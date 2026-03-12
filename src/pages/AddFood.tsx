@@ -142,6 +142,11 @@ export default function AddFood() {
   if (mode === 'scanning') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 animate-fade-in">
+        {receiptPreview && (
+          <div className="w-32 h-40 rounded-xl overflow-hidden mb-4 border border-border shadow-sm">
+            <img src={receiptPreview} alt="Receipt" className="w-full h-full object-cover" />
+          </div>
+        )}
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
