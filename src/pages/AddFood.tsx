@@ -76,18 +76,47 @@ export default function AddFood() {
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
         <div className="space-y-3">
           <button
-            onClick={simulateScan}
+            onClick={() => cameraInputRef.current?.click()}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <ScanLine className="w-6 h-6 text-primary" />
+                <Camera className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">Scan Receipt</div>
-                <div className="text-sm text-muted-foreground">Upload a photo of your grocery receipt</div>
+                <div className="font-semibold">Take Photo of Receipt</div>
+                <div className="text-sm text-muted-foreground">Use your camera to scan a grocery receipt</div>
+              </div>
+            </div>
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Image className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold">Upload Receipt Photo</div>
+                <div className="text-sm text-muted-foreground">Choose an existing photo from your gallery</div>
               </div>
             </div>
           </button>
