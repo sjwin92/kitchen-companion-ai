@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
@@ -6,7 +6,7 @@ import { MOCK_RECEIPT_ITEMS } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScanLine, Plus, Upload, Trash2, Check, Loader2 } from 'lucide-react';
+import { ScanLine, Plus, Camera, Trash2, Check, Loader2, Image } from 'lucide-react';
 
 export default function AddFood() {
   const { addItems } = useApp();
@@ -19,13 +19,24 @@ export default function AddFood() {
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
+  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const simulateScan = () => {
-    setMode('scanning');
-    setTimeout(() => {
-      setScannedItems([...MOCK_RECEIPT_ITEMS]);
-      setMode('review');
-    }, 2000);
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setReceiptPreview(reader.result as string);
+      setMode('scanning');
+      // Simulate AI extraction
+      setTimeout(() => {
+        setScannedItems([...MOCK_RECEIPT_ITEMS]);
+        setMode('review');
+      }, 2500);
+    };
+    reader.readAsDataURL(file);
   };
 
   const removeScanned = (index: number) => {
@@ -65,18 +76,47 @@ export default function AddFood() {
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
         <div className="space-y-3">
           <button
-            onClick={simulateScan}
+            onClick={() => cameraInputRef.current?.click()}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <ScanLine className="w-6 h-6 text-primary" />
+                <Camera className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">Scan Receipt</div>
-                <div className="text-sm text-muted-foreground">Upload a photo of your grocery receipt</div>
+                <div className="font-semibold">Take Photo of Receipt</div>
+                <div className="text-sm text-muted-foreground">Use your camera to scan a grocery receipt</div>
+              </div>
+            </div>
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Image className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold">Upload Receipt Photo</div>
+                <div className="text-sm text-muted-foreground">Choose an existing photo from your gallery</div>
               </div>
             </div>
           </button>
@@ -102,6 +142,11 @@ export default function AddFood() {
   if (mode === 'scanning') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 animate-fade-in">
+        {receiptPreview && (
+          <div className="w-32 h-40 rounded-xl overflow-hidden mb-4 border border-border shadow-sm">
+            <img src={receiptPreview} alt="Receipt" className="w-full h-full object-cover" />
+          </div>
+        )}
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
