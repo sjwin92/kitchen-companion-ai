@@ -14,9 +14,20 @@ export default function Onboarding() {
   const [dietary, setDietary] = useState<string[]>([]);
   const [cookingTime, setCookingTime] = useState('30 min');
   const [dislikes, setDislikes] = useState<string[]>([]);
+  const [customDislike, setCustomDislike] = useState('');
+  const customInputRef = useRef<HTMLInputElement>(null);
 
   const toggleItem = (list: string[], item: string, setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
+  };
+
+  const addCustomDislike = () => {
+    const trimmed = customDislike.trim();
+    if (trimmed && !dislikes.includes(trimmed)) {
+      setDislikes(prev => [...prev, trimmed]);
+    }
+    setCustomDislike('');
+    customInputRef.current?.focus();
   };
 
   const handleFinish = () => {
