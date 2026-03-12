@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
@@ -6,7 +6,7 @@ import { MOCK_RECEIPT_ITEMS } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScanLine, Plus, Upload, Trash2, Check, Loader2 } from 'lucide-react';
+import { ScanLine, Plus, Camera, Trash2, Check, Loader2, Image } from 'lucide-react';
 
 export default function AddFood() {
   const { addItems } = useApp();
@@ -19,13 +19,24 @@ export default function AddFood() {
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
+  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const simulateScan = () => {
-    setMode('scanning');
-    setTimeout(() => {
-      setScannedItems([...MOCK_RECEIPT_ITEMS]);
-      setMode('review');
-    }, 2000);
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setReceiptPreview(reader.result as string);
+      setMode('scanning');
+      // Simulate AI extraction
+      setTimeout(() => {
+        setScannedItems([...MOCK_RECEIPT_ITEMS]);
+        setMode('review');
+      }, 2500);
+    };
+    reader.readAsDataURL(file);
   };
 
   const removeScanned = (index: number) => {
