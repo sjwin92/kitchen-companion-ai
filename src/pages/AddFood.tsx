@@ -2,11 +2,12 @@ import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
-import { MOCK_RECEIPT_ITEMS } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScanLine, Plus, Camera, Trash2, Check, Loader2, Image } from 'lucide-react';
+import { Plus, Camera, Trash2, Check, Loader2, Image } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function AddFood() {
   const { addItems } = useApp();
@@ -23,20 +24,43 @@ export default function AddFood() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
-    reader.onload = () => {
-      setReceiptPreview(reader.result as string);
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      setReceiptPreview(base64);
       setMode('scanning');
-      // Simulate AI extraction
-      setTimeout(() => {
-        setScannedItems([...MOCK_RECEIPT_ITEMS]);
+
+      try {
+        const { data, error } = await supabase.functions.invoke('scan-receipt', {
+          body: { imageBase64: base64 },
+        });
+
+        if (error) throw new Error(error.message);
+        if (data?.error) throw new Error(data.error);
+
+        const items = data.items || [];
+        if (items.length === 0) {
+          toast.info('No food items found on receipt. Try adding manually.');
+          setMode('choose');
+          return;
+        }
+
+        setScannedItems(items);
         setMode('review');
-      }, 2500);
+        toast.success(`Found ${items.length} item${items.length > 1 ? 's' : ''}!`);
+      } catch (err: any) {
+        console.error('Receipt scan failed:', err);
+        toast.error(err.message || 'Failed to scan receipt. Try again or add manually.');
+        setMode('choose');
+      }
     };
     reader.readAsDataURL(file);
+    // Reset the input so the same file can be re-selected
+    e.target.value = '';
   };
 
   const removeScanned = (index: number) => {
