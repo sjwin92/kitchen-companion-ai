@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { ChefHat, Users, Clock, Leaf, X } from 'lucide-react';
@@ -14,9 +14,20 @@ export default function Onboarding() {
   const [dietary, setDietary] = useState<string[]>([]);
   const [cookingTime, setCookingTime] = useState('30 min');
   const [dislikes, setDislikes] = useState<string[]>([]);
+  const [customDislike, setCustomDislike] = useState('');
+  const customInputRef = useRef<HTMLInputElement>(null);
 
   const toggleItem = (list: string[], item: string, setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
+  };
+
+  const addCustomDislike = () => {
+    const trimmed = customDislike.trim();
+    if (trimmed && !dislikes.includes(trimmed)) {
+      setDislikes(prev => [...prev, trimmed]);
+    }
+    setCustomDislike('');
+    customInputRef.current?.focus();
   };
 
   const handleFinish = () => {
@@ -127,6 +138,29 @@ export default function Onboarding() {
             {opt}
           </button>
         ))}
+        {dislikes.filter(d => !COMMON_DISLIKES.includes(d)).map(opt => (
+          <button
+            key={opt}
+            onClick={() => setDislikes(prev => prev.filter(i => i !== opt))}
+            className="px-4 py-2 rounded-full text-sm font-medium border bg-destructive text-destructive-foreground border-destructive"
+          >
+            {opt} ×
+          </button>
+        ))}
+      </div>
+      <div className="flex gap-2 max-w-xs mx-auto">
+        <input
+          ref={customInputRef}
+          type="text"
+          value={customDislike}
+          onChange={e => setCustomDislike(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && addCustomDislike()}
+          placeholder="Add other..."
+          className="flex-1 h-10 rounded-full border border-border bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+        />
+        <Button variant="outline" size="sm" onClick={addCustomDislike} disabled={!customDislike.trim()} className="rounded-full">
+          Add
+        </Button>
       </div>
     </div>,
   ];
