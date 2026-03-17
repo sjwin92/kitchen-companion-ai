@@ -114,7 +114,7 @@ export default function AddFood() {
       { value: 'cupboard' as StorageLocation, label: 'Cupboard / Pantry', icon: Archive, desc: 'Dry goods, cans, snacks' },
     ];
     return (
-      <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
+        {hiddenInputs}
         <div>
           <h1 className="text-2xl font-bold">Where are you scanning?</h1>
           <p className="text-sm text-muted-foreground">Pick the location, then take a photo</p>
