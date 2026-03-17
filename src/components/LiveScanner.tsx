@@ -62,17 +62,18 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
     const canvas = canvasRef.current;
     if (!video || !canvas || video.videoWidth === 0) return null;
 
-    // Resize to max 800px for faster processing
-    const maxW = 800;
+    // Resize to max 480px for smaller payload (live scanning needs small fast requests)
+    const maxW = 480;
     let w = video.videoWidth;
     let h = video.videoHeight;
-    if (w > maxW) { h = (h * maxW) / w; w = maxW; }
+    if (w > maxW) { h = Math.round((h * maxW) / w); w = maxW; }
+    if (h > maxW) { w = Math.round((w * maxW) / h); h = maxW; }
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
     ctx.drawImage(video, 0, 0, w, h);
-    return canvas.toDataURL('image/jpeg', 0.6);
+    return canvas.toDataURL('image/jpeg', 0.35);
   }, []);
 
   const processFrame = useCallback(async () => {
