@@ -137,6 +137,7 @@ export default function AddFood() {
     );
   }
 
+  if (mode === 'choose') {
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
