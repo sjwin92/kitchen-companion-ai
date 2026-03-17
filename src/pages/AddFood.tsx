@@ -5,7 +5,7 @@ import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye } from 'lucide-react';
+import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -15,13 +15,14 @@ export default function AddFood() {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'manual' ? 'manual' : 'choose';
 
-  const [mode, setMode] = useState<'choose' | 'scanning' | 'review' | 'manual'>(initialMode);
+  const [mode, setMode] = useState<'choose' | 'pick-location' | 'scanning' | 'review' | 'manual'>(initialMode);
   const [scannedItems, setScannedItems] = useState<Omit<FoodItem, 'id'>[]>([]);
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [scanType, setScanType] = useState<'receipt' | 'fridge'>('receipt');
+  const [scanLocation, setScanLocation] = useState<StorageLocation>('fridge');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
@@ -38,7 +39,7 @@ export default function AddFood() {
 
       try {
         const { data, error } = await supabase.functions.invoke('scan-receipt', {
-          body: { imageBase64: base64, mode: scanType },
+          body: { imageBase64: base64, mode: scanType, storageLocation: scanLocation },
         });
 
         if (error) throw new Error(error.message);
@@ -98,6 +99,44 @@ export default function AddFood() {
     setManualQty('');
   };
 
+  if (mode === 'pick-location') {
+    const locations = [
+      { value: 'fridge' as StorageLocation, label: 'Fridge', icon: Refrigerator, desc: 'Fresh food, dairy, drinks' },
+      { value: 'freezer' as StorageLocation, label: 'Freezer', icon: Snowflake, desc: 'Frozen items, ice cream, meat' },
+      { value: 'cupboard' as StorageLocation, label: 'Cupboard / Pantry', icon: Archive, desc: 'Dry goods, cans, snacks' },
+    ];
+    return (
+      <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-bold">Where are you scanning?</h1>
+          <p className="text-sm text-muted-foreground">Pick the location, then take a photo</p>
+        </div>
+        <div className="space-y-3">
+          {locations.map(loc => (
+            <button
+              key={loc.value}
+              onClick={() => { setScanLocation(loc.value); fridgeCameraRef.current?.click(); }}
+              className="w-full bg-card border border-border rounded-xl p-5 text-left hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <loc.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold">{loc.label}</div>
+                  <div className="text-sm text-muted-foreground">{loc.desc}</div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+        <Button variant="ghost" onClick={() => setMode('choose')} className="w-full text-muted-foreground">
+          ← Back
+        </Button>
+      </div>
+    );
+  }
+
   if (mode === 'choose') {
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
@@ -127,7 +166,7 @@ export default function AddFood() {
         />
         <div className="space-y-3">
           <button
-            onClick={() => { setScanType('fridge'); fridgeCameraRef.current?.click(); }}
+            onClick={() => { setScanType('fridge'); setMode('pick-location'); }}
             className="w-full bg-card border-2 border-primary/20 rounded-xl p-6 text-left hover:border-primary/50 transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -135,8 +174,8 @@ export default function AddFood() {
                 <ScanEye className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">Scan My Fridge</div>
-                <div className="text-sm text-muted-foreground">Point your camera at the fridge — AI identifies everything</div>
+                <div className="font-semibold">Scan My Kitchen</div>
+                <div className="text-sm text-muted-foreground">Point your camera at the fridge, freezer, or cupboard</div>
               </div>
             </div>
           </button>
@@ -198,7 +237,9 @@ export default function AddFood() {
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
-        <h2 className="text-xl font-bold">{scanType === 'fridge' ? 'Scanning Fridge...' : 'Scanning Receipt...'}</h2>
+        <h2 className="text-xl font-bold">
+          {scanType === 'fridge' ? `Scanning ${scanLocation === 'freezer' ? 'Freezer' : scanLocation === 'cupboard' ? 'Cupboard' : 'Fridge'}...` : 'Scanning Receipt...'}
+        </h2>
         <p className="text-sm text-muted-foreground mt-1">{scanType === 'fridge' ? 'Identifying items with AI' : 'Extracting items with AI'}</p>
       </div>
     );

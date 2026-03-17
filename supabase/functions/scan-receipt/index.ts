@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, mode = "receipt" } = await req.json();
+    const { imageBase64, mode = "receipt", storageLocation } = await req.json();
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
         status: 400,
@@ -152,7 +152,7 @@ You MUST respond using the extract_items tool.`;
     const items = (parsed.items || []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity || "1",
-      location: item.location || "fridge",
+      location: storageLocation || item.location || "fridge",
       dateAdded: new Date().toISOString().split("T")[0],
       daysUntilExpiry: item.daysUntilExpiry || 7,
       status: item.daysUntilExpiry <= 2 ? "use-today" : item.daysUntilExpiry <= 5 ? "use-soon" : "okay",
