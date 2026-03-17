@@ -39,7 +39,7 @@ export default function AddFood() {
 
       try {
         const { data, error } = await supabase.functions.invoke('scan-receipt', {
-          body: { imageBase64: base64, mode: scanType },
+          body: { imageBase64: base64, mode: scanType, storageLocation: scanLocation },
         });
 
         if (error) throw new Error(error.message);
