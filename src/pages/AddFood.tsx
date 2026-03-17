@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import LiveScanner from '@/components/LiveScanner';
 
 export default function AddFood() {
   const { addItems } = useApp();
@@ -15,7 +16,7 @@ export default function AddFood() {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'manual' ? 'manual' : 'choose';
 
-  const [mode, setMode] = useState<'choose' | 'pick-location' | 'scanning' | 'review' | 'manual'>(initialMode);
+  const [mode, setMode] = useState<'choose' | 'pick-location' | 'live-scan' | 'scanning' | 'review' | 'manual'>(initialMode);
   const [scannedItems, setScannedItems] = useState<Omit<FoodItem, 'id'>[]>([]);
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
@@ -130,6 +131,20 @@ export default function AddFood() {
     </>
   );
 
+  if (mode === 'live-scan') {
+    return (
+      <LiveScanner
+        location={scanLocation}
+        onComplete={(items) => {
+          setScannedItems(items);
+          setMode('review');
+          toast.success(`Found ${items.length} item${items.length > 1 ? 's' : ''}!`);
+        }}
+        onCancel={() => setMode('choose')}
+      />
+    );
+  }
+
   if (mode === 'pick-location') {
     const locations = [
       { value: 'fridge' as StorageLocation, label: 'Fridge', icon: Refrigerator, desc: 'Fresh food, dairy, drinks' },
@@ -141,13 +156,13 @@ export default function AddFood() {
         {hiddenInputs}
         <div>
           <h1 className="text-2xl font-bold">Where are you scanning?</h1>
-          <p className="text-sm text-muted-foreground">Pick the location, then take a photo</p>
+          <p className="text-sm text-muted-foreground">Pick a location to open live scanner</p>
         </div>
         <div className="space-y-3">
           {locations.map(loc => (
             <button
               key={loc.value}
-              onClick={() => { setScanLocation(loc.value); fridgeCameraRef.current?.click(); }}
+              onClick={() => { setScanLocation(loc.value); setMode('live-scan'); }}
               className="w-full bg-card border border-border rounded-xl p-5 text-left hover:border-primary/40 transition-colors"
             >
               <div className="flex items-center gap-4">
