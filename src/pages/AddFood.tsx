@@ -237,7 +237,9 @@ export default function AddFood() {
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
-        <h2 className="text-xl font-bold">{scanType === 'fridge' ? 'Scanning Fridge...' : 'Scanning Receipt...'}</h2>
+        <h2 className="text-xl font-bold">
+          {scanType === 'fridge' ? `Scanning ${scanLocation === 'freezer' ? 'Freezer' : scanLocation === 'cupboard' ? 'Cupboard' : 'Fridge'}...` : 'Scanning Receipt...'}
+        </h2>
         <p className="text-sm text-muted-foreground mt-1">{scanType === 'fridge' ? 'Identifying items with AI' : 'Extracting items with AI'}</p>
       </div>
     );
