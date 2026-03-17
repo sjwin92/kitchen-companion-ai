@@ -27,43 +27,66 @@ export default function AddFood() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
 
+  const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return reject(new Error('Canvas not supported'));
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+        img.src = reader.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Reset the input so the same file can be re-selected
+    e.target.value = '';
 
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = reader.result as string;
+    try {
+      const base64 = await compressImage(file);
       setReceiptPreview(base64);
       setMode('scanning');
 
-      try {
-        const { data, error } = await supabase.functions.invoke('scan-receipt', {
-          body: { imageBase64: base64, mode: scanType, storageLocation: scanLocation },
-        });
+      const { data, error } = await supabase.functions.invoke('scan-receipt', {
+        body: { imageBase64: base64, mode: scanType, storageLocation: scanLocation },
+      });
 
-        if (error) throw new Error(error.message);
-        if (data?.error) throw new Error(data.error);
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
 
-        const items = data.items || [];
-        if (items.length === 0) {
-          toast.info('No food items found. Try a clearer photo or add manually.');
-          setMode('choose');
-          return;
-        }
-
-        setScannedItems(items);
-        setMode('review');
-        toast.success(`Found ${items.length} item${items.length > 1 ? 's' : ''}!`);
-      } catch (err: any) {
-        console.error('Receipt scan failed:', err);
-        toast.error(err.message || 'Failed to scan receipt. Try again or add manually.');
+      const items = data.items || [];
+      if (items.length === 0) {
+        toast.info('No food items found. Try a clearer photo or add manually.');
         setMode('choose');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
-    // Reset the input so the same file can be re-selected
-    e.target.value = '';
+
+      setScannedItems(items);
+      setMode('review');
+      toast.success(`Found ${items.length} item${items.length > 1 ? 's' : ''}!`);
+    } catch (err: any) {
+      console.error('Receipt scan failed:', err);
+      toast.error(err.message || 'Failed to scan. Try again or add manually.');
+      setMode('choose');
+    }
   };
 
   const removeScanned = (index: number) => {
