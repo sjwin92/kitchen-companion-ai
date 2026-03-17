@@ -46,7 +46,7 @@ export default function AddFood() {
 
         const items = data.items || [];
         if (items.length === 0) {
-          toast.info('No food items found on receipt. Try adding manually.');
+          toast.info('No food items found. Try a clearer photo or add manually.');
           setMode('choose');
           return;
         }
