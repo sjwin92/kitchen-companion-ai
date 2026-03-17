@@ -127,6 +127,20 @@ export default function AddFood() {
         />
         <div className="space-y-3">
           <button
+            onClick={() => { setScanType('fridge'); fridgeCameraRef.current?.click(); }}
+            className="w-full bg-card border-2 border-primary/20 rounded-xl p-6 text-left hover:border-primary/50 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <ScanEye className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold">Scan My Fridge</div>
+                <div className="text-sm text-muted-foreground">Point your camera at the fridge — AI identifies everything</div>
+              </div>
+            </div>
+          </button>
+          <button
             onClick={() => cameraInputRef.current?.click()}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
