@@ -99,7 +99,44 @@ export default function AddFood() {
     setManualQty('');
   };
 
-  if (mode === 'choose') {
+  if (mode === 'pick-location') {
+    const locations = [
+      { value: 'fridge' as StorageLocation, label: 'Fridge', icon: Refrigerator, desc: 'Fresh food, dairy, drinks' },
+      { value: 'freezer' as StorageLocation, label: 'Freezer', icon: Snowflake, desc: 'Frozen items, ice cream, meat' },
+      { value: 'cupboard' as StorageLocation, label: 'Cupboard / Pantry', icon: Archive, desc: 'Dry goods, cans, snacks' },
+    ];
+    return (
+      <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-bold">Where are you scanning?</h1>
+          <p className="text-sm text-muted-foreground">Pick the location, then take a photo</p>
+        </div>
+        <div className="space-y-3">
+          {locations.map(loc => (
+            <button
+              key={loc.value}
+              onClick={() => { setScanLocation(loc.value); fridgeCameraRef.current?.click(); }}
+              className="w-full bg-card border border-border rounded-xl p-5 text-left hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <loc.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold">{loc.label}</div>
+                  <div className="text-sm text-muted-foreground">{loc.desc}</div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+        <Button variant="ghost" onClick={() => setMode('choose')} className="w-full text-muted-foreground">
+          ← Back
+        </Button>
+      </div>
+    );
+  }
+
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
