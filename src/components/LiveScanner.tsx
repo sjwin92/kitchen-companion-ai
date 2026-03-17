@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { X, ScanEye, Check, Loader2 } from 'lucide-react';
+import { X, ScanEye, Check, Loader2, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LiveScannerProps {
@@ -11,15 +11,21 @@ interface LiveScannerProps {
   onCancel: () => void;
 }
 
+type ScanPreset = 'auto' | 'manual';
+
+const AUTO_SCAN_INTERVAL_MS = 7000;
+const ERROR_TOAST_COOLDOWN_MS = 12000;
+
 export default function LiveScanner({ location, onComplete, onCancel }: LiveScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const scanIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isScanningRef = useRef(false);
+  const lastErrorToastAtRef = useRef(0);
 
   const [items, setItems] = useState<Omit<FoodItem, 'id'>[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isManualScanning, setIsManualScanning] = useState(false);
   const [scanCount, setScanCount] = useState(0);
   const [cameraReady, setCameraReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,37 +59,56 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
     return () => {
       mounted = false;
       streamRef.current?.getTracks().forEach(t => t.stop());
-      if (scanIntervalRef.current) clearTimeout(scanIntervalRef.current);
     };
   }, []);
 
-  const captureFrame = useCallback((): string | null => {
+  const captureFrame = useCallback((preset: ScanPreset = 'auto'): string | null => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas || video.videoWidth === 0) return null;
 
-    // Resize to max 480px for smaller payload (live scanning needs small fast requests)
-    const maxW = 480;
+    // Keep payload very small for reliable background scans;
+    // manual snap keeps a bit more detail while still constrained.
+    const maxSide = preset === 'manual' ? 420 : 320;
+    const quality = preset === 'manual' ? 0.3 : 0.22;
+
     let w = video.videoWidth;
     let h = video.videoHeight;
-    if (w > maxW) { h = Math.round((h * maxW) / w); w = maxW; }
-    if (h > maxW) { w = Math.round((w * maxW) / h); h = maxW; }
+
+    if (w > maxSide) {
+      h = Math.round((h * maxSide) / w);
+      w = maxSide;
+    }
+    if (h > maxSide) {
+      w = Math.round((w * maxSide) / h);
+      h = maxSide;
+    }
+
     canvas.width = w;
     canvas.height = h;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
+
     ctx.drawImage(video, 0, 0, w, h);
-    return canvas.toDataURL('image/jpeg', 0.35);
+    return canvas.toDataURL('image/jpeg', quality);
   }, []);
 
-  const processFrame = useCallback(async () => {
+  const processFrame = useCallback(async (preset: ScanPreset = 'auto') => {
     if (isScanningRef.current) return;
+
     isScanningRef.current = true;
     setIsProcessing(true);
+    if (preset === 'manual') setIsManualScanning(true);
 
     try {
-      const frame = captureFrame();
-      if (!frame) { isScanningRef.current = false; setIsProcessing(false); return; }
+      const frame = captureFrame(preset);
+      if (!frame) {
+        isScanningRef.current = false;
+        setIsProcessing(false);
+        if (preset === 'manual') setIsManualScanning(false);
+        return;
+      }
 
       const { data, error } = await supabase.functions.invoke('scan-receipt', {
         body: { imageBase64: frame, mode: 'fridge', storageLocation: location },
@@ -108,25 +133,34 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
       }
     } catch (err: any) {
       console.error('Scan frame error:', err);
-      // Don't toast on every frame error, just log it
+      const now = Date.now();
+      if (now - lastErrorToastAtRef.current > ERROR_TOAST_COOLDOWN_MS) {
+        toast.error('Scan request failed. Keep camera steady and tap Snap to log.');
+        lastErrorToastAtRef.current = now;
+      }
     } finally {
       isScanningRef.current = false;
       setIsProcessing(false);
+      if (preset === 'manual') setIsManualScanning(false);
     }
   }, [captureFrame, location]);
 
-  // Auto-scan every 5 seconds once camera is ready
+  // Auto-scan on an interval once camera is ready
   useEffect(() => {
     if (!cameraReady) return;
 
-    // Run first scan immediately
-    processFrame();
+    const firstScan = setTimeout(() => {
+      processFrame('auto');
+    }, 900);
 
     const interval = setInterval(() => {
-      processFrame();
-    }, 5000);
+      processFrame('auto');
+    }, AUTO_SCAN_INTERVAL_MS);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(firstScan);
+      clearInterval(interval);
+    };
   }, [cameraReady, processFrame]);
 
   const handleDone = () => {
@@ -136,6 +170,10 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
       return;
     }
     onComplete(items);
+  };
+
+  const handleManualSnap = () => {
+    processFrame('manual');
   };
 
   const removeItem = (index: number) => {
@@ -152,7 +190,7 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-[90] bg-black flex flex-col">
       {/* Camera feed */}
       <div className="relative flex-1 overflow-hidden">
         <video
@@ -194,6 +232,24 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
           )}
         </div>
 
+        {/* Manual quick-snap assist while scanner stays open */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleManualSnap}
+            disabled={!cameraReady || isProcessing}
+            className="h-11 rounded-full px-5 shadow-lg"
+          >
+            {isManualScanning ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Camera className="w-4 h-4" />
+            )}
+            {isManualScanning ? 'Snapping…' : 'Snap to log'}
+          </Button>
+        </div>
+
         {/* Scan pulse */}
         {isProcessing && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary animate-pulse" />
@@ -218,7 +274,7 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
         <div className="flex-1 overflow-y-auto px-4 pb-2">
           {items.length === 0 && (
             <p className="text-sm text-muted-foreground py-3 text-center">
-              {cameraReady ? 'Point camera at food items...' : 'Starting camera...'}
+              {cameraReady ? 'Point camera at food items or tap Snap to log...' : 'Starting camera...'}
             </p>
           )}
           <div className="space-y-1.5">
