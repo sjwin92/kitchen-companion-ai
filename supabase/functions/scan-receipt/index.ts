@@ -12,13 +12,40 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64 } = await req.json();
+    const { imageBase64, mode = "receipt" } = await req.json();
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const systemPrompt = mode === "fridge"
+      ? `You are a kitchen inventory scanner. Look at this photo of the inside of a fridge, freezer, or cupboard and identify all visible food items.
+For each item return: name (common name), quantity (best estimate e.g. "1 bottle", "2", "~500g"), and location (the most logical storage: "fridge", "freezer", or "cupboard").
+
+Rules:
+- Identify every distinct food item you can see
+- Be specific: "Cheddar Cheese" not just "cheese", "Semi-Skimmed Milk" not just "milk"
+- Estimate quantity from what's visible (number of items, approximate weight/volume)
+- Estimate days until expiry: fresh produce 5-7, dairy 7-14, meat 3-5, condiments/sauces 90, frozen 60
+- Skip non-food items (cleaning products, containers without food, etc.)
+
+You MUST respond using the extract_items tool.`
+      : `You are a grocery receipt parser. Extract food items from the receipt image. 
+For each item return: name (clean product name, not brand), quantity (e.g. "1", "500g", "2 lbs"), and location (best guess: "fridge", "freezer", or "cupboard").
+
+Rules:
+- Only extract FOOD items, skip non-food products, taxes, totals, store info
+- Clean up names: "BNLS CHKN BRST" → "Chicken Breast"
+- Guess reasonable storage locations based on the item type
+- Estimate days until expiry based on item type: fresh produce 5-7, dairy 7-14, meat 3-5, frozen 60, pantry 90
+
+You MUST respond using the extract_items tool.`;
+
+    const userText = mode === "fridge"
+      ? "Identify all food items visible in this photo of my fridge/kitchen storage."
+      : "Extract all food items from this grocery receipt.";
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -38,23 +65,14 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: `You are a grocery receipt parser. Extract food items from the receipt image. 
-For each item return: name (clean product name, not brand), quantity (e.g. "1", "500g", "2 lbs"), and location (best guess: "fridge", "freezer", or "cupboard").
-
-Rules:
-- Only extract FOOD items, skip non-food products, taxes, totals, store info
-- Clean up names: "BNLS CHKN BRST" → "Chicken Breast"
-- Guess reasonable storage locations based on the item type
-- Estimate days until expiry based on item type: fresh produce 5-7, dairy 7-14, meat 3-5, frozen 60, pantry 90
-
-You MUST respond using the extract_items tool.`,
+              content: systemPrompt,
             },
             {
               role: "user",
               content: [
                 {
                   type: "text",
-                  text: "Extract all food items from this grocery receipt.",
+                  text: userText,
                 },
                 {
                   type: "image_url",

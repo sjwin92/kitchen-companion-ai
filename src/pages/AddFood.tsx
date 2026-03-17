@@ -5,7 +5,7 @@ import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Camera, Trash2, Check, Loader2, Image } from 'lucide-react';
+import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -21,8 +21,10 @@ export default function AddFood() {
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+  const [scanType, setScanType] = useState<'receipt' | 'fridge'>('receipt');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const fridgeCameraRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,7 +38,7 @@ export default function AddFood() {
 
       try {
         const { data, error } = await supabase.functions.invoke('scan-receipt', {
-          body: { imageBase64: base64 },
+          body: { imageBase64: base64, mode: scanType },
         });
 
         if (error) throw new Error(error.message);
@@ -44,7 +46,7 @@ export default function AddFood() {
 
         const items = data.items || [];
         if (items.length === 0) {
-          toast.info('No food items found on receipt. Try adding manually.');
+          toast.info('No food items found. Try a clearer photo or add manually.');
           setMode('choose');
           return;
         }
@@ -101,6 +103,14 @@ export default function AddFood() {
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
         <input
+          ref={fridgeCameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+        <input
           ref={cameraInputRef}
           type="file"
           accept="image/*"
@@ -117,7 +127,21 @@ export default function AddFood() {
         />
         <div className="space-y-3">
           <button
-            onClick={() => cameraInputRef.current?.click()}
+            onClick={() => { setScanType('fridge'); fridgeCameraRef.current?.click(); }}
+            className="w-full bg-card border-2 border-primary/20 rounded-xl p-6 text-left hover:border-primary/50 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <ScanEye className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold">Scan My Fridge</div>
+                <div className="text-sm text-muted-foreground">Point your camera at the fridge — AI identifies everything</div>
+              </div>
+            </div>
+          </button>
+          <button
+            onClick={() => { setScanType('receipt'); cameraInputRef.current?.click(); }}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -131,7 +155,7 @@ export default function AddFood() {
             </div>
           </button>
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => { setScanType('receipt'); fileInputRef.current?.click(); }}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -174,8 +198,8 @@ export default function AddFood() {
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
-        <h2 className="text-xl font-bold">Scanning Receipt...</h2>
-        <p className="text-sm text-muted-foreground mt-1">Extracting items with AI</p>
+        <h2 className="text-xl font-bold">{scanType === 'fridge' ? 'Scanning Fridge...' : 'Scanning Receipt...'}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{scanType === 'fridge' ? 'Identifying items with AI' : 'Extracting items with AI'}</p>
       </div>
     );
   }
