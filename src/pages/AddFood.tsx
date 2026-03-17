@@ -103,6 +103,14 @@ export default function AddFood() {
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Add Food</h1>
         <input
+          ref={fridgeCameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+        <input
           ref={cameraInputRef}
           type="file"
           accept="image/*"
