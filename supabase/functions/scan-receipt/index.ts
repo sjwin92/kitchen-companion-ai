@@ -65,23 +65,14 @@ You MUST respond using the extract_items tool.`;
           messages: [
             {
               role: "system",
-              content: `You are a grocery receipt parser. Extract food items from the receipt image. 
-For each item return: name (clean product name, not brand), quantity (e.g. "1", "500g", "2 lbs"), and location (best guess: "fridge", "freezer", or "cupboard").
-
-Rules:
-- Only extract FOOD items, skip non-food products, taxes, totals, store info
-- Clean up names: "BNLS CHKN BRST" → "Chicken Breast"
-- Guess reasonable storage locations based on the item type
-- Estimate days until expiry based on item type: fresh produce 5-7, dairy 7-14, meat 3-5, frozen 60, pantry 90
-
-You MUST respond using the extract_items tool.`,
+              content: systemPrompt,
             },
             {
               role: "user",
               content: [
                 {
                   type: "text",
-                  text: "Extract all food items from this grocery receipt.",
+                  text: userText,
                 },
                 {
                   type: "image_url",
