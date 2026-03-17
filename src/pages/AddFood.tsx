@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import LiveScanner from '@/components/LiveScanner';
 
 export default function AddFood() {
   const { addItems } = useApp();
@@ -15,7 +16,7 @@ export default function AddFood() {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'manual' ? 'manual' : 'choose';
 
-  const [mode, setMode] = useState<'choose' | 'pick-location' | 'scanning' | 'review' | 'manual'>(initialMode);
+  const [mode, setMode] = useState<'choose' | 'pick-location' | 'live-scan' | 'scanning' | 'review' | 'manual'>(initialMode);
   const [scannedItems, setScannedItems] = useState<Omit<FoodItem, 'id'>[]>([]);
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
