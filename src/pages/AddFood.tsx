@@ -21,8 +21,10 @@ export default function AddFood() {
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+  const [scanType, setScanType] = useState<'receipt' | 'fridge'>('receipt');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const fridgeCameraRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
