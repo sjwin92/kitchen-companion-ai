@@ -155,7 +155,7 @@ export default function AddFood() {
             </div>
           </button>
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => { setScanType('receipt'); fileInputRef.current?.click(); }}
             className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
