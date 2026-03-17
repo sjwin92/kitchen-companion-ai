@@ -15,7 +15,7 @@ export default function AddFood() {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'manual' ? 'manual' : 'choose';
 
-  const [mode, setMode] = useState<'choose' | 'scanning' | 'review' | 'manual'>(initialMode);
+  const [mode, setMode] = useState<'choose' | 'pick-location' | 'scanning' | 'review' | 'manual'>(initialMode);
   const [scannedItems, setScannedItems] = useState<Omit<FoodItem, 'id'>[]>([]);
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
