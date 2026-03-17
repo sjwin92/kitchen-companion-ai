@@ -99,6 +99,14 @@ export default function AddFood() {
     setManualQty('');
   };
 
+  const hiddenInputs = (
+    <>
+      <input ref={fridgeCameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelected} />
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelected} />
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelected} />
+    </>
+  );
+
   if (mode === 'pick-location') {
     const locations = [
       { value: 'fridge' as StorageLocation, label: 'Fridge', icon: Refrigerator, desc: 'Fresh food, dairy, drinks' },
