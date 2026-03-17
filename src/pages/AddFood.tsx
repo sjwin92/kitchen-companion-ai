@@ -22,6 +22,7 @@ export default function AddFood() {
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [scanType, setScanType] = useState<'receipt' | 'fridge'>('receipt');
+  const [scanLocation, setScanLocation] = useState<StorageLocation>('fridge');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
