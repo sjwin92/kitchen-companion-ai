@@ -99,6 +99,14 @@ export default function AddFood() {
     setManualQty('');
   };
 
+  const hiddenInputs = (
+    <>
+      <input ref={fridgeCameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelected} />
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelected} />
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelected} />
+    </>
+  );
+
   if (mode === 'pick-location') {
     const locations = [
       { value: 'fridge' as StorageLocation, label: 'Fridge', icon: Refrigerator, desc: 'Fresh food, dairy, drinks' },
@@ -107,6 +115,7 @@ export default function AddFood() {
     ];
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
+        {hiddenInputs}
         <div>
           <h1 className="text-2xl font-bold">Where are you scanning?</h1>
           <p className="text-sm text-muted-foreground">Pick the location, then take a photo</p>
@@ -140,30 +149,8 @@ export default function AddFood() {
   if (mode === 'choose') {
     return (
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
+        {hiddenInputs}
         <h1 className="text-2xl font-bold">Add Food</h1>
-        <input
-          ref={fridgeCameraRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFileSelected}
-        />
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFileSelected}
-        />
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileSelected}
-        />
         <div className="space-y-3">
           <button
             onClick={() => { setScanType('fridge'); setMode('pick-location'); }}
