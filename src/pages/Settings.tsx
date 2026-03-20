@@ -56,9 +56,17 @@ export default function Settings() {
             <User className="w-5 h-5 text-primary" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium truncate">{session?.user?.email}</p>
-            <p className="text-xs text-muted-foreground">Account</p>
+            <p className="text-sm font-medium truncate">{preferences.displayName || session?.user?.email}</p>
+            <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
           </div>
+        </div>
+        <div>
+          <label className="text-sm font-medium">Display Name</label>
+          <Input
+            value={preferences.displayName}
+            onChange={e => setPreferences({ displayName: e.target.value })}
+            placeholder="Your name"
+          />
         </div>
         <Button
           variant="destructive"

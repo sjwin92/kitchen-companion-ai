@@ -23,6 +23,7 @@ const defaultPreferences: UserPreferences = {
   cookingTime: '30 min',
   dislikedIngredients: [],
   onboardingComplete: false,
+  displayName: '',
 };
 
 const AppContext = createContext<AppState | null>(null);
@@ -70,6 +71,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           cookingTime: data.cooking_time ?? '30 min',
           dislikedIngredients: data.disliked_ingredients ?? [],
           onboardingComplete: data.onboarding_complete ?? false,
+          displayName: data.display_name ?? '',
         });
       }
     };
@@ -147,6 +149,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           cooking_time: next.cookingTime,
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
+          display_name: next.displayName,
         }).eq('id', session.user.id).then();
       }
 
