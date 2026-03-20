@@ -86,6 +86,42 @@ export type Database = {
         }
         Relationships: []
       }
+      scan_sessions: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          image_path: string | null
+          parsed_items: Json
+          raw_output: Json | null
+          source_type: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          image_path?: string | null
+          parsed_items?: Json
+          raw_output?: Json | null
+          source_type: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          image_path?: string | null
+          parsed_items?: Json
+          raw_output?: Json | null
+          source_type?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
