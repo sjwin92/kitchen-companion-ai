@@ -71,6 +71,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           cookingTime: data.cooking_time ?? '30 min',
           dislikedIngredients: data.disliked_ingredients ?? [],
           onboardingComplete: data.onboarding_complete ?? false,
+          displayName: data.display_name ?? '',
         });
       }
     };
