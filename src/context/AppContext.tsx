@@ -23,6 +23,7 @@ const defaultPreferences: UserPreferences = {
   cookingTime: '30 min',
   dislikedIngredients: [],
   onboardingComplete: false,
+  displayName: '',
 };
 
 const AppContext = createContext<AppState | null>(null);
