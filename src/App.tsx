@@ -12,6 +12,7 @@ import AddFood from "@/pages/AddFood";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
 import MissingIngredients from "@/pages/MissingIngredients";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
