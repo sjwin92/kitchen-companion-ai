@@ -11,8 +11,12 @@ const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.Reac
 };
 
 export default function Dashboard() {
-  const { inventory } = useApp();
+  const { inventory, preferences } = useApp();
   const navigate = useNavigate();
+
+  const greeting = preferences.displayName
+    ? `Hi, ${preferences.displayName} 👋`
+    : 'Your Kitchen';
 
   const counts: Record<StorageLocation, number> = { fridge: 0, freezer: 0, cupboard: 0 };
   inventory.forEach(item => counts[item.location]++);
@@ -22,7 +26,7 @@ export default function Dashboard() {
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold">Your Kitchen</h1>
+        <h1 className="text-2xl font-bold">{greeting}</h1>
         <p className="text-muted-foreground text-sm">{inventory.length} items tracked</p>
       </div>
 
