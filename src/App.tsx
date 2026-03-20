@@ -46,6 +46,7 @@ function AppContent() {
         <Route path="/use-soon" element={<UseSoon />} />
         <Route path="/meals" element={<MealSuggestions />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />

@@ -1,12 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Package, AlertTriangle, ChefHat, Plus } from 'lucide-react';
+import { Home, Package, Plus, ChefHat, Settings } from 'lucide-react';
 
 const NAV_ITEMS = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/inventory', icon: Package, label: 'Inventory' },
   { to: '/add-food', icon: Plus, label: 'Add' },
-  { to: '/use-soon', icon: AlertTriangle, label: 'Use Soon' },
   { to: '/meals', icon: ChefHat, label: 'Meals' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export default function BottomNav() {
