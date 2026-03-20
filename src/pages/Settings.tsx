@@ -14,6 +14,19 @@ export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
+  const [darkMode, setDarkMode] = useState(() =>
+    document.documentElement.classList.contains('dark')
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   const handleSignOut = async () => {
     setSigningOut(true);
