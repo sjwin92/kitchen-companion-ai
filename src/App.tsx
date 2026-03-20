@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
+import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
@@ -12,11 +13,24 @@ import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
 import MissingIngredients from "@/pages/MissingIngredients";
 import NotFound from "@/pages/NotFound";
+import { Loader2 } from "lucide-react";
 
 const queryClient = new QueryClient();
 
 function AppContent() {
-  const { preferences } = useApp();
+  const { preferences, session, loading } = useApp();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Auth />;
+  }
 
   if (!preferences.onboardingComplete) {
     return <Onboarding />;
