@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      food_items: {
+        Row: {
+          created_at: string
+          date_added: string
+          days_until_expiry: number
+          id: string
+          location: string
+          name: string
+          quantity: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_added?: string
+          days_until_expiry?: number
+          id?: string
+          location?: string
+          name: string
+          quantity?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_added?: string
+          days_until_expiry?: number
+          id?: string
+          location?: string
+          name?: string
+          quantity?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          cooking_time: string | null
+          created_at: string
+          dietary_preferences: string[] | null
+          disliked_ingredients: string[] | null
+          display_name: string | null
+          household_size: number | null
+          id: string
+          onboarding_complete: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          cooking_time?: string | null
+          created_at?: string
+          dietary_preferences?: string[] | null
+          disliked_ingredients?: string[] | null
+          display_name?: string | null
+          household_size?: number | null
+          id: string
+          onboarding_complete?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          cooking_time?: string | null
+          created_at?: string
+          dietary_preferences?: string[] | null
+          disliked_ingredients?: string[] | null
+          display_name?: string | null
+          household_size?: number | null
+          id?: string
+          onboarding_complete?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
