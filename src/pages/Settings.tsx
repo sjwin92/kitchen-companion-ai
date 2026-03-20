@@ -63,6 +63,20 @@ export default function Settings() {
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
       <h1 className="text-2xl font-bold">Settings</h1>
 
+      {/* Dark Mode */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Moon className="w-4 h-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-semibold">Dark Mode</p>
+              <p className="text-xs text-muted-foreground">Switch between light and dark themes</p>
+            </div>
+          </div>
+          <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+        </div>
+      </section>
+
       {/* Account */}
       <section className="bg-card rounded-xl border border-border p-4 space-y-3">
         <div className="flex items-center gap-3">
