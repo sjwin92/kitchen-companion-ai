@@ -27,4 +27,5 @@ export interface UserPreferences {
   cookingTime: string;
   dislikedIngredients: string[];
   onboardingComplete: boolean;
+  displayName: string;
 }

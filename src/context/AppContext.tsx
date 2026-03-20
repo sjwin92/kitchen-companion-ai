@@ -149,6 +149,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           cooking_time: next.cookingTime,
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
+          display_name: next.displayName,
         }).eq('id', session.user.id).then();
       }
 
