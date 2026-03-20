@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, User, Users, Clock, Ban, X, Loader2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'Nut-Free'];
@@ -13,6 +14,19 @@ export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
+  const [darkMode, setDarkMode] = useState(() =>
+    document.documentElement.classList.contains('dark')
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -48,6 +62,20 @@ export default function Settings() {
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
       <h1 className="text-2xl font-bold">Settings</h1>
+
+      {/* Dark Mode */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Moon className="w-4 h-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-semibold">Dark Mode</p>
+              <p className="text-xs text-muted-foreground">Switch between light and dark themes</p>
+            </div>
+          </div>
+          <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+        </div>
+      </section>
 
       {/* Account */}
       <section className="bg-card rounded-xl border border-border p-4 space-y-3">
