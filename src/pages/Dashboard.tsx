@@ -1,8 +1,9 @@
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Refrigerator, Snowflake, Archive, AlertTriangle, Plus, ScanLine, ChefHat } from 'lucide-react';
+import { Refrigerator, Snowflake, Archive, Plus, ScanLine, ChefHat, ShoppingCart } from 'lucide-react';
 import { StorageLocation } from '@/types';
+import ExpiryBanner from '@/components/ExpiryBanner';
 
 const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.ReactNode; color: string }> = {
   fridge: { label: 'Fridge', icon: <Refrigerator className="w-5 h-5" />, color: 'text-blue-500' },
@@ -21,14 +22,15 @@ export default function Dashboard() {
   const counts: Record<StorageLocation, number> = { fridge: 0, freezer: 0, cupboard: 0 };
   inventory.forEach(item => counts[item.location]++);
 
-  const useSoonItems = inventory.filter(i => i.status === 'use-today' || i.status === 'use-soon');
-
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold">{greeting}</h1>
         <p className="text-muted-foreground text-sm">{inventory.length} items tracked</p>
       </div>
+
+      {/* Expiry Alert */}
+      <ExpiryBanner />
 
       {/* Storage summary */}
       <div className="grid grid-cols-3 gap-3">
@@ -45,34 +47,6 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Use Soon */}
-      {useSoonItems.length > 0 && (
-        <div className="bg-card rounded-xl border border-border p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-warning" />
-              <h2 className="font-semibold text-sm">Use Soon</h2>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/use-soon')} className="text-xs text-primary">
-              View All
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {useSoonItems.slice(0, 4).map(item => (
-              <div key={item.id} className="flex items-center justify-between py-1.5">
-                <div>
-                  <span className="text-sm font-medium">{item.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">{item.quantity}</span>
-                </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full border ${item.status === 'use-today' ? 'status-urgent' : 'status-soon'}`}>
-                  {item.status === 'use-today' ? 'Today' : 'Soon'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Quick Actions */}
       <div className="space-y-2">
         <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Quick Actions</h2>
@@ -85,6 +59,9 @@ export default function Dashboard() {
           </Button>
           <Button onClick={() => navigate('/meals')} className="justify-start gap-3 h-12">
             <ChefHat className="w-5 h-5" /> What Can I Make?
+          </Button>
+          <Button onClick={() => navigate('/shopping')} variant="outline" className="justify-start gap-3 h-12">
+            <ShoppingCart className="w-5 h-5 text-primary" /> Shopping List
           </Button>
         </div>
       </div>

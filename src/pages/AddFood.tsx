@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Barcode } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -229,6 +230,20 @@ export default function AddFood() {
               <div>
                 <div className="font-semibold">Upload Receipt Photo</div>
                 <div className="text-sm text-muted-foreground">Choose an existing photo from your gallery</div>
+              </div>
+            </div>
+          </button>
+          <button
+            onClick={() => navigate('/barcode')}
+            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Barcode className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold">Scan Barcode</div>
+                <div className="text-sm text-muted-foreground">Scan a product barcode for auto-fill</div>
               </div>
             </div>
           </button>

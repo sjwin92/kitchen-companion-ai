@@ -5,13 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon } from 'lucide-react';
+import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon, Trash2, TrendingDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'Nut-Free'];
 
 export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
+  const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
   const [darkMode, setDarkMode] = useState(() =>
@@ -75,6 +77,20 @@ export default function Settings() {
           </div>
           <Switch checked={darkMode} onCheckedChange={setDarkMode} />
         </div>
+      </section>
+
+      {/* Waste Tracker */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <button onClick={() => navigate('/waste')} className="w-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <TrendingDown className="w-4 h-4 text-muted-foreground" />
+            <div className="text-left">
+              <p className="text-sm font-semibold">Waste Tracker</p>
+              <p className="text-xs text-muted-foreground">View your food waste stats</p>
+            </div>
+          </div>
+          <span className="text-xs text-primary">View →</span>
+        </button>
       </section>
 
       {/* Account */}

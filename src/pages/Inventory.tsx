@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { StorageLocation, FoodItem } from '@/types';
-import { Refrigerator, Snowflake, Archive, Pencil, Trash2, ArrowRightLeft, Check } from 'lucide-react';
+import { Refrigerator, Snowflake, Archive, Pencil, Trash2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import WasteDialog from '@/components/WasteDialog';
 
 const TABS: { key: StorageLocation; label: string; icon: React.ReactNode }[] = [
   { key: 'fridge', label: 'Fridge', icon: <Refrigerator className="w-4 h-4" /> },
@@ -20,6 +21,7 @@ export default function Inventory() {
   const [editName, setEditName] = useState('');
   const [editQty, setEditQty] = useState('');
   const [editLocation, setEditLocation] = useState<StorageLocation>('fridge');
+  const [wasteItem, setWasteItem] = useState<FoodItem | null>(null);
 
   const items = inventory.filter(i => i.location === tab);
 
@@ -87,7 +89,7 @@ export default function Inventory() {
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.id)}>
                   <Check className="w-3.5 h-3.5 text-success" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => removeItem(item.id)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setWasteItem(item)}>
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               </div>
@@ -126,6 +128,9 @@ export default function Inventory() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Waste Dialog */}
+      <WasteDialog item={wasteItem} open={!!wasteItem} onClose={() => setWasteItem(null)} />
     </div>
   );
 }

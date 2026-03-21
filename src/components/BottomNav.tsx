@@ -1,11 +1,11 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Package, Plus, ChefHat, Settings } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Home, Package, Plus, ShoppingCart, Settings } from 'lucide-react';
 
 const NAV_ITEMS = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/inventory', icon: Package, label: 'Inventory' },
   { to: '/add-food', icon: Plus, label: 'Add' },
-  { to: '/meals', icon: ChefHat, label: 'Meals' },
+  { to: '/shopping', icon: ShoppingCart, label: 'Shop' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 

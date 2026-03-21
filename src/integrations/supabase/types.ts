@@ -122,6 +122,60 @@ export type Database = {
         }
         Relationships: []
       }
+      shopping_list: {
+        Row: {
+          checked: boolean
+          created_at: string
+          id: string
+          name: string
+          quantity: string
+          user_id: string
+        }
+        Insert: {
+          checked?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          quantity?: string
+          user_id: string
+        }
+        Update: {
+          checked?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          quantity?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      waste_log: {
+        Row: {
+          id: string
+          name: string
+          quantity: string
+          reason: string
+          user_id: string
+          wasted_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          quantity?: string
+          reason?: string
+          user_id: string
+          wasted_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          quantity?: string
+          reason?: string
+          user_id?: string
+          wasted_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
