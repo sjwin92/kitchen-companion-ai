@@ -51,6 +51,7 @@ function AppContent() {
         <Route path="/missing/:id" element={<MissingIngredients />} />
         <Route path="/shopping" element={<ShoppingList />} />
         <Route path="/waste" element={<WasteTracker />} />
+        <Route path="/barcode" element={<BarcodeScanner />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
