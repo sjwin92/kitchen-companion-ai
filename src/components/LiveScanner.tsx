@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 interface LiveScannerProps {
   location: StorageLocation;
+  dietaryPreferences?: string[];
   onComplete: (items: Omit<FoodItem, 'id'>[]) => void;
   onCancel: () => void;
 }
@@ -16,7 +17,7 @@ type ScanPreset = 'auto' | 'manual';
 const AUTO_SCAN_INTERVAL_MS = 7000;
 const ERROR_TOAST_COOLDOWN_MS = 12000;
 
-export default function LiveScanner({ location, onComplete, onCancel }: LiveScannerProps) {
+export default function LiveScanner({ location, dietaryPreferences, onComplete, onCancel }: LiveScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -111,7 +112,7 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
       }
 
       const { data, error } = await supabase.functions.invoke('scan-receipt', {
-        body: { imageBase64: frame, mode: 'fridge', storageLocation: location },
+        body: { imageBase64: frame, mode: 'fridge', storageLocation: location, dietaryPreferences },
       });
 
       if (error) throw new Error(error.message);
@@ -145,23 +146,7 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
     }
   }, [captureFrame, location]);
 
-  // Auto-scan on an interval once camera is ready
-  useEffect(() => {
-    if (!cameraReady) return;
-
-    const firstScan = setTimeout(() => {
-      processFrame('auto');
-    }, 900);
-
-    const interval = setInterval(() => {
-      processFrame('auto');
-    }, AUTO_SCAN_INTERVAL_MS);
-
-    return () => {
-      clearTimeout(firstScan);
-      clearInterval(interval);
-    };
-  }, [cameraReady, processFrame]);
+  // No auto-scan — user must tap "Snap to log" to trigger each scan
 
   const handleDone = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());

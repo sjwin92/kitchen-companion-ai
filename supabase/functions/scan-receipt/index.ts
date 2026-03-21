@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, mode = "receipt", storageLocation } = await req.json();
+    const { imageBase64, mode = "receipt", storageLocation, dietaryPreferences } = await req.json();
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
         status: 400,
@@ -20,16 +20,21 @@ serve(async (req) => {
       });
     }
 
+    const dietaryNote = Array.isArray(dietaryPreferences) && dietaryPreferences.length > 0
+      ? `\n\nIMPORTANT: The user follows these dietary preferences: ${dietaryPreferences.join(", ")}. Do NOT identify items that clearly contradict these preferences unless you can actually see them with high confidence. For example, if the user is vegan, do not guess "chicken" unless you can clearly read a label or see raw meat. When uncertain, skip the item rather than guessing wrong.`
+      : "";
+
     const systemPrompt = mode === "fridge"
       ? `You are a kitchen inventory scanner. Look at this photo of the inside of a fridge, freezer, or cupboard and identify all visible food items.
 For each item return: name (common name), quantity (best estimate e.g. "1 bottle", "2", "~500g"), and location (the most logical storage: "fridge", "freezer", or "cupboard").
 
 Rules:
-- Identify every distinct food item you can see
+- ONLY identify items you can clearly see — do NOT guess or assume items that aren't visible
 - Be specific: "Cheddar Cheese" not just "cheese", "Semi-Skimmed Milk" not just "milk"
+- If you cannot clearly identify an item, skip it rather than guessing
 - Estimate quantity from what's visible (number of items, approximate weight/volume)
 - Estimate days until expiry: fresh produce 5-7, dairy 7-14, meat 3-5, condiments/sauces 90, frozen 60
-- Skip non-food items (cleaning products, containers without food, etc.)
+- Skip non-food items (cleaning products, containers without food, etc.)${dietaryNote}
 
 You MUST respond using the extract_items tool.`
       : `You are a grocery receipt parser. Extract food items from the receipt image. 
