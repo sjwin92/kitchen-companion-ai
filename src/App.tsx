@@ -12,6 +12,8 @@ import AddFood from "@/pages/AddFood";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
 import MissingIngredients from "@/pages/MissingIngredients";
+import ShoppingList from "@/pages/ShoppingList";
+import WasteTracker from "@/pages/WasteTracker";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
@@ -46,6 +48,8 @@ function AppContent() {
         <Route path="/use-soon" element={<UseSoon />} />
         <Route path="/meals" element={<MealSuggestions />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
+        <Route path="/shopping" element={<ShoppingList />} />
+        <Route path="/waste" element={<WasteTracker />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
