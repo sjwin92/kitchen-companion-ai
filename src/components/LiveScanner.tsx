@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { X, ScanEye, Check, Loader2, Camera } from 'lucide-react';
 import { toast } from 'sonner';
@@ -14,7 +15,6 @@ interface LiveScannerProps {
 
 type ScanPreset = 'auto' | 'manual';
 
-const AUTO_SCAN_INTERVAL_MS = 7000;
 const ERROR_TOAST_COOLDOWN_MS = 12000;
 
 export default function LiveScanner({ location, dietaryPreferences, onComplete, onCancel }: LiveScannerProps) {
@@ -30,6 +30,10 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
   const [scanCount, setScanCount] = useState(0);
   const [cameraReady, setCameraReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Pending items from last snap awaiting confirmation
+  const [pendingItems, setPendingItems] = useState<Omit<FoodItem, 'id'>[]>([]);
+  const [pendingChecked, setPendingChecked] = useState<boolean[]>([]);
 
   const locationLabel = location === 'freezer' ? 'Freezer' : location === 'cupboard' ? 'Cupboard' : 'Fridge';
 
@@ -68,8 +72,6 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
     const canvas = canvasRef.current;
     if (!video || !canvas || video.videoWidth === 0) return null;
 
-    // Keep payload very small for reliable background scans;
-    // manual snap keeps a bit more detail while still constrained.
     const maxSide = preset === 'manual' ? 420 : 320;
     const quality = preset === 'manual' ? 0.3 : 0.22;
 
@@ -120,17 +122,19 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
 
       const newItems: Omit<FoodItem, 'id'>[] = data.items || [];
       if (newItems.length > 0) {
-        setItems(prev => {
-          const merged = [...prev];
-          for (const item of newItems) {
-            const exists = merged.some(
-              existing => existing.name.toLowerCase() === item.name.toLowerCase()
-            );
-            if (!exists) merged.push(item);
-          }
-          return merged;
-        });
+        // Filter out items already in confirmed list
+        const filtered = newItems.filter(
+          item => !items.some(existing => existing.name.toLowerCase() === item.name.toLowerCase())
+        );
+        if (filtered.length > 0) {
+          setPendingItems(filtered);
+          setPendingChecked(filtered.map(() => true)); // all checked by default
+        } else {
+          toast.info('No new items detected.');
+        }
         setScanCount(c => c + 1);
+      } else {
+        toast.info('No items detected. Try a different angle.');
       }
     } catch (err: any) {
       console.error('Scan frame error:', err);
@@ -144,9 +148,26 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
       setIsProcessing(false);
       if (preset === 'manual') setIsManualScanning(false);
     }
-  }, [captureFrame, location]);
+  }, [captureFrame, location, items, dietaryPreferences]);
 
-  // No auto-scan — user must tap "Snap to log" to trigger each scan
+  const handleConfirmPending = () => {
+    const accepted = pendingItems.filter((_, i) => pendingChecked[i]);
+    if (accepted.length > 0) {
+      setItems(prev => [...prev, ...accepted]);
+      toast.success(`Added ${accepted.length} item${accepted.length !== 1 ? 's' : ''}`);
+    }
+    setPendingItems([]);
+    setPendingChecked([]);
+  };
+
+  const handleDiscardPending = () => {
+    setPendingItems([]);
+    setPendingChecked([]);
+  };
+
+  const togglePendingItem = (index: number) => {
+    setPendingChecked(prev => prev.map((v, i) => (i === index ? !v : v)));
+  };
 
   const handleDone = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
@@ -174,6 +195,9 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
     );
   }
 
+  const hasPending = pendingItems.length > 0;
+  const checkedCount = pendingChecked.filter(Boolean).length;
+
   return (
     <div className="fixed inset-0 z-[90] bg-black flex flex-col">
       {/* Camera feed */}
@@ -191,7 +215,7 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
         <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent p-4 pt-12 flex items-center justify-between">
           <div>
             <h2 className="text-white font-bold text-lg">Scanning {locationLabel}</h2>
-            <p className="text-white/70 text-xs">Move camera slowly across items</p>
+            <p className="text-white/70 text-xs">Tap Snap, then confirm detected items</p>
           </div>
           <button onClick={onCancel} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
             <X className="w-5 h-5 text-white" />
@@ -210,30 +234,32 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
               </span>
             </div>
           )}
-          {!isProcessing && cameraReady && (
+          {!isProcessing && cameraReady && !hasPending && (
             <div className="w-48 h-48 border-2 border-white/30 rounded-2xl flex items-center justify-center">
               <ScanEye className="w-10 h-10 text-white/40" />
             </div>
           )}
         </div>
 
-        {/* Manual quick-snap assist while scanner stays open */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleManualSnap}
-            disabled={!cameraReady || isProcessing}
-            className="h-11 rounded-full px-5 shadow-lg"
-          >
-            {isManualScanning ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Camera className="w-4 h-4" />
-            )}
-            {isManualScanning ? 'Snapping…' : 'Snap to log'}
-          </Button>
-        </div>
+        {/* Snap button — hidden when pending confirmation */}
+        {!hasPending && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleManualSnap}
+              disabled={!cameraReady || isProcessing}
+              className="h-11 rounded-full px-5 shadow-lg"
+            >
+              {isManualScanning ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4" />
+              )}
+              {isManualScanning ? 'Snapping…' : 'Snap to log'}
+            </Button>
+          </div>
+        )}
 
         {/* Scan pulse */}
         {isProcessing && (
@@ -241,55 +267,90 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
         )}
       </div>
 
-      {/* Bottom panel — detected items */}
+      {/* Bottom panel */}
       <div className="bg-background rounded-t-3xl -mt-6 relative z-10 flex flex-col max-h-[45%]">
-        <div className="p-4 pb-2 flex items-center justify-between">
-          <div>
-            <span className="font-bold text-lg">{items.length} item{items.length !== 1 ? 's' : ''} found</span>
-            {scanCount > 0 && (
-              <span className="text-xs text-muted-foreground ml-2">
-                ({scanCount} scan{scanCount !== 1 ? 's' : ''})
-              </span>
-            )}
-          </div>
-          {isProcessing && <Loader2 className="w-4 h-4 text-primary animate-spin" />}
-        </div>
-
-        {/* Scrollable item list */}
-        <div className="flex-1 overflow-y-auto px-4 pb-2">
-          {items.length === 0 && (
-            <p className="text-sm text-muted-foreground py-3 text-center">
-              {cameraReady ? 'Point camera at food items or tap Snap to log...' : 'Starting camera...'}
-            </p>
-          )}
-          <div className="space-y-1.5">
-            {items.map((item, idx) => (
-              <div
-                key={`${item.name}-${idx}`}
-                className="flex items-center justify-between bg-card border border-border rounded-lg px-3 py-2 animate-fade-in"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Check className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-sm font-medium truncate">{item.name}</span>
-                  <span className="text-xs text-muted-foreground shrink-0">{item.quantity}</span>
-                </div>
-                <button onClick={() => removeItem(idx)} className="text-muted-foreground hover:text-destructive ml-2 shrink-0">
-                  <X className="w-3.5 h-3.5" />
-                </button>
+        {/* Pending confirmation review */}
+        {hasPending ? (
+          <>
+            <div className="p-4 pb-2">
+              <span className="font-bold text-lg">Review detected items</span>
+              <p className="text-xs text-muted-foreground">Uncheck anything that's wrong</p>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 pb-2">
+              <div className="space-y-1.5">
+                {pendingItems.map((item, idx) => (
+                  <label
+                    key={`pending-${item.name}-${idx}`}
+                    className="flex items-center gap-3 bg-card border border-border rounded-lg px-3 py-2.5 cursor-pointer animate-fade-in"
+                  >
+                    <Checkbox
+                      checked={pendingChecked[idx]}
+                      onCheckedChange={() => togglePendingItem(idx)}
+                    />
+                    <span className="text-sm font-medium truncate flex-1">{item.name}</span>
+                    <span className="text-xs text-muted-foreground shrink-0">{item.quantity}</span>
+                  </label>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+            <div className="p-4 pt-2 flex gap-3 border-t border-border">
+              <Button variant="outline" onClick={handleDiscardPending} className="flex-1">
+                Discard All
+              </Button>
+              <Button onClick={handleConfirmPending} className="flex-1" disabled={checkedCount === 0}>
+                <Check className="w-4 h-4 mr-1" /> Confirm ({checkedCount})
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="p-4 pb-2 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-lg">{items.length} item{items.length !== 1 ? 's' : ''} confirmed</span>
+                {scanCount > 0 && (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    ({scanCount} scan{scanCount !== 1 ? 's' : ''})
+                  </span>
+                )}
+              </div>
+              {isProcessing && <Loader2 className="w-4 h-4 text-primary animate-spin" />}
+            </div>
 
-        {/* Action buttons */}
-        <div className="p-4 pt-2 flex gap-3 border-t border-border">
-          <Button variant="outline" onClick={onCancel} className="flex-1">
-            Cancel
-          </Button>
-          <Button onClick={handleDone} className="flex-1" disabled={items.length === 0}>
-            <Check className="w-4 h-4 mr-1" /> Done ({items.length})
-          </Button>
-        </div>
+            <div className="flex-1 overflow-y-auto px-4 pb-2">
+              {items.length === 0 && (
+                <p className="text-sm text-muted-foreground py-3 text-center">
+                  {cameraReady ? 'Point camera at food items and tap Snap to log...' : 'Starting camera...'}
+                </p>
+              )}
+              <div className="space-y-1.5">
+                {items.map((item, idx) => (
+                  <div
+                    key={`${item.name}-${idx}`}
+                    className="flex items-center justify-between bg-card border border-border rounded-lg px-3 py-2 animate-fade-in"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Check className="w-4 h-4 text-primary shrink-0" />
+                      <span className="text-sm font-medium truncate">{item.name}</span>
+                      <span className="text-xs text-muted-foreground shrink-0">{item.quantity}</span>
+                    </div>
+                    <button onClick={() => removeItem(idx)} className="text-muted-foreground hover:text-destructive ml-2 shrink-0">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 pt-2 flex gap-3 border-t border-border">
+              <Button variant="outline" onClick={onCancel} className="flex-1">
+                Cancel
+              </Button>
+              <Button onClick={handleDone} className="flex-1" disabled={items.length === 0}>
+                <Check className="w-4 h-4 mr-1" /> Done ({items.length})
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
