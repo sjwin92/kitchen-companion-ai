@@ -79,6 +79,20 @@ export default function Settings() {
         </div>
       </section>
 
+      {/* Waste Tracker */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <button onClick={() => navigate('/waste')} className="w-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <TrendingDown className="w-4 h-4 text-muted-foreground" />
+            <div className="text-left">
+              <p className="text-sm font-semibold">Waste Tracker</p>
+              <p className="text-xs text-muted-foreground">View your food waste stats</p>
+            </div>
+          </div>
+          <span className="text-xs text-primary">View →</span>
+        </button>
+      </section>
+
       {/* Account */}
       <section className="bg-card rounded-xl border border-border p-4 space-y-3">
         <div className="flex items-center gap-3">
