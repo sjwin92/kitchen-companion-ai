@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { MOCK_MEALS } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Check, Copy, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { Check, Copy, ArrowLeft, ShoppingCart, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MissingIngredients() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { inventory } = useApp();
+  const { inventory, session } = useApp();
   const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [adding, setAdding] = useState(false);
 
   const meal = MOCK_MEALS.find(m => m.id === id);
   if (!meal) return <div className="p-4">Meal not found</div>;
@@ -30,6 +32,31 @@ export default function MissingIngredients() {
     const text = missing.filter(i => !checked.has(i)).join('\n');
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard!');
+  };
+
+  const addToShoppingList = async () => {
+    if (!session?.user) {
+      toast.error('Please sign in first');
+      return;
+    }
+    const toAdd = missing.filter(i => !checked.has(i));
+    if (toAdd.length === 0) {
+      toast('All items already checked off');
+      return;
+    }
+    setAdding(true);
+    const rows = toAdd.map(name => ({
+      user_id: session.user.id,
+      name,
+      quantity: '1',
+    }));
+    const { error } = await supabase.from('shopping_list').insert(rows);
+    setAdding(false);
+    if (error) {
+      toast.error('Failed to add items');
+    } else {
+      toast.success(`Added ${toAdd.length} item${toAdd.length > 1 ? 's' : ''} to shopping list`);
+    }
   };
 
   return (
@@ -72,8 +99,8 @@ export default function MissingIngredients() {
         <Button variant="outline" onClick={copyList} className="flex-1">
           <Copy className="w-4 h-4 mr-1" /> Copy List
         </Button>
-        <Button onClick={() => toast.success('List saved!')} className="flex-1">
-          Save List
+        <Button onClick={addToShoppingList} disabled={adding} className="flex-1">
+          <Plus className="w-4 h-4 mr-1" /> Add to Shop List
         </Button>
       </div>
     </div>
