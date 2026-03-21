@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Barcode } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
