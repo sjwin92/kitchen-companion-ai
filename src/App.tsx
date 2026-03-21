@@ -14,6 +14,7 @@ import MealSuggestions from "@/pages/MealSuggestions";
 import MissingIngredients from "@/pages/MissingIngredients";
 import ShoppingList from "@/pages/ShoppingList";
 import WasteTracker from "@/pages/WasteTracker";
+import BarcodeScanner from "@/pages/BarcodeScanner";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
