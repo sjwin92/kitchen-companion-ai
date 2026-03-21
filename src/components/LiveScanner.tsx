@@ -145,23 +145,7 @@ export default function LiveScanner({ location, onComplete, onCancel }: LiveScan
     }
   }, [captureFrame, location]);
 
-  // Auto-scan on an interval once camera is ready
-  useEffect(() => {
-    if (!cameraReady) return;
-
-    const firstScan = setTimeout(() => {
-      processFrame('auto');
-    }, 900);
-
-    const interval = setInterval(() => {
-      processFrame('auto');
-    }, AUTO_SCAN_INTERVAL_MS);
-
-    return () => {
-      clearTimeout(firstScan);
-      clearInterval(interval);
-    };
-  }, [cameraReady, processFrame]);
+  // No auto-scan — user must tap "Snap to log" to trigger each scan
 
   const handleDone = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
