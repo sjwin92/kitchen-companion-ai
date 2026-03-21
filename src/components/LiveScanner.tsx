@@ -17,7 +17,7 @@ type ScanPreset = 'auto' | 'manual';
 const AUTO_SCAN_INTERVAL_MS = 7000;
 const ERROR_TOAST_COOLDOWN_MS = 12000;
 
-export default function LiveScanner({ location, onComplete, onCancel }: LiveScannerProps) {
+export default function LiveScanner({ location, dietaryPreferences, onComplete, onCancel }: LiveScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
