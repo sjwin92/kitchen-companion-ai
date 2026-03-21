@@ -112,7 +112,7 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
       }
 
       const { data, error } = await supabase.functions.invoke('scan-receipt', {
-        body: { imageBase64: frame, mode: 'fridge', storageLocation: location },
+        body: { imageBase64: frame, mode: 'fridge', storageLocation: location, dietaryPreferences },
       });
 
       if (error) throw new Error(error.message);
