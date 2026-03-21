@@ -136,6 +136,7 @@ export default function AddFood() {
     return (
       <LiveScanner
         location={scanLocation}
+        dietaryPreferences={preferences.dietaryPreferences}
         onComplete={(items) => {
           setScannedItems(items);
           setMode('review');
