@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import LiveScanner from '@/components/LiveScanner';
 
 export default function AddFood() {
-  const { addItems } = useApp();
+  const { addItems, preferences } = useApp();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'manual' ? 'manual' : 'choose';
