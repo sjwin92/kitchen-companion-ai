@@ -13,6 +13,7 @@ const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Ke
 
 export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
+  const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
   const [darkMode, setDarkMode] = useState(() =>
