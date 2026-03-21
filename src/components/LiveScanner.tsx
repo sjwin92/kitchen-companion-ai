@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 interface LiveScannerProps {
   location: StorageLocation;
+  dietaryPreferences?: string[];
   onComplete: (items: Omit<FoodItem, 'id'>[]) => void;
   onCancel: () => void;
 }
