@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, mode = "receipt", storageLocation } = await req.json();
+    const { imageBase64, mode = "receipt", storageLocation, dietaryPreferences } = await req.json();
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
         status: 400,
