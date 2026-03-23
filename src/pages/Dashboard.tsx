@@ -133,6 +133,51 @@ export default function Dashboard() {
         </button>
       )}
 
+      {/* Today's Meal Plan */}
+      <button
+        onClick={() => navigate('/meal-planner')}
+        className="glass-card w-full p-4 text-left animate-fade-in"
+        style={{ animationDelay: '280ms', animationFillMode: 'backwards' }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="icon-container bg-violet-500/10 dark:bg-violet-500/20">
+              <CalendarDays className="w-4 h-4 text-violet-500" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-sm">Today's Meals</h2>
+              <p className="text-xs text-muted-foreground">
+                {todayPlans.length > 0
+                  ? `${todayPlans.length} meal${todayPlans.length > 1 ? 's' : ''} planned`
+                  : 'No meals planned yet'}
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-muted-foreground" />
+        </div>
+        {todayPlans.length > 0 ? (
+          <div className="space-y-1.5">
+            {MEAL_SLOTS.map(slot => {
+              const plan = todayPlans.find(p => p.meal_slot === slot);
+              if (!plan) return null;
+              return (
+                <div key={slot} className="flex items-center gap-2.5 rounded-lg bg-muted/40 px-3 py-2">
+                  <span className="text-sm">{SLOT_EMOJI[slot]}</span>
+                  {plan.image && (
+                    <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{plan.title}</p>
+                    <p className="text-[10px] text-muted-foreground capitalize">{slot}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">Tap to plan your meals for the week</p>
+        )}
+
       {/* Primary CTA */}
       <button
         onClick={() => navigate('/meals')}
