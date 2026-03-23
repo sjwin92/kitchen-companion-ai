@@ -66,7 +66,8 @@ export default function Dashboard() {
         {/* Primary CTA */}
         <button
           onClick={() => navigate('/meals')}
-          className="w-full glass-card bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 flex items-center gap-4 group active:scale-[0.98] transition-all"
+          className="w-full glass-card bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 flex items-center gap-4 group active:scale-[0.98] transition-all animate-fade-in"
+          style={{ animationDelay: '240ms', animationFillMode: 'backwards' }}
         >
           <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-105">
             <ChefHat className="w-5 h-5" />
