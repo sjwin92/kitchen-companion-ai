@@ -1,6 +1,5 @@
 import type { FoodItem, MealSuggestion } from '@/types';
 import { getMealsWithStatus, type MealWithStatus } from '@/lib/mealMatching';
-import { supabase } from '@/integrations/supabase/client';
 
 type MealDbMeal = {
   idMeal: string;
@@ -18,14 +17,6 @@ type MealDbResponse = {
 };
 
 async function mealDbFetch<T>(path: string): Promise<T> {
-  const { data, error } = await supabase.functions.invoke('mealdb-proxy', {
-    body: null,
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  // supabase.functions.invoke doesn't support query params easily,
-  // so we'll use fetch directly with the project URL
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
   const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
