@@ -61,66 +61,74 @@ function mapMeal(meal: MealDbMeal): MealSuggestion {
   };
 }
 
-let cachedAllMeals: MealSuggestion[] | null = null;
+// Cache full meal details by ID to avoid re-fetching
+const detailCache = new Map<string, MealSuggestion>();
 
-const CATEGORIES = [
-  'Beef', 'Chicken', 'Dessert', 'Lamb', 'Miscellaneous',
-  'Pasta', 'Pork', 'Seafood', 'Side', 'Starter',
-  'Vegan', 'Vegetarian', 'Breakfast', 'Goat',
-];
-
-async function fetchMealsByCategory(category: string): Promise<MealDbMeal[]> {
+async function fetchMealsByIngredient(ingredient: string): Promise<string[]> {
   try {
-    const data = await mealDbFetch<MealDbResponse>(`filter.php?c=${category}`);
-    return data.meals ?? [];
+    const data = await mealDbFetch<MealDbResponse>(
+      `filter.php?i=${encodeURIComponent(ingredient)}`
+    );
+    return (data.meals ?? []).map(m => m.idMeal);
   } catch {
     return [];
   }
 }
 
-async function fetchMealDetail(id: string): Promise<MealDbMeal | null> {
+async function fetchMealDetail(id: string): Promise<MealSuggestion | null> {
+  if (detailCache.has(id)) return detailCache.get(id)!;
   try {
     const data = await mealDbFetch<MealDbResponse>(`lookup.php?i=${id}`);
-    return data.meals?.[0] ?? null;
+    const raw = data.meals?.[0];
+    if (!raw) return null;
+    const mapped = mapMeal(raw);
+    if (mapped.ingredients.length > 0) {
+      detailCache.set(mapped.id, mapped);
+      return mapped;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
-async function loadAllMeals(): Promise<MealSuggestion[]> {
-  if (cachedAllMeals) return cachedAllMeals;
-
-  // Fetch all category listings in parallel
-  const listings = await Promise.all(CATEGORIES.map(fetchMealsByCategory));
-  const allListings = listings.flat();
-
-  // Dedupe by id
-  const uniqueIds = [...new Set(allListings.map(m => m.idMeal))];
-
-  // Fetch full details in batches of 10
-  const details: MealSuggestion[] = [];
-  for (let i = 0; i < uniqueIds.length; i += 10) {
-    const batch = uniqueIds.slice(i, i + 10);
-    const results = await Promise.all(batch.map(id => fetchMealDetail(id)));
-    for (const meal of results) {
-      if (meal) {
-        const mapped = mapMeal(meal);
-        if (mapped.ingredients.length > 0) {
-          details.push(mapped);
-        }
-      }
-    }
-  }
-
-  cachedAllMeals = details;
-  return details;
-}
-
+/**
+ * Optimised flow:
+ * 1. For each inventory item, call filter.php?i=<ingredient> (parallel, ~5-15 calls)
+ * 2. Deduplicate the returned meal IDs
+ * 3. Fetch full details only for matched meals (parallel batches of 15)
+ */
 export async function getTheMealDbRecipeSuggestions(
   inventory: FoodItem[]
 ): Promise<MealWithStatus[]> {
   try {
-    const meals = await loadAllMeals();
+    const available = inventory.filter(i => (i.status as string) !== 'used');
+    if (available.length === 0) return [];
+
+    // Normalise inventory names to simple search terms
+    const searchTerms = [...new Set(
+      available.map(item =>
+        item.name.toLowerCase().replace(/[^a-z ]/g, '').trim().split(' ')[0]
+      ).filter(t => t.length >= 3)
+    )];
+
+    // 1. Search by ingredient – all in parallel
+    const idArrays = await Promise.all(searchTerms.map(fetchMealsByIngredient));
+    const uniqueIds = [...new Set(idArrays.flat())];
+
+    if (uniqueIds.length === 0) return [];
+
+    // 2. Fetch details in parallel batches of 15
+    const meals: MealSuggestion[] = [];
+    const BATCH = 15;
+    for (let i = 0; i < uniqueIds.length; i += BATCH) {
+      const batch = uniqueIds.slice(i, i + BATCH);
+      const results = await Promise.all(batch.map(fetchMealDetail));
+      for (const m of results) {
+        if (m) meals.push(m);
+      }
+    }
+
     return getMealsWithStatus(inventory, meals);
   } catch (error) {
     console.error('Failed to load TheMealDB recipes', error);
@@ -131,20 +139,9 @@ export async function getTheMealDbRecipeSuggestions(
 export async function getTheMealDbRecipeById(
   id: string
 ): Promise<MealSuggestion | null> {
-  try {
-    // Try cache first
-    if (cachedAllMeals) {
-      const cached = cachedAllMeals.find(m => m.id === id);
-      if (cached) return cached;
-    }
+  // Check detail cache
+  if (detailCache.has(id)) return detailCache.get(id)!;
 
-    // Extract numeric id
-    const numericId = id.replace('mealdb-', '');
-    const meal = await fetchMealDetail(numericId);
-    if (!meal) return null;
-    return mapMeal(meal);
-  } catch (error) {
-    console.error('Failed to load TheMealDB recipe by id', error);
-    return null;
-  }
+  const numericId = id.replace('mealdb-', '');
+  return fetchMealDetail(numericId);
 }
