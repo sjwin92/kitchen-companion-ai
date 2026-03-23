@@ -1,7 +1,6 @@
 import type { FoodItem, MealSuggestion } from '@/types';
 import { getMealsWithStatus, type MealWithStatus } from '@/lib/mealMatching';
-
-const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
+import { supabase } from '@/integrations/supabase/client';
 
 type MealDbMeal = {
   idMeal: string;
@@ -17,6 +16,33 @@ type MealDbMeal = {
 type MealDbResponse = {
   meals: MealDbMeal[] | null;
 };
+
+async function mealDbFetch<T>(path: string): Promise<T> {
+  const { data, error } = await supabase.functions.invoke('mealdb-proxy', {
+    body: null,
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  // supabase.functions.invoke doesn't support query params easily,
+  // so we'll use fetch directly with the project URL
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(path)}`;
+  const response = await fetch(url, {
+    headers: {
+      'apikey': anonKey,
+      'Authorization': `Bearer ${anonKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`MealDB proxy failed: ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
 
 function extractIngredients(meal: MealDbMeal): string[] {
   const ingredients: string[] = [];
@@ -53,17 +79,21 @@ const CATEGORIES = [
 ];
 
 async function fetchMealsByCategory(category: string): Promise<MealDbMeal[]> {
-  const res = await fetch(`${BASE_URL}/filter.php?c=${category}`);
-  if (!res.ok) return [];
-  const data = (await res.json()) as MealDbResponse;
-  return data.meals ?? [];
+  try {
+    const data = await mealDbFetch<MealDbResponse>(`filter.php?c=${category}`);
+    return data.meals ?? [];
+  } catch {
+    return [];
+  }
 }
 
 async function fetchMealDetail(id: string): Promise<MealDbMeal | null> {
-  const res = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
-  if (!res.ok) return null;
-  const data = (await res.json()) as MealDbResponse;
-  return data.meals?.[0] ?? null;
+  try {
+    const data = await mealDbFetch<MealDbResponse>(`lookup.php?i=${id}`);
+    return data.meals?.[0] ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function loadAllMeals(): Promise<MealSuggestion[]> {
