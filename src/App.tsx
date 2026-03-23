@@ -11,6 +11,7 @@ import Inventory from "@/pages/Inventory";
 import AddFood from "@/pages/AddFood";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
+import RecipeDetail from "@/pages/RecipeDetail";
 import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
 import Shopping from "@/pages/Shopping";
