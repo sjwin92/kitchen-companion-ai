@@ -5,7 +5,7 @@ import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import {
   Dialog,
