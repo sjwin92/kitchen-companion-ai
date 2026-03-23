@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
@@ -22,6 +22,7 @@ import {
   X,
   UtensilsCrossed,
   CalendarDays,
+  ChefHat,
 } from 'lucide-react';
 
 interface MealAnalysis {
@@ -34,8 +35,17 @@ interface MealAnalysis {
   matched_inventory_ids: string[];
 }
 
+interface CombinedRecipe {
+  id: string;
+  title: string;
+  image?: string;
+  ingredients: string[];
+  measures?: string[];
+}
+
 export default function MealLog() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { inventory, removeItem, session, preferences } = useApp();
   const { plans: todayPlans } = useMealPlans();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -48,6 +58,16 @@ export default function MealLog() {
   const [linkedPlanId, setLinkedPlanId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
+
+  // Combined recipes from Cook Together
+  const combinedRecipes: CombinedRecipe[] | undefined = (location.state as any)?.combinedRecipes;
+  const passedServings: number | undefined = (location.state as any)?.servings;
+  const isCombinedMeal = combinedRecipes && combinedRecipes.length > 1;
+
+  // Pre-fill meal title for combined meals
+  const combinedTitle = isCombinedMeal
+    ? combinedRecipes!.map(r => r.title).join(' + ')
+    : '';
 
   const processImage = useCallback((file: File) => {
     const reader = new FileReader();
@@ -83,43 +103,47 @@ export default function MealLog() {
     if (!imageBase64) return;
     setAnalyzing(true);
     try {
-      // If there's a planned meal for today, look up its recipe for better context
       const todayStr = format(new Date(), 'yyyy-MM-dd');
       const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
       let recipeContext: { ingredients: string[]; measures: string[] } | undefined;
-      
-      // Try to find a matching planned meal's recipe for ingredient/quantity context
-      const hour = new Date().getHours();
-      const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
-      const likelyPlan = todayOnly.find(p => p.meal_slot === currentSlot) || todayOnly[0];
-      if (likelyPlan) {
-        try {
-          const recipe = await getRecipeById(likelyPlan.recipe_id);
-          if (recipe?.measures && recipe.measures.length > 0) {
-            recipeContext = {
-              ingredients: recipe.ingredients,
-              measures: recipe.measures,
-            };
-          }
-        } catch { /* ignore */ }
+
+      // For combined meals, merge all recipe ingredients as context
+      if (isCombinedMeal) {
+        const allIngredients = combinedRecipes!.flatMap(r => r.ingredients);
+        const allMeasures = combinedRecipes!.flatMap(r => r.measures || r.ingredients.map(() => ''));
+        recipeContext = { ingredients: allIngredients, measures: allMeasures };
+      } else {
+        const hour = new Date().getHours();
+        const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
+        const likelyPlan = todayOnly.find(p => p.meal_slot === currentSlot) || todayOnly[0];
+        if (likelyPlan) {
+          try {
+            const recipe = await getRecipeById(likelyPlan.recipe_id);
+            if (recipe?.measures && recipe.measures.length > 0) {
+              recipeContext = {
+                ingredients: recipe.ingredients,
+                measures: recipe.measures,
+              };
+            }
+          } catch { /* ignore */ }
+        }
       }
 
       const { data, error } = await supabase.functions.invoke('log-meal', {
         body: {
           imageBase64,
-          mealTitle: mealTitle || undefined,
+          mealTitle: mealTitle || combinedTitle || undefined,
           inventoryItems: inventory.map(i => ({ id: i.id, name: i.name, quantity: i.quantity })),
-          servings: preferences.householdSize || 4,
+          servings: passedServings || preferences.householdSize || 4,
           recipeContext,
         },
       });
       if (error) throw error;
       setAnalysis(data as MealAnalysis);
       setDeductItems(data.matched_inventory_ids || []);
-      const title = data.title || mealTitle;
+      const title = data.title || mealTitle || combinedTitle;
       if (data.title && !mealTitle) setMealTitle(data.title);
 
-      // Auto-match to today's planned meals (reuse todayOnly from above)
       if (todayOnly.length > 0) {
         const match = todayOnly.find(p =>
           p.title.toLowerCase().includes(title.toLowerCase()) ||
@@ -127,8 +151,11 @@ export default function MealLog() {
         );
         if (match) {
           setLinkedPlanId(match.id);
-        } else if (likelyPlan) {
-          setLinkedPlanId(likelyPlan.id);
+        } else {
+          const hour = new Date().getHours();
+          const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
+          const likelyPlan = todayOnly.find(p => p.meal_slot === currentSlot) || todayOnly[0];
+          if (likelyPlan) setLinkedPlanId(likelyPlan.id);
         }
       }
     } catch (err: any) {
@@ -146,7 +173,6 @@ export default function MealLog() {
     if (!analysis || !session?.user) return;
     setSaving(true);
     try {
-      // Save meal log linked to planner
       const { error } = await supabase.from('meal_log').insert({
         user_id: session.user.id,
         title: mealTitle || analysis.title,
@@ -161,7 +187,6 @@ export default function MealLog() {
       });
       if (error) throw error;
 
-      // Deduct selected inventory items
       for (const id of deductItems) {
         await removeItem(id);
       }
@@ -186,18 +211,52 @@ export default function MealLog() {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-lg font-bold text-foreground">Log a Meal</h1>
-          <p className="text-xs text-muted-foreground">Snap your plate to track nutrition & usage</p>
+          <h1 className="text-lg font-bold text-foreground">
+            {isCombinedMeal ? 'Log Combined Meal' : 'Log a Meal'}
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            {isCombinedMeal ? 'Cook Together — track as one meal' : 'Snap your plate to track nutrition & usage'}
+          </p>
         </div>
       </div>
 
       <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
+        {/* Combined recipes preview */}
+        {isCombinedMeal && (
+          <Card className="p-4 border-primary/20 bg-primary/5">
+            <div className="flex items-center gap-2 mb-3">
+              <UtensilsCrossed className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Combined Meal</h2>
+            </div>
+            <div className="space-y-3">
+              {combinedRecipes!.map((r, idx) => (
+                <div key={r.id} className="flex items-start gap-3">
+                  {r.image ? (
+                    <img src={r.image} alt={r.title} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                      <ChefHat className="w-4 h-4 text-muted-foreground/40" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-medium text-foreground truncate">{r.title}</h3>
+                    <p className="text-[10px] text-muted-foreground">
+                      {r.ingredients.length} ingredients
+                      {idx === 0 ? ' · Main dish' : ' · Side dish'}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
         {/* Image capture */}
         {!imagePreview ? (
           <Card className="p-6 flex flex-col items-center gap-4 border-dashed border-2 border-primary/30">
             <UtensilsCrossed className="w-12 h-12 text-primary/40" />
             <p className="text-sm text-muted-foreground text-center">
-              Take a photo of your meal or upload one
+              {isCombinedMeal ? 'Take a photo of your combined plate' : 'Take a photo of your meal or upload one'}
             </p>
             <div className="flex gap-3">
               <Button onClick={() => cameraRef.current?.click()} className="gap-2">
@@ -225,7 +284,7 @@ export default function MealLog() {
             </div>
 
             <Input
-              placeholder="Meal name (optional — AI will guess)"
+              placeholder={isCombinedMeal ? combinedTitle : 'Meal name (optional — AI will guess)'}
               value={mealTitle}
               onChange={e => setMealTitle(e.target.value)}
             />
@@ -244,7 +303,13 @@ export default function MealLog() {
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Nutrition card */}
             <Card className="p-4">
-              <h2 className="font-semibold text-foreground mb-3">{analysis.title}</h2>
+              <h2 className="font-semibold text-foreground mb-1">{analysis.title}</h2>
+              {isCombinedMeal && (
+                <p className="text-[10px] text-muted-foreground mb-3 flex items-center gap-1">
+                  <UtensilsCrossed className="w-2.5 h-2.5" />
+                  Combined nutrition for entire meal
+                </p>
+              )}
               <div className="grid grid-cols-4 gap-2">
                 {[
                   { label: 'Calories', value: `${analysis.calories}`, icon: Flame, color: 'text-orange-500' },
@@ -261,18 +326,61 @@ export default function MealLog() {
               </div>
             </Card>
 
-            {/* Ingredients identified */}
-            <Card className="p-4">
-              <h3 className="text-sm font-semibold text-foreground mb-2">Identified Ingredients</h3>
-              <div className="space-y-1.5">
-                {analysis.ingredients.map((ing, i) => (
-                  <div key={i} className="flex justify-between text-sm px-2 py-1.5 rounded bg-muted/30">
-                    <span className="text-foreground">{ing.name}</span>
-                    <span className="text-muted-foreground">{ing.amount}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
+            {/* Ingredients — separate cards per dish for combined meals */}
+            {isCombinedMeal ? (
+              combinedRecipes!.map((recipe, rIdx) => {
+                const recipeIngredients = analysis.ingredients.filter(ing =>
+                  recipe.ingredients.some(ri =>
+                    ri.toLowerCase().includes(ing.name.toLowerCase()) ||
+                    ing.name.toLowerCase().includes(ri.toLowerCase())
+                  )
+                );
+                // If no fuzzy match, show all for first, none for second
+                const displayIngredients = recipeIngredients.length > 0
+                  ? recipeIngredients
+                  : rIdx === 0 ? analysis.ingredients : [];
+
+                return (
+                  <Card key={recipe.id} className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      {recipe.image ? (
+                        <img src={recipe.image} alt={recipe.title} className="w-8 h-8 rounded-md object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                          <ChefHat className="w-3.5 h-3.5 text-muted-foreground/40" />
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-sm font-semibold text-foreground">{recipe.title}</h3>
+                        <p className="text-[10px] text-muted-foreground">
+                          {rIdx === 0 ? 'Main dish' : 'Side dish'} · {displayIngredients.length} items
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      {displayIngredients.map((ing, i) => (
+                        <div key={i} className="flex justify-between text-sm px-2 py-1.5 rounded bg-muted/30">
+                          <span className="text-foreground">{ing.name}</span>
+                          <span className="text-muted-foreground">{ing.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                );
+              })
+            ) : (
+              <Card className="p-4">
+                <h3 className="text-sm font-semibold text-foreground mb-2">Identified Ingredients</h3>
+                <div className="space-y-1.5">
+                  {analysis.ingredients.map((ing, i) => (
+                    <div key={i} className="flex justify-between text-sm px-2 py-1.5 rounded bg-muted/30">
+                      <span className="text-foreground">{ing.name}</span>
+                      <span className="text-muted-foreground">{ing.amount}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
 
             {/* Inventory deduction */}
             {(matchedItems.length > 0 || unmatchedInventory.length > 0) && (
@@ -326,7 +434,7 @@ export default function MealLog() {
             {/* Save button */}
             <Button onClick={saveMealLog} disabled={saving} className="w-full gap-2" size="lg">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-              {saving ? 'Saving…' : 'Log Meal'}
+              {saving ? 'Saving…' : isCombinedMeal ? 'Log Combined Meal' : 'Log Meal'}
             </Button>
           </div>
         )}
