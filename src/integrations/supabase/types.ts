@@ -80,6 +80,62 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_log: {
+        Row: {
+          calories: number | null
+          carbs_g: number | null
+          created_at: string
+          deducted_item_ids: Json
+          fat_g: number | null
+          id: string
+          identified_ingredients: Json
+          image_url: string | null
+          logged_at: string
+          meal_plan_id: string | null
+          protein_g: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs_g?: number | null
+          created_at?: string
+          deducted_item_ids?: Json
+          fat_g?: number | null
+          id?: string
+          identified_ingredients?: Json
+          image_url?: string | null
+          logged_at?: string
+          meal_plan_id?: string | null
+          protein_g?: number | null
+          title?: string
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          carbs_g?: number | null
+          created_at?: string
+          deducted_item_ids?: Json
+          fat_g?: number | null
+          id?: string
+          identified_ingredients?: Json
+          image_url?: string | null
+          logged_at?: string
+          meal_plan_id?: string | null
+          protein_g?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_log_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_plans: {
         Row: {
           created_at: string
