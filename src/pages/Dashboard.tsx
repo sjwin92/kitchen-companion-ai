@@ -43,11 +43,12 @@ export default function Dashboard() {
 
       {/* Storage summary */}
       <div className="grid grid-cols-3 gap-3">
-        {(Object.keys(counts) as StorageLocation[]).map(loc => (
+        {(Object.keys(counts) as StorageLocation[]).map((loc, i) => (
           <button
             key={loc}
             onClick={() => navigate('/inventory')}
-            className={`glass-card bg-gradient-to-br ${LOCATION_CONFIG[loc].gradient} rounded-2xl p-4 text-center group active:scale-[0.97] transition-all`}
+            className={`glass-card bg-gradient-to-br ${LOCATION_CONFIG[loc].gradient} rounded-2xl p-4 text-center group active:scale-[0.97] transition-all animate-fade-in`}
+            style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'backwards' }}
           >
             <div className={`mx-auto mb-2 ${LOCATION_ICON_COLOR[loc]} transition-transform group-hover:scale-110`}>
               {LOCATION_CONFIG[loc].icon}
