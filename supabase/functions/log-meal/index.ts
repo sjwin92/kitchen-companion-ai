@@ -24,16 +24,21 @@ serve(async (req) => {
       ? `\n\nThe user currently has these items in their inventory:\n${inventoryItems.map((i: any) => `- ${i.name} (${i.quantity})`).join("\n")}\nWhen identifying ingredients, try to match them to these inventory items by name. Return matched inventory item IDs in the matched_inventory_ids array.`
       : "";
 
-    const systemPrompt = `You are a meal nutrition analyzer. Look at this photo of a meal and:
-1. Identify the dish and its visible ingredients
-2. Estimate the nutritional content (calories, protein in grams, carbs in grams, fat in grams)
-3. List each identifiable ingredient with an estimated portion
+    const systemPrompt = `You are a precise meal nutrition analyzer modeled after professional food-tracking apps. Analyze this photo of a meal for ONE SINGLE SERVING (what one person would eat in one sitting).
 
-Rules:
-- Be reasonable with portion estimates based on a typical serving
-- If the meal title is provided, use it as context for your analysis
-- Base nutrition estimates on the visible portion size
-- For each ingredient, estimate the amount used in this serving${inventoryContext}
+Steps:
+1. Identify the dish and its visible ingredients
+2. Estimate realistic single-serving portion sizes based on what is visible on the plate
+3. Calculate nutritional content by summing per-ingredient macros using USDA-standard values
+
+Critical rules for accuracy:
+- This is ONE person's plate, not the whole recipe. A typical single serving of meat/protein is 120-180g (4-6oz), not the full recipe amount.
+- Use USDA nutrient database reference values per 100g for each ingredient, then scale to the estimated portion
+- Protein per 100g references: chicken breast ~31g, chicken thigh ~26g, beef ~26g, salmon ~20g, eggs ~13g, rice ~2.7g, pasta ~5g, tofu ~8g
+- Do NOT inflate protein — a 150g chicken serving = ~39-45g protein, not 80g
+- Calories should reflect the sum of (protein×4 + carbs×4 + fat×9) — verify your numbers are internally consistent
+- When in doubt, estimate conservatively rather than generously
+- If the meal title is provided, use it as context but still base portions on what's visible${inventoryContext}
 
 You MUST respond using the analyze_meal tool.`;
 
