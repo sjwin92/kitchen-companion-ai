@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Leaf,
   CalendarDays,
+  Camera,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
