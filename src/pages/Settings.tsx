@@ -17,6 +17,7 @@ export default function Settings() {
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
+  const { permission, requestPermission } = useNotifications();
   const [darkMode, setDarkMode] = useState(() =>
     document.documentElement.classList.contains('dark')
   );
