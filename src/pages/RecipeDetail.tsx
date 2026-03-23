@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
+import PairingSuggestions from '@/components/PairingSuggestions';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -292,6 +293,13 @@ export default function RecipeDetail() {
             <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
           </a>
         )}
+        {/* Pairing suggestions */}
+        <PairingSuggestions
+          recipeTitle={recipe.title}
+          category={recipe.category}
+          area={recipe.area}
+          ingredients={recipe.ingredients}
+        />
       </div>
     </div>
   );
