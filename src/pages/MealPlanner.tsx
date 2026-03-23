@@ -93,34 +93,11 @@ export default function MealPlanner() {
     if (success) {
       toast.success(`Added ${title} to ${addDialog.slot}`);
       setAddDialog(null);
-      setSearchQuery('');
-      setSearchResults([]);
     } else {
       toast.error('Failed to add meal');
     }
   };
 
-  const handleSearch = useCallback(async () => {
-    const q = searchQuery.trim();
-    if (q.length < 2) return;
-    setSearching(true);
-    try {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${q}`)}`;
-      const res = await fetch(url, {
-        headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` },
-      });
-      const data = await res.json();
-      setSearchResults(
-        (data.meals ?? []).map((m: any) => ({ id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb }))
-      );
-    } catch {
-      toast.error('Search failed');
-    } finally {
-      setSearching(false);
-    }
-  }, [searchQuery]);
 
   return (
     <div className="p-4 pb-28 max-w-lg mx-auto space-y-4 animate-fade-in">
