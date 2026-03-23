@@ -15,6 +15,7 @@ import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
 import Shopping from "@/pages/Shopping";
 import Settings from "@/pages/Settings";
+import WasteTracker from "@/pages/WasteTracker";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
