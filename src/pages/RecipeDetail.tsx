@@ -5,7 +5,7 @@ import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Check, ShoppingCart, Plus, ChefHat } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
