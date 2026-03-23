@@ -253,14 +253,22 @@ export default function MealSuggestions() {
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="flex-1 rounded-xl"
-                      style={{ background: 'var(--gradient-primary)' }}
-                      onClick={() => navigate(`/recipe/${meal.id}`)}
-                    >
-                      View Full Recipe <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                    </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 rounded-xl"
+                        style={{ background: 'var(--gradient-primary)' }}
+                        onClick={() => navigate(`/recipe/${meal.id}`)}
+                      >
+                        View Full Recipe <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl"
+                        onClick={() => toggleFavorite(meal.id, meal.title, meal.image, meal.category)}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isFavorite(meal.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                      </Button>
                     {meal.missing.length > 0 && (
                       <Button
                         variant="outline"
