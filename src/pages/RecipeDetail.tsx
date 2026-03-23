@@ -6,7 +6,7 @@ import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import PairingSuggestions from '@/components/PairingSuggestions';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users } from 'lucide-react';
+import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users, UtensilsCrossed, X, Camera } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -20,7 +20,8 @@ export default function RecipeDetail() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const defaultServings = preferences.householdSize || 4;
   const [servings, setServings] = useState(defaultServings);
-  const baseServings = 4; // TheMealDB recipes typically serve 4
+  const baseServings = 4;
+  const [pairedRecipe, setPairedRecipe] = useState<MealSuggestion | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -91,6 +92,43 @@ export default function RecipeDetail() {
     if (!error) toast.success(`Added ${newItems.length} item${newItems.length > 1 ? 's' : ''} to shopping list`);
     else toast.error('Failed to add items');
   };
+
+  const handleCookTogether = (sideRecipe: MealSuggestion) => {
+    // Toggle: if same recipe already selected, deselect
+    if (pairedRecipe?.id === sideRecipe.id) {
+      setPairedRecipe(null);
+    } else {
+      setPairedRecipe(sideRecipe);
+    }
+  };
+
+  const handleLogCombinedMeal = () => {
+    // Navigate to meal log with combined recipe data
+    const combinedRecipes = [
+      {
+        id: recipe.id,
+        title: recipe.title,
+        image: recipe.image,
+        ingredients: recipe.ingredients,
+        measures: recipe.measures,
+      },
+      ...(pairedRecipe ? [{
+        id: pairedRecipe.id,
+        title: pairedRecipe.title,
+        image: pairedRecipe.image,
+        ingredients: pairedRecipe.ingredients,
+        measures: pairedRecipe.measures,
+      }] : []),
+    ];
+    navigate('/meal-log', { state: { combinedRecipes, servings } });
+  };
+
+  // Compute combined ingredients for the paired view
+  const pairedMissing = pairedRecipe
+    ? pairedRecipe.ingredients.filter(ing =>
+        !activeInventory.some(item => ingredientMatches(item.name, ing))
+      )
+    : [];
 
   return (
     <div className="pb-28 max-w-lg mx-auto animate-fade-in">
@@ -293,13 +331,95 @@ export default function RecipeDetail() {
             <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
           </a>
         )}
+
         {/* Pairing suggestions */}
         <PairingSuggestions
           recipeTitle={recipe.title}
           category={recipe.category}
           area={recipe.area}
           ingredients={recipe.ingredients}
+          onCookTogether={handleCookTogether}
+          selectedPairingId={pairedRecipe?.id}
         />
+
+        {/* Cook Together combined panel */}
+        {pairedRecipe && (
+          <div className="glass-card overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="p-4 border-b border-border/50 bg-primary/5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UtensilsCrossed className="w-4 h-4 text-primary" />
+                  <h2 className="font-semibold text-sm">Cook Together</h2>
+                </div>
+                <button
+                  onClick={() => setPairedRecipe(null)}
+                  className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {recipe.title} + {pairedRecipe.title}
+              </p>
+            </div>
+
+            {/* Side dish ingredients card */}
+            <div className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                {pairedRecipe.image && (
+                  <img src={pairedRecipe.image} alt={pairedRecipe.title} className="w-10 h-10 rounded-lg object-cover" />
+                )}
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-foreground truncate">{pairedRecipe.title}</h3>
+                  <p className="text-[10px] text-muted-foreground">{pairedRecipe.ingredients.length} ingredients</p>
+                </div>
+              </div>
+              <div className="divide-y divide-border/40 rounded-lg border border-border/50 overflow-hidden">
+                {pairedRecipe.ingredients.map((ing, idx) => {
+                  const owned = activeInventory.some(item => ingredientMatches(item.name, ing));
+                  const rawMeasure = pairedRecipe.measures?.[idx] || '';
+                  const scaledMeasure = scaleMeasure(rawMeasure, servings / baseServings);
+                  return (
+                    <div key={ing} className="flex items-center gap-3 px-3 py-2">
+                      <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${
+                        owned ? 'bg-success/15' : 'bg-muted'
+                      }`}>
+                        {owned && <Check className="w-2.5 h-2.5 text-success" />}
+                      </div>
+                      <span className={`text-xs flex-1 ${owned ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {ing}
+                      </span>
+                      {scaledMeasure && (
+                        <span className="text-[10px] font-medium text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded-full">
+                          {scaledMeasure}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Add combined missing to shopping */}
+              {pairedMissing.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {pairedMissing.length} missing ingredient{pairedMissing.length > 1 ? 's' : ''} for this side
+                </p>
+              )}
+            </div>
+
+            {/* Log combined meal CTA */}
+            <div className="p-4 pt-0">
+              <Button
+                onClick={handleLogCombinedMeal}
+                className="w-full gap-2"
+                style={{ background: 'var(--gradient-primary)' }}
+              >
+                <Camera className="w-4 h-4" />
+                Log Combined Meal
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
