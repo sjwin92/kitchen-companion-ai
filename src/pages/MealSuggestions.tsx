@@ -96,6 +96,14 @@ export default function MealSuggestions() {
       <div>
         <h1 className="text-2xl font-bold">Meal Ideas</h1>
         <p className="text-sm text-muted-foreground">Based on what you have</p>
+        <div className="flex gap-2 mt-2">
+          <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => navigate('/favorites')}>
+            <Heart className="w-3.5 h-3.5 mr-1" /> Favorites
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => navigate('/meal-planner')}>
+            <CalendarDays className="w-3.5 h-3.5 mr-1" /> Planner
+          </Button>
+        </div>
 
         {!hasValidSourceConfig && (
           <p className="text-xs text-warning mt-2">
