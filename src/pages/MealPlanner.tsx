@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startOfWeek, addDays, addWeeks, format, isToday } from 'date-fns';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
@@ -50,38 +51,46 @@ export default function MealPlanner() {
   const { plans, loading, addPlan, removePlan, movePlan } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
-  const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
-  const dragPlanId = useRef<string | null>(null);
-
-  const handleDragStart = (planId: string) => {
-    dragPlanId.current = planId;
-  };
-
-  const handleDragOver = (e: React.DragEvent, dayStr: string, slot: MealSlot) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverTarget(`${dayStr}-${slot}`);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverTarget(null);
-  };
+  const {
+    draggingPlanId,
+    dragOverTarget,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useMealDragDrop();
 
   const handleDrop = async (e: React.DragEvent, day: Date, slot: MealSlot) => {
     e.preventDefault();
-    setDragOverTarget(null);
-    const planId = dragPlanId.current;
-    if (!planId) return;
-    dragPlanId.current = null;
+    handleDragEnd();
+    if (!draggingPlanId) return;
+
+    const plan = plans.find(p => p.id === draggingPlanId);
+    if (!plan) return;
+    if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
+
+    const success = await movePlan(draggingPlanId, day, slot);
+    if (success) {
+      toast.success(`Moved ${plan.title} to ${slot}`);
+    } else {
+      toast.error('Failed to move meal');
+    }
+  };
+
+  const handleTouchDrop = async (planId: string) => {
+    const target = handleTouchEnd();
+    if (!target) return;
 
     const plan = plans.find(p => p.id === planId);
     if (!plan) return;
-    // Skip if dropped on same slot
-    if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
+    if (plan.planned_date === target.dayStr && plan.meal_slot === target.slot) return;
 
-    const success = await movePlan(planId, day, slot);
+    const success = await movePlan(planId, target.day, target.slot);
     if (success) {
-      toast.success(`Moved ${plan.title} to ${slot}`);
+      toast.success(`Moved ${plan.title} to ${target.slot}`);
     } else {
       toast.error('Failed to move meal');
     }
@@ -199,6 +208,10 @@ export default function MealPlanner() {
                   return (
                     <div
                       key={slot}
+                      data-drop-slot={dropKey}
+                      data-drop-day={dayStr}
+                      data-drop-meal-slot={slot}
+                      data-drop-day-iso={day.toISOString()}
                       className={`flex items-center gap-2 rounded-lg transition-colors ${isOver ? 'bg-primary/10 ring-1 ring-primary/30' : ''}`}
                       onDragOver={e => handleDragOver(e, dayStr, slot)}
                       onDragLeave={handleDragLeave}
@@ -211,12 +224,15 @@ export default function MealPlanner() {
                         <div
                           draggable
                           onDragStart={() => handleDragStart(plan.id)}
-                          onDragEnd={() => { dragPlanId.current = null; setDragOverTarget(null); }}
-                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing ${SLOT_COLORS[slot]}`}
+                          onDragEnd={handleDragEnd}
+                          onTouchStart={e => handleTouchStart(e, plan.id)}
+                          onTouchMove={handleTouchMove}
+                          onTouchEnd={() => handleTouchDrop(plan.id)}
+                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing select-none ${SLOT_COLORS[slot]} ${draggingPlanId === plan.id ? 'opacity-50 scale-95' : ''} transition-all`}
                         >
                           <GripVertical className="w-3 h-3 shrink-0 opacity-40" />
                           {plan.image && (
-                            <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
+                            <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0 pointer-events-none" />
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
