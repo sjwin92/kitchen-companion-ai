@@ -20,13 +20,13 @@ export default function MealSuggestions() {
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-4 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold">Meal Ideas</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Meal Ideas</h1>
         <p className="text-sm text-muted-foreground">Based on what you have</p>
       </div>
 
       <div className="space-y-3">
         {mealsWithStatus.map(meal => (
-          <div key={meal.id} className="bg-card border border-border rounded-xl p-4 space-y-3">
+          <div key={meal.id} className="glass-card p-4 space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">{meal.title}</h3>

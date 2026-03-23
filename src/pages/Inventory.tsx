@@ -47,15 +47,15 @@ export default function Inventory() {
 
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-4 animate-fade-in">
-      <h1 className="text-2xl font-bold">Inventory</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Inventory</h1>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-muted p-1 rounded-xl">
+      <div className="flex gap-1 bg-muted/60 backdrop-blur-sm p-1 rounded-2xl">
         {TABS.map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               tab === t.key ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -72,7 +72,7 @@ export default function Inventory() {
       ) : (
         <div className="space-y-2">
           {items.map(item => (
-            <div key={item.id} className="bg-card border border-border rounded-xl p-3 flex items-center justify-between">
+            <div key={item.id} className="glass-card p-3 flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm truncate">{item.name}</span>
