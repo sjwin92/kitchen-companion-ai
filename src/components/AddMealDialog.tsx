@@ -106,9 +106,21 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     setCustomName('');
   };
 
-  const handlePickInventoryItem = async (itemName: string) => {
-    await onAdd(`custom-${Date.now()}`, itemName, undefined);
+  const { removeItem, updateItem } = useApp();
+
+  const handlePickInventoryItem = async (item: { id: string; name: string; quantity: string }) => {
+    await onAdd(`custom-${Date.now()}`, item.name, undefined);
+
+    // Auto-deduct from inventory
+    const currentQty = parseInt(item.quantity, 10);
+    if (!isNaN(currentQty) && currentQty > 1) {
+      await updateItem(item.id, { quantity: String(currentQty - 1) });
+    } else {
+      await removeItem(item.id);
+    }
+
     setCustomName('');
+    toast.success(`${item.name} deducted from stock`);
   };
 
   const handleClose = () => {
@@ -227,7 +239,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
                   {filteredInventory.map(item => (
                     <button
                       key={item.id}
-                      onClick={() => handlePickInventoryItem(item.name)}
+                      onClick={() => handlePickInventoryItem(item)}
                       className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-border/60 text-xs hover:bg-accent/50 transition-colors"
                     >
                       <Apple className="w-3 h-3 text-muted-foreground" />
