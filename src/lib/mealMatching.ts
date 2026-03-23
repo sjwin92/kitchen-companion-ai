@@ -73,7 +73,7 @@ export function getMealsWithStatus(
   inventory: FoodItem[],
   meals: MealSuggestion[]
 ): MealWithStatus[] {
-  const availableInventory = inventory.filter(item => item.status !== 'used');
+  const availableInventory = inventory.filter(item => (item.status as string) !== 'used');
 
   return meals
     .map(meal => {

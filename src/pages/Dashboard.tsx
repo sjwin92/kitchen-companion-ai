@@ -23,7 +23,7 @@ const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.Reac
 
 export default function Dashboard() {
   const { inventory } = useApp();
-  const activeInventory = inventory.filter(item => item.status !== 'used');
+  const activeInventory = inventory.filter(item => (item.status as string) !== 'used');
   const navigate = useNavigate();
 
   const counts: Record<StorageLocation, number> = { fridge: 0, freezer: 0, cupboard: 0 };
