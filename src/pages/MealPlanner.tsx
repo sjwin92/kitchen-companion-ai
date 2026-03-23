@@ -5,7 +5,8 @@ import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2, ShoppingCart } from 'lucide-react';
+import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import {
   Dialog,
   DialogContent,
@@ -48,6 +49,7 @@ export default function MealPlanner() {
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
   const { plans, loading, addPlan, removePlan } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
+  const { generate, generating } = useGroceryGenerator();
 
   const handleAddMeal = async (recipeId: string, title: string, image?: string) => {
     if (!addDialog) return;
@@ -92,6 +94,16 @@ export default function MealPlanner() {
           <h1 className="text-2xl font-bold">Meal Planner</h1>
           <p className="text-sm text-muted-foreground">Plan your week</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-xl text-xs gap-1.5"
+          disabled={generating || plans.length === 0}
+          onClick={() => generate(plans)}
+        >
+          {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+          Grocery List
+        </Button>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w - 1)}>
             <ChevronLeft className="w-4 h-4" />
