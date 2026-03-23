@@ -239,7 +239,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
                   {filteredInventory.map(item => (
                     <button
                       key={item.id}
-                      onClick={() => handlePickInventoryItem(item.name)}
+                      onClick={() => handlePickInventoryItem(item)}
                       className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-border/60 text-xs hover:bg-accent/50 transition-colors"
                     >
                       <Apple className="w-3 h-3 text-muted-foreground" />
