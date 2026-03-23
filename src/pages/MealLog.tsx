@@ -83,11 +83,34 @@ export default function MealLog() {
     if (!imageBase64) return;
     setAnalyzing(true);
     try {
+      // If there's a planned meal for today, look up its recipe for better context
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
+      let recipeContext: { ingredients: string[]; measures: string[] } | undefined;
+      
+      // Try to find a matching planned meal's recipe for ingredient/quantity context
+      const hour = new Date().getHours();
+      const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
+      const likelyPlan = todayOnly.find(p => p.meal_slot === currentSlot) || todayOnly[0];
+      if (likelyPlan) {
+        try {
+          const recipe = await getRecipeById(likelyPlan.recipe_id);
+          if (recipe?.measures && recipe.measures.length > 0) {
+            recipeContext = {
+              ingredients: recipe.ingredients,
+              measures: recipe.measures,
+            };
+          }
+        } catch { /* ignore */ }
+      }
+
       const { data, error } = await supabase.functions.invoke('log-meal', {
         body: {
           imageBase64,
           mealTitle: mealTitle || undefined,
           inventoryItems: inventory.map(i => ({ id: i.id, name: i.name, quantity: i.quantity })),
+          servings: preferences.householdSize || 4,
+          recipeContext,
         },
       });
       if (error) throw error;
