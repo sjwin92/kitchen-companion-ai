@@ -16,6 +16,7 @@ export default function RecipeDetail() {
   const { inventory, session } = useApp();
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     let cancelled = false;
