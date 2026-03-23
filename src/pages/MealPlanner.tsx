@@ -51,38 +51,46 @@ export default function MealPlanner() {
   const { plans, loading, addPlan, removePlan, movePlan } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
-  const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
-  const dragPlanId = useRef<string | null>(null);
-
-  const handleDragStart = (planId: string) => {
-    dragPlanId.current = planId;
-  };
-
-  const handleDragOver = (e: React.DragEvent, dayStr: string, slot: MealSlot) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverTarget(`${dayStr}-${slot}`);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverTarget(null);
-  };
+  const {
+    draggingPlanId,
+    dragOverTarget,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useMealDragDrop();
 
   const handleDrop = async (e: React.DragEvent, day: Date, slot: MealSlot) => {
     e.preventDefault();
-    setDragOverTarget(null);
-    const planId = dragPlanId.current;
-    if (!planId) return;
-    dragPlanId.current = null;
+    handleDragEnd();
+    if (!draggingPlanId) return;
+
+    const plan = plans.find(p => p.id === draggingPlanId);
+    if (!plan) return;
+    if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
+
+    const success = await movePlan(draggingPlanId, day, slot);
+    if (success) {
+      toast.success(`Moved ${plan.title} to ${slot}`);
+    } else {
+      toast.error('Failed to move meal');
+    }
+  };
+
+  const handleTouchDrop = async (planId: string) => {
+    const target = handleTouchEnd();
+    if (!target) return;
 
     const plan = plans.find(p => p.id === planId);
     if (!plan) return;
-    // Skip if dropped on same slot
-    if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
+    if (plan.planned_date === target.dayStr && plan.meal_slot === target.slot) return;
 
-    const success = await movePlan(planId, day, slot);
+    const success = await movePlan(planId, target.day, target.slot);
     if (success) {
-      toast.success(`Moved ${plan.title} to ${slot}`);
+      toast.success(`Moved ${plan.title} to ${target.slot}`);
     } else {
       toast.error('Failed to move meal');
     }
