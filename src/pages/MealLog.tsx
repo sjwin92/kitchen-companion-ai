@@ -119,9 +119,7 @@ export default function MealLog() {
       const title = data.title || mealTitle;
       if (data.title && !mealTitle) setMealTitle(data.title);
 
-      // Auto-match to today's planned meals
-      const todayStr = format(new Date(), 'yyyy-MM-dd');
-      const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
+      // Auto-match to today's planned meals (reuse todayOnly from above)
       if (todayOnly.length > 0) {
         const match = todayOnly.find(p =>
           p.title.toLowerCase().includes(title.toLowerCase()) ||
@@ -129,12 +127,8 @@ export default function MealLog() {
         );
         if (match) {
           setLinkedPlanId(match.id);
-        } else {
-          // Auto-link to the current meal slot by time of day
-          const hour = new Date().getHours();
-          const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
-          const slotMatch = todayOnly.find(p => p.meal_slot === currentSlot);
-          if (slotMatch) setLinkedPlanId(slotMatch.id);
+        } else if (likelyPlan) {
+          setLinkedPlanId(likelyPlan.id);
         }
       }
     } catch (err: any) {
