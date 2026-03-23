@@ -56,7 +56,7 @@ export default function MissingIngredients() {
   }, [id]);
 
   const availableInventory = useMemo(
-    () => inventory.filter(item => item.status !== 'used'),
+    () => inventory.filter(item => (item.status as string) !== 'used'),
     [inventory]
   );
 

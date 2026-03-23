@@ -41,7 +41,7 @@ export default function Shopping() {
     () =>
       uniqueStrings(
         inventory
-          .filter(item => item.status === 'used')
+          .filter(item => (item.status as string) === 'used')
           .map(item => item.name)
       ),
     [inventory]
