@@ -9,7 +9,9 @@ import {
   Plus,
   ScanLine,
   ChefHat,
-  ListChecks
+  ListChecks,
+  Settings as SettingsIcon,
+  ShoppingCart
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 
@@ -31,9 +33,20 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Your Kitchen</h1>
-        <p className="text-muted-foreground text-sm">{activeInventory.length} items tracked</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">Your Kitchen</h1>
+          <p className="text-muted-foreground text-sm">{activeInventory.length} items tracked</p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => navigate('/settings')}
+          aria-label="Open settings"
+        >
+          <SettingsIcon className="w-4 h-4" />
+        </Button>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
@@ -89,8 +102,14 @@ export default function Dashboard() {
           <Button onClick={() => navigate('/meals')} className="justify-start gap-3 h-12">
             <ChefHat className="w-5 h-5" /> What Can I Make?
           </Button>
+          <Button onClick={() => navigate('/shopping')} variant="outline" className="justify-start gap-3 h-12">
+            <ShoppingCart className="w-5 h-5 text-primary" /> Shopping
+          </Button>
           <Button onClick={() => navigate('/saved-lists')} variant="outline" className="justify-start gap-3 h-12">
             <ListChecks className="w-5 h-5 text-primary" /> Saved Shopping Lists
+          </Button>
+          <Button onClick={() => navigate('/settings')} variant="outline" className="justify-start gap-3 h-12">
+            <SettingsIcon className="w-5 h-5 text-primary" /> Settings
           </Button>
         </div>
       </div>
