@@ -170,51 +170,6 @@ export default function Shopping() {
         )}
       </section>
 
-      <section className="bg-card border border-border rounded-xl p-4 space-y-3">
-        <h2 className="font-semibold text-sm">Sources</h2>
-
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Saved meal lists</p>
-          {savedLists.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No saved meal lists.</p>
-          ) : (
-            <div className="space-y-2">
-              {savedLists.map(list => (
-                <div key={list.id} className="rounded-lg border border-border p-3">
-                  <div className="text-sm font-medium">{list.recipeTitle}</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {list.items.length} item{list.items.length === 1 ? '' : 's'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Used inventory to restock</p>
-          {restockItems.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No used items to restock.</p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {restockItems.map(item => (
-                <span
-                  key={item}
-                  className="text-xs px-2 py-1 rounded-full border border-border bg-muted text-muted-foreground"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {savedLists.length > 0 && (
-          <Button variant="outline" onClick={handleClearSavedMealLists} className="w-full">
-            <Trash2 className="w-4 h-4 mr-1" /> Clear Saved Meal Lists
-          </Button>
-        )}
-      </section>
     </div>
   );
 }
