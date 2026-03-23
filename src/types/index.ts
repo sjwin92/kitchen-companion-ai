@@ -1,6 +1,6 @@
 export type StorageLocation = 'fridge' | 'freezer' | 'cupboard';
 
-export type FreshnessStatus = 'use-today' | 'use-soon' | 'okay';
+export type FreshnessStatus = 'use-today' | 'use-soon' | 'okay' | 'used';
 
 export interface FoodItem {
   id: string;
@@ -27,5 +27,4 @@ export interface UserPreferences {
   cookingTime: string;
   dislikedIngredients: string[];
   onboardingComplete: boolean;
-  displayName: string;
 }

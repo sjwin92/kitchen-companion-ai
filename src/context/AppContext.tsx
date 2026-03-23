@@ -23,7 +23,6 @@ const defaultPreferences: UserPreferences = {
   cookingTime: '30 min',
   dislikedIngredients: [],
   onboardingComplete: false,
-  displayName: '',
 };
 
 const AppContext = createContext<AppState | null>(null);
@@ -36,18 +35,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Auth listener
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+
+      if (!nextSession) {
         setInventory([]);
         setPrefs(defaultPreferences);
         setLoading(false);
+        return;
       }
+
+      setLoading(true);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      setSession(initialSession);
+
+      if (!initialSession) {
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -56,23 +64,46 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Load profile when session changes
   useEffect(() => {
     if (!session?.user) return;
-    
-    const loadProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
 
-      if (data) {
-        setPrefs({
-          householdSize: data.household_size ?? 2,
-          dietaryPreferences: data.dietary_preferences ?? [],
-          cookingTime: data.cooking_time ?? '30 min',
-          dislikedIngredients: data.disliked_ingredients ?? [],
-          onboardingComplete: data.onboarding_complete ?? false,
-          displayName: data.display_name ?? '',
-        });
+    const loadProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error loading profile:', error);
+          setPrefs(defaultPreferences);
+          return;
+        }
+
+        if (data) {
+          setPrefs({
+            householdSize: data.household_size ?? 2,
+            dietaryPreferences: data.dietary_preferences ?? [],
+            cookingTime: data.cooking_time ?? '30 min',
+            dislikedIngredients: data.disliked_ingredients ?? [],
+            onboardingComplete: data.onboarding_complete ?? false,
+          });
+        } else {
+          setPrefs(defaultPreferences);
+
+          await supabase.from('profiles').upsert({
+            id: session.user.id,
+            household_size: 2,
+            dietary_preferences: [],
+            cooking_time: '30 min',
+            disliked_ingredients: [],
+            onboarding_complete: false,
+          });
+        }
+      } catch (err) {
+        console.error('Unexpected profile load error:', err);
+        setPrefs(defaultPreferences);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -149,7 +180,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           cooking_time: next.cookingTime,
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
-          display_name: next.displayName,
         }).eq('id', session.user.id).then();
       }
 
@@ -177,3 +207,5 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be used within AppProvider');
   return ctx;
 }
+
+
