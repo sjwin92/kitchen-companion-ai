@@ -108,4 +108,15 @@
   .status-okay {
     @apply bg-success/10 text-success border-success/20;
   }
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border rounded-2xl;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .glass-card:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+  .section-title {
+    @apply text-xs font-semibold uppercase tracking-widest text-muted-foreground;
+  }
 }
