@@ -157,6 +157,7 @@ export default function MealLog() {
         identified_ingredients: analysis.ingredients as any,
         deducted_item_ids: deductItems as any,
         meal_plan_id: linkedPlanId,
+        image_url: imagePreview,
       });
       if (error) throw error;
 
