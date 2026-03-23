@@ -43,11 +43,12 @@ export default function Dashboard() {
 
       {/* Storage summary */}
       <div className="grid grid-cols-3 gap-3">
-        {(Object.keys(counts) as StorageLocation[]).map(loc => (
+        {(Object.keys(counts) as StorageLocation[]).map((loc, i) => (
           <button
             key={loc}
             onClick={() => navigate('/inventory')}
-            className={`glass-card bg-gradient-to-br ${LOCATION_CONFIG[loc].gradient} rounded-2xl p-4 text-center group active:scale-[0.97] transition-all`}
+            className={`glass-card bg-gradient-to-br ${LOCATION_CONFIG[loc].gradient} rounded-2xl p-4 text-center group active:scale-[0.97] transition-all animate-fade-in`}
+            style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'backwards' }}
           >
             <div className={`mx-auto mb-2 ${LOCATION_ICON_COLOR[loc]} transition-transform group-hover:scale-110`}>
               {LOCATION_CONFIG[loc].icon}
@@ -65,7 +66,8 @@ export default function Dashboard() {
         {/* Primary CTA */}
         <button
           onClick={() => navigate('/meals')}
-          className="w-full glass-card bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 flex items-center gap-4 group active:scale-[0.98] transition-all"
+          className="w-full glass-card bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 flex items-center gap-4 group active:scale-[0.98] transition-all animate-fade-in"
+          style={{ animationDelay: '240ms', animationFillMode: 'backwards' }}
         >
           <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-105">
             <ChefHat className="w-5 h-5" />
@@ -83,11 +85,12 @@ export default function Dashboard() {
             { icon: ScanLine, label: 'Scan', sub: 'Receipt', onClick: () => navigate('/add-food') },
             { icon: Plus, label: 'Add', sub: 'Item', onClick: () => navigate('/add-food?mode=manual') },
             { icon: ShoppingCart, label: 'Shop', sub: 'List', onClick: () => navigate('/shopping') },
-          ].map(({ icon: Icon, label, sub, onClick }) => (
+          ].map(({ icon: Icon, label, sub, onClick }, i) => (
             <button
               key={label}
               onClick={onClick}
-              className="glass-card p-3 flex flex-col items-center gap-1.5 group active:scale-[0.96] transition-all"
+              className="glass-card p-3 flex flex-col items-center gap-1.5 group active:scale-[0.96] transition-all animate-fade-in"
+              style={{ animationDelay: `${320 + i * 80}ms`, animationFillMode: 'backwards' }}
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-105">
                 <Icon className="w-4 h-4" />

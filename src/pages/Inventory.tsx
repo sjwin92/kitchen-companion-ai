@@ -71,8 +71,8 @@ export default function Inventory() {
         </div>
       ) : (
         <div className="space-y-2">
-          {items.map(item => (
-            <div key={item.id} className="glass-card p-3 flex items-center justify-between">
+          {items.map((item, i) => (
+            <div key={item.id} className="glass-card p-3 flex items-center justify-between animate-fade-in" style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'backwards' }}>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm truncate">{item.name}</span>
