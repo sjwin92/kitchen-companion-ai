@@ -101,6 +101,20 @@ export default function RecipeDetail() {
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button
+              onClick={() => toggleFavorite(recipe.id, recipe.title, recipe.image, recipe.category)}
+              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            >
+              <Heart className={`w-4 h-4 ${isFavorite(recipe.id) ? 'fill-red-500 text-red-500' : ''}`} />
+            </button>
+            <button
+              onClick={() => navigate('/meal-planner')}
+              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            >
+              <CalendarPlus className="w-4 h-4" />
+            </button>
+          </div>
           <div className="absolute bottom-4 left-4 right-4">
             <h1 className="text-xl font-bold text-white leading-tight">{recipe.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">
