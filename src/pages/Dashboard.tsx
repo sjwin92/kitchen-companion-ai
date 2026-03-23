@@ -85,11 +85,12 @@ export default function Dashboard() {
             { icon: ScanLine, label: 'Scan', sub: 'Receipt', onClick: () => navigate('/add-food') },
             { icon: Plus, label: 'Add', sub: 'Item', onClick: () => navigate('/add-food?mode=manual') },
             { icon: ShoppingCart, label: 'Shop', sub: 'List', onClick: () => navigate('/shopping') },
-          ].map(({ icon: Icon, label, sub, onClick }) => (
+          ].map(({ icon: Icon, label, sub, onClick }, i) => (
             <button
               key={label}
               onClick={onClick}
-              className="glass-card p-3 flex flex-col items-center gap-1.5 group active:scale-[0.96] transition-all"
+              className="glass-card p-3 flex flex-col items-center gap-1.5 group active:scale-[0.96] transition-all animate-fade-in"
+              style={{ animationDelay: `${320 + i * 80}ms`, animationFillMode: 'backwards' }}
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-105">
                 <Icon className="w-4 h-4" />
