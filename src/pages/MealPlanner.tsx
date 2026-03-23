@@ -47,9 +47,45 @@ export default function MealPlanner() {
   );
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
-  const { plans, loading, addPlan, removePlan } = useMealPlans(weekStart);
+  const { plans, loading, addPlan, removePlan, movePlan } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
+  const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
+  const dragPlanId = useRef<string | null>(null);
+
+  const handleDragStart = (planId: string) => {
+    dragPlanId.current = planId;
+  };
+
+  const handleDragOver = (e: React.DragEvent, dayStr: string, slot: MealSlot) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverTarget(`${dayStr}-${slot}`);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverTarget(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, day: Date, slot: MealSlot) => {
+    e.preventDefault();
+    setDragOverTarget(null);
+    const planId = dragPlanId.current;
+    if (!planId) return;
+    dragPlanId.current = null;
+
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+    // Skip if dropped on same slot
+    if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
+
+    const success = await movePlan(planId, day, slot);
+    if (success) {
+      toast.success(`Moved ${plan.title} to ${slot}`);
+    } else {
+      toast.error('Failed to move meal');
+    }
+  };
 
   const handleAddMeal = async (recipeId: string, title: string, image?: string) => {
     if (!addDialog) return;
