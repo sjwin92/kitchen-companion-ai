@@ -211,7 +211,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Log a Meal', icon: Camera, path: '/meal-log', delay: 360 },
-            { label: 'Scan Receipt', icon: ScanLine, path: '/add-food', delay: 400 },
+            { label: 'Meal History', icon: CalendarDays, path: '/meal-history', delay: 400 },
+            { label: 'Scan Receipt', icon: ScanLine, path: '/add-food', delay: 440 },
             { label: 'Shopping List', icon: ShoppingCart, path: '/shopping', delay: 480 },
           ].map(action => (
             <button

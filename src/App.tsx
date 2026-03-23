@@ -20,6 +20,7 @@ import WasteTracker from "@/pages/WasteTracker";
 import Favorites from "@/pages/Favorites";
 import MealPlanner from "@/pages/MealPlanner";
 import MealLog from "@/pages/MealLog";
+import MealHistory from "@/pages/MealHistory";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -61,6 +62,7 @@ function AppContent() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/meal-planner" element={<MealPlanner />} />
         <Route path="/meal-log" element={<MealLog />} />
+        <Route path="/meal-history" element={<MealHistory />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />

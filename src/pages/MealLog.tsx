@@ -122,7 +122,7 @@ export default function MealLog() {
       }
 
       toast.success('Meal logged! ' + (deductItems.length > 0 ? `${deductItems.length} items removed from inventory.` : ''));
-      navigate('/');
+      navigate('/meal-history');
     } catch (err: any) {
       toast.error(err.message || 'Failed to save meal log');
     } finally {
