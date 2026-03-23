@@ -11,6 +11,7 @@ import Inventory from "@/pages/Inventory";
 import AddFood from "@/pages/AddFood";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
+import RecipeDetail from "@/pages/RecipeDetail";
 import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
 import Shopping from "@/pages/Shopping";
@@ -48,6 +49,7 @@ function AppContent() {
         <Route path="/add-food" element={<AddFood />} />
         <Route path="/use-soon" element={<UseSoon />} />
         <Route path="/meals" element={<MealSuggestions />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
         <Route path="/saved-lists" element={<SavedLists />} />
         <Route path="/shopping" element={<Shopping />} />
