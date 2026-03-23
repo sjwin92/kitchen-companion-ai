@@ -28,9 +28,7 @@ export default function MealPlanner() {
   const navigate = useNavigate();
   const [weekOffset, setWeekOffset] = useState(0);
   const [addDialog, setAddDialog] = useState<{ date: Date; slot: MealSlot } | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; name: string; thumb: string }>>([]);
-  const [searching, setSearching] = useState(false);
+
 
   const weekStart = useMemo(
     () => {
