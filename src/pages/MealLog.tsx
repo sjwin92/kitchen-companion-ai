@@ -91,7 +91,27 @@ export default function MealLog() {
       if (error) throw error;
       setAnalysis(data as MealAnalysis);
       setDeductItems(data.matched_inventory_ids || []);
+      const title = data.title || mealTitle;
       if (data.title && !mealTitle) setMealTitle(data.title);
+
+      // Auto-match to today's planned meals
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
+      if (todayOnly.length > 0) {
+        const match = todayOnly.find(p =>
+          p.title.toLowerCase().includes(title.toLowerCase()) ||
+          title.toLowerCase().includes(p.title.toLowerCase())
+        );
+        if (match) {
+          setLinkedPlanId(match.id);
+        } else {
+          // Auto-link to the current meal slot by time of day
+          const hour = new Date().getHours();
+          const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
+          const slotMatch = todayOnly.find(p => p.meal_slot === currentSlot);
+          if (slotMatch) setLinkedPlanId(slotMatch.id);
+        }
+      }
     } catch (err: any) {
       toast.error(err.message || 'Failed to analyze meal');
     } finally {
