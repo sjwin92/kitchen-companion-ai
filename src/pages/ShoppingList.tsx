@@ -104,7 +104,7 @@ export default function ShoppingList() {
       {unchecked.length > 0 && (
         <div className="space-y-1.5">
           {unchecked.map(item => (
-            <div key={item.id} className="bg-card border border-border rounded-xl p-3 flex items-center gap-3">
+            <div key={item.id} className="glass-card p-3 flex items-center gap-3">
               <Checkbox checked={false} onCheckedChange={() => toggleCheck(item)} />
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-medium">{item.name}</span>
