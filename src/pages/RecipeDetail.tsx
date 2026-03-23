@@ -293,6 +293,13 @@ export default function RecipeDetail() {
             <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
           </a>
         )}
+        {/* Pairing suggestions */}
+        <PairingSuggestions
+          recipeTitle={recipe.title}
+          category={recipe.category}
+          area={recipe.area}
+          ingredients={recipe.ingredients}
+        />
       </div>
     </div>
   );
