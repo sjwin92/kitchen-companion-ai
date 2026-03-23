@@ -5,7 +5,7 @@ import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Clock, Check, ShoppingCart, Plus, ChefHat } from 'lucide-react';
+import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -62,8 +62,7 @@ export default function RecipeDetail() {
   );
   const matchPercent = Math.round((ownedIngredients.length / recipe.ingredients.length) * 100);
 
-  // Parse description into steps (split by sentence-ending periods followed by space + capital)
-  const steps = parseSteps(recipe.description);
+  const steps = parseSteps(recipe.instructions || recipe.description);
 
   const addMissingToShoppingList = async () => {
     if (!session?.user || missingIngredients.length === 0) return;
@@ -88,132 +87,189 @@ export default function RecipeDetail() {
   };
 
   return (
-    <div className="p-4 pb-28 max-w-lg mx-auto space-y-5 animate-fade-in">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back to meals
-      </button>
-
-      {/* Header */}
-      <div className="glass-card p-5">
-        <div className="flex items-start gap-3 mb-3">
-          <div className="icon-container bg-primary/10 shrink-0">
-            <ChefHat className="w-5 h-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold leading-tight">{recipe.title}</h1>
+    <div className="pb-28 max-w-lg mx-auto animate-fade-in">
+      {/* Hero image */}
+      {recipe.image && (
+        <div className="relative h-56 w-full overflow-hidden">
+          <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div className="absolute bottom-4 left-4 right-4">
+            <h1 className="text-xl font-bold text-white leading-tight">{recipe.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="text-xs text-white/80 flex items-center gap-1">
                 <Clock className="w-3 h-3" /> {recipe.prepTime}
               </span>
-              <span className="text-xs font-semibold text-primary">{matchPercent}% match</span>
+              {recipe.category && (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/20 text-white/90">{recipe.category}</span>
+              )}
+              {recipe.area && (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/20 text-white/90">{recipe.area}</span>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Match bar */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1 bg-muted rounded-full h-2">
-            <div className="bg-primary rounded-full h-2 transition-all" style={{ width: `${matchPercent}%` }} />
-          </div>
-          <span className="text-[10px] font-medium text-muted-foreground">
-            {ownedIngredients.length}/{recipe.ingredients.length}
-          </span>
-        </div>
-      </div>
-
-      {/* Ingredients */}
-      <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-border/50">
-          <h2 className="font-semibold text-sm">Ingredients</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {ownedIngredients.length} of {recipe.ingredients.length} in your kitchen
-          </p>
-        </div>
-        <div className="divide-y divide-border/40">
-          {recipe.ingredients.map(ing => {
-            const owned = activeInventory.some(item => ingredientMatches(item.name, ing));
-            return (
-              <div key={ing} className="flex items-center gap-3 px-4 py-2.5">
-                <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 ${
-                  owned ? 'bg-success/15' : 'bg-muted'
-                }`}>
-                  {owned && <Check className="w-3 h-3 text-success" />}
-                </div>
-                <span className={`text-sm ${owned ? 'text-foreground' : 'text-muted-foreground'}`}>
-                  {ing}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Add missing to shopping */}
-      {missingIngredients.length > 0 && (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="flex-1 rounded-xl"
-            onClick={() => navigate(`/missing/${recipe.id}`)}
-          >
-            <ShoppingCart className="w-4 h-4 mr-1.5" />
-            View Missing ({missingIngredients.length})
-          </Button>
-          <Button
-            className="rounded-xl"
-            onClick={addMissingToShoppingList}
-            style={{ background: 'var(--gradient-primary)' }}
-          >
-            <Plus className="w-4 h-4 mr-1" /> Add All
-          </Button>
-        </div>
       )}
 
-      {/* Instructions */}
-      <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-border/50">
-          <h2 className="font-semibold text-sm">Instructions</h2>
-        </div>
-        <div className="p-4 space-y-4">
-          {steps.length > 1 ? (
-            steps.map((step, i) => (
-              <div key={i} className="flex gap-3 animate-fade-in" style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'backwards' }}>
-                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
-                  {i + 1}
+      <div className="p-4 space-y-5">
+        {/* Back + header when no image */}
+        {!recipe.image && (
+          <>
+            <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Back to meals
+            </button>
+            <div className="glass-card p-5">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="icon-container bg-primary/10 shrink-0">
+                  <ChefHat className="w-5 h-5 text-primary" />
                 </div>
-                <p className="text-sm text-foreground/90 leading-relaxed pt-1">{step}</p>
+                <div className="min-w-0">
+                  <h1 className="text-xl font-bold leading-tight">{recipe.title}</h1>
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {recipe.prepTime}
+                    </span>
+                    <span className="text-xs font-semibold text-primary">{matchPercent}% match</span>
+                  </div>
+                </div>
               </div>
-            ))
-          ) : (
-            <p className="text-sm text-foreground/90 leading-relaxed">{recipe.description}</p>
-          )}
+            </div>
+          </>
+        )}
 
-          {/* Search online link */}
-          <div className="pt-2 border-t border-border/40">
-            <a
-              href={`https://www.google.com/search?q=${encodeURIComponent(recipe.title + ' recipe')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-primary font-medium flex items-center gap-1.5 hover:underline"
-            >
-              🔍 Search full recipe online
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+        {/* Match bar */}
+        <div className="glass-card p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground">Ingredient match</span>
+            <span className="text-sm font-bold text-primary">{matchPercent}%</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-muted rounded-full h-2">
+              <div className="bg-primary rounded-full h-2 transition-all" style={{ width: `${matchPercent}%` }} />
+            </div>
+            <span className="text-[10px] font-medium text-muted-foreground">
+              {ownedIngredients.length}/{recipe.ingredients.length}
+            </span>
           </div>
         </div>
+
+        {/* Ingredients */}
+        <div className="glass-card overflow-hidden">
+          <div className="p-4 border-b border-border/50">
+            <h2 className="font-semibold text-sm">Ingredients</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {ownedIngredients.length} of {recipe.ingredients.length} in your kitchen
+            </p>
+          </div>
+          <div className="divide-y divide-border/40">
+            {recipe.ingredients.map(ing => {
+              const owned = activeInventory.some(item => ingredientMatches(item.name, ing));
+              return (
+                <div key={ing} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 ${
+                    owned ? 'bg-success/15' : 'bg-muted'
+                  }`}>
+                    {owned && <Check className="w-3 h-3 text-success" />}
+                  </div>
+                  <span className={`text-sm ${owned ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {ing}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Add missing to shopping */}
+        {missingIngredients.length > 0 && (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex-1 rounded-xl"
+              onClick={() => navigate(`/missing/${recipe.id}`)}
+            >
+              <ShoppingCart className="w-4 h-4 mr-1.5" />
+              View Missing ({missingIngredients.length})
+            </Button>
+            <Button
+              className="rounded-xl"
+              onClick={addMissingToShoppingList}
+              style={{ background: 'var(--gradient-primary)' }}
+            >
+              <Plus className="w-4 h-4 mr-1" /> Add All
+            </Button>
+          </div>
+        )}
+
+        {/* Instructions */}
+        <div className="glass-card overflow-hidden">
+          <div className="p-4 border-b border-border/50">
+            <h2 className="font-semibold text-sm">Instructions</h2>
+          </div>
+          <div className="p-4 space-y-4">
+            {steps.length > 1 ? (
+              steps.map((step, i) => (
+                <div key={i} className="flex gap-3 animate-fade-in" style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'backwards' }}>
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+                    {i + 1}
+                  </div>
+                  <p className="text-sm text-foreground/90 leading-relaxed pt-1">{step}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{recipe.instructions || recipe.description}</p>
+            )}
+          </div>
+        </div>
+
+        {/* YouTube link */}
+        {recipe.youtubeUrl && (
+          <a
+            href={recipe.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-card p-4 flex items-center gap-3 hover:bg-accent/50 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
+              <span className="text-lg">▶️</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">Watch Video Tutorial</p>
+              <p className="text-xs text-muted-foreground">See how it's made on YouTube</p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
+          </a>
+        )}
       </div>
     </div>
   );
 }
 
-/** Parse a description blob into numbered steps */
-function parseSteps(description: string): string[] {
-  // Try splitting on sentence boundaries (period + space + capital letter)
-  const sentences = description
+function parseSteps(text: string): string[] {
+  if (!text) return [];
+
+  // TheMealDB often uses \r\n between steps
+  const byNewline = text
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(s => s.length > 5)
+    // Remove step numbers like "STEP 1" or "1." at the start
+    .map(s => s.replace(/^(?:step\s*\d+[.:)]\s*|\d+[.:)\s]+)/i, '').trim())
+    .filter(s => s.length > 5);
+
+  if (byNewline.length >= 2) return byNewline;
+
+  // Fallback: split on sentence boundaries
+  const sentences = text
     .split(/\.(?:\s+)(?=[A-Z])/)
     .map(s => s.trim().replace(/\.$/, '').trim())
     .filter(s => s.length > 10);
 
   if (sentences.length >= 2) return sentences;
-  return [description];
+  return [text];
 }

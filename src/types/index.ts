@@ -19,6 +19,10 @@ export interface MealSuggestion {
   prepTime: string;
   ingredients: string[];
   image?: string;
+  instructions?: string;
+  category?: string;
+  area?: string;
+  youtubeUrl?: string;
 }
 
 export interface UserPreferences {
