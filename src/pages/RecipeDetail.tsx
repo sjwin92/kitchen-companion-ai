@@ -187,6 +187,19 @@ export default function RecipeDetail() {
           ) : (
             <p className="text-sm text-foreground/90 leading-relaxed">{recipe.description}</p>
           )}
+
+          {/* Search online link */}
+          <div className="pt-2 border-t border-border/40">
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(recipe.title + ' recipe')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-primary font-medium flex items-center gap-1.5 hover:underline"
+            >
+              🔍 Search full recipe online
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
