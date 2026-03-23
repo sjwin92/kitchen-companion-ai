@@ -165,29 +165,56 @@ export default function MealSuggestions() {
             >
               {/* Tappable header */}
               <button
-                className="w-full p-4 text-left"
+                className="w-full text-left"
                 onClick={() => setExpandedId(isExpanded ? null : meal.id)}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-sm leading-tight">{meal.title}</h3>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {meal.prepTime}
-                      </span>
-                      <span className="text-xs font-semibold text-primary">{meal.matchPercent}%</span>
+                {meal.image && (
+                  <div className="relative h-36 w-full overflow-hidden">
+                    <img
+                      src={meal.image}
+                      alt={meal.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-3 right-3">
+                      <h3 className="font-semibold text-sm leading-tight text-white drop-shadow-sm">{meal.title}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[11px] text-white/80 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {meal.prepTime}
+                        </span>
+                        <span className="text-[11px] font-semibold text-white">{meal.matchPercent}%</span>
+                        {meal.category && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/20 text-white/90">{meal.category}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {isExpanded
-                    ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                    : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  }
-                </div>
+                )}
+                <div className="p-4">
+                  {!meal.image && (
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-sm leading-tight">{meal.title}</h3>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {meal.prepTime}
+                          </span>
+                          <span className="text-xs font-semibold text-primary">{meal.matchPercent}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                {/* Match bar */}
-                <div className="flex items-center gap-2 mt-3">
-                  <div className="flex-1 bg-muted rounded-full h-1.5">
-                    <div className="bg-primary rounded-full h-1.5 transition-all" style={{ width: `${meal.matchPercent}%` }} />
+                  {/* Match bar */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <div className="flex-1 bg-muted rounded-full h-1.5">
+                      <div className="bg-primary rounded-full h-1.5 transition-all" style={{ width: `${meal.matchPercent}%` }} />
+                    </div>
+                    {isExpanded
+                      ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />
+                      : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+                    }
                   </div>
                 </div>
               </button>
