@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { useApp } from '@/context/AppContext';
+import { useMealPlans } from '@/hooks/useMealPlans';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Loader2, Sparkles, ChefHat, Clock, Plus } from 'lucide-react';
+import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PairingSuggestion {
   name: string;
@@ -27,9 +29,29 @@ interface Props {
 
 export default function PairingSuggestions({ recipeTitle, category, area, ingredients }: Props) {
   const navigate = useNavigate();
+  const { session } = useApp();
+  const { addPlan } = useMealPlans();
   const [pairings, setPairings] = useState<PairingWithRecipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
+
+  const handleAddToPlanner = async (pairing: PairingWithRecipe, idx: number) => {
+    if (!session?.user || !pairing.recipe) return;
+    const success = await addPlan(
+      pairing.recipe.id,
+      pairing.recipe.title,
+      new Date(),
+      'dinner',
+      pairing.recipe.image
+    );
+    if (success) {
+      setAddedIds(prev => new Set(prev).add(idx));
+      toast.success(`Added ${pairing.recipe.title} to today's planner`);
+    } else {
+      toast.error('Failed to add to planner');
+    }
+  };
 
   const fetchPairings = async () => {
     setLoading(true);
@@ -173,9 +195,9 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
                   variant="ghost"
                   size="icon"
                   className="shrink-0 w-8 h-8"
-                  onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
+                  onClick={() => addedIds.has(idx) ? navigate(`/recipe/${pairing.recipe!.id}`) : handleAddToPlanner(pairing, idx)}
                 >
-                  <Plus className="w-4 h-4" />
+                  {addedIds.has(idx) ? <Check className="w-4 h-4 text-success" /> : <CalendarPlus className="w-4 h-4" />}
                 </Button>
               </div>
             ) : (

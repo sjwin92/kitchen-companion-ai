@@ -30,7 +30,11 @@ serve(async (req) => {
             role: "system",
             content: `You are a culinary pairing expert. Given a main dish, suggest 2-3 complementary side dishes or accompaniments that would complete the meal. Think about what's traditionally served together and what balances the meal nutritionally (e.g., a protein dish needs a starch and/or vegetable side).
 
-Return simple, common dish names that would be found in a recipe database (e.g., "steamed rice", "green salad", "garlic bread", "roasted vegetables"). Keep suggestions practical and widely known.
+CRITICAL RULES:
+- NEVER suggest a dish that contains the same primary protein as the main dish. For example, if the main dish is chicken, do NOT suggest another chicken dish.
+- Focus on sides: starches (rice, bread, couscous, potatoes), vegetables, salads, or sauces.
+- Return simple, common dish names that would be found in a recipe database (e.g., "steamed rice", "green salad", "garlic bread", "roasted vegetables").
+- Keep suggestions practical and widely known.
 
 You MUST respond using the suggest_pairings tool.`,
           },
