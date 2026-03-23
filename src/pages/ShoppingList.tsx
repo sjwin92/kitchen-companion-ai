@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ShoppingItem {
@@ -36,11 +36,9 @@ export default function ShoppingList() {
     if (!name.trim() || !session?.user) return;
     const trimmedName = name.trim();
     const qty = quantity.trim() || '1';
-    
-    // Dedup: check if item already exists (case-insensitive)
+
     const existing = items.find(i => i.name.toLowerCase() === trimmedName.toLowerCase() && !i.checked);
     if (existing) {
-      // Update quantity instead of creating duplicate
       const newQty = mergeQuantities(existing.quantity, qty);
       await supabase.from('shopping_list').update({ quantity: newQty }).eq('id', existing.id);
       setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
@@ -48,7 +46,7 @@ export default function ShoppingList() {
       toast.success(`Updated ${trimmedName} quantity to ${newQty}`);
       return;
     }
-    
+
     const { error } = await supabase.from('shopping_list').insert({
       user_id: session.user.id,
       name: trimmedName,
@@ -57,7 +55,6 @@ export default function ShoppingList() {
     if (!error) { setName(''); setQuantity(''); load(); }
   };
 
-  // Merge quantities: tries to add numbers, otherwise concatenates
   const mergeQuantities = (a: string, b: string): string => {
     const numA = parseFloat(a);
     const numB = parseFloat(b);
@@ -89,52 +86,66 @@ export default function ShoppingList() {
   const checked = items.filter(i => i.checked);
 
   return (
-    <div className="p-4 pb-24 max-w-lg mx-auto space-y-4 animate-fade-in">
+    <div className="p-4 pb-28 max-w-lg mx-auto space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Shopping List</h1>
           <p className="text-sm text-muted-foreground">{unchecked.length} item{unchecked.length !== 1 ? 's' : ''} to buy</p>
         </div>
         {checked.length > 0 && (
-          <Button variant="outline" size="sm" onClick={clearChecked}>
+          <Button variant="outline" size="sm" className="rounded-xl" onClick={clearChecked}>
             Clear Done
           </Button>
         )}
       </div>
 
       {/* Add item */}
-      <div className="flex gap-2">
+      <div className="glass-card p-3 flex gap-2">
         <Input
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Add item..."
           onKeyDown={e => e.key === 'Enter' && addItem()}
-          className="flex-1"
+          className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0"
         />
         <Input
           value={quantity}
           onChange={e => setQuantity(e.target.value)}
           placeholder="Qty"
           onKeyDown={e => e.key === 'Enter' && addItem()}
-          className="w-20"
+          className="w-16 border-0 bg-transparent shadow-none focus-visible:ring-0 text-center"
         />
-        <Button onClick={addItem} disabled={!name.trim()} size="icon">
+        <Button
+          onClick={addItem}
+          disabled={!name.trim()}
+          size="icon"
+          className="rounded-xl shrink-0"
+          style={{ background: 'var(--gradient-primary)' }}
+        >
           <Plus className="w-4 h-4" />
         </Button>
       </div>
 
       {/* Unchecked items */}
       {unchecked.length > 0 && (
-        <div className="space-y-1.5">
-          {unchecked.map(item => (
-            <div key={item.id} className="glass-card p-3 flex items-center gap-3">
-              <Checkbox checked={false} onCheckedChange={() => toggleCheck(item)} />
+        <div className="space-y-2">
+          {unchecked.map((item, i) => (
+            <div
+              key={item.id}
+              className="glass-card p-3.5 flex items-center gap-3 animate-fade-in"
+              style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'backwards' }}
+            >
+              <Checkbox
+                checked={false}
+                onCheckedChange={() => toggleCheck(item)}
+                className="rounded-lg"
+              />
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium">{item.name}</span>
-                <span className="text-xs text-muted-foreground ml-2">{item.quantity}</span>
+                <span className="text-sm font-semibold">{item.name}</span>
+                <span className="text-xs text-muted-foreground ml-2 font-medium">{item.quantity}</span>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => remove(item.id)}>
-                <Trash2 className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                <Trash2 className="w-3.5 h-3.5 text-destructive" />
               </Button>
             </div>
           ))}
@@ -143,14 +154,18 @@ export default function ShoppingList() {
 
       {/* Checked items */}
       {checked.length > 0 && (
-        <div className="space-y-1.5">
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Done</h2>
+        <div className="space-y-2">
+          <h2 className="section-title px-1">Done</h2>
           {checked.map(item => (
-            <div key={item.id} className="glass-card bg-card/40 p-3 flex items-center gap-3 opacity-60">
-              <Checkbox checked={true} onCheckedChange={() => toggleCheck(item)} />
-              <span className="text-sm line-through flex-1">{item.name}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => remove(item.id)}>
-                <Trash2 className="w-3.5 h-3.5" />
+            <div key={item.id} className="glass-card p-3.5 flex items-center gap-3 opacity-50">
+              <Checkbox
+                checked={true}
+                onCheckedChange={() => toggleCheck(item)}
+                className="rounded-lg"
+              />
+              <span className="text-sm line-through flex-1 text-muted-foreground">{item.name}</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                <Trash2 className="w-3.5 h-3.5 text-destructive" />
               </Button>
             </div>
           ))}
@@ -158,9 +173,12 @@ export default function ShoppingList() {
       )}
 
       {items.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <ShoppingCart className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Your shopping list is empty</p>
+        <div className="text-center py-16 text-muted-foreground">
+          <div className="icon-container mx-auto mb-3 bg-muted">
+            <ShoppingBag className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium">Your shopping list is empty</p>
+          <p className="text-xs mt-1">Add items above or from meal suggestions</p>
         </div>
       )}
     </div>
