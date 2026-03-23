@@ -20,6 +20,7 @@ import {
   Check,
   X,
   UtensilsCrossed,
+  CalendarDays,
 } from 'lucide-react';
 
 interface MealAnalysis {
