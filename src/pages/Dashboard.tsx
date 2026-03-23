@@ -177,6 +177,7 @@ export default function Dashboard() {
         ) : (
           <p className="text-xs text-muted-foreground">Tap to plan your meals for the week</p>
         )}
+      </button>
 
       {/* Primary CTA */}
       <button
