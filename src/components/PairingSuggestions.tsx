@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { useApp } from '@/context/AppContext';
+import { useMealPlans } from '@/hooks/useMealPlans';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Loader2, Sparkles, ChefHat, Clock, Plus } from 'lucide-react';
+import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PairingSuggestion {
   name: string;
