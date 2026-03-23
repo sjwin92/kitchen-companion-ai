@@ -11,9 +11,10 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search, Plus, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus, ChevronDown, ChevronUp, ArrowRight, Heart, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useFavorites } from '@/hooks/useFavorites';
 
 const MAX_VISIBLE_MEALS = 30;
 
