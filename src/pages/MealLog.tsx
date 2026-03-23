@@ -127,7 +127,7 @@ export default function MealLog() {
     if (!analysis || !session?.user) return;
     setSaving(true);
     try {
-      // Save meal log
+      // Save meal log linked to planner
       const { error } = await supabase.from('meal_log').insert({
         user_id: session.user.id,
         title: mealTitle || analysis.title,
@@ -137,6 +137,7 @@ export default function MealLog() {
         fat_g: analysis.fat_g,
         identified_ingredients: analysis.ingredients as any,
         deducted_item_ids: deductItems as any,
+        meal_plan_id: linkedPlanId,
       });
       if (error) throw error;
 
