@@ -29,9 +29,29 @@ interface Props {
 
 export default function PairingSuggestions({ recipeTitle, category, area, ingredients }: Props) {
   const navigate = useNavigate();
+  const { session } = useApp();
+  const { addPlan } = useMealPlans();
   const [pairings, setPairings] = useState<PairingWithRecipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
+
+  const handleAddToPlanner = async (pairing: PairingWithRecipe, idx: number) => {
+    if (!session?.user || !pairing.recipe) return;
+    const success = await addPlan(
+      pairing.recipe.id,
+      pairing.recipe.title,
+      new Date(),
+      'dinner',
+      pairing.recipe.image
+    );
+    if (success) {
+      setAddedIds(prev => new Set(prev).add(idx));
+      toast.success(`Added ${pairing.recipe.title} to today's planner`);
+    } else {
+      toast.error('Failed to add to planner');
+    }
+  };
 
   const fetchPairings = async () => {
     setLoading(true);
