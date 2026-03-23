@@ -194,13 +194,27 @@ export default function MealPlanner() {
               <div className="p-2 space-y-1.5">
                 {MEAL_SLOTS.map(slot => {
                   const plan = dayPlans.find(p => p.meal_slot === slot);
+                  const dropKey = `${dayStr}-${slot}`;
+                  const isOver = dragOverTarget === dropKey;
                   return (
-                    <div key={slot} className="flex items-center gap-2">
+                    <div
+                      key={slot}
+                      className={`flex items-center gap-2 rounded-lg transition-colors ${isOver ? 'bg-primary/10 ring-1 ring-primary/30' : ''}`}
+                      onDragOver={e => handleDragOver(e, dayStr, slot)}
+                      onDragLeave={handleDragLeave}
+                      onDrop={e => handleDrop(e, day, slot)}
+                    >
                       <span className="text-xs w-14 shrink-0 text-muted-foreground capitalize flex items-center gap-1">
                         {SLOT_EMOJI[slot]} {slot}
                       </span>
                       {plan ? (
-                        <div className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border ${SLOT_COLORS[slot]}`}>
+                        <div
+                          draggable
+                          onDragStart={() => handleDragStart(plan.id)}
+                          onDragEnd={() => { dragPlanId.current = null; setDragOverTarget(null); }}
+                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing ${SLOT_COLORS[slot]}`}
+                        >
+                          <GripVertical className="w-3 h-3 shrink-0 opacity-40" />
                           {plan.image && (
                             <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
                           )}
@@ -220,9 +234,9 @@ export default function MealPlanner() {
                       ) : (
                         <button
                           onClick={() => setAddDialog({ date: day, slot })}
-                          className="flex-1 flex items-center gap-1.5 rounded-lg border border-dashed border-border/60 px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent/50 hover:border-border transition-colors"
+                          className={`flex-1 flex items-center gap-1.5 rounded-lg border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground transition-colors ${isOver ? 'border-primary/40 bg-primary/5' : 'border-border/60 hover:bg-accent/50 hover:border-border'}`}
                         >
-                          <Plus className="w-3 h-3" /> Add meal
+                          <Plus className="w-3 h-3" /> {isOver ? 'Drop here' : 'Add meal'}
                         </button>
                       )}
                     </div>
