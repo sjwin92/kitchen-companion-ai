@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { useMealPlans, MEAL_SLOTS } from '@/hooks/useMealPlans';
 import {
   Camera,
   Upload,
@@ -18,6 +20,7 @@ import {
   Check,
   X,
   UtensilsCrossed,
+  CalendarDays,
 } from 'lucide-react';
 
 interface MealAnalysis {
@@ -33,6 +36,7 @@ interface MealAnalysis {
 export default function MealLog() {
   const navigate = useNavigate();
   const { inventory, removeItem, session } = useApp();
+  const { plans: todayPlans } = useMealPlans();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [mealTitle, setMealTitle] = useState('');
@@ -40,6 +44,7 @@ export default function MealLog() {
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [saving, setSaving] = useState(false);
   const [deductItems, setDeductItems] = useState<string[]>([]);
+  const [linkedPlanId, setLinkedPlanId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
@@ -87,7 +92,27 @@ export default function MealLog() {
       if (error) throw error;
       setAnalysis(data as MealAnalysis);
       setDeductItems(data.matched_inventory_ids || []);
+      const title = data.title || mealTitle;
       if (data.title && !mealTitle) setMealTitle(data.title);
+
+      // Auto-match to today's planned meals
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
+      if (todayOnly.length > 0) {
+        const match = todayOnly.find(p =>
+          p.title.toLowerCase().includes(title.toLowerCase()) ||
+          title.toLowerCase().includes(p.title.toLowerCase())
+        );
+        if (match) {
+          setLinkedPlanId(match.id);
+        } else {
+          // Auto-link to the current meal slot by time of day
+          const hour = new Date().getHours();
+          const currentSlot = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snack';
+          const slotMatch = todayOnly.find(p => p.meal_slot === currentSlot);
+          if (slotMatch) setLinkedPlanId(slotMatch.id);
+        }
+      }
     } catch (err: any) {
       toast.error(err.message || 'Failed to analyze meal');
     } finally {
@@ -103,7 +128,7 @@ export default function MealLog() {
     if (!analysis || !session?.user) return;
     setSaving(true);
     try {
-      // Save meal log
+      // Save meal log linked to planner
       const { error } = await supabase.from('meal_log').insert({
         user_id: session.user.id,
         title: mealTitle || analysis.title,
@@ -113,6 +138,7 @@ export default function MealLog() {
         fat_g: analysis.fat_g,
         identified_ingredients: analysis.ingredients as any,
         deducted_item_ids: deductItems as any,
+        meal_plan_id: linkedPlanId,
       });
       if (error) throw error;
 
@@ -263,6 +289,19 @@ export default function MealLog() {
                   ))}
                 </div>
               </Card>
+            )}
+
+            {/* Linked meal plan indicator */}
+            {linkedPlanId && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-sm">
+                <CalendarDays className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-foreground">
+                  Linked to planned meal: <strong>{todayPlans.find(p => p.id === linkedPlanId)?.title}</strong>
+                </span>
+                <button onClick={() => setLinkedPlanId(null)} className="ml-auto text-muted-foreground hover:text-foreground">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
 
             {/* Save button */}
