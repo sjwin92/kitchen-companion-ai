@@ -11,7 +11,9 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const MAX_VISIBLE_MEALS = 30;
 
