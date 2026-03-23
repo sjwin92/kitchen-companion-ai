@@ -18,6 +18,7 @@ export interface MealSuggestion {
   description: string;
   prepTime: string;
   ingredients: string[];
+  measures: string[];
   image?: string;
   instructions?: string;
   category?: string;

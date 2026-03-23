@@ -35,24 +35,29 @@ async function mealDbFetch<T>(path: string): Promise<T> {
   return (await response.json()) as T;
 }
 
-function extractIngredients(meal: MealDbMeal): string[] {
-  const ingredients: string[] = [];
+function extractIngredients(meal: MealDbMeal): { names: string[]; measures: string[] } {
+  const names: string[] = [];
+  const measures: string[] = [];
   for (let i = 1; i <= 20; i++) {
     const ing = meal[`strIngredient${i}`];
+    const measure = meal[`strMeasure${i}`];
     if (ing && ing.trim()) {
-      ingredients.push(ing.trim());
+      names.push(ing.trim());
+      measures.push(measure?.trim() || '');
     }
   }
-  return ingredients;
+  return { names, measures };
 }
 
 function mapMeal(meal: MealDbMeal): MealSuggestion {
+  const { names, measures } = extractIngredients(meal);
   return {
     id: `mealdb-${meal.idMeal}`,
     title: meal.strMeal,
     description: meal.strInstructions?.trim() || '',
     prepTime: '30 min',
-    ingredients: extractIngredients(meal),
+    ingredients: names,
+    measures,
     image: meal.strMealThumb || undefined,
     instructions: meal.strInstructions?.trim() || undefined,
     category: meal.strCategory || undefined,
