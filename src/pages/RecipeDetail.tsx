@@ -297,6 +297,46 @@ export default function RecipeDetail() {
   );
 }
 
+/**
+ * Scale a measurement string by a ratio (e.g. "200g" × 1.5 → "300g").
+ * Handles common formats: "200g", "1/2 cup", "2 tbsp", "1 1/2 tsp", plain numbers.
+ */
+function scaleMeasure(measure: string, ratio: number): string {
+  if (!measure.trim() || ratio === 1) return measure;
+
+  // Try to find a leading number (including fractions like 1/2, 1 1/2)
+  const match = measure.match(/^(\d+\s+)?(\d+)\/(\d+)(.*)/);
+  if (match) {
+    const whole = match[1] ? parseInt(match[1].trim()) : 0;
+    const num = parseInt(match[2]);
+    const den = parseInt(match[3]);
+    const rest = match[4];
+    const value = (whole + num / den) * ratio;
+    return formatNum(value) + rest;
+  }
+
+  const numMatch = measure.match(/^([\d.]+)(.*)/);
+  if (numMatch) {
+    const value = parseFloat(numMatch[1]) * ratio;
+    return formatNum(value) + numMatch[2];
+  }
+
+  return measure;
+}
+
+function formatNum(n: number): string {
+  if (Number.isInteger(n)) return n.toString();
+  // Show common fractions for readability
+  const frac = n % 1;
+  const whole = Math.floor(n);
+  if (Math.abs(frac - 0.25) < 0.05) return whole ? `${whole} 1/4` : '1/4';
+  if (Math.abs(frac - 0.33) < 0.05) return whole ? `${whole} 1/3` : '1/3';
+  if (Math.abs(frac - 0.5) < 0.05) return whole ? `${whole} 1/2` : '1/2';
+  if (Math.abs(frac - 0.67) < 0.05) return whole ? `${whole} 2/3` : '2/3';
+  if (Math.abs(frac - 0.75) < 0.05) return whole ? `${whole} 3/4` : '3/4';
+  return n.toFixed(1);
+}
+
 function parseSteps(text: string): string[] {
   if (!text) return [];
 
