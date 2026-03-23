@@ -99,5 +99,5 @@ export function useMealPlans(weekStart?: Date) {
     [plans]
   );
 
-  return { plans, loading, addPlan, removePlan, getPlansForDate, refetch: fetchPlans };
+  return { plans, loading, addPlan, removePlan, movePlan, getPlansForDate, refetch: fetchPlans };
 }
