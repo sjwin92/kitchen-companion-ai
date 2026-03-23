@@ -209,6 +209,7 @@ export default function Dashboard() {
         <h2 className="section-title px-1">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3">
           {[
+            { label: 'Log a Meal', icon: Camera, path: '/meal-log', delay: 360 },
             { label: 'Scan Receipt', icon: ScanLine, path: '/add-food', delay: 400 },
             { label: 'Shopping List', icon: ShoppingCart, path: '/shopping', delay: 480 },
           ].map(action => (

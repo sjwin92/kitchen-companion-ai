@@ -60,6 +60,7 @@ function AppContent() {
         <Route path="/waste" element={<WasteTracker />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/meal-planner" element={<MealPlanner />} />
+        <Route path="/meal-log" element={<MealLog />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />
