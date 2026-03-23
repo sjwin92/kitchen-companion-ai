@@ -49,6 +49,7 @@ export default function MealPlanner() {
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
   const { plans, loading, addPlan, removePlan } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
+  const { generate, generating } = useGroceryGenerator();
 
   const handleAddMeal = async (recipeId: string, title: string, image?: string) => {
     if (!addDialog) return;
