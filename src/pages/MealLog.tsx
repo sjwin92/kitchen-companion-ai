@@ -290,6 +290,19 @@ export default function MealLog() {
               </Card>
             )}
 
+            {/* Linked meal plan indicator */}
+            {linkedPlanId && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-sm">
+                <CalendarDays className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-foreground">
+                  Linked to planned meal: <strong>{todayPlans.find(p => p.id === linkedPlanId)?.title}</strong>
+                </span>
+                <button onClick={() => setLinkedPlanId(null)} className="ml-auto text-muted-foreground hover:text-foreground">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+
             {/* Save button */}
             <Button onClick={saveMealLog} disabled={saving} className="w-full gap-2" size="lg">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
