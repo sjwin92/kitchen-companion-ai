@@ -62,6 +62,7 @@ function AppContent() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/meal-planner" element={<MealPlanner />} />
         <Route path="/meal-log" element={<MealLog />} />
+        <Route path="/meal-history" element={<MealHistory />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />
