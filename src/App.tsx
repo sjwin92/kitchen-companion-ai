@@ -15,6 +15,7 @@ import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
 import Shopping from "@/pages/Shopping";
 import Settings from "@/pages/Settings";
+import WasteTracker from "@/pages/WasteTracker";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -51,6 +52,7 @@ function AppContent() {
         <Route path="/saved-lists" element={<SavedLists />} />
         <Route path="/shopping" element={<Shopping />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/waste" element={<WasteTracker />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />

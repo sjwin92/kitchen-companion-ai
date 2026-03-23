@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon, Trash2, TrendingDown } from 'lucide-react';
+import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon, Trash2, TrendingDown, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'Nut-Free'];
 
@@ -16,6 +17,7 @@ export default function Settings() {
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
+  const { permission, requestPermission } = useNotifications();
   const [darkMode, setDarkMode] = useState(() =>
     document.documentElement.classList.contains('dark')
   );
@@ -76,6 +78,31 @@ export default function Settings() {
             </div>
           </div>
           <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+        </div>
+      </section>
+
+      {/* Notifications */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Bell className="w-4 h-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-semibold">Expiry Reminders</p>
+              <p className="text-xs text-muted-foreground">Daily notifications for expiring items</p>
+            </div>
+          </div>
+          <Switch
+            checked={permission === 'granted'}
+            onCheckedChange={async (checked) => {
+              if (checked) {
+                const result = await requestPermission();
+                if (result === 'granted') toast.success('Notifications enabled!');
+                else toast.error('Permission denied');
+              } else {
+                toast.info('Disable notifications in your browser settings');
+              }
+            }}
+          />
         </div>
       </section>
 

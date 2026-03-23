@@ -34,12 +34,35 @@ export default function ShoppingList() {
 
   const addItem = async () => {
     if (!name.trim() || !session?.user) return;
+    const trimmedName = name.trim();
+    const qty = quantity.trim() || '1';
+    
+    // Dedup: check if item already exists (case-insensitive)
+    const existing = items.find(i => i.name.toLowerCase() === trimmedName.toLowerCase() && !i.checked);
+    if (existing) {
+      // Update quantity instead of creating duplicate
+      const newQty = mergeQuantities(existing.quantity, qty);
+      await supabase.from('shopping_list').update({ quantity: newQty }).eq('id', existing.id);
+      setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
+      setName(''); setQuantity('');
+      toast.success(`Updated ${trimmedName} quantity to ${newQty}`);
+      return;
+    }
+    
     const { error } = await supabase.from('shopping_list').insert({
       user_id: session.user.id,
-      name: name.trim(),
-      quantity: quantity.trim() || '1',
+      name: trimmedName,
+      quantity: qty,
     });
     if (!error) { setName(''); setQuantity(''); load(); }
+  };
+
+  // Merge quantities: tries to add numbers, otherwise concatenates
+  const mergeQuantities = (a: string, b: string): string => {
+    const numA = parseFloat(a);
+    const numB = parseFloat(b);
+    if (!isNaN(numA) && !isNaN(numB)) return String(numA + numB);
+    return `${a} + ${b}`;
   };
 
   const toggleCheck = async (item: ShoppingItem) => {

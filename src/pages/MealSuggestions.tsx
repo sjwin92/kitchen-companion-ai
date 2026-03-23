@@ -11,12 +11,14 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const MAX_VISIBLE_MEALS = 30;
 
 export default function MealSuggestions() {
-  const { inventory } = useApp();
+  const { inventory, session } = useApp();
   const navigate = useNavigate();
   const [mealsWithStatus, setMealsWithStatus] = useState<MealWithStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -229,14 +231,44 @@ export default function MealSuggestions() {
             </div>
 
             {meal.missing.length > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full"
-                onClick={() => navigate(`/missing/${meal.id}`)}
-              >
-                <ShoppingCart className="w-4 h-4 mr-1" /> Missing {meal.missing.length} ingredient{meal.missing.length > 1 ? 's' : ''}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => navigate(`/missing/${meal.id}`)}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Missing {meal.missing.length}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    if (!session?.user) return;
+                    const items = meal.missing.map(name => ({
+                      user_id: session.user.id,
+                      name,
+                      quantity: '1',
+                    }));
+                    // Dedup: check existing items first
+                    const { data: existing } = await supabase
+                      .from('shopping_list')
+                      .select('name')
+                      .eq('user_id', session.user.id);
+                    const existingNames = new Set((existing || []).map(e => e.name.toLowerCase()));
+                    const newItems = items.filter(i => !existingNames.has(i.name.toLowerCase()));
+                    if (newItems.length === 0) {
+                      toast.info('All items already in shopping list');
+                      return;
+                    }
+                    const { error } = await supabase.from('shopping_list').insert(newItems);
+                    if (!error) toast.success(`Added ${newItems.length} item${newItems.length > 1 ? 's' : ''} to shopping list`);
+                    else toast.error('Failed to add items');
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             )}
           </div>
         ))}
