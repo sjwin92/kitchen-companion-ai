@@ -5,7 +5,8 @@ import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus } from 'lucide-react';
+import { useFavorites } from '@/hooks/useFavorites';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -15,6 +16,7 @@ export default function RecipeDetail() {
   const { inventory, session } = useApp();
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     let cancelled = false;
@@ -99,6 +101,20 @@ export default function RecipeDetail() {
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button
+              onClick={() => toggleFavorite(recipe.id, recipe.title, recipe.image, recipe.category)}
+              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            >
+              <Heart className={`w-4 h-4 ${isFavorite(recipe.id) ? 'fill-red-500 text-red-500' : ''}`} />
+            </button>
+            <button
+              onClick={() => navigate('/meal-planner')}
+              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            >
+              <CalendarPlus className="w-4 h-4" />
+            </button>
+          </div>
           <div className="absolute bottom-4 left-4 right-4">
             <h1 className="text-xl font-bold text-white leading-tight">{recipe.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">

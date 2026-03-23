@@ -11,9 +11,10 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search, Plus, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus, ChevronDown, ChevronUp, ArrowRight, Heart, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useFavorites } from '@/hooks/useFavorites';
 
 const MAX_VISIBLE_MEALS = 30;
 
@@ -25,6 +26,7 @@ export default function MealSuggestions() {
   const [searchTerm, setSearchTerm] = useState('');
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const requestedSource = getRequestedRecipeSource();
   const configuredSource = getConfiguredRecipeSource();
@@ -94,6 +96,14 @@ export default function MealSuggestions() {
       <div>
         <h1 className="text-2xl font-bold">Meal Ideas</h1>
         <p className="text-sm text-muted-foreground">Based on what you have</p>
+        <div className="flex gap-2 mt-2">
+          <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => navigate('/favorites')}>
+            <Heart className="w-3.5 h-3.5 mr-1" /> Favorites
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => navigate('/meal-planner')}>
+            <CalendarDays className="w-3.5 h-3.5 mr-1" /> Planner
+          </Button>
+        </div>
 
         {!hasValidSourceConfig && (
           <p className="text-xs text-warning mt-2">
@@ -243,14 +253,22 @@ export default function MealSuggestions() {
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="flex-1 rounded-xl"
-                      style={{ background: 'var(--gradient-primary)' }}
-                      onClick={() => navigate(`/recipe/${meal.id}`)}
-                    >
-                      View Full Recipe <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                    </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 rounded-xl"
+                        style={{ background: 'var(--gradient-primary)' }}
+                        onClick={() => navigate(`/recipe/${meal.id}`)}
+                      >
+                        View Full Recipe <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl"
+                        onClick={() => toggleFavorite(meal.id, meal.title, meal.image, meal.category)}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isFavorite(meal.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                      </Button>
                     {meal.missing.length > 0 && (
                       <Button
                         variant="outline"
