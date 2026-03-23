@@ -64,6 +64,33 @@ export function useMealPlans(weekStart?: Date) {
     []
   );
 
+  const movePlan = useCallback(
+    async (planId: string, newDate: Date, newSlot: MealSlot) => {
+      if (!userId) return false;
+      const planned_date = format(newDate, 'yyyy-MM-dd');
+
+      // Remove any existing meal in the target slot
+      const existing = plans.find(
+        p => p.planned_date === planned_date && p.meal_slot === newSlot && p.id !== planId
+      );
+      if (existing) {
+        await supabase.from('meal_plans').delete().eq('id', existing.id);
+      }
+
+      const { error } = await supabase
+        .from('meal_plans')
+        .update({ planned_date, meal_slot: newSlot })
+        .eq('id', planId);
+
+      if (!error) {
+        await fetchPlans();
+        return true;
+      }
+      return false;
+    },
+    [userId, plans, fetchPlans]
+  );
+
   const getPlansForDate = useCallback(
     (date: Date) => {
       const dateStr = format(date, 'yyyy-MM-dd');
