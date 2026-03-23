@@ -13,10 +13,13 @@ import { toast } from 'sonner';
 export default function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { inventory, session } = useApp();
+  const { inventory, preferences, session } = useApp();
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const defaultServings = preferences.householdSize || 4;
+  const [servings, setServings] = useState(defaultServings);
+  const baseServings = 4; // TheMealDB recipes typically serve 4
 
   useEffect(() => {
     let cancelled = false;
