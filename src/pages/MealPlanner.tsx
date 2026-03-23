@@ -5,16 +5,9 @@ import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Plus, X, CalendarDays, Search, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AddMealDialog from '@/components/AddMealDialog';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
