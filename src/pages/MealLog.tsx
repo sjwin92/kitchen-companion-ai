@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { useMealPlans, MEAL_SLOTS } from '@/hooks/useMealPlans';
 import {
   Camera,
   Upload,
