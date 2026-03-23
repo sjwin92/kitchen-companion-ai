@@ -195,9 +195,9 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
                   variant="ghost"
                   size="icon"
                   className="shrink-0 w-8 h-8"
-                  onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
+                  onClick={() => addedIds.has(idx) ? navigate(`/recipe/${pairing.recipe!.id}`) : handleAddToPlanner(pairing, idx)}
                 >
-                  <Plus className="w-4 h-4" />
+                  {addedIds.has(idx) ? <Check className="w-4 h-4 text-green-500" /> : <CalendarPlus className="w-4 h-4" />}
                 </Button>
               </div>
             ) : (
