@@ -180,14 +180,37 @@ export default function RecipeDetail() {
         {/* Ingredients */}
         <div className="glass-card overflow-hidden">
           <div className="p-4 border-b border-border/50">
-            <h2 className="font-semibold text-sm">Ingredients</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {ownedIngredients.length} of {recipe.ingredients.length} in your kitchen
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-semibold text-sm">Ingredients</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {ownedIngredients.length} of {recipe.ingredients.length} in your kitchen
+                </p>
+              </div>
+              {/* Serving adjuster */}
+              <div className="flex items-center gap-2">
+                <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                <button
+                  onClick={() => setServings(Math.max(1, servings - 1))}
+                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span className="text-sm font-bold w-4 text-center">{servings}</span>
+                <button
+                  onClick={() => setServings(servings + 1)}
+                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
           </div>
           <div className="divide-y divide-border/40">
-            {recipe.ingredients.map(ing => {
+            {recipe.ingredients.map((ing, idx) => {
               const owned = activeInventory.some(item => ingredientMatches(item.name, ing));
+              const rawMeasure = recipe.measures?.[idx] || '';
+              const scaledMeasure = scaleMeasure(rawMeasure, servings / baseServings);
               return (
                 <div key={ing} className="flex items-center gap-3 px-4 py-2.5">
                   <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 ${
@@ -195,9 +218,14 @@ export default function RecipeDetail() {
                   }`}>
                     {owned && <Check className="w-3 h-3 text-success" />}
                   </div>
-                  <span className={`text-sm ${owned ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`text-sm flex-1 ${owned ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {ing}
                   </span>
+                  {scaledMeasure && (
+                    <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+                      {scaledMeasure}
+                    </span>
+                  )}
                 </div>
               );
             })}
