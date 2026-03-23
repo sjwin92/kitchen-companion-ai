@@ -36,7 +36,7 @@ interface MealAnalysis {
 
 export default function MealLog() {
   const navigate = useNavigate();
-  const { inventory, removeItem, session } = useApp();
+  const { inventory, removeItem, session, preferences } = useApp();
   const { plans: todayPlans } = useMealPlans();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
