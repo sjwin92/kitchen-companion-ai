@@ -49,6 +49,7 @@ function AppContent() {
         <Route path="/add-food" element={<AddFood />} />
         <Route path="/use-soon" element={<UseSoon />} />
         <Route path="/meals" element={<MealSuggestions />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
         <Route path="/saved-lists" element={<SavedLists />} />
         <Route path="/shopping" element={<Shopping />} />
