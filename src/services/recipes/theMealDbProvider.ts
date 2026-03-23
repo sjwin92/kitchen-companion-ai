@@ -66,6 +66,18 @@ function mapMeal(meal: MealDbMeal): MealSuggestion {
   };
 }
 
+export async function searchTheMealDbRecipes(query: string): Promise<MealSuggestion[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  try {
+    const data = await mealDbFetch<MealDbResponse>(`search.php?s=${encodeURIComponent(trimmed)}`);
+    return (data.meals ?? []).map(mapMeal).filter((meal) => meal.ingredients.length > 0);
+  } catch {
+    return [];
+  }
+}
+
 // Cache full meal details by ID to avoid re-fetching
 const detailCache = new Map<string, MealSuggestion>();
 

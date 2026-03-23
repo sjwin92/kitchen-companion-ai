@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { searchTheMealDbRecipes } from '@/services/recipes/theMealDbProvider';
 import { useApp } from '@/context/AppContext';
 import { useMealPlans } from '@/hooks/useMealPlans';
+import { chooseComplementaryRecipe, getBlockedProteins } from '@/lib/pairingFilters';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check, UtensilsCrossed } from 'lucide-react';
@@ -68,33 +69,24 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
       setPairings(withRecipes);
       setLoaded(true);
 
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const blockedProteins = getBlockedProteins(category, ingredients);
+      const updatePairingAt = (idx: number, updates: Partial<PairingWithRecipe>) => {
+        setPairings(prev => prev.map((pairing, i) => (i === idx ? { ...pairing, ...updates } : pairing)));
+      };
 
       await Promise.all(
         suggestions.map(async (suggestion, idx) => {
           try {
-            const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${suggestion.search_term}`)}`;
-            const resp = await fetch(url, {
-              headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+            const queries = Array.from(new Set([suggestion.name, suggestion.search_term].filter(Boolean)));
+            const candidatesByQuery = await Promise.all(queries.map(query => searchTheMealDbRecipes(query)));
+            const selectedRecipe = chooseComplementaryRecipe(candidatesByQuery.flat(), blockedProteins);
+
+            updatePairingAt(idx, {
+              recipe: selectedRecipe,
+              loading: false,
             });
-            if (!resp.ok) return;
-            const result = await resp.json();
-            const meal = result.meals?.[0];
-            if (meal) {
-              const recipe = await getRecipeById(`mealdb-${meal.idMeal}`);
-              setPairings(prev =>
-                prev.map((p, i) => i === idx ? { ...p, recipe: recipe || undefined, loading: false } : p)
-              );
-            } else {
-              setPairings(prev =>
-                prev.map((p, i) => i === idx ? { ...p, loading: false } : p)
-              );
-            }
           } catch {
-            setPairings(prev =>
-              prev.map((p, i) => i === idx ? { ...p, loading: false } : p)
-            );
+            updatePairingAt(idx, { loading: false });
           }
         })
       );
