@@ -47,7 +47,7 @@ export default function MealSuggestions() {
     }
     void loadMeals();
     return () => { cancelled = true; };
-  }, [inventory]);
+  }, [inventory, configuredSource]);
 
   const filteredMeals = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
