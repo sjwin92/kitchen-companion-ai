@@ -94,6 +94,16 @@ export default function MealPlanner() {
           <h1 className="text-2xl font-bold">Meal Planner</h1>
           <p className="text-sm text-muted-foreground">Plan your week</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-xl text-xs gap-1.5"
+          disabled={generating || plans.length === 0}
+          onClick={() => generate(plans)}
+        >
+          {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+          Grocery List
+        </Button>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w - 1)}>
             <ChevronLeft className="w-4 h-4" />
