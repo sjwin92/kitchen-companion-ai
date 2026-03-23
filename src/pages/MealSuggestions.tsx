@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 const MAX_VISIBLE_MEALS = 30;
 
 export default function MealSuggestions() {
-  const { inventory } = useApp();
+  const { inventory, session } = useApp();
   const navigate = useNavigate();
   const [mealsWithStatus, setMealsWithStatus] = useState<MealWithStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
