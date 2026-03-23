@@ -208,6 +208,10 @@ export default function MealPlanner() {
                   return (
                     <div
                       key={slot}
+                      data-drop-slot={dropKey}
+                      data-drop-day={dayStr}
+                      data-drop-meal-slot={slot}
+                      data-drop-day-iso={day.toISOString()}
                       className={`flex items-center gap-2 rounded-lg transition-colors ${isOver ? 'bg-primary/10 ring-1 ring-primary/30' : ''}`}
                       onDragOver={e => handleDragOver(e, dayStr, slot)}
                       onDragLeave={handleDragLeave}
@@ -220,12 +224,15 @@ export default function MealPlanner() {
                         <div
                           draggable
                           onDragStart={() => handleDragStart(plan.id)}
-                          onDragEnd={() => { dragPlanId.current = null; setDragOverTarget(null); }}
-                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing ${SLOT_COLORS[slot]}`}
+                          onDragEnd={handleDragEnd}
+                          onTouchStart={e => handleTouchStart(e, plan.id)}
+                          onTouchMove={handleTouchMove}
+                          onTouchEnd={() => handleTouchDrop(plan.id)}
+                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing select-none ${SLOT_COLORS[slot]} ${draggingPlanId === plan.id ? 'opacity-50 scale-95' : ''} transition-all`}
                         >
                           <GripVertical className="w-3 h-3 shrink-0 opacity-40" />
                           {plan.image && (
-                            <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
+                            <img src={plan.image} alt="" className="w-7 h-7 rounded object-cover shrink-0 pointer-events-none" />
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
