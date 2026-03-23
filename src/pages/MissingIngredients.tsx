@@ -1,24 +1,77 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { MOCK_MEALS } from '@/data/mockData';
-import { supabase } from '@/integrations/supabase/client';
+import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { ingredientMatches } from '@/lib/mealMatching';
+import { saveShoppingList } from '@/lib/shoppingLists';
+import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Check, Copy, ArrowLeft, ShoppingCart, Plus } from 'lucide-react';
+import { Check, Copy, ArrowLeft, ShoppingCart, ListChecks } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MissingIngredients() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { inventory, session } = useApp();
+  const { inventory } = useApp();
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [adding, setAdding] = useState(false);
+  const [meal, setMeal] = useState<MealSuggestion | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const meal = MOCK_MEALS.find(m => m.id === id);
-  if (!meal) return <div className="p-4">Meal not found</div>;
+  useEffect(() => {
+    let cancelled = false;
 
-  const ownedNames = inventory.map(i => i.name.toLowerCase());
-  const missing = meal.ingredients.filter(ing => !ownedNames.some(o => o.includes(ing.toLowerCase()) || ing.toLowerCase().includes(o)));
+    async function loadMeal() {
+      if (!id) {
+        setMeal(null);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const recipe = await getRecipeById(id);
+
+        if (!cancelled) {
+          setMeal(recipe);
+        }
+      } catch (error) {
+        console.error('Failed to load recipe', error);
+
+        if (!cancelled) {
+          setMeal(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadMeal();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const availableInventory = useMemo(
+    () => inventory.filter(item => item.status !== 'used'),
+    [inventory]
+  );
+
+  const missing = useMemo(() => {
+    if (!meal) return [];
+
+    return meal.ingredients.filter(
+      ing => !availableInventory.some(item => ingredientMatches(item.name, ing))
+    );
+  }, [meal, availableInventory]);
+
+  const uncheckedMissing = useMemo(
+    () => missing.filter(item => !checked.has(item)),
+    [missing, checked]
+  );
 
   const toggleCheck = (ing: string) => {
     setChecked(prev => {
@@ -29,35 +82,38 @@ export default function MissingIngredients() {
   };
 
   const copyList = () => {
-    const text = missing.filter(i => !checked.has(i)).join('\n');
+    const text = uncheckedMissing.join('\n');
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard!');
   };
 
-  const addToShoppingList = async () => {
-    if (!session?.user) {
-      toast.error('Please sign in first');
+  const handleSaveList = () => {
+    if (!meal || !id) {
+      toast.error('No recipe loaded.');
       return;
     }
-    const toAdd = missing.filter(i => !checked.has(i));
-    if (toAdd.length === 0) {
-      toast('All items already checked off');
+
+    if (uncheckedMissing.length === 0) {
+      toast.info('Nothing left to save.');
       return;
     }
-    setAdding(true);
-    const rows = toAdd.map(name => ({
-      user_id: session.user.id,
-      name,
-      quantity: '1',
-    }));
-    const { error } = await supabase.from('shopping_list').insert(rows);
-    setAdding(false);
-    if (error) {
-      toast.error('Failed to add items');
-    } else {
-      toast.success(`Added ${toAdd.length} item${toAdd.length > 1 ? 's' : ''} to shopping list`);
-    }
+
+    saveShoppingList({
+      recipeId: id,
+      recipeTitle: meal.title,
+      items: uncheckedMissing,
+    });
+
+    toast.success(`Saved list with ${uncheckedMissing.length} item${uncheckedMissing.length === 1 ? '' : 's'}!`);
   };
+
+  if (isLoading) {
+    return <div className="p-4">Loading recipe...</div>;
+  }
+
+  if (!meal) {
+    return <div className="p-4">Meal not found</div>;
+  }
 
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
@@ -99,10 +155,14 @@ export default function MissingIngredients() {
         <Button variant="outline" onClick={copyList} className="flex-1">
           <Copy className="w-4 h-4 mr-1" /> Copy List
         </Button>
-        <Button onClick={addToShoppingList} disabled={adding} className="flex-1">
-          <Plus className="w-4 h-4 mr-1" /> Add to Shop List
+        <Button onClick={handleSaveList} className="flex-1">
+          Save List
         </Button>
       </div>
+
+      <Button variant="outline" onClick={() => navigate('/saved-lists')} className="w-full">
+        <ListChecks className="w-4 h-4 mr-1" /> View Saved Lists
+      </Button>
     </div>
   );
 }
