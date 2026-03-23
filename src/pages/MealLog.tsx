@@ -35,6 +35,7 @@ interface MealAnalysis {
 export default function MealLog() {
   const navigate = useNavigate();
   const { inventory, removeItem, session } = useApp();
+  const { plans: todayPlans } = useMealPlans();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [mealTitle, setMealTitle] = useState('');
@@ -42,6 +43,7 @@ export default function MealLog() {
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [saving, setSaving] = useState(false);
   const [deductItems, setDeductItems] = useState<string[]>([]);
+  const [linkedPlanId, setLinkedPlanId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
