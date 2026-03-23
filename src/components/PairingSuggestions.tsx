@@ -6,7 +6,7 @@ import { useApp } from '@/context/AppContext';
 import { useMealPlans } from '@/hooks/useMealPlans';
 import type { MealSuggestion } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check } from 'lucide-react';
+import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check, UtensilsCrossed } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface PairingSuggestion {
@@ -25,9 +25,11 @@ interface Props {
   category?: string;
   area?: string;
   ingredients: string[];
+  onCookTogether?: (sideRecipe: MealSuggestion) => void;
+  selectedPairingId?: string;
 }
 
-export default function PairingSuggestions({ recipeTitle, category, area, ingredients }: Props) {
+export default function PairingSuggestions({ recipeTitle, category, area, ingredients, onCookTogether, selectedPairingId }: Props) {
   const navigate = useNavigate();
   const { session } = useApp();
   const { addPlan } = useMealPlans();
@@ -66,7 +68,6 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
       setPairings(withRecipes);
       setLoaded(true);
 
-      // Search TheMealDB for each suggestion in parallel
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
@@ -148,71 +149,88 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
       </div>
 
       <div className="divide-y divide-border/40">
-        {pairings.map((pairing, idx) => (
-          <div key={idx} className="p-3">
-            {pairing.loading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 rounded-lg bg-muted animate-pulse shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 bg-muted rounded animate-pulse" />
-                  <div className="h-3 w-48 bg-muted rounded animate-pulse" />
-                </div>
-              </div>
-            ) : pairing.recipe ? (
-              <div className="flex items-start gap-3">
-                {pairing.recipe.image ? (
-                  <img
-                    src={pairing.recipe.image}
-                    alt={pairing.recipe.title}
-                    className="w-16 h-16 rounded-lg object-cover shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                    <ChefHat className="w-5 h-5 text-muted-foreground/40" />
+        {pairings.map((pairing, idx) => {
+          const isSelected = pairing.recipe && selectedPairingId === pairing.recipe.id;
+          return (
+            <div key={idx} className={`p-3 ${isSelected ? 'bg-primary/5 ring-1 ring-primary/20' : ''}`}>
+              {pairing.loading ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-lg bg-muted animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-32 bg-muted rounded animate-pulse" />
+                    <div className="h-3 w-48 bg-muted rounded animate-pulse" />
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h3
-                    className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors"
-                    onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
-                  >
-                    {pairing.recipe.title}
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{pairing.reason}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                      <Clock className="w-2.5 h-2.5" /> {pairing.recipe.prepTime}
-                    </span>
-                    {pairing.recipe.category && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
-                        {pairing.recipe.category}
-                      </span>
+                </div>
+              ) : pairing.recipe ? (
+                <div>
+                  <div className="flex items-start gap-3">
+                    {pairing.recipe.image ? (
+                      <img
+                        src={pairing.recipe.image}
+                        alt={pairing.recipe.title}
+                        className="w-16 h-16 rounded-lg object-cover shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                        <ChefHat className="w-5 h-5 text-muted-foreground/40" />
+                      </div>
                     )}
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors"
+                        onClick={() => navigate(`/recipe/${pairing.recipe!.id}`)}
+                      >
+                        {pairing.recipe.title}
+                      </h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{pairing.reason}</p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                          <Clock className="w-2.5 h-2.5" /> {pairing.recipe.prepTime}
+                        </span>
+                        {pairing.recipe.category && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                            {pairing.recipe.category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="shrink-0 w-8 h-8"
+                      onClick={() => addedIds.has(idx) ? navigate(`/recipe/${pairing.recipe!.id}`) : handleAddToPlanner(pairing, idx)}
+                    >
+                      {addedIds.has(idx) ? <Check className="w-4 h-4 text-success" /> : <CalendarPlus className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                  {/* Cook Together button */}
+                  {onCookTogether && pairing.recipe && (
+                    <Button
+                      variant={isSelected ? 'default' : 'outline'}
+                      size="sm"
+                      className="w-full mt-2 gap-2 text-xs"
+                      onClick={() => onCookTogether(pairing.recipe!)}
+                    >
+                      <UtensilsCrossed className="w-3.5 h-3.5" />
+                      {isSelected ? 'Selected for Cook Together' : 'Cook Together'}
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                    <ChefHat className="w-5 h-5 text-muted-foreground/30" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-foreground">{pairing.name}</h3>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{pairing.reason}</p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="shrink-0 w-8 h-8"
-                  onClick={() => addedIds.has(idx) ? navigate(`/recipe/${pairing.recipe!.id}`) : handleAddToPlanner(pairing, idx)}
-                >
-                  {addedIds.has(idx) ? <Check className="w-4 h-4 text-success" /> : <CalendarPlus className="w-4 h-4" />}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
-                  <ChefHat className="w-5 h-5 text-muted-foreground/30" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-foreground">{pairing.name}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{pairing.reason}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
