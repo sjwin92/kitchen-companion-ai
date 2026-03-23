@@ -81,6 +81,31 @@ export default function Settings() {
         </div>
       </section>
 
+      {/* Notifications */}
+      <section className="bg-card rounded-xl border border-border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Bell className="w-4 h-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-semibold">Expiry Reminders</p>
+              <p className="text-xs text-muted-foreground">Daily notifications for expiring items</p>
+            </div>
+          </div>
+          <Switch
+            checked={permission === 'granted'}
+            onCheckedChange={async (checked) => {
+              if (checked) {
+                const result = await requestPermission();
+                if (result === 'granted') toast.success('Notifications enabled!');
+                else toast.error('Permission denied');
+              } else {
+                toast.info('Disable notifications in your browser settings');
+              }
+            }}
+          />
+        </div>
+      </section>
+
       {/* Waste Tracker */}
       <section className="bg-card rounded-xl border border-border p-4">
         <button onClick={() => navigate('/waste')} className="w-full flex items-center justify-between">
