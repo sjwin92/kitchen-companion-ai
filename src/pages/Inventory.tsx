@@ -72,7 +72,7 @@ export default function Inventory() {
       ) : (
         <div className="space-y-2">
           {items.map(item => (
-            <div key={item.id} className="bg-card border border-border rounded-xl p-3 flex items-center justify-between">
+            <div key={item.id} className="glass-card p-3 flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm truncate">{item.name}</span>

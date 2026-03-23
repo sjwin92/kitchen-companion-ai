@@ -123,7 +123,7 @@ export default function ShoppingList() {
         <div className="space-y-1.5">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Done</h2>
           {checked.map(item => (
-            <div key={item.id} className="bg-card/50 border border-border rounded-xl p-3 flex items-center gap-3 opacity-60">
+            <div key={item.id} className="glass-card bg-card/40 p-3 flex items-center gap-3 opacity-60">
               <Checkbox checked={true} onCheckedChange={() => toggleCheck(item)} />
               <span className="text-sm line-through flex-1">{item.name}</span>
               <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => remove(item.id)}>
