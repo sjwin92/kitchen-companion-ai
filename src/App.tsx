@@ -19,6 +19,7 @@ import Settings from "@/pages/Settings";
 import WasteTracker from "@/pages/WasteTracker";
 import Favorites from "@/pages/Favorites";
 import MealPlanner from "@/pages/MealPlanner";
+import MealLog from "@/pages/MealLog";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
