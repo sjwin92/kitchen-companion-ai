@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, mealTitle, inventoryItems } = await req.json();
+    const { imageBase64, mealTitle, inventoryItems, servings, recipeContext } = await req.json();
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
         status: 400,
@@ -22,6 +22,16 @@ serve(async (req) => {
 
     const inventoryContext = Array.isArray(inventoryItems) && inventoryItems.length > 0
       ? `\n\nThe user currently has these items in their inventory:\n${inventoryItems.map((i: any) => `- ${i.name} (${i.quantity})`).join("\n")}\nWhen identifying ingredients, try to match them to these inventory items by name. Return matched inventory item IDs in the matched_inventory_ids array.`
+      : "";
+
+    const servingCount = servings || 1;
+    const recipeIngredientContext = recipeContext?.ingredients?.length > 0
+      ? `\n\nIMPORTANT — The user is cooking from a known recipe with these ingredients and quantities (for ~4 servings):\n${
+          recipeContext.ingredients.map((ing: string, i: number) => {
+            const measure = recipeContext.measures?.[i] || '';
+            return `- ${ing}: ${measure}`;
+          }).join("\n")
+        }\nThe user is cooking for ${servingCount} people. Scale the recipe quantities proportionally (×${(servingCount / 4).toFixed(2)}) and calculate nutrition for ONE person's serving from that scaled batch.\nThis recipe data is MORE RELIABLE than guessing from the photo alone — use it as the primary source for ingredient identification and amounts, using the photo only to confirm.`
       : "";
 
     const systemPrompt = `You are a precise meal nutrition analyzer modeled after professional food-tracking apps. Analyze this photo of a meal for ONE SINGLE SERVING (what one person would eat in one sitting).
@@ -38,7 +48,7 @@ Critical rules for accuracy:
 - Do NOT inflate protein — a 150g chicken serving = ~39-45g protein, not 80g
 - Calories should reflect the sum of (protein×4 + carbs×4 + fat×9) — verify your numbers are internally consistent
 - When in doubt, estimate conservatively rather than generously
-- If the meal title is provided, use it as context but still base portions on what's visible${inventoryContext}
+- If the meal title is provided, use it as context but still base portions on what's visible${recipeIngredientContext}${inventoryContext}
 
 You MUST respond using the analyze_meal tool.`;
 
