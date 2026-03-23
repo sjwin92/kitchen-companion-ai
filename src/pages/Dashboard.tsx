@@ -12,8 +12,10 @@ import {
   Sparkles,
   ArrowRight,
   Leaf,
+  CalendarDays,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
+import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 
 const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.ReactNode; bg: string; iconColor: string }> = {
   fridge: {
