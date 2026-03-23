@@ -187,7 +187,7 @@ export default function MealPlanner() {
       </div>
 
       {/* Add meal dialog */}
-      <Dialog open={!!addDialog} onOpenChange={open => !open && setAddDialog(null)}>
+      <Dialog open={!!addDialog} onOpenChange={open => { if (!open) { setAddDialog(null); setSearchQuery(''); setSearchResults([]); } }}>
         <DialogContent className="max-w-sm max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base">
@@ -195,34 +195,77 @@ export default function MealPlanner() {
             </DialogTitle>
           </DialogHeader>
 
-          {favorites.length === 0 ? (
-            <div className="text-center py-6 space-y-3">
-              <CalendarDays className="w-8 h-8 text-muted-foreground/40 mx-auto" />
-              <p className="text-sm text-muted-foreground">Save some favorites first!</p>
-              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => { setAddDialog(null); navigate('/meals'); }}>
-                Browse Meals
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">Choose from your favorites:</p>
-              {favorites.map(fav => (
-                <button
-                  key={fav.id}
-                  className="w-full flex items-center gap-3 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
-                  onClick={() => handleAddFromFavorites(fav.recipe_id, fav.title, fav.image ?? undefined)}
-                >
-                  {fav.image && (
-                    <img src={fav.image} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{fav.title}</p>
-                    {fav.category && <p className="text-[10px] text-muted-foreground">{fav.category}</p>}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
+          <Tabs defaultValue="favorites" className="w-full">
+            <TabsList className="w-full grid grid-cols-2">
+              <TabsTrigger value="favorites">Favorites</TabsTrigger>
+              <TabsTrigger value="search">Search</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="favorites" className="mt-3">
+              {favorites.length === 0 ? (
+                <div className="text-center py-6 space-y-3">
+                  <CalendarDays className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                  <p className="text-sm text-muted-foreground">Save some favorites first!</p>
+                  <Button variant="outline" size="sm" className="rounded-xl" onClick={() => { setAddDialog(null); navigate('/meals'); }}>
+                    Browse Meals
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {favorites.map(fav => (
+                    <button
+                      key={fav.id}
+                      className="w-full flex items-center gap-3 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
+                      onClick={() => handleAddMeal(fav.recipe_id, fav.title, fav.image ?? undefined)}
+                    >
+                      {fav.image && (
+                        <img src={fav.image} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{fav.title}</p>
+                        {fav.category && <p className="text-[10px] text-muted-foreground">{fav.category}</p>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="search" className="mt-3 space-y-3">
+              <form onSubmit={e => { e.preventDefault(); handleSearch(); }} className="flex gap-2">
+                <Input
+                  placeholder="Search recipes..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="flex-1 h-9 text-sm"
+                />
+                <Button type="submit" size="sm" variant="outline" disabled={searching || searchQuery.trim().length < 2}>
+                  {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                </Button>
+              </form>
+
+              {searchResults.length > 0 && (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {searchResults.map(meal => (
+                    <button
+                      key={meal.id}
+                      className="w-full flex items-center gap-3 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
+                      onClick={() => handleAddMeal(`mealdb-${meal.id}`, meal.name, meal.thumb)}
+                    >
+                      {meal.thumb && (
+                        <img src={meal.thumb} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                      )}
+                      <p className="text-sm font-medium truncate flex-1">{meal.name}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {searchResults.length === 0 && !searching && searchQuery.length >= 2 && (
+                <p className="text-xs text-muted-foreground text-center py-4">No results found</p>
+              )}
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
