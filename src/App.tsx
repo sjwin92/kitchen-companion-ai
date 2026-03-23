@@ -52,6 +52,7 @@ function AppContent() {
         <Route path="/saved-lists" element={<SavedLists />} />
         <Route path="/shopping" element={<Shopping />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/waste" element={<WasteTracker />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />
