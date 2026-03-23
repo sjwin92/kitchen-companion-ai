@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      favorite_recipes: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          image: string | null
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image?: string | null
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image?: string | null
+          recipe_id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       food_items: {
         Row: {
           created_at: string
@@ -46,6 +76,39 @@ export type Database = {
           name?: string
           quantity?: string
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      meal_plans: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          meal_slot: string
+          planned_date: string
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          meal_slot?: string
+          planned_date: string
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          meal_slot?: string
+          planned_date?: string
+          recipe_id?: string
+          title?: string
           user_id?: string
         }
         Relationships: []
