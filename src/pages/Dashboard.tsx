@@ -38,10 +38,18 @@ const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.Reac
   },
 };
 
+const SLOT_EMOJI: Record<MealSlot, string> = {
+  breakfast: '🌅',
+  lunch: '☀️',
+  dinner: '🌙',
+  snack: '🍎',
+};
+
 export default function Dashboard() {
   const { inventory, preferences } = useApp();
   const activeInventory = inventory.filter(item => (item.status as string) !== 'used');
   const navigate = useNavigate();
+  const { plans: todayPlans, loading: plansLoading } = useMealPlans();
 
   const counts: Record<StorageLocation, number> = { fridge: 0, freezer: 0, cupboard: 0 };
   activeInventory.forEach(item => counts[item.location]++);
