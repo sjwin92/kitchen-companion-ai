@@ -3,9 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { useInteractions } from '@/hooks/useInteractions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useMealPlans, MEAL_SLOTS } from '@/hooks/useMealPlans';
@@ -23,6 +25,7 @@ import {
   UtensilsCrossed,
   CalendarDays,
   ChefHat,
+  Star,
 } from 'lucide-react';
 
 interface MealAnalysis {
