@@ -1,6 +1,7 @@
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import FirstWinCard from '@/components/FirstWinCard';
 import {
   Refrigerator,
   Snowflake,
@@ -14,6 +15,7 @@ import {
   Leaf,
   CalendarDays,
   Camera,
+  TrendingUp,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
