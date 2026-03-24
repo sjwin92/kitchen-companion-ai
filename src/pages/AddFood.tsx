@@ -6,7 +6,20 @@ import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive } from 'lucide-react';
+import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive, CalendarDays } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import LiveScanner from '@/components/LiveScanner';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+const LOCATION_BUTTONS: { value: StorageLocation; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
+  { value: 'fridge', label: 'Fridge', icon: <Refrigerator className="w-3.5 h-3.5" />, color: 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400', activeColor: 'bg-emerald-500 text-white border-emerald-500 dark:bg-emerald-600 dark:border-emerald-600' },
+  { value: 'freezer', label: 'Freezer', icon: <Snowflake className="w-3.5 h-3.5" />, color: 'border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400', activeColor: 'bg-blue-500 text-white border-blue-500 dark:bg-blue-600 dark:border-blue-600' },
+  { value: 'cupboard', label: 'Cupboard', icon: <Archive className="w-3.5 h-3.5" />, color: 'border-amber-200 text-amber-600 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400', activeColor: 'bg-amber-500 text-white border-amber-500 dark:bg-amber-600 dark:border-amber-600' },
+];
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import LiveScanner from '@/components/LiveScanner';
