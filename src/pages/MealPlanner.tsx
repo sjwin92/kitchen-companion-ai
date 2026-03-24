@@ -29,7 +29,7 @@ export default function MealPlanner() {
   const navigate = useNavigate();
   const [weekOffset, setWeekOffset] = useState(0);
   const [addDialog, setAddDialog] = useState<{ date: Date; slot: MealSlot } | null>(null);
-
+  const [productInfoName, setProductInfoName] = useState<string | null>(null);
 
   const weekStart = useMemo(
     () => {
