@@ -96,6 +96,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         location: item.location as FoodItem['location'],
         dateAdded: item.date_added,
         daysUntilExpiry: item.days_until_expiry,
+        expiryDate: (item as any).expiry_date || undefined,
         status: item.status as FoodItem['status'],
       })));
     }
