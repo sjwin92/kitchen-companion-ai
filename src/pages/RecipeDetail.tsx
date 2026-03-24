@@ -5,9 +5,11 @@ import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import PairingSuggestions from '@/components/PairingSuggestions';
+import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users, UtensilsCrossed, X, Camera } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
