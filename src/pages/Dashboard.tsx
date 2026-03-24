@@ -97,6 +97,9 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* First-win activation */}
+      <FirstWinCard />
+
       {/* Use Soon alert */}
       {useSoonItems.length > 0 && (
         <button
