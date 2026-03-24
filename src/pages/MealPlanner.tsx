@@ -97,6 +97,7 @@ export default function MealPlanner() {
     if (!addDialog) return;
     const success = await addPlan(recipeId, title, addDialog.date, addDialog.slot, image);
     if (success) {
+      await track('meal_added_to_plan', { recipeId, recipeTitle: title });
       toast.success(`Added ${title} to ${addDialog.slot}`);
       setAddDialog(null);
     } else toast.error('Failed to add meal');
@@ -106,6 +107,7 @@ export default function MealPlanner() {
     if (!guidedSlot) return;
     const success = await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image);
     if (success) {
+      await track('meal_added_to_plan', { recipeId, recipeTitle: title });
       toast.success(`Added ${title} to ${guidedSlot.slot}`);
       setGuidedSlot(null);
     } else toast.error('Failed to add meal');
@@ -128,6 +130,30 @@ export default function MealPlanner() {
     if (!ratingTarget) return;
     await addRating(ratingTarget.recipeId, ratingTarget.title, rating, wouldRepeat, ratingTarget.slot, ratingTarget.planId);
     toast.success('Rating saved!');
+  };
+
+  const handleRemovePlan = async (planId: string, recipeId: string, title: string) => {
+    await removePlan(planId);
+    await track('meal_removed_from_plan', { recipeId, recipeTitle: title, mealPlanId: planId });
+  };
+
+  const handleStatusChange = async (planId: string, recipeId: string, title: string, newStatus: string) => {
+    const { error } = await supabase.from('meal_plans').update({ status: newStatus } as any).eq('id', planId);
+    if (!error) {
+      const eventMap: Record<string, string> = {
+        cooked: 'meal_marked_cooked',
+        eaten: 'meal_marked_eaten',
+        skipped: 'meal_skipped',
+      };
+      if (eventMap[newStatus]) {
+        await track(eventMap[newStatus] as any, { recipeId, recipeTitle: title, mealPlanId: planId });
+      }
+      // Refresh plans to show updated status
+      await plans; // trigger re-render via refetch
+      toast.success(newStatus === 'planned' ? 'Reset to planned' : `Marked as ${newStatus}`);
+      // Force refetch
+      window.location.href = window.location.href; // simple refetch
+    }
   };
 
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
