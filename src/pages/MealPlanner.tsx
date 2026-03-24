@@ -148,11 +148,8 @@ export default function MealPlanner() {
       if (eventMap[newStatus]) {
         await track(eventMap[newStatus] as any, { recipeId, recipeTitle: title, mealPlanId: planId });
       }
-      // Refresh plans to show updated status
-      await plans; // trigger re-render via refetch
+      await refetchPlans();
       toast.success(newStatus === 'planned' ? 'Reset to planned' : `Marked as ${newStatus}`);
-      // Force refetch
-      window.location.href = window.location.href; // simple refetch
     }
   };
 
