@@ -38,6 +38,64 @@ export default function AddFood() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
+  const expiryInputRef = useRef<HTMLInputElement>(null);
+  const [scanningExpiry, setScanningExpiry] = useState(false);
+
+  const handleExpiryScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    
+    try {
+      setScanningExpiry(true);
+      toast.loading('Scanning expiry dates...', { id: 'expiry-scan' });
+      const base64 = await compressImage(file);
+      
+      const { data, error } = await supabase.functions.invoke('scan-expiry', {
+        body: { imageBase64: base64, itemNames: scannedItems.map(i => i.name) },
+      });
+
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
+
+      const expiryResults = data.results || [];
+      let matched = 0;
+      setScannedItems(prev => prev.map(item => {
+        const match = expiryResults.find((r: any) => 
+          r.itemName.toLowerCase() === item.name.toLowerCase() ||
+          item.name.toLowerCase().includes(r.itemName.toLowerCase()) ||
+          r.itemName.toLowerCase().includes(item.name.toLowerCase())
+        );
+        if (match?.expiryDate) {
+          matched++;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const exp = new Date(match.expiryDate);
+          exp.setHours(0, 0, 0, 0);
+          const diffDays = Math.max(0, Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+          return {
+            ...item,
+            expiryDate: match.expiryDate,
+            daysUntilExpiry: diffDays,
+            status: diffDays <= 1 ? 'use-today' as const : diffDays <= 3 ? 'use-soon' as const : 'okay' as const,
+          };
+        }
+        return item;
+      }));
+
+      toast.dismiss('expiry-scan');
+      if (matched > 0) {
+        toast.success(`Updated expiry for ${matched} item${matched > 1 ? 's' : ''}`);
+      } else {
+        toast.info('Could not match any expiry dates to your items. Try a clearer photo.');
+      }
+    } catch (err: any) {
+      toast.dismiss('expiry-scan');
+      toast.error(err.message || 'Failed to scan expiry dates');
+    } finally {
+      setScanningExpiry(false);
+    }
+  };
 
   const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> => {
     return new Promise((resolve, reject) => {
