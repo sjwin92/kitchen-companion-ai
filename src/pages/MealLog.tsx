@@ -51,9 +51,12 @@ export default function MealLog() {
   const location = useLocation();
   const { inventory, removeItem, session, preferences } = useApp();
   const { plans: todayPlans } = useMealPlans();
+  const { track } = useInteractions();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [mealTitle, setMealTitle] = useState('');
+  const [mealNotes, setMealNotes] = useState('');
+  const [mealRating, setMealRating] = useState<number>(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [saving, setSaving] = useState(false);
