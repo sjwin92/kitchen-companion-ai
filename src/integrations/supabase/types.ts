@@ -49,6 +49,7 @@ export type Database = {
           created_at: string
           date_added: string
           days_until_expiry: number
+          expiry_date: string | null
           id: string
           location: string
           name: string
@@ -60,6 +61,7 @@ export type Database = {
           created_at?: string
           date_added?: string
           days_until_expiry?: number
+          expiry_date?: string | null
           id?: string
           location?: string
           name: string
@@ -71,6 +73,7 @@ export type Database = {
           created_at?: string
           date_added?: string
           days_until_expiry?: number
+          expiry_date?: string | null
           id?: string
           location?: string
           name?: string
