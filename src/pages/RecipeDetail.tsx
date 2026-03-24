@@ -20,6 +20,7 @@ export default function RecipeDetail() {
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { track } = useInteractions();
   const defaultServings = preferences.householdSize || 4;
   const [servings, setServings] = useState(defaultServings);
   const baseServings = 4;
