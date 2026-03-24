@@ -327,7 +327,7 @@ export default function MealPlanner() {
                           onTouchStart={e => handleTouchStart(e, plan.id)}
                           onTouchMove={handleTouchMove}
                           onTouchEnd={() => handleTouchDrop(plan.id)}
-                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing select-none ${SLOT_COLORS[slot]} ${draggingPlanId === plan.id ? 'opacity-50 scale-95' : ''} transition-all`}
+                          className={`flex-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 border cursor-grab active:cursor-grabbing select-none ${SLOT_COLORS[slot]} ${draggingPlanId === plan.id ? 'opacity-50 scale-95' : ''} ${plan.status === 'eaten' ? 'opacity-60' : ''} ${plan.status === 'skipped' ? 'opacity-40 line-through' : ''} transition-all`}
                         >
                           <GripVertical className="w-3 h-3 shrink-0 opacity-40" />
                           {plan.image && (
@@ -342,6 +342,30 @@ export default function MealPlanner() {
                           >
                             {plan.title}
                           </button>
+                          {/* Status actions: cooked / eaten / skipped */}
+                          <div className="flex items-center gap-0.5 shrink-0">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'cooked' ? 'planned' : 'cooked'); }}
+                              className={`p-0.5 rounded transition-colors ${plan.status === 'cooked' ? 'text-amber-500' : 'hover:bg-foreground/10 text-current opacity-30'}`}
+                              title={plan.status === 'cooked' ? 'Undo cooked' : 'Mark cooked'}
+                            >
+                              <UtensilsCrossed className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'eaten' ? 'planned' : 'eaten'); }}
+                              className={`p-0.5 rounded transition-colors ${plan.status === 'eaten' ? 'text-green-500' : 'hover:bg-foreground/10 text-current opacity-30'}`}
+                              title={plan.status === 'eaten' ? 'Undo eaten' : 'Mark eaten'}
+                            >
+                              <Check className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'skipped' ? 'planned' : 'skipped'); }}
+                              className={`p-0.5 rounded transition-colors ${plan.status === 'skipped' ? 'text-muted-foreground' : 'hover:bg-foreground/10 text-current opacity-30'}`}
+                              title={plan.status === 'skipped' ? 'Undo skip' : 'Mark skipped'}
+                            >
+                              <SkipForward className="w-3 h-3" />
+                            </button>
+                          </div>
                           {/* Rating button */}
                           <button
                             onClick={() => setRatingTarget({ recipeId: plan.recipe_id, title: plan.title, slot: plan.meal_slot, planId: plan.id })}
@@ -351,7 +375,7 @@ export default function MealPlanner() {
                             <Star className={`w-3 h-3 ${existingRating ? 'fill-amber-400 text-amber-400' : 'text-current opacity-40'}`} />
                           </button>
                           <button
-                            onClick={() => removePlan(plan.id)}
+                            onClick={() => handleRemovePlan(plan.id, plan.recipe_id, plan.title)}
                             className="shrink-0 p-0.5 rounded hover:bg-foreground/10 transition-colors"
                           >
                             <X className="w-3 h-3" />
