@@ -282,6 +282,15 @@ export default function MealSuggestions() {
                       </Button>
                     )}
                   </div>
+
+                  {/* Feedback */}
+                  <RecipeFeedbackBar
+                    recipeId={meal.id}
+                    recipeTitle={meal.title}
+                    recipeImage={meal.image}
+                    recipeCategory={meal.category}
+                    compact
+                  />
                 </div>
               )}
             </div>
