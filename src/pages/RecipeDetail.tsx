@@ -5,9 +5,11 @@ import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealSuggestion } from '@/types';
 import PairingSuggestions from '@/components/PairingSuggestions';
+import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users, UtensilsCrossed, X, Camera } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -18,6 +20,7 @@ export default function RecipeDetail() {
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { track } = useInteractions();
   const defaultServings = preferences.householdSize || 4;
   const [servings, setServings] = useState(defaultServings);
   const baseServings = 4;
@@ -30,7 +33,10 @@ export default function RecipeDetail() {
       setIsLoading(true);
       try {
         const data = await getRecipeById(id);
-        if (!cancelled) setRecipe(data);
+        if (!cancelled) {
+          setRecipe(data);
+          if (data) track('recipe_viewed', { recipeId: id, recipeTitle: data.title });
+        }
       } catch {
         if (!cancelled) setRecipe(null);
       } finally {
@@ -331,6 +337,17 @@ export default function RecipeDetail() {
             <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
           </a>
         )}
+
+        {/* Feedback actions */}
+        <div className="glass-card p-4 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">How do you feel about this recipe?</p>
+          <RecipeFeedbackBar
+            recipeId={recipe.id}
+            recipeTitle={recipe.title}
+            recipeImage={recipe.image}
+            recipeCategory={recipe.category}
+          />
+        </div>
 
         {/* Pairing suggestions */}
         <PairingSuggestions

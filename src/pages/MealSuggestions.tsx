@@ -15,6 +15,7 @@ import { Clock, Check, ShoppingCart, Search, Plus, ChevronDown, ChevronUp, Arrow
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
+import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 
 const MAX_VISIBLE_MEALS = 30;
 
@@ -281,6 +282,15 @@ export default function MealSuggestions() {
                       </Button>
                     )}
                   </div>
+
+                  {/* Feedback */}
+                  <RecipeFeedbackBar
+                    recipeId={meal.id}
+                    recipeTitle={meal.title}
+                    recipeImage={meal.image}
+                    recipeCategory={meal.category}
+                    compact
+                  />
                 </div>
               )}
             </div>

@@ -3,9 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { useInteractions } from '@/hooks/useInteractions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useMealPlans, MEAL_SLOTS } from '@/hooks/useMealPlans';
@@ -23,6 +25,7 @@ import {
   UtensilsCrossed,
   CalendarDays,
   ChefHat,
+  Star,
 } from 'lucide-react';
 
 interface MealAnalysis {
@@ -48,9 +51,12 @@ export default function MealLog() {
   const location = useLocation();
   const { inventory, removeItem, session, preferences } = useApp();
   const { plans: todayPlans } = useMealPlans();
+  const { track } = useInteractions();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [mealTitle, setMealTitle] = useState('');
+  const [mealNotes, setMealNotes] = useState('');
+  const [mealRating, setMealRating] = useState<number>(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [saving, setSaving] = useState(false);
@@ -173,9 +179,11 @@ export default function MealLog() {
     if (!analysis || !session?.user) return;
     setSaving(true);
     try {
+      const source = isCombinedMeal ? 'cook_together' : linkedPlanId ? 'planned' : 'manual';
+      const title = mealTitle || analysis.title;
       const { error } = await supabase.from('meal_log').insert({
         user_id: session.user.id,
-        title: mealTitle || analysis.title,
+        title,
         calories: analysis.calories,
         protein_g: analysis.protein_g,
         carbs_g: analysis.carbs_g,
@@ -184,8 +192,22 @@ export default function MealLog() {
         deducted_item_ids: deductItems as any,
         meal_plan_id: linkedPlanId,
         image_url: imagePreview,
-      });
+        source,
+        notes: mealNotes || null,
+        rating: mealRating > 0 ? mealRating : null,
+      } as any);
       if (error) throw error;
+
+      // Track interaction
+      const recipeId = linkedPlanId
+        ? todayPlans.find(p => p.id === linkedPlanId)?.recipe_id
+        : undefined;
+      await track('meal_logged', {
+        recipeId,
+        recipeTitle: title,
+        mealPlanId: linkedPlanId || undefined,
+        metadata: { source, rating: mealRating > 0 ? mealRating : undefined },
+      });
 
       for (const id of deductItems) {
         await removeItem(id);
@@ -430,6 +452,32 @@ export default function MealLog() {
                 </button>
               </div>
             )}
+
+            {/* Quick rating */}
+            <Card className="p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">Quick Rating</h3>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setMealRating(mealRating === s ? 0 : s)}
+                    className="p-1 transition-colors"
+                  >
+                    <Star className={`w-6 h-6 ${s <= mealRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} />
+                  </button>
+                ))}
+                <span className="text-xs text-muted-foreground ml-2">
+                  {mealRating === 0 ? 'Optional' : `${mealRating}/5`}
+                </span>
+              </div>
+              <Textarea
+                placeholder="Any notes about this meal? (optional)"
+                value={mealNotes}
+                onChange={e => setMealNotes(e.target.value)}
+                rows={2}
+                className="text-sm"
+              />
+            </Card>
 
             {/* Save button */}
             <Button onClick={saveMealLog} disabled={saving} className="w-full gap-2" size="lg">

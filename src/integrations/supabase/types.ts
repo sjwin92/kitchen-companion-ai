@@ -95,7 +95,10 @@ export type Database = {
           image_url: string | null
           logged_at: string
           meal_plan_id: string | null
+          notes: string | null
           protein_g: number | null
+          rating: number | null
+          source: string | null
           title: string
           user_id: string
         }
@@ -110,7 +113,10 @@ export type Database = {
           image_url?: string | null
           logged_at?: string
           meal_plan_id?: string | null
+          notes?: string | null
           protein_g?: number | null
+          rating?: number | null
+          source?: string | null
           title?: string
           user_id: string
         }
@@ -125,7 +131,10 @@ export type Database = {
           image_url?: string | null
           logged_at?: string
           meal_plan_id?: string | null
+          notes?: string | null
           protein_g?: number | null
+          rating?: number | null
+          source?: string | null
           title?: string
           user_id?: string
         }
@@ -147,6 +156,7 @@ export type Database = {
           meal_slot: string
           planned_date: string
           recipe_id: string
+          status: string
           title: string
           user_id: string
         }
@@ -157,6 +167,7 @@ export type Database = {
           meal_slot?: string
           planned_date: string
           recipe_id: string
+          status?: string
           title: string
           user_id: string
         }
@@ -167,6 +178,7 @@ export type Database = {
           meal_slot?: string
           planned_date?: string
           recipe_id?: string
+          status?: string
           title?: string
           user_id?: string
         }
@@ -380,6 +392,78 @@ export type Database = {
           id?: string
           name?: string
           quantity?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      staple_meals: {
+        Row: {
+          category: string | null
+          created_at: string
+          frequency_hint: string | null
+          id: string
+          image: string | null
+          meal_slot: string | null
+          notes: string | null
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          frequency_hint?: string | null
+          id?: string
+          image?: string | null
+          meal_slot?: string | null
+          notes?: string | null
+          recipe_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          frequency_hint?: string | null
+          id?: string
+          image?: string | null
+          meal_slot?: string | null
+          notes?: string | null
+          recipe_id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_interactions: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          meal_plan_id: string | null
+          metadata: Json | null
+          recipe_id: string | null
+          recipe_title: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          meal_plan_id?: string | null
+          metadata?: Json | null
+          recipe_id?: string | null
+          recipe_title?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          meal_plan_id?: string | null
+          metadata?: Json | null
+          recipe_id?: string | null
+          recipe_title?: string | null
           user_id?: string
         }
         Relationships: []
