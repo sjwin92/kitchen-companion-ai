@@ -118,23 +118,46 @@ export default function MealPlanner() {
   const handleAcceptDraft = async () => {
     let added = 0;
     const newPlans: typeof plans = [];
+
+    // Try to resolve MealDB recipe IDs for generated meals via search_term
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
     for (const meal of draft) {
       const date = new Date(meal.date + 'T00:00:00');
-      const recipeId = `custom-${Date.now()}-${added}`;
-      const success = await addPlan(recipeId, meal.title, date, meal.slot as MealSlot);
+      let recipeId = `custom-${Date.now()}-${added}`;
+      let image: string | undefined;
+
+      // Attempt to find a real MealDB match using search_term
+      if (meal.search_term) {
+        try {
+          const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${meal.search_term}`)}`;
+          const res = await fetch(url, {
+            headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+          });
+          const data = await res.json();
+          const match = data?.meals?.[0];
+          if (match) {
+            recipeId = `mealdb-${match.idMeal}`;
+            image = match.strMealThumb;
+          }
+        } catch { /* fallback to custom */ }
+      }
+
+      const success = await addPlan(recipeId, meal.title, date, meal.slot as MealSlot, image);
       if (success) {
         added++;
         newPlans.push({
           id: '', recipe_id: recipeId, title: meal.title,
           planned_date: meal.date, meal_slot: meal.slot,
-          image: null, status: 'planned', created_at: '',
+          image: image ?? null, status: 'planned', created_at: '',
         });
       }
     }
     clearDraft();
     toast.success(`Added ${added} meals to your plan`);
 
-    // Auto-generate grocery list for the new + existing plans
+    // Auto-generate grocery list for plans with real recipe IDs
     if (added > 0) {
       const allPlans = [...plans, ...newPlans];
       const mealDbPlans = allPlans.filter(p => p.recipe_id.startsWith('mealdb-'));
