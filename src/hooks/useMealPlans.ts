@@ -10,6 +10,7 @@ export type MealPlan = {
   image: string | null;
   planned_date: string;
   meal_slot: string;
+  status: string;
   created_at: string;
 };
 
