@@ -174,6 +174,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allergies: string[] | null
+          budget_sensitivity: string | null
+          cooking_confidence: string | null
           cooking_time: string | null
           created_at: string
           dietary_preferences: string[] | null
@@ -182,9 +185,15 @@ export type Database = {
           household_size: number | null
           id: string
           onboarding_complete: boolean | null
+          planning_style: string | null
+          preferred_cuisines: string[] | null
+          primary_goal: string | null
           updated_at: string
         }
         Insert: {
+          allergies?: string[] | null
+          budget_sensitivity?: string | null
+          cooking_confidence?: string | null
           cooking_time?: string | null
           created_at?: string
           dietary_preferences?: string[] | null
@@ -193,9 +202,15 @@ export type Database = {
           household_size?: number | null
           id: string
           onboarding_complete?: boolean | null
+          planning_style?: string | null
+          preferred_cuisines?: string[] | null
+          primary_goal?: string | null
           updated_at?: string
         }
         Update: {
+          allergies?: string[] | null
+          budget_sensitivity?: string | null
+          cooking_confidence?: string | null
           cooking_time?: string | null
           created_at?: string
           dietary_preferences?: string[] | null
@@ -204,6 +219,9 @@ export type Database = {
           household_size?: number | null
           id?: string
           onboarding_complete?: boolean | null
+          planning_style?: string | null
+          preferred_cuisines?: string[] | null
+          primary_goal?: string | null
           updated_at?: string
         }
         Relationships: []
