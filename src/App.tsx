@@ -9,6 +9,7 @@ import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
 import AddFood from "@/pages/AddFood";
+import BarcodeScanner from "@/pages/BarcodeScanner";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
 import RecipeDetail from "@/pages/RecipeDetail";
@@ -51,6 +52,7 @@ function AppContent() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/add-food" element={<AddFood />} />
+        <Route path="/barcode" element={<BarcodeScanner />} />
         <Route path="/use-soon" element={<UseSoon />} />
         <Route path="/meals" element={<MealSuggestions />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
