@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
+import ProductInfoDialog from '@/components/ProductInfoDialog';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
