@@ -6,6 +6,9 @@ export function useNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>(
     typeof Notification !== 'undefined' ? Notification.permission : 'default'
   );
+  const [enabled, setEnabled] = useState(() =>
+    localStorage.getItem('notifications-enabled') === 'true'
+  );
 
   const requestPermission = useCallback(async () => {
     if (typeof Notification === 'undefined') return 'denied' as NotificationPermission;
@@ -14,9 +17,28 @@ export function useNotifications() {
     return result;
   }, []);
 
+  const toggle = useCallback(async (on: boolean) => {
+    if (on) {
+      let perm = permission;
+      if (perm !== 'granted') {
+        perm = await requestPermission();
+      }
+      if (perm === 'granted') {
+        setEnabled(true);
+        localStorage.setItem('notifications-enabled', 'true');
+        return true;
+      }
+      return false;
+    } else {
+      setEnabled(false);
+      localStorage.setItem('notifications-enabled', 'false');
+      return true;
+    }
+  }, [permission, requestPermission]);
+
   // Check daily for expiring items and send notification
   useEffect(() => {
-    if (permission !== 'granted') return;
+    if (!enabled || permission !== 'granted') return;
 
     const checkExpiry = () => {
       const urgent = inventory.filter(i => i.status === 'use-today');
@@ -42,9 +64,9 @@ export function useNotifications() {
     };
 
     checkExpiry();
-    const interval = setInterval(checkExpiry, 60 * 60 * 1000); // hourly
+    const interval = setInterval(checkExpiry, 60 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [permission, inventory]);
+  }, [enabled, permission, inventory]);
 
-  return { permission, requestPermission };
+  return { enabled, permission, toggle };
 }
