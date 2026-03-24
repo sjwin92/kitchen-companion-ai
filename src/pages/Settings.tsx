@@ -115,15 +115,13 @@ export default function Settings() {
             </div>
           </div>
           <Switch
-            checked={permission === 'granted'}
+            checked={notificationsEnabled}
+            disabled={notifPermission === 'denied'}
             onCheckedChange={async (checked) => {
-              if (checked) {
-                const result = await requestPermission();
-                if (result === 'granted') toast.success('Notifications enabled!');
-                else toast.error('Permission denied');
-              } else {
-                toast.info('Disable notifications in your browser settings');
-              }
+              const ok = await toggleNotifications(checked);
+              if (checked && ok) toast.success('Notifications enabled!');
+              else if (checked && !ok) toast.error('Notification permission denied by browser');
+              else if (!checked) toast.success('Notifications disabled');
             }}
           />
         </div>
