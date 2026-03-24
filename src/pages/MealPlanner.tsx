@@ -205,7 +205,13 @@ export default function MealPlanner() {
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
-                            onClick={() => navigate(`/recipe/${plan.recipe_id}`)}
+                            onClick={() => {
+                              if (plan.recipe_id.startsWith('custom-')) {
+                                setProductInfoName(plan.title);
+                              } else {
+                                navigate(`/recipe/${plan.recipe_id}`);
+                              }
+                            }}
                           >
                             {plan.title}
                           </button>
