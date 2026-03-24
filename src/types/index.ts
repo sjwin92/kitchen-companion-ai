@@ -9,6 +9,7 @@ export interface FoodItem {
   location: StorageLocation;
   dateAdded: string;
   daysUntilExpiry: number;
+  expiryDate?: string;
   status: FreshnessStatus;
 }
 
