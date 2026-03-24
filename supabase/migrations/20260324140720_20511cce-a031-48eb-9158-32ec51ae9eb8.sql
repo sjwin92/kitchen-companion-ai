@@ -1,0 +1,1 @@
+ALTER TABLE public.food_items ADD COLUMN expiry_date date;

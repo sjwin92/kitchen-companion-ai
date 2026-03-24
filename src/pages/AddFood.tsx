@@ -6,10 +6,20 @@ import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive } from 'lucide-react';
+import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import LiveScanner from '@/components/LiveScanner';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+const LOCATION_BUTTONS: { value: StorageLocation; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
+  { value: 'fridge', label: 'Fridge', icon: <Refrigerator className="w-3.5 h-3.5" />, color: 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400', activeColor: 'bg-emerald-500 text-white border-emerald-500 dark:bg-emerald-600 dark:border-emerald-600' },
+  { value: 'freezer', label: 'Freezer', icon: <Snowflake className="w-3.5 h-3.5" />, color: 'border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400', activeColor: 'bg-blue-500 text-white border-blue-500 dark:bg-blue-600 dark:border-blue-600' },
+  { value: 'cupboard', label: 'Cupboard', icon: <Archive className="w-3.5 h-3.5" />, color: 'border-amber-200 text-amber-600 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400', activeColor: 'bg-amber-500 text-white border-amber-500 dark:bg-amber-600 dark:border-amber-600' },
+];
 
 export default function AddFood() {
   const { addItems, preferences } = useApp();
@@ -28,6 +38,64 @@ export default function AddFood() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
+  const expiryInputRef = useRef<HTMLInputElement>(null);
+  const [scanningExpiry, setScanningExpiry] = useState(false);
+
+  const handleExpiryScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    
+    try {
+      setScanningExpiry(true);
+      toast.loading('Scanning expiry dates...', { id: 'expiry-scan' });
+      const base64 = await compressImage(file);
+      
+      const { data, error } = await supabase.functions.invoke('scan-expiry', {
+        body: { imageBase64: base64, itemNames: scannedItems.map(i => i.name) },
+      });
+
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
+
+      const expiryResults = data.results || [];
+      let matched = 0;
+      setScannedItems(prev => prev.map(item => {
+        const match = expiryResults.find((r: any) => 
+          r.itemName.toLowerCase() === item.name.toLowerCase() ||
+          item.name.toLowerCase().includes(r.itemName.toLowerCase()) ||
+          r.itemName.toLowerCase().includes(item.name.toLowerCase())
+        );
+        if (match?.expiryDate) {
+          matched++;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const exp = new Date(match.expiryDate);
+          exp.setHours(0, 0, 0, 0);
+          const diffDays = Math.max(0, Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+          return {
+            ...item,
+            expiryDate: match.expiryDate,
+            daysUntilExpiry: diffDays,
+            status: diffDays <= 1 ? 'use-today' as const : diffDays <= 3 ? 'use-soon' as const : 'okay' as const,
+          };
+        }
+        return item;
+      }));
+
+      toast.dismiss('expiry-scan');
+      if (matched > 0) {
+        toast.success(`Updated expiry for ${matched} item${matched > 1 ? 's' : ''}`);
+      } else {
+        toast.info('Could not match any expiry dates to your items. Try a clearer photo.');
+      }
+    } catch (err: any) {
+      toast.dismiss('expiry-scan');
+      toast.error(err.message || 'Failed to scan expiry dates');
+    } finally {
+      setScanningExpiry(false);
+    }
+  };
 
   const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -293,32 +361,71 @@ export default function AddFood() {
           <h1 className="text-2xl font-bold">Review Items</h1>
           <p className="text-sm text-muted-foreground">Edit items before adding to your inventory</p>
         </div>
+
+        {/* Scan Expiry Dates prompt */}
+        <button
+          onClick={() => {
+            toast.info('Take a photo of the expiry dates on your products');
+            expiryInputRef.current?.click();
+          }}
+          className="w-full bg-card border border-dashed border-primary/30 rounded-xl p-3.5 text-left hover:border-primary/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <CalendarDays className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold">📸 Scan Expiry Dates</div>
+              <div className="text-xs text-muted-foreground">Take a photo of product labels to auto-extract dates</div>
+            </div>
+          </div>
+        </button>
+        <input ref={expiryInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleExpiryScan} />
+
         <div className="space-y-2">
           {scannedItems.map((item, idx) => (
-            <div key={idx} className="bg-card border border-border rounded-xl p-3">
+            <div key={idx} className="bg-card border border-border rounded-xl p-3 space-y-2.5">
               <div className="flex items-center gap-2">
                 <Input
                   value={item.name}
                   onChange={e => updateScanned(idx, { name: e.target.value })}
                   className="flex-1 h-9 text-sm"
+                  placeholder="Item name"
                 />
                 <Input
                   value={item.quantity}
                   onChange={e => updateScanned(idx, { quantity: e.target.value })}
                   className="w-20 h-9 text-sm"
+                  placeholder="Qty"
                 />
-                <Select value={item.location} onValueChange={v => updateScanned(idx, { location: v as StorageLocation })}>
-                  <SelectTrigger className="w-28 h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fridge">Fridge</SelectItem>
-                    <SelectItem value="freezer">Freezer</SelectItem>
-                    <SelectItem value="cupboard">Cupboard</SelectItem>
-                  </SelectContent>
-                </Select>
                 <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive shrink-0" onClick={() => removeScanned(idx)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
+              {/* Color-coded location buttons */}
+              <div className="flex gap-1.5">
+                {LOCATION_BUTTONS.map(loc => (
+                  <button
+                    key={loc.value}
+                    onClick={() => updateScanned(idx, { location: loc.value })}
+                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium border-2 transition-all duration-150 ${
+                      item.location === loc.value ? loc.activeColor : loc.color
+                    }`}
+                  >
+                    {loc.icon}
+                    {loc.label}
+                  </button>
+                ))}
+              </div>
+              {/* Expiry info */}
+              {item.expiryDate ? (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <CalendarDays className="w-3 h-3" />
+                  <span>Exp: {new Date(item.expiryDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground/60 italic">~{item.daysUntilExpiry}d estimated expiry</div>
+              )}
             </div>
           ))}
         </div>

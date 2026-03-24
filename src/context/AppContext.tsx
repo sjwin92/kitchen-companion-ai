@@ -96,6 +96,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         location: item.location as FoodItem['location'],
         dateAdded: item.date_added,
         daysUntilExpiry: item.days_until_expiry,
+        expiryDate: (item as any).expiry_date || undefined,
         status: item.status as FoodItem['status'],
       })));
     }
@@ -114,6 +115,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       location: item.location,
       date_added: item.dateAdded,
       days_until_expiry: item.daysUntilExpiry,
+      expiry_date: item.expiryDate || null,
       status: item.status,
     }));
 
@@ -132,6 +134,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (updates.quantity !== undefined) dbUpdates.quantity = updates.quantity;
     if (updates.location !== undefined) dbUpdates.location = updates.location;
     if (updates.daysUntilExpiry !== undefined) dbUpdates.days_until_expiry = updates.daysUntilExpiry;
+    if (updates.expiryDate !== undefined) dbUpdates.expiry_date = updates.expiryDate;
     if (updates.status !== undefined) dbUpdates.status = updates.status;
 
     const { error } = await supabase.from('food_items').update(dbUpdates).eq('id', id);
