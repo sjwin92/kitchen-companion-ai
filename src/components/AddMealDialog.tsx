@@ -261,7 +261,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
 
           {/* Search tab */}
           <TabsContent value="search" className="mt-3 space-y-3">
-            <form onSubmit={e => { e.preventDefault(); handleSearch(); }} className="flex gap-2">
+            <form onSubmit={e => { e.preventDefault(); doSearch(searchQuery.trim()); }} className="flex gap-2">
               <Input
                 placeholder={SLOT_SEARCH_HINTS[slot]}
                 value={searchQuery}
