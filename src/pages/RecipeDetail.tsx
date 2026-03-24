@@ -338,6 +338,17 @@ export default function RecipeDetail() {
           </a>
         )}
 
+        {/* Feedback actions */}
+        <div className="glass-card p-4 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">How do you feel about this recipe?</p>
+          <RecipeFeedbackBar
+            recipeId={recipe.id}
+            recipeTitle={recipe.title}
+            recipeImage={recipe.image}
+            recipeCategory={recipe.category}
+          />
+        </div>
+
         {/* Pairing suggestions */}
         <PairingSuggestions
           recipeTitle={recipe.title}
