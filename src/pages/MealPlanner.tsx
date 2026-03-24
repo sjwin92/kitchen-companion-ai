@@ -117,13 +117,32 @@ export default function MealPlanner() {
 
   const handleAcceptDraft = async () => {
     let added = 0;
+    const newPlans: typeof plans = [];
     for (const meal of draft) {
       const date = new Date(meal.date + 'T00:00:00');
-      const success = await addPlan(`custom-${Date.now()}-${added}`, meal.title, date, meal.slot as MealSlot);
-      if (success) added++;
+      const recipeId = `custom-${Date.now()}-${added}`;
+      const success = await addPlan(recipeId, meal.title, date, meal.slot as MealSlot);
+      if (success) {
+        added++;
+        newPlans.push({
+          id: '', recipe_id: recipeId, title: meal.title,
+          planned_date: meal.date, meal_slot: meal.slot,
+          image: null, status: 'planned', user_id: '', created_at: '',
+        });
+      }
     }
     clearDraft();
     toast.success(`Added ${added} meals to your plan`);
+
+    // Auto-generate grocery list for the new + existing plans
+    if (added > 0) {
+      const allPlans = [...plans, ...newPlans];
+      const mealDbPlans = allPlans.filter(p => p.recipe_id.startsWith('mealdb-'));
+      if (mealDbPlans.length > 0) {
+        toast.info('Checking pantry for missing ingredients...');
+        await generate(mealDbPlans);
+      }
+    }
   };
 
   const handleRatingSubmit = async (rating: number, wouldRepeat: boolean) => {
