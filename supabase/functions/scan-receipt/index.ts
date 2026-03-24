@@ -34,7 +34,12 @@ Rules:
 - If you cannot clearly identify an item, skip it rather than guessing
 - Estimate quantity from what's visible (number of items, approximate weight/volume)
 - Estimate days until expiry: fresh produce 5-7, dairy 7-14, meat 3-5, condiments/sauces 90, frozen 60
-- Skip non-food items (cleaning products, containers without food, etc.)${dietaryNote}
+- Skip non-food items (cleaning products, containers without food, etc.)
+- STORAGE LOCATION RULES (very important):
+  * FRIDGE: dairy (milk, cheese, yogurt, butter), fresh meat, fish, fresh juice, opened sauces, salads, cooked leftovers, eggs, fresh herbs
+  * FREEZER: frozen meals, ice cream, frozen vegetables, frozen meat, frozen fish, items labeled "frozen"
+  * CUPBOARD: bread, rice, pasta, flour, sugar, cereal, canned goods, biscuits, crackers, chips/crisps, tea, coffee, oil, vinegar, honey, jam, peanut butter, dried fruit, nuts, chocolate, spices, salt, pepper, soy sauce (unopened), stock cubes, dried beans/lentils, oats, granola, bars, snacks
+  * When in doubt: if it's shelf-stable and doesn't need refrigeration, choose cupboard. Bread ALWAYS goes to cupboard unless sliced bread the user puts in freezer.${dietaryNote}
 
 You MUST respond using the extract_items tool.`
       : `You are a grocery receipt parser. Extract food items from the receipt image. 
