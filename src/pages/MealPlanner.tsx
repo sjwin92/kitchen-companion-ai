@@ -245,6 +245,11 @@ export default function MealPlanner() {
         onAdd={handleAddMeal}
         favorites={favorites}
       />
+
+      <ProductInfoDialog
+        productName={productInfoName}
+        onClose={() => setProductInfoName(null)}
+      />
     </div>
   );
 }
