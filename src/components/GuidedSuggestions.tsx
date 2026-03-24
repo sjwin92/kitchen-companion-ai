@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '@/context/AppContext';
 import type { MealSlot } from '@/hooks/useMealPlans';
+import type { SlotSettings } from '@/hooks/useMealSlotSettings';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -14,6 +15,7 @@ interface Suggestion {
 interface Props {
   slot: MealSlot;
   date: Date;
+  slotSettings?: SlotSettings;
   onSelect: (recipeId: string, title: string, image?: string) => Promise<void>;
 }
 
@@ -24,7 +26,7 @@ const SLOT_KEYWORDS: Record<MealSlot, string[]> = {
   snack: ['cookie', 'fruit', 'yogurt', 'smoothie', 'cake'],
 };
 
-export default function GuidedSuggestions({ slot, date, onSelect }: Props) {
+export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
   const { preferences } = useApp();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,13 +37,15 @@ export default function GuidedSuggestions({ slot, date, onSelect }: Props) {
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      // Pick a keyword based on slot + cuisine preferences
-      const keywords = SLOT_KEYWORDS[slot];
-      const cuisineKeywords = preferences.preferredCuisines.length > 0
-        ? preferences.preferredCuisines
-        : [];
-      const allKeywords = [...keywords, ...cuisineKeywords];
-      const keyword = allKeywords[Math.floor(Math.random() * allKeywords.length)];
+      // Build keyword pool: slot defaults + slot cuisine pref + profile cuisines
+      const keywords = [...SLOT_KEYWORDS[slot]];
+      if (slotSettings?.cuisine_preference) {
+        keywords.push(slotSettings.cuisine_preference);
+      }
+      if (preferences.preferredCuisines.length > 0) {
+        keywords.push(...preferences.preferredCuisines);
+      }
+      const keyword = keywords[Math.floor(Math.random() * keywords.length)];
 
       const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${keyword}`)}`;
       const res = await fetch(url, {
@@ -51,9 +55,12 @@ export default function GuidedSuggestions({ slot, date, onSelect }: Props) {
       const meals = (data.meals ?? [])
         .map((m: any) => ({ id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb }))
         .filter((m: Suggestion) => {
-          // Filter out disliked ingredients from title
           const lower = m.name.toLowerCase();
-          return !preferences.dislikedIngredients.some(d => lower.includes(d.toLowerCase()));
+          // Filter out disliked ingredients
+          if (preferences.dislikedIngredients.some(d => lower.includes(d.toLowerCase()))) return false;
+          // Filter out allergens from title
+          if (preferences.allergies.some(a => lower.includes(a.toLowerCase()))) return false;
+          return true;
         })
         .slice(0, 3);
 
@@ -63,7 +70,7 @@ export default function GuidedSuggestions({ slot, date, onSelect }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [slot, preferences.preferredCuisines, preferences.dislikedIngredients]);
+  }, [slot, slotSettings?.cuisine_preference, preferences.preferredCuisines, preferences.dislikedIngredients, preferences.allergies]);
 
   useEffect(() => { fetchSuggestions(); }, [fetchSuggestions]);
 
@@ -87,6 +94,14 @@ export default function GuidedSuggestions({ slot, date, onSelect }: Props) {
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
       </div>
+      {slotSettings && (
+        <p className="text-[10px] text-muted-foreground">
+          {slotSettings.target_prep_time} · {slotSettings.complexity}
+          {slotSettings.cuisine_preference ? ` · ${slotSettings.cuisine_preference}` : ''}
+          {slotSettings.quick_bias ? ' · Quick' : ''}
+          {slotSettings.family_friendly_bias ? ' · Family' : ''}
+        </p>
+      )}
       <div className="space-y-1.5">
         {suggestions.map(s => (
           <button

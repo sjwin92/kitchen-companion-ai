@@ -1,19 +1,22 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startOfWeek, addDays, addWeeks, format, isToday } from 'date-fns';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
+import { useMealRatings } from '@/hooks/useMealRatings';
+import { useAutoPlan } from '@/hooks/useAutoPlan';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Settings2, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
 import ProductInfoDialog from '@/components/ProductInfoDialog';
 import PlanningModeSelector from '@/components/PlanningModeSelector';
 import SlotSettingsDialog from '@/components/SlotSettingsDialog';
 import GuidedSuggestions from '@/components/GuidedSuggestions';
+import MealRatingDialog from '@/components/MealRatingDialog';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
@@ -38,6 +41,7 @@ export default function MealPlanner() {
   const [productInfoName, setProductInfoName] = useState<string | null>(null);
   const [editingSlot, setEditingSlot] = useState<MealSlot | null>(null);
   const [guidedSlot, setGuidedSlot] = useState<{ date: Date; slot: MealSlot } | null>(null);
+  const [ratingTarget, setRatingTarget] = useState<{ recipeId: string; title: string; slot: string; planId: string } | null>(null);
 
   const weekStart = useMemo(() => {
     const base = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -49,13 +53,17 @@ export default function MealPlanner() {
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
+  const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
+  const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
   const {
     draggingPlanId, dragOverTarget,
     handleDragStart, handleDragEnd, handleDragOver, handleDragLeave,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = useMealDragDrop();
 
-  const isManual = preferences.planningStyle === 'pick-myself';
+  // Fetch ratings on mount
+  useEffect(() => { fetchRatings(); }, [fetchRatings]);
+
   const isGuided = preferences.planningStyle === 'help-choose';
   const isAuto = preferences.planningStyle === 'do-it-for-me';
 
@@ -100,9 +108,27 @@ export default function MealPlanner() {
     } else toast.error('Failed to add meal');
   };
 
+  const handleAutoGenerate = () => generatePlan(days, plans);
+
+  const handleAcceptDraft = async () => {
+    let added = 0;
+    for (const meal of draft) {
+      const date = new Date(meal.date + 'T00:00:00');
+      const success = await addPlan(`custom-${Date.now()}-${added}`, meal.title, date, meal.slot as MealSlot);
+      if (success) added++;
+    }
+    clearDraft();
+    toast.success(`Added ${added} meals to your plan`);
+  };
+
+  const handleRatingSubmit = async (rating: number, wouldRepeat: boolean) => {
+    if (!ratingTarget) return;
+    await addRating(ratingTarget.recipeId, ratingTarget.title, rating, wouldRepeat, ratingTarget.slot, ratingTarget.planId);
+    toast.success('Rating saved!');
+  };
+
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
 
-  // Count empty slots for auto-plan scaffolding
   const emptySlotCount = useMemo(() => {
     let count = 0;
     days.forEach(day => {
@@ -149,7 +175,7 @@ export default function MealPlanner() {
       {/* Planning Mode Selector */}
       <PlanningModeSelector />
 
-      {/* Profile summary chip */}
+      {/* Profile summary chips */}
       <div className="flex flex-wrap gap-1.5">
         {preferences.dietaryPreferences.length > 0 && (
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
@@ -171,22 +197,45 @@ export default function MealPlanner() {
         </span>
       </div>
 
-      {/* Auto-plan scaffold */}
+      {/* Auto-plan section */}
       {isAuto && emptySlotCount > 0 && (
-        <div className="glass-card p-4 border-dashed border-2 border-primary/20 bg-primary/5 space-y-2">
+        <div className="glass-card p-4 border-2 border-primary/20 bg-primary/5 space-y-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
             <p className="text-sm font-semibold">Auto-Plan</p>
           </div>
           <p className="text-xs text-muted-foreground">
-            {emptySlotCount} empty slot{emptySlotCount > 1 ? 's' : ''} this week. Auto-planning based on your preferences will be available soon.
+            {emptySlotCount} empty slot{emptySlotCount > 1 ? 's' : ''} this week. Generate meals based on your preferences, inventory, and past ratings.
           </p>
-          <p className="text-[10px] text-muted-foreground">
-            Your profile: {preferences.primaryGoal?.replace('-', ' ')} · {preferences.cookingConfidence} · {preferences.budgetSensitivity} budget
-          </p>
-          <Button variant="outline" size="sm" className="rounded-xl text-xs" disabled>
-            <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Generate Plan — Coming Soon
-          </Button>
+
+          {draft.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Draft Plan</p>
+              {draft.map((meal, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground w-20 shrink-0">{meal.date.slice(5)} {meal.slot}</span>
+                  <span className="font-medium truncate flex-1">{meal.title}</span>
+                </div>
+              ))}
+              <div className="flex gap-2">
+                <Button size="sm" className="flex-1 rounded-xl text-xs gap-1" onClick={handleAcceptDraft}>
+                  <Check className="w-3.5 h-3.5" /> Accept Plan
+                </Button>
+                <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={clearDraft}>
+                  Discard
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              size="sm" className="rounded-xl text-xs gap-1.5"
+              disabled={autoGenerating}
+              onClick={handleAutoGenerate}
+            >
+              {autoGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+              {autoGenerating ? 'Generating...' : 'Generate Plan'}
+            </Button>
+          )}
         </div>
       )}
 
@@ -223,6 +272,8 @@ export default function MealPlanner() {
                   const plan = dayPlans.find(p => p.meal_slot === slot);
                   const dropKey = `${dayStr}-${slot}`;
                   const isOver = dragOverTarget === dropKey;
+                  const existingRating = plan ? getRatingForRecipe(plan.recipe_id) : null;
+
                   return (
                     <div
                       key={slot}
@@ -265,6 +316,14 @@ export default function MealPlanner() {
                           >
                             {plan.title}
                           </button>
+                          {/* Rating button */}
+                          <button
+                            onClick={() => setRatingTarget({ recipeId: plan.recipe_id, title: plan.title, slot: plan.meal_slot, planId: plan.id })}
+                            className="shrink-0 p-0.5 rounded hover:bg-foreground/10 transition-colors"
+                            title={existingRating ? `Rated ${existingRating.rating}★` : 'Rate this meal'}
+                          >
+                            <Star className={`w-3 h-3 ${existingRating ? 'fill-amber-400 text-amber-400' : 'text-current opacity-40'}`} />
+                          </button>
                           <button
                             onClick={() => removePlan(plan.id)}
                             className="shrink-0 p-0.5 rounded hover:bg-foreground/10 transition-colors"
@@ -300,23 +359,14 @@ export default function MealPlanner() {
         })}
       </div>
 
-      <AddMealDialog
-        addDialog={addDialog}
-        onClose={() => setAddDialog(null)}
-        onAdd={handleAddMeal}
-        favorites={favorites}
-      />
-
-      <ProductInfoDialog
-        productName={productInfoName}
-        onClose={() => setProductInfoName(null)}
-      />
-
-      <SlotSettingsDialog
-        slot={editingSlot}
-        settings={editingSettings}
-        onClose={() => setEditingSlot(null)}
-        onSave={updateSlotSettings}
+      <AddMealDialog addDialog={addDialog} onClose={() => setAddDialog(null)} onAdd={handleAddMeal} favorites={favorites} />
+      <ProductInfoDialog productName={productInfoName} onClose={() => setProductInfoName(null)} />
+      <SlotSettingsDialog slot={editingSlot} settings={editingSettings} onClose={() => setEditingSlot(null)} onSave={updateSlotSettings} />
+      <MealRatingDialog
+        open={!!ratingTarget}
+        title={ratingTarget?.title || ''}
+        onClose={() => setRatingTarget(null)}
+        onSubmit={handleRatingSubmit}
       />
 
       {/* Guided suggestions popup */}
@@ -334,6 +384,7 @@ export default function MealPlanner() {
             <GuidedSuggestions
               slot={guidedSlot.slot}
               date={guidedSlot.date}
+              slotSettings={getSlotSettings(guidedSlot.slot)}
               onSelect={handleGuidedSelect}
             />
             <Button variant="outline" size="sm" className="w-full rounded-xl text-xs"
