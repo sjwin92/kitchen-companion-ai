@@ -115,6 +115,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       location: item.location,
       date_added: item.dateAdded,
       days_until_expiry: item.daysUntilExpiry,
+      expiry_date: item.expiryDate || null,
       status: item.status,
     }));
 
