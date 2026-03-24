@@ -22,6 +22,7 @@ import Favorites from "@/pages/Favorites";
 import MealPlanner from "@/pages/MealPlanner";
 import MealLog from "@/pages/MealLog";
 import MealHistory from "@/pages/MealHistory";
+import WeeklyInsights from "@/pages/WeeklyInsights";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
