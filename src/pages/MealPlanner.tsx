@@ -9,7 +9,7 @@ import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check, UtensilsCrossed, SkipForward } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
 import ProductInfoDialog from '@/components/ProductInfoDialog';
