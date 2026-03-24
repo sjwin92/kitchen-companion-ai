@@ -453,6 +453,32 @@ export default function MealLog() {
               </div>
             )}
 
+            {/* Quick rating */}
+            <Card className="p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">Quick Rating</h3>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setMealRating(mealRating === s ? 0 : s)}
+                    className="p-1 transition-colors"
+                  >
+                    <Star className={`w-6 h-6 ${s <= mealRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} />
+                  </button>
+                ))}
+                <span className="text-xs text-muted-foreground ml-2">
+                  {mealRating === 0 ? 'Optional' : `${mealRating}/5`}
+                </span>
+              </div>
+              <Textarea
+                placeholder="Any notes about this meal? (optional)"
+                value={mealNotes}
+                onChange={e => setMealNotes(e.target.value)}
+                rows={2}
+                className="text-sm"
+              />
+            </Card>
+
             {/* Save button */}
             <Button onClick={saveMealLog} disabled={saving} className="w-full gap-2" size="lg">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
