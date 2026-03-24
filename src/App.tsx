@@ -22,6 +22,7 @@ import Favorites from "@/pages/Favorites";
 import MealPlanner from "@/pages/MealPlanner";
 import MealLog from "@/pages/MealLog";
 import MealHistory from "@/pages/MealHistory";
+import WeeklyInsights from "@/pages/WeeklyInsights";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -65,6 +66,7 @@ function AppContent() {
         <Route path="/meal-planner" element={<MealPlanner />} />
         <Route path="/meal-log" element={<MealLog />} />
         <Route path="/meal-history" element={<MealHistory />} />
+        <Route path="/weekly-insights" element={<WeeklyInsights />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <BottomNav />

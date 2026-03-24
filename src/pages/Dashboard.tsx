@@ -1,6 +1,7 @@
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import FirstWinCard from '@/components/FirstWinCard';
 import {
   Refrigerator,
   Snowflake,
@@ -14,6 +15,7 @@ import {
   Leaf,
   CalendarDays,
   Camera,
+  TrendingUp,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
@@ -94,6 +96,9 @@ export default function Dashboard() {
           </button>
         ))}
       </div>
+
+      {/* First-win activation */}
+      <FirstWinCard />
 
       {/* Use Soon alert */}
       {useSoonItems.length > 0 && (
@@ -211,7 +216,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Log a Meal', icon: Camera, path: '/meal-log', delay: 360 },
-            { label: 'Meal History', icon: CalendarDays, path: '/meal-history', delay: 400 },
+            { label: 'Weekly Insights', icon: TrendingUp, path: '/weekly-insights', delay: 400 },
             { label: 'Scan Receipt', icon: ScanLine, path: '/add-food', delay: 440 },
             { label: 'Shopping List', icon: ShoppingCart, path: '/shopping', delay: 480 },
           ].map(action => (
