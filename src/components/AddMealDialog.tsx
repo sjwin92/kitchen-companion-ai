@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import type { MealSlot } from '@/hooks/useMealPlans';
@@ -73,9 +73,10 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
   // Catalog items filtered by slot + search
   const catalogGroups = useMemo(() => getCatalogForSlot(slot, catalogFilter), [slot, catalogFilter]);
 
-  const handleSearch = useCallback(async () => {
-    const q = searchQuery.trim();
-    if (q.length < 2) return;
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const doSearch = useCallback(async (q: string) => {
+    if (q.length < 2) { setSearchResults([]); return; }
     setSearching(true);
     try {
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
@@ -92,7 +93,16 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     } finally {
       setSearching(false);
     }
-  }, [searchQuery]);
+  }, []);
+
+  // Auto-search with debounce
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 2) { setSearchResults([]); return; }
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => doSearch(q), 400);
+    return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
+  }, [searchQuery, doSearch]);
 
   const handleAddCustom = async () => {
     const name = customName.trim();
@@ -251,7 +261,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
 
           {/* Search tab */}
           <TabsContent value="search" className="mt-3 space-y-3">
-            <form onSubmit={e => { e.preventDefault(); handleSearch(); }} className="flex gap-2">
+            <form onSubmit={e => { e.preventDefault(); doSearch(searchQuery.trim()); }} className="flex gap-2">
               <Input
                 placeholder={SLOT_SEARCH_HINTS[slot]}
                 value={searchQuery}
