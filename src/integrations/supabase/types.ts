@@ -172,6 +172,54 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_slot_settings: {
+        Row: {
+          budget_friendly_bias: boolean | null
+          complexity: string | null
+          created_at: string
+          cuisine_preference: string | null
+          family_friendly_bias: boolean | null
+          id: string
+          pantry_first_bias: boolean | null
+          quick_bias: boolean | null
+          servings: number | null
+          slot: string
+          target_prep_time: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget_friendly_bias?: boolean | null
+          complexity?: string | null
+          created_at?: string
+          cuisine_preference?: string | null
+          family_friendly_bias?: boolean | null
+          id?: string
+          pantry_first_bias?: boolean | null
+          quick_bias?: boolean | null
+          servings?: number | null
+          slot?: string
+          target_prep_time?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget_friendly_bias?: boolean | null
+          complexity?: string | null
+          created_at?: string
+          cuisine_preference?: string | null
+          family_friendly_bias?: boolean | null
+          id?: string
+          pantry_first_bias?: boolean | null
+          quick_bias?: boolean | null
+          servings?: number | null
+          slot?: string
+          target_prep_time?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           allergies: string[] | null
