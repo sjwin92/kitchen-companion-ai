@@ -127,7 +127,7 @@ export default function MealPlanner() {
         newPlans.push({
           id: '', recipe_id: recipeId, title: meal.title,
           planned_date: meal.date, meal_slot: meal.slot,
-          image: null, status: 'planned', user_id: '', created_at: '',
+          image: null, status: 'planned', created_at: '',
         });
       }
     }
