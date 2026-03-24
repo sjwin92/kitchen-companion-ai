@@ -33,7 +33,10 @@ export default function RecipeDetail() {
       setIsLoading(true);
       try {
         const data = await getRecipeById(id);
-        if (!cancelled) setRecipe(data);
+        if (!cancelled) {
+          setRecipe(data);
+          if (data) track('recipe_viewed', { recipeId: id, recipeTitle: data.title });
+        }
       } catch {
         if (!cancelled) setRecipe(null);
       } finally {
