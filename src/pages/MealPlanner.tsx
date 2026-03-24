@@ -56,6 +56,7 @@ export default function MealPlanner() {
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
   const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
+  const { track } = useInteractions();
   const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
   const {
     draggingPlanId, dragOverTarget,
