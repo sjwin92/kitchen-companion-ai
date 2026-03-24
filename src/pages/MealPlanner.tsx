@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
+import ProductInfoDialog from '@/components/ProductInfoDialog';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
@@ -28,7 +29,7 @@ export default function MealPlanner() {
   const navigate = useNavigate();
   const [weekOffset, setWeekOffset] = useState(0);
   const [addDialog, setAddDialog] = useState<{ date: Date; slot: MealSlot } | null>(null);
-
+  const [productInfoName, setProductInfoName] = useState<string | null>(null);
 
   const weekStart = useMemo(
     () => {
@@ -204,7 +205,13 @@ export default function MealPlanner() {
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
-                            onClick={() => navigate(`/recipe/${plan.recipe_id}`)}
+                            onClick={() => {
+                              if (plan.recipe_id.startsWith('custom-')) {
+                                setProductInfoName(plan.title);
+                              } else {
+                                navigate(`/recipe/${plan.recipe_id}`);
+                              }
+                            }}
                           >
                             {plan.title}
                           </button>
@@ -237,6 +244,11 @@ export default function MealPlanner() {
         onClose={() => setAddDialog(null)}
         onAdd={handleAddMeal}
         favorites={favorites}
+      />
+
+      <ProductInfoDialog
+        productName={productInfoName}
+        onClose={() => setProductInfoName(null)}
       />
     </div>
   );
