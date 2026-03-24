@@ -24,6 +24,12 @@ const defaultPreferences: UserPreferences = {
   dislikedIngredients: [],
   onboardingComplete: false,
   displayName: '',
+  preferredCuisines: [],
+  budgetSensitivity: 'medium',
+  cookingConfidence: 'intermediate',
+  primaryGoal: 'reduce-waste',
+  planningStyle: 'help-choose',
+  allergies: [],
 };
 
 const AppContext = createContext<AppState | null>(null);
@@ -72,6 +78,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           dislikedIngredients: data.disliked_ingredients ?? [],
           onboardingComplete: data.onboarding_complete ?? false,
           displayName: data.display_name ?? '',
+          preferredCuisines: (data as any).preferred_cuisines ?? [],
+          budgetSensitivity: (data as any).budget_sensitivity ?? 'medium',
+          cookingConfidence: (data as any).cooking_confidence ?? 'intermediate',
+          primaryGoal: (data as any).primary_goal ?? 'reduce-waste',
+          planningStyle: (data as any).planning_style ?? 'help-choose',
+          allergies: (data as any).allergies ?? [],
         });
       }
     };
@@ -153,7 +165,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
           display_name: next.displayName,
-        }).eq('id', session.user.id).then();
+          preferred_cuisines: next.preferredCuisines,
+          budget_sensitivity: next.budgetSensitivity,
+          cooking_confidence: next.cookingConfidence,
+          primary_goal: next.primaryGoal,
+          planning_style: next.planningStyle,
+          allergies: next.allergies,
+        } as any).eq('id', session.user.id).then();
       }
 
       return next;

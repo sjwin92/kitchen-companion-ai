@@ -27,6 +27,11 @@ export interface MealSuggestion {
   youtubeUrl?: string;
 }
 
+export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
+export type BudgetSensitivity = 'low' | 'medium' | 'high';
+export type CookingConfidence = 'beginner' | 'intermediate' | 'advanced';
+export type PrimaryGoal = 'save-time' | 'eat-healthier' | 'reduce-waste' | 'family-friendly' | 'variety';
+
 export interface UserPreferences {
   householdSize: number;
   dietaryPreferences: string[];
@@ -34,4 +39,10 @@ export interface UserPreferences {
   dislikedIngredients: string[];
   onboardingComplete: boolean;
   displayName: string;
+  preferredCuisines: string[];
+  budgetSensitivity: BudgetSensitivity;
+  cookingConfidence: CookingConfidence;
+  primaryGoal: PrimaryGoal;
+  planningStyle: PlanningStyle;
+  allergies: string[];
 }
