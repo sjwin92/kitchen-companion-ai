@@ -179,9 +179,11 @@ export default function MealLog() {
     if (!analysis || !session?.user) return;
     setSaving(true);
     try {
+      const source = isCombinedMeal ? 'cook_together' : linkedPlanId ? 'planned' : 'manual';
+      const title = mealTitle || analysis.title;
       const { error } = await supabase.from('meal_log').insert({
         user_id: session.user.id,
-        title: mealTitle || analysis.title,
+        title,
         calories: analysis.calories,
         protein_g: analysis.protein_g,
         carbs_g: analysis.carbs_g,
@@ -190,8 +192,22 @@ export default function MealLog() {
         deducted_item_ids: deductItems as any,
         meal_plan_id: linkedPlanId,
         image_url: imagePreview,
-      });
+        source,
+        notes: mealNotes || null,
+        rating: mealRating > 0 ? mealRating : null,
+      } as any);
       if (error) throw error;
+
+      // Track interaction
+      const recipeId = linkedPlanId
+        ? todayPlans.find(p => p.id === linkedPlanId)?.recipe_id
+        : undefined;
+      await track('meal_logged', {
+        recipeId,
+        recipeTitle: title,
+        mealPlanId: linkedPlanId || undefined,
+        metadata: { source, rating: mealRating > 0 ? mealRating : undefined },
+      });
 
       for (const id of deductItems) {
         await removeItem(id);
