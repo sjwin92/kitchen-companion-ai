@@ -17,6 +17,8 @@ import PlanningModeSelector from '@/components/PlanningModeSelector';
 import SlotSettingsDialog from '@/components/SlotSettingsDialog';
 import GuidedSuggestions from '@/components/GuidedSuggestions';
 import MealRatingDialog from '@/components/MealRatingDialog';
+import { useInteractions } from '@/hooks/useInteractions';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
