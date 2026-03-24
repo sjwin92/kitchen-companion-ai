@@ -172,6 +172,53 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          meal_plan_id: string | null
+          meal_slot: string | null
+          notes: string | null
+          rating: number
+          recipe_id: string
+          title: string
+          user_id: string
+          would_repeat: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meal_plan_id?: string | null
+          meal_slot?: string | null
+          notes?: string | null
+          rating: number
+          recipe_id: string
+          title: string
+          user_id: string
+          would_repeat?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meal_plan_id?: string | null
+          meal_slot?: string | null
+          notes?: string | null
+          rating?: number
+          recipe_id?: string
+          title?: string
+          user_id?: string
+          would_repeat?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_ratings_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_slot_settings: {
         Row: {
           budget_friendly_bias: boolean | null
