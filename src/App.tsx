@@ -9,6 +9,7 @@ import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
 import AddFood from "@/pages/AddFood";
+import BarcodeScanner from "@/pages/BarcodeScanner";
 import UseSoon from "@/pages/UseSoon";
 import MealSuggestions from "@/pages/MealSuggestions";
 import RecipeDetail from "@/pages/RecipeDetail";
