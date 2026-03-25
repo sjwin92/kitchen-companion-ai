@@ -172,6 +172,9 @@ export default function Settings() {
         </button>
       </div>
 
+      {/* Calorie Tracker */}
+      <CalorieTracker />
+
       {/* Planning Style */}
       <div className="space-y-3">
         <h2 className="section-title px-1">Planning Style</h2>
