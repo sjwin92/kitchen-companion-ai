@@ -16,7 +16,13 @@ export async function loadLocalRecipes(): Promise<MealSuggestion[]> {
 
   const data = (await response.json()) as MealSuggestion[];
 
-  cachedRecipes = Array.isArray(data) ? data : [];
+  // Filter out recipes with truncated/incomplete descriptions
+  cachedRecipes = Array.isArray(data)
+    ? data.filter(r => {
+        const text = (r.instructions || r.description || '').trim();
+        return text.length >= 100 && !text.endsWith('...') && !text.endsWith('..');
+      })
+    : [];
   return cachedRecipes;
 }
 
