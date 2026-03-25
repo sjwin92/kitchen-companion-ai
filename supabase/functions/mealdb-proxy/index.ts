@@ -21,7 +21,9 @@ serve(async (req) => {
       });
     }
 
-    const mealDbUrl = `${MEALDB_BASE}/${path}`;
+    const apiKey = Deno.env.get('MEALDB_API_KEY') || '1';
+    const mealDbBase = `https://www.themealdb.com/api/json/v2/${apiKey}`;
+    const mealDbUrl = `${mealDbBase}/${path}`;
     const response = await fetch(mealDbUrl);
 
     if (!response.ok) {
