@@ -57,9 +57,39 @@ export default function MealSuggestions() {
     return mealsWithStatus.filter(meal => {
       if (meal.matchPercent < minMatchPercent) return false;
       if (!query) return true;
+
+      // Dietary keyword filtering — exclude non-matching meals
+      const dietaryTerms: Record<string, (m: MealWithStatus) => boolean> = {
+        vegan: m => {
+          const cat = (m.category || '').toLowerCase();
+          if (cat === 'vegan') return true;
+          const nonVegan = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'prawn', 'bacon', 'steak', 'turkey', 'duck', 'goat', 'meat', 'egg', 'cheese', 'cream', 'butter', 'milk', 'yogurt', 'honey'];
+          const titleLower = m.title.toLowerCase();
+          const ingsLower = m.ingredients.map(i => i.toLowerCase()).join(' ');
+          return !nonVegan.some(nv => titleLower.includes(nv) || ingsLower.includes(nv));
+        },
+        vegetarian: m => {
+          const cat = (m.category || '').toLowerCase();
+          if (cat === 'vegetarian' || cat === 'vegan') return true;
+          const nonVeg = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'prawn', 'bacon', 'steak', 'turkey', 'duck', 'goat', 'meat'];
+          const titleLower = m.title.toLowerCase();
+          const ingsLower = m.ingredients.map(i => i.toLowerCase()).join(' ');
+          return !nonVeg.some(nv => titleLower.includes(nv) || ingsLower.includes(nv));
+        },
+      };
+
+      // Check if query is a dietary term
+      for (const [term, filterFn] of Object.entries(dietaryTerms)) {
+        if (query === term || query === term.slice(0, -1)) {
+          return filterFn(meal);
+        }
+      }
+
       return (
         meal.title.toLowerCase().includes(query) ||
         meal.description.toLowerCase().includes(query) ||
+        (meal.category || '').toLowerCase().includes(query) ||
+        (meal.area || '').toLowerCase().includes(query) ||
         meal.ingredients.some(ing => ing.toLowerCase().includes(query))
       );
     });
