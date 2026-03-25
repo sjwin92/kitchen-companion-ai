@@ -5,8 +5,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-const MEALDB_BASE = 'https://www.themealdb.com/api/json/v1/1';
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -23,7 +21,9 @@ serve(async (req) => {
       });
     }
 
-    const mealDbUrl = `${MEALDB_BASE}/${path}`;
+    const apiKey = Deno.env.get('MEALDB_API_KEY') || '1';
+    const mealDbBase = `https://www.themealdb.com/api/json/v2/${apiKey}`;
+    const mealDbUrl = `${mealDbBase}/${path}`;
     const response = await fetch(mealDbUrl);
 
     if (!response.ok) {
