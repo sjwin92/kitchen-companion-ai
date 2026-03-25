@@ -59,7 +59,7 @@ function AppContent() {
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
         <Route path="/saved-lists" element={<SavedLists />} />
-        <Route path="/shopping" element={<Shopping />} />
+        
         <Route path="/settings" element={<Settings />} />
         <Route path="/waste" element={<WasteTracker />} />
         <Route path="/favorites" element={<Favorites />} />
