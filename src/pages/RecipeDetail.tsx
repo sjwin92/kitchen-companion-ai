@@ -316,6 +316,11 @@ export default function RecipeDetail() {
             ) : (
               <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{recipe.instructions || recipe.description}</p>
             )}
+            {isInstructionTruncated(recipe.instructions || recipe.description) && (
+              <p className="text-xs text-muted-foreground italic bg-muted/50 rounded-lg p-3">
+                ⚠️ This recipe's instructions appear to be incomplete. Try searching for "{recipe.title}" online for the full method.
+              </p>
+            )}
           </div>
         </div>
 
@@ -480,6 +485,12 @@ function formatNum(n: number): string {
   if (Math.abs(frac - 0.67) < 0.05) return whole ? `${whole} 2/3` : '2/3';
   if (Math.abs(frac - 0.75) < 0.05) return whole ? `${whole} 3/4` : '3/4';
   return n.toFixed(1);
+}
+
+function isInstructionTruncated(text: string): boolean {
+  if (!text) return false;
+  const trimmed = text.trim();
+  return trimmed.endsWith('...') || trimmed.endsWith('..') || (trimmed.length > 50 && !trimmed.endsWith('.') && !trimmed.endsWith('!') && !trimmed.endsWith(')'));
 }
 
 function parseSteps(text: string): string[] {
