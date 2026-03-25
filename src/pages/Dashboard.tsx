@@ -218,7 +218,7 @@ export default function Dashboard() {
             { label: 'Log a Meal', icon: Camera, path: '/meal-log', delay: 360 },
             { label: 'Weekly Insights', icon: TrendingUp, path: '/weekly-insights', delay: 400 },
             { label: 'Scan Receipt', icon: ScanLine, path: '/add-food', delay: 440 },
-            { label: 'Shopping List', icon: ShoppingCart, path: '/shopping', delay: 480 },
+            { label: 'Shopping List', icon: ShoppingCart, path: '/shopping-list', delay: 480 },
           ].map(action => (
             <button
               key={action.label}

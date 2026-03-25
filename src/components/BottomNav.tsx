@@ -5,7 +5,7 @@ const NAV_ITEMS = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/inventory', icon: Package, label: 'Pantry' },
   { to: '/add-food', icon: Plus, label: 'Add', isCenter: true },
-  { to: '/shopping', icon: ShoppingCart, label: 'Shop' },
+  { to: '/shopping-list', icon: ShoppingCart, label: 'Shop' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
