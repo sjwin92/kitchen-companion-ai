@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
+import CalorieTracker from '@/components/CalorieTracker';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'Nut-Free'];
 const COMMON_ALLERGIES = ['Peanuts', 'Tree Nuts', 'Shellfish', 'Dairy', 'Eggs', 'Soy', 'Wheat', 'Fish', 'Sesame'];
@@ -170,6 +171,9 @@ export default function Settings() {
           <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
+
+      {/* Calorie Tracker */}
+      <CalorieTracker />
 
       {/* Planning Style */}
       <div className="space-y-3">

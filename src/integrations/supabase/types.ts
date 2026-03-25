@@ -286,6 +286,7 @@ export type Database = {
           cooking_confidence: string | null
           cooking_time: string | null
           created_at: string
+          daily_calorie_goal: number | null
           dietary_preferences: string[] | null
           disliked_ingredients: string[] | null
           display_name: string | null
@@ -303,6 +304,7 @@ export type Database = {
           cooking_confidence?: string | null
           cooking_time?: string | null
           created_at?: string
+          daily_calorie_goal?: number | null
           dietary_preferences?: string[] | null
           disliked_ingredients?: string[] | null
           display_name?: string | null
@@ -320,6 +322,7 @@ export type Database = {
           cooking_confidence?: string | null
           cooking_time?: string | null
           created_at?: string
+          daily_calorie_goal?: number | null
           dietary_preferences?: string[] | null
           disliked_ingredients?: string[] | null
           display_name?: string | null

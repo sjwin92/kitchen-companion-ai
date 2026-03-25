@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN daily_calorie_goal integer DEFAULT 2000;
