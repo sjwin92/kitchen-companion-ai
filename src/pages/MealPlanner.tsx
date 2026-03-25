@@ -471,7 +471,7 @@ export default function MealPlanner() {
       </div>
 
       <AddMealDialog addDialog={addDialog} onClose={() => setAddDialog(null)} onAdd={handleAddMeal} favorites={favorites} />
-      <ProductInfoDialog productName={productInfoName} onClose={() => setProductInfoName(null)} />
+      <ProductInfoDialog productName={productInfoName} onClose={() => setProductInfoName(null)} includeRecipe />
       <SlotSettingsDialog slot={editingSlot} settings={editingSettings} onClose={() => setEditingSlot(null)} onSave={updateSlotSettings} />
       <MealRatingDialog
         open={!!ratingTarget}
