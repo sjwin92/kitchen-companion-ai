@@ -5,7 +5,7 @@ import { useApp } from '@/context/AppContext';
 import { FoodItem, StorageLocation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -448,21 +448,26 @@ export default function AddFood() {
           <label className="text-sm font-medium">Item Name</label>
           <Input value={manualName} onChange={e => setManualName(e.target.value)} placeholder="e.g. Chicken Breast" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-sm font-medium">Quantity</label>
-            <Input value={manualQty} onChange={e => setManualQty(e.target.value)} placeholder="e.g. 500g" />
-          </div>
-          <div>
-            <label className="text-sm font-medium">Location</label>
-            <Select value={manualLocation} onValueChange={v => setManualLocation(v as StorageLocation)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="fridge">Fridge</SelectItem>
-                <SelectItem value="freezer">Freezer</SelectItem>
-                <SelectItem value="cupboard">Cupboard</SelectItem>
-              </SelectContent>
-            </Select>
+        <div>
+          <label className="text-sm font-medium">Quantity</label>
+          <Input value={manualQty} onChange={e => setManualQty(e.target.value)} placeholder="e.g. 500g" />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Location</label>
+          <div className="flex gap-1.5 mt-1">
+            {LOCATION_BUTTONS.map(loc => (
+              <button
+                key={loc.value}
+                type="button"
+                onClick={() => setManualLocation(loc.value)}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-medium border-2 transition-all duration-150 ${
+                  manualLocation === loc.value ? loc.activeColor : loc.color
+                }`}
+              >
+                {loc.icon}
+                {loc.label}
+              </button>
+            ))}
           </div>
         </div>
         <Button onClick={addManual} disabled={!manualName.trim()} className="w-full">
