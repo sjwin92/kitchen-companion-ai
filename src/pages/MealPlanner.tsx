@@ -378,9 +378,27 @@ export default function MealPlanner() {
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
-                            onClick={() => {
-                              if (plan.recipe_id.startsWith('custom-')) setProductInfoName(plan.title);
-                              else navigate(`/recipe/${plan.recipe_id}`);
+                            onClick={async () => {
+                              if (!plan.recipe_id.startsWith('custom-')) {
+                                navigate(`/recipe/${plan.recipe_id}`);
+                                return;
+                              }
+                              // Try to find a real recipe for custom meals
+                              toast.loading('Searching for recipe…', { id: 'recipe-search' });
+                              try {
+                                const results = await searchRecipes(plan.title);
+                                const match = results[0];
+                                if (match) {
+                                  toast.dismiss('recipe-search');
+                                  navigate(`/recipe/${match.id}`);
+                                } else {
+                                  toast.dismiss('recipe-search');
+                                  setProductInfoName(plan.title);
+                                }
+                              } catch {
+                                toast.dismiss('recipe-search');
+                                setProductInfoName(plan.title);
+                              }
                             }}
                           >
                             {plan.title}
