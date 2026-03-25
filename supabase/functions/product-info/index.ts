@@ -12,11 +12,24 @@ serve(async (req) => {
   }
 
   try {
-    const { productName } = await req.json();
+    const { productName, includeRecipe } = await req.json();
     if (!productName) throw new Error("productName is required");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const recipeFields = includeRecipe
+      ? `
+- "ingredients": array of ingredient strings with quantities (e.g. ["2 cups red lentils", "1 onion, diced", "3 cloves garlic, minced"])
+- "instructions": array of step-by-step cooking instructions (each step is a string, max 2 sentences per step)
+- "prep_time": string (e.g. "10 min")
+- "cook_time": string (e.g. "25 min")
+- "servings": number (default 4)`
+      : "";
+
+    const recipeNote = includeRecipe
+      ? "\nThis is a planned meal, so provide a COMPLETE, practical recipe with real measurements and clear cooking steps. The recipe should be easy to follow for a home cook."
+      : "";
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -29,7 +42,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a nutritionist assistant. Given a food product name, return a JSON object with:
+            content: `You are a nutritionist and recipe assistant. Given a food/meal name, return a JSON object with:
 - "name": cleaned product name
 - "emoji": a single emoji representing the food
 - "tagline": a short 1-sentence health benefit (max 15 words)
@@ -37,9 +50,9 @@ serve(async (req) => {
 - "nutrients": object with keys "calories", "protein_g", "carbs_g", "fat_g", "fiber_g", "sugar_g" — values are numbers for a typical single serving
 - "serving_size": string describing the serving (e.g. "1 medium apple (182g)", "100g")
 - "vitamins": array of up to 4 notable vitamins/minerals (e.g. ["Vitamin C", "Potassium"])
-- "category": one of "fruit", "vegetable", "dairy", "grain", "protein", "snack", "beverage", "other"
+- "category": one of "fruit", "vegetable", "dairy", "grain", "protein", "snack", "beverage", "other"${recipeFields}
 
-Return ONLY valid JSON, no markdown.`,
+Return ONLY valid JSON, no markdown.${recipeNote}`,
           },
           {
             role: "user",
@@ -53,7 +66,6 @@ Return ONLY valid JSON, no markdown.`,
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content ?? "";
     
-    // Parse JSON from response
     const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     const info = JSON.parse(cleaned);
 
