@@ -15,6 +15,7 @@ import MealSuggestions from "@/pages/MealSuggestions";
 import RecipeDetail from "@/pages/RecipeDetail";
 import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
+import ShoppingList from "@/pages/ShoppingList";
 
 import Settings from "@/pages/Settings";
 import WasteTracker from "@/pages/WasteTracker";
