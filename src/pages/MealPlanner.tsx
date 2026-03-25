@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startOfWeek, addDays, addWeeks, format, isToday } from 'date-fns';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
@@ -19,6 +19,7 @@ import GuidedSuggestions from '@/components/GuidedSuggestions';
 import MealRatingDialog from '@/components/MealRatingDialog';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
+import { searchRecipes } from '@/services/recipes/recipeProvider';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
@@ -377,9 +378,27 @@ export default function MealPlanner() {
                           )}
                           <button
                             className="flex-1 text-left text-xs font-medium truncate hover:underline"
-                            onClick={() => {
-                              if (plan.recipe_id.startsWith('custom-')) setProductInfoName(plan.title);
-                              else navigate(`/recipe/${plan.recipe_id}`);
+                            onClick={async () => {
+                              if (!plan.recipe_id.startsWith('custom-')) {
+                                navigate(`/recipe/${plan.recipe_id}`);
+                                return;
+                              }
+                              // Try to find a real recipe for custom meals
+                              toast.loading('Searching for recipe…', { id: 'recipe-search' });
+                              try {
+                                const results = await searchRecipes(plan.title);
+                                const match = results[0];
+                                if (match) {
+                                  toast.dismiss('recipe-search');
+                                  navigate(`/recipe/${match.id}`);
+                                } else {
+                                  toast.dismiss('recipe-search');
+                                  setProductInfoName(plan.title);
+                                }
+                              } catch {
+                                toast.dismiss('recipe-search');
+                                setProductInfoName(plan.title);
+                              }
                             }}
                           >
                             {plan.title}

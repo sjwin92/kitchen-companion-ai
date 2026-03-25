@@ -90,3 +90,39 @@ export async function getRecipeById(
   if (source === 'themealdb') return getTheMealDbRecipeById(id);
   return getHybridRecipeById(id);
 }
+
+/**
+ * Search recipes by title/keyword. Returns MealSuggestion[] for display.
+ * Uses TheMealDB search + local fallback.
+ */
+export async function searchRecipes(query: string): Promise<MealSuggestion[]> {
+  const projectId = (import.meta.env as Record<string, string | undefined>).VITE_SUPABASE_PROJECT_ID;
+  const anonKey = (import.meta.env as Record<string, string | undefined>).VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!projectId || !anonKey) return [];
+
+  try {
+    const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${query}`)}`;
+    const res = await fetch(url, {
+      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+    });
+    const data = await res.json();
+    if (data?.meals?.length) {
+      return data.meals.map((m: any) => ({
+        id: `mealdb-${m.idMeal}`,
+        title: m.strMeal,
+        image: m.strMealThumb,
+        ingredients: [],
+        instructions: '',
+        category: m.strCategory ?? '',
+      }));
+    }
+  } catch { /* fallback below */ }
+
+  // Fallback: search local recipes
+  const local = await loadLocalRecipes();
+  const q = query.toLowerCase();
+  return local
+    .filter(r => r.title.toLowerCase().includes(q))
+    .slice(0, 5)
+    .map(r => ({ ...r, ingredients: r.ingredients ?? [], instructions: r.instructions ?? '' }));
+}
