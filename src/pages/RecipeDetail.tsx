@@ -487,6 +487,12 @@ function formatNum(n: number): string {
   return n.toFixed(1);
 }
 
+function isInstructionTruncated(text: string): boolean {
+  if (!text) return false;
+  const trimmed = text.trim();
+  return trimmed.endsWith('...') || trimmed.endsWith('..') || (trimmed.length > 50 && !trimmed.endsWith('.') && !trimmed.endsWith('!') && !trimmed.endsWith(')'));
+}
+
 function parseSteps(text: string): string[] {
   if (!text) return [];
 
