@@ -316,11 +316,6 @@ export default function RecipeDetail() {
             ) : (
               <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{recipe.instructions || recipe.description}</p>
             )}
-            {isInstructionTruncated(recipe.instructions || recipe.description) && (
-              <p className="text-xs text-muted-foreground italic bg-muted/50 rounded-lg p-3">
-                ⚠️ This recipe's instructions appear to be incomplete. Try searching for "{recipe.title}" online for the full method.
-              </p>
-            )}
           </div>
         </div>
 
