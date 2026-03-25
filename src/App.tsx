@@ -15,6 +15,7 @@ import MealSuggestions from "@/pages/MealSuggestions";
 import RecipeDetail from "@/pages/RecipeDetail";
 import MissingIngredients from "@/pages/MissingIngredients";
 import SavedLists from "@/pages/SavedLists";
+import ShoppingList from "@/pages/ShoppingList";
 
 import Settings from "@/pages/Settings";
 import WasteTracker from "@/pages/WasteTracker";
@@ -59,7 +60,7 @@ function AppContent() {
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/missing/:id" element={<MissingIngredients />} />
         <Route path="/saved-lists" element={<SavedLists />} />
-        
+        <Route path="/shopping-list" element={<ShoppingList />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/waste" element={<WasteTracker />} />
         <Route path="/favorites" element={<Favorites />} />
