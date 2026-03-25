@@ -19,6 +19,7 @@ import GuidedSuggestions from '@/components/GuidedSuggestions';
 import MealRatingDialog from '@/components/MealRatingDialog';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
+import { searchRecipes } from '@/services/recipes/recipeProvider';
 import { toast } from 'sonner';
 
 const SLOT_COLORS: Record<MealSlot, string> = {
