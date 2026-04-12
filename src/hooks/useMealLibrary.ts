@@ -188,7 +188,7 @@ export function useMealLibrary() {
 
     await supabase
       .from('meal_library')
-      .update(updates)
+      .update(updates as any)
       .eq('id', libraryId);
 
     setMeals(prev => prev.map(m =>
