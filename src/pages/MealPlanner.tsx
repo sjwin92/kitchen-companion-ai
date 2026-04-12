@@ -7,6 +7,7 @@ import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
 import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
+import { useMealLibrary } from '@/hooks/useMealLibrary';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check, UtensilsCrossed, SkipForward, Leaf } from 'lucide-react';
@@ -45,6 +46,7 @@ export default function MealPlanner() {
   const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
   const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
+  const { saveMeal, saveBatch, trackSignal, fetchLibrary } = useMealLibrary();
   const {
     draggingPlanId, dragOverTarget,
     handleDragStart, handleDragEnd, handleDragOver, handleDragLeave,
@@ -90,6 +92,12 @@ export default function MealPlanner() {
     const success = await addPlan(recipeId, title, addDialog.date, addDialog.slot, image);
     if (success) {
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
+      // Persist to meal library
+      const entry = await saveMeal({
+        title, image, external_recipe_id: recipeId, source: 'external',
+        generation_context: { added_via: 'manual', slot: addDialog.slot },
+      });
+      if (entry) await trackSignal(entry.id, 'planned');
       toast.success(`Added ${title}`);
       setAddDialog(null);
     } else toast.error('Failed to add meal');
@@ -100,6 +108,11 @@ export default function MealPlanner() {
     const success = await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image);
     if (success) {
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
+      const entry = await saveMeal({
+        title, image, external_recipe_id: recipeId, source: 'external',
+        generation_context: { added_via: 'guided', slot: guidedSlot.slot },
+      });
+      if (entry) await trackSignal(entry.id, 'planned');
       toast.success(`Added ${title}`);
       setGuidedSlot(null);
     } else toast.error('Failed to add meal');
@@ -132,6 +145,14 @@ export default function MealPlanner() {
         newPlans.push({ id: '', recipe_id: recipeId, title: meal.title, planned_date: meal.date, meal_slot: meal.slot, image: image ?? null, status: 'planned', created_at: '' });
       }
     }
+    // Batch-save generated meals to library
+    const libraryInserts = draft.map(meal => ({
+      title: meal.title,
+      source: 'generated' as const,
+      generation_context: { search_term: meal.search_term, slot: meal.slot, date: meal.date },
+    }));
+    await saveBatch(libraryInserts);
+
     clearDraft();
     toast.success(`Added ${added} meals`);
     if (added > 0) {

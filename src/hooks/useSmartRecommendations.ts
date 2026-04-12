@@ -10,7 +10,11 @@ interface RecommendationSignals {
   topRatedRecipeIds: string[];
   avoidedIngredients: string[];
   frequentlyLoggedTitles: string[];
-  mealSlotPreferences: Record<string, string[]>; // slot -> recipe titles
+  mealSlotPreferences: Record<string, string[]>;
+  /** Promoted meals from the library ranked by success score */
+  libraryPromotedTitles: string[];
+  /** Recipe IDs that exist in the meal library */
+  libraryRecipeIds: string[];
 }
 
 export function useSmartRecommendations() {
@@ -91,6 +95,23 @@ export function useSmartRecommendations() {
         }
       });
 
+      // Fetch promoted library meals
+      const { data: libMeals } = await supabase
+        .from('meal_library')
+        .select('title, external_recipe_id, is_promoted, times_cooked, avg_rating')
+        .eq('user_id', userId)
+        .order('times_cooked', { ascending: false })
+        .limit(100);
+
+      const libraryPromotedTitles = (libMeals || [])
+        .filter((m: any) => m.is_promoted)
+        .map((m: any) => m.title?.toLowerCase())
+        .filter(Boolean);
+
+      const libraryRecipeIds = (libMeals || [])
+        .map((m: any) => m.external_recipe_id)
+        .filter(Boolean);
+
       const result: RecommendationSignals = {
         likedRecipeIds,
         dislikedRecipeIds,
@@ -100,6 +121,8 @@ export function useSmartRecommendations() {
         avoidedIngredients,
         frequentlyLoggedTitles,
         mealSlotPreferences,
+        libraryPromotedTitles,
+        libraryRecipeIds,
       };
 
       setSignals(result);
@@ -115,12 +138,19 @@ export function useSmartRecommendations() {
     return signals.dislikedRecipeIds.includes(recipeId) || signals.hiddenRecipeIds.includes(recipeId);
   }, [signals]);
 
-  /** Check if a recipe is highly recommended */
+  /** Check if a recipe is highly recommended (includes library-promoted meals) */
   const isRecommended = useCallback((recipeId: string): boolean => {
     if (!signals) return false;
     return signals.likedRecipeIds.includes(recipeId) ||
            signals.topRatedRecipeIds.includes(recipeId) ||
-           signals.stapleRecipeIds.includes(recipeId);
+           signals.stapleRecipeIds.includes(recipeId) ||
+           signals.libraryRecipeIds.includes(recipeId);
+  }, [signals]);
+
+  /** Check if a recipe exists in the user's meal library */
+  const isInLibrary = useCallback((recipeId: string): boolean => {
+    if (!signals) return false;
+    return signals.libraryRecipeIds.includes(recipeId);
   }, [signals]);
 
   /** Get all ingredients to avoid (profile + interaction-based) */
@@ -139,6 +169,7 @@ export function useSmartRecommendations() {
     loadSignals,
     shouldExclude,
     isRecommended,
+    isInLibrary,
     getAllAvoidedIngredients,
   };
 }
