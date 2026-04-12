@@ -7,6 +7,7 @@ import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
 import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
+import { useMealLibrary } from '@/hooks/useMealLibrary';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check, UtensilsCrossed, SkipForward, Leaf } from 'lucide-react';
