@@ -83,6 +83,99 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_library: {
+        Row: {
+          avg_rating: number | null
+          category: string | null
+          created_at: string
+          cuisine: string | null
+          description: string | null
+          dietary_tags: string[]
+          external_recipe_id: string | null
+          generation_context: Json | null
+          id: string
+          image: string | null
+          ingredients: Json
+          instructions: string | null
+          is_promoted: boolean
+          last_cooked_at: string | null
+          last_planned_at: string | null
+          missing_ingredients: Json
+          nutrition: Json | null
+          prep_time: string | null
+          source: string
+          substitutions: Json
+          times_cooked: number
+          times_planned: number
+          times_skipped: number
+          times_viewed: number
+          title: string
+          updated_at: string
+          use_soon_items_used: string[]
+          user_id: string
+        }
+        Insert: {
+          avg_rating?: number | null
+          category?: string | null
+          created_at?: string
+          cuisine?: string | null
+          description?: string | null
+          dietary_tags?: string[]
+          external_recipe_id?: string | null
+          generation_context?: Json | null
+          id?: string
+          image?: string | null
+          ingredients?: Json
+          instructions?: string | null
+          is_promoted?: boolean
+          last_cooked_at?: string | null
+          last_planned_at?: string | null
+          missing_ingredients?: Json
+          nutrition?: Json | null
+          prep_time?: string | null
+          source?: string
+          substitutions?: Json
+          times_cooked?: number
+          times_planned?: number
+          times_skipped?: number
+          times_viewed?: number
+          title: string
+          updated_at?: string
+          use_soon_items_used?: string[]
+          user_id: string
+        }
+        Update: {
+          avg_rating?: number | null
+          category?: string | null
+          created_at?: string
+          cuisine?: string | null
+          description?: string | null
+          dietary_tags?: string[]
+          external_recipe_id?: string | null
+          generation_context?: Json | null
+          id?: string
+          image?: string | null
+          ingredients?: Json
+          instructions?: string | null
+          is_promoted?: boolean
+          last_cooked_at?: string | null
+          last_planned_at?: string | null
+          missing_ingredients?: Json
+          nutrition?: Json | null
+          prep_time?: string | null
+          source?: string
+          substitutions?: Json
+          times_cooked?: number
+          times_planned?: number
+          times_skipped?: number
+          times_viewed?: number
+          title?: string
+          updated_at?: string
+          use_soon_items_used?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       meal_log: {
         Row: {
           calories: number | null
