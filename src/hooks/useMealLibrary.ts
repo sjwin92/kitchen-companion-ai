@@ -254,10 +254,12 @@ export function useMealLibrary() {
     if (candidates.length === 0) return;
 
     const ids = candidates.map(c => c.id);
-    await supabase
-      .from('meal_library')
-      .update({ is_promoted: true } as any)
-      .in('id', ids);
+    for (const id of ids) {
+      await supabase
+        .from('meal_library')
+        .update({ is_promoted: true } as any)
+        .eq('id', id);
+    }
 
     setMeals(prev => prev.map(m =>
       ids.includes(m.id) ? { ...m, is_promoted: true } : m
