@@ -16,29 +16,21 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
 
-const LOCATION_CONFIG: Record<StorageLocation, { label: string; icon: React.ReactNode; bg: string; iconColor: string }> = {
-  fridge: {
-    label: 'Fridge',
-    icon: <Refrigerator className="w-5 h-5" />,
-    bg: 'bg-primary/8 dark:bg-primary/15',
-    iconColor: 'text-primary',
-  },
-  freezer: {
-    label: 'Freezer',
-    icon: <Snowflake className="w-5 h-5" />,
-    bg: 'bg-primary/8 dark:bg-primary/15',
-    iconColor: 'text-primary',
-  },
-  cupboard: {
-    label: 'Cupboard',
-    icon: <Package className="w-5 h-5" />,
-    bg: 'bg-primary/8 dark:bg-primary/15',
-    iconColor: 'text-primary',
-  },
+const LOCATION_ICONS: Record<StorageLocation, React.ReactNode> = {
+  fridge: <Refrigerator className="w-5 h-5 text-primary" />,
+  freezer: <Snowflake className="w-5 h-5 text-primary" />,
+  cupboard: <Package className="w-5 h-5 text-primary" />,
+};
+
+const LOCATION_LABELS: Record<StorageLocation, string> = {
+  fridge: 'Fridge',
+  freezer: 'Freezer',
+  cupboard: 'Pantry',
 };
 
 const SLOT_EMOJI: Record<MealSlot, string> = {
@@ -52,7 +44,7 @@ export default function Dashboard() {
   const { inventory, preferences } = useApp();
   const activeInventory = inventory.filter(item => (item.status as string) !== 'used');
   const navigate = useNavigate();
-  const { plans: todayPlans, loading: plansLoading } = useMealPlans();
+  const { plans: todayPlans } = useMealPlans();
 
   const counts: Record<StorageLocation, number> = { fridge: 0, freezer: 0, cupboard: 0 };
   activeInventory.forEach(item => counts[item.location]++);
@@ -66,188 +58,260 @@ export default function Dashboard() {
     : 100;
 
   return (
-    <div className="p-4 pb-28 max-w-lg mx-auto space-y-5 animate-fade-in">
-      {/* Hero greeting */}
-      <div className="pt-3 pb-1">
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground mb-2">
-          Kitchen Companion
-        </p>
-        <h1 className="text-2xl font-bold tracking-tight leading-tight">
-          {greeting}{displayName}.
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-          {activeInventory.length > 0
-            ? <>
-                {useSoonItems.length > 0
-                  ? <>{useSoonItems.length} ingredient{useSoonItems.length > 1 ? 's' : ''} need attention today. </>
-                  : null}
-                Your kitchen is {optimizationPercent}% optimized.
-              </>
-            : 'Start by adding items to your kitchen.'}
-        </p>
+    <div className="p-4 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      {/* Hero greeting - two column on desktop */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+        <div className="pt-2">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
+            {greeting}{displayName}.
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-md">
+            {useSoonItems.length > 0 && (
+              <>{useSoonItems.length} ingredient{useSoonItems.length > 1 ? 's' : ''} need attention today. </>
+            )}
+            Your kitchen is currently {optimizationPercent}% optimized.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/waste')}
+          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-[0.14em] uppercase hover:bg-primary/12 transition-colors shrink-0"
+        >
+          <Sparkles className="w-4 h-4" />
+          Today's Goal: Zero Waste
+        </button>
       </div>
 
       {/* First-win activation */}
       <FirstWinCard />
 
-      {/* Action Required */}
-      {useSoonItems.length > 0 && (
-        <div className="animate-fade-in" style={{ animationDelay: '80ms', animationFillMode: 'backwards' }}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="section-title">Action Required</h2>
-            <button onClick={() => navigate('/use-soon')} className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors">
-              View All
-            </button>
-          </div>
-          <div className="space-y-2">
-            {useSoonItems.slice(0, 4).map((item, i) => (
+      {/* Main two-column layout */}
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 mt-5">
+        {/* Left column - Main content */}
+        <div className="space-y-6">
+          {/* Use Soon */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold tracking-tight">Use Soon</h2>
               <button
-                key={item.id}
                 onClick={() => navigate('/use-soon')}
-                className="glass-card w-full p-3.5 flex items-center gap-3.5 text-left animate-fade-in"
-                style={{ animationDelay: `${120 + i * 60}ms`, animationFillMode: 'backwards' }}
+                className="text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground hover:text-primary transition-colors"
               >
-                <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0">
-                  <Leaf className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">{item.name}</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {item.status === 'use-today' ? 'Expiring today' : 'Expiring soon'}
-                  </p>
-                </div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${
-                  item.status === 'use-today' ? 'bg-destructive/10 text-destructive' : 'bg-warning/10 text-warning'
-                }`}>
-                  {item.status === 'use-today' ? 'Critical' : 'High'}
-                </span>
+                View All
               </button>
-            ))}
+            </div>
+            {useSoonItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {useSoonItems.slice(0, 4).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => navigate('/use-soon')}
+                    className="glass-card p-4 flex items-center gap-3.5 text-left"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0">
+                      <Leaf className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate">{item.name}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {item.status === 'use-today' ? 'Expires today' : 'Expiring soon'}
+                      </p>
+                    </div>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md whitespace-nowrap ${
+                      item.status === 'use-today' ? 'bg-destructive/10 text-destructive' : 'bg-warning/10 text-warning'
+                    }`}>
+                      {item.status === 'use-today' ? 'High Priority' : 'Medium'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="glass-card p-6 text-center">
+                <CheckCircle2 className="w-6 h-6 text-success mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">No items need immediate attention. Great job!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Featured Recommendation */}
+          <button
+            onClick={() => navigate('/meals')}
+            className="w-full rounded-xl overflow-hidden text-left group"
+            style={{ boxShadow: 'var(--shadow-card)' }}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr] bg-card">
+              <div className="aspect-[4/3] sm:aspect-auto bg-surface-high relative overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800"
+                  alt="Fresh bowl"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-5 md:p-6 flex flex-col justify-center">
+                <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-primary mb-2">
+                  Recommendation
+                </p>
+                <h3 className="text-xl md:text-2xl font-bold tracking-tight leading-tight mb-2">
+                  What Can I Make?
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  Find recipes that use your ingredients. Prioritize expiring items to reduce waste.
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
+                  View Recipes <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </div>
+          </button>
+
+          {/* Today's Schedule */}
+          <div>
+            <h2 className="text-lg font-bold tracking-tight mb-3">Today's Schedule</h2>
+            <div className="glass-card p-4 space-y-0">
+              {todayPlans.length > 0 ? (
+                MEAL_SLOTS.map(slot => {
+                  const plan = todayPlans.find(p => p.meal_slot === slot);
+                  if (!plan) return null;
+                  return (
+                    <button
+                      key={slot}
+                      onClick={() => navigate('/meal-planner')}
+                      className="w-full flex items-center gap-3.5 py-3 border-b border-border/40 last:border-0 text-left hover:bg-surface-low/50 transition-colors rounded-lg px-2"
+                    >
+                      <span className="text-xs font-bold text-muted-foreground w-12 shrink-0">
+                        {slot === 'breakfast' ? '08:00' : slot === 'lunch' ? '12:30' : slot === 'dinner' ? '19:00' : '15:00'}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{plan.title}</p>
+                        <p className="text-[11px] text-muted-foreground capitalize">
+                          {plan.meal_slot} • Planned
+                        </p>
+                      </div>
+                      {plan.image && (
+                        <img src={plan.image} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                      )}
+                    </button>
+                  );
+                })
+              ) : (
+                <button
+                  onClick={() => navigate('/meal-planner')}
+                  className="w-full flex items-center gap-3 py-3 text-left"
+                >
+                  <div className="icon-container bg-primary/8">
+                    <CalendarDays className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">No meals planned</p>
+                    <p className="text-[11px] text-muted-foreground">Tap to plan your meals for the week</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Quick actions - mobile only */}
+          <div className="md:hidden space-y-3">
+            <h2 className="section-title">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-2.5">
+              {[
+                { label: 'Log a Meal', icon: Camera, path: '/meal-log' },
+                { label: 'Weekly Insights', icon: TrendingUp, path: '/weekly-insights' },
+                { label: 'Scan Receipt', icon: Clock, path: '/add-food' },
+                { label: 'Shopping List', icon: ShoppingCart, path: '/shopping-list' },
+              ].map(action => (
+                <button
+                  key={action.label}
+                  onClick={() => navigate(action.path)}
+                  className="glass-card p-3.5 flex flex-col items-start gap-2.5 text-left"
+                >
+                  <div className="icon-container bg-primary/8">
+                    <action.icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="text-xs font-bold">{action.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Inventory Status */}
-      <div className="animate-fade-in" style={{ animationDelay: '160ms', animationFillMode: 'backwards' }}>
-        <h2 className="section-title mb-3">Inventory Status</h2>
-        <div className="grid grid-cols-3 gap-2.5">
-          {(Object.keys(counts) as StorageLocation[]).map((loc, i) => {
-            const capacity = loc === 'fridge' ? 50 : loc === 'freezer' ? 30 : 100;
-            const percent = Math.min(100, Math.round((counts[loc] / capacity) * 100));
-            return (
-              <button
-                key={loc}
-                onClick={() => navigate('/inventory')}
-                className="glass-card p-3.5 text-left group animate-fade-in"
-                style={{ animationDelay: `${200 + i * 60}ms`, animationFillMode: 'backwards' }}
-              >
-                <div className={`icon-container mb-2.5 ${LOCATION_CONFIG[loc].bg} ${LOCATION_CONFIG[loc].iconColor}`}>
-                  {LOCATION_CONFIG[loc].icon}
-                </div>
-                <p className="text-[11px] text-muted-foreground font-medium">{LOCATION_CONFIG[loc].label}</p>
-                <p className="text-lg font-bold tracking-tight mt-0.5">{counts[loc]} <span className="text-[11px] font-medium text-muted-foreground">Items</span></p>
-                {/* Mini progress bar */}
-                <div className="mt-2 h-1 rounded-full bg-surface-high overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary/60 transition-all duration-500"
-                    style={{ width: `${percent}%` }}
-                  />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Today's Meal Plan */}
-      <div className="animate-fade-in" style={{ animationDelay: '280ms', animationFillMode: 'backwards' }}>
-        <h2 className="section-title mb-3">Today's Schedule</h2>
-        <button
-          onClick={() => navigate('/meal-planner')}
-          className="glass-card w-full p-4 text-left"
-        >
-          {todayPlans.length > 0 ? (
-            <div className="space-y-2">
-              {MEAL_SLOTS.map(slot => {
-                const plan = todayPlans.find(p => p.meal_slot === slot);
-                if (!plan) return null;
+        {/* Right column - Sidebar */}
+        <div className="space-y-5">
+          {/* Inventory Status */}
+          <div className="glass-card p-5">
+            <h3 className="section-title mb-4">Inventory Status</h3>
+            <div className="space-y-4">
+              {(Object.keys(counts) as StorageLocation[]).map((loc) => {
+                const capacity = loc === 'fridge' ? 50 : loc === 'freezer' ? 30 : 100;
+                const percent = Math.min(100, Math.round((counts[loc] / capacity) * 100));
                 return (
-                  <div key={slot} className="flex items-center gap-3 rounded-lg bg-surface-low px-3 py-2.5">
-                    <span className="text-sm">{SLOT_EMOJI[slot]}</span>
-                    {plan.image && (
-                      <img src={plan.image} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold truncate">{plan.title}</p>
-                      <p className="text-[10px] text-muted-foreground capitalize">{slot}</p>
+                  <button
+                    key={loc}
+                    onClick={() => navigate('/inventory')}
+                    className="w-full text-left group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2.5">
+                        {LOCATION_ICONS[loc]}
+                        <span className="text-sm font-semibold">{LOCATION_LABELS[loc]}</span>
+                      </div>
+                      <span className="text-sm font-bold">{counts[loc]} Items</span>
                     </div>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-primary/40" />
-                  </div>
+                    <div className="h-1.5 rounded-full bg-surface-high overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-primary/50 transition-all duration-500"
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                  </button>
                 );
               })}
             </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <div className="icon-container bg-primary/8">
-                <CalendarDays className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold">No meals planned</p>
-                <p className="text-[11px] text-muted-foreground">Tap to plan your meals for the week</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto" />
-            </div>
-          )}
-        </button>
-      </div>
-
-      {/* Primary CTA */}
-      <button
-        onClick={() => navigate('/meals')}
-        className="w-full rounded-xl p-5 text-left text-primary-foreground relative overflow-hidden animate-fade-in group"
-        style={{
-          background: 'var(--gradient-primary)',
-          boxShadow: 'var(--shadow-glow-primary)',
-          animationDelay: '340ms',
-          animationFillMode: 'backwards',
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center">
-              <ChefHat className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-sm">What Can I Make?</h3>
-              <p className="text-xs opacity-75">Find recipes with your ingredients</p>
-            </div>
           </div>
-          <Sparkles className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-        </div>
-      </button>
 
-      {/* Quick actions grid */}
-      <div className="space-y-3">
-        <h2 className="section-title">Quick Actions</h2>
-        <div className="grid grid-cols-2 gap-2.5">
-          {[
-            { label: 'Log a Meal', icon: Camera, path: '/meal-log', delay: 380 },
-            { label: 'Weekly Insights', icon: TrendingUp, path: '/weekly-insights', delay: 420 },
-            { label: 'Scan Receipt', icon: Clock, path: '/add-food', delay: 460 },
-            { label: 'Shopping List', icon: ShoppingCart, path: '/shopping-list', delay: 500 },
-          ].map(action => (
-            <button
-              key={action.label}
-              onClick={() => navigate(action.path)}
-              className="glass-card p-3.5 flex flex-col items-start gap-2.5 text-left animate-fade-in"
-              style={{ animationDelay: `${action.delay}ms`, animationFillMode: 'backwards' }}
-            >
-              <div className="icon-container bg-primary/8 dark:bg-primary/15">
-                <action.icon className="w-4 h-4 text-primary" />
-              </div>
-              <span className="text-xs font-bold">{action.label}</span>
-            </button>
-          ))}
+          {/* Shopping List */}
+          <button
+            onClick={() => navigate('/shopping-list')}
+            className="glass-card p-5 w-full text-left"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="section-title">Shopping List</h3>
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">View and manage your shopping list</p>
+          </button>
+
+          {/* Weekly Impact */}
+          <div className="glass-card p-5">
+            <p className="section-title mb-2">Weekly Impact</p>
+            <div className="flex items-center gap-2 mb-1">
+              <Zap className="w-4 h-4 text-primary" />
+              <p className="text-sm font-bold">Zero Waste Goal</p>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Track your progress in reducing food waste and optimizing your kitchen.
+            </p>
+          </div>
+
+          {/* Quick Actions - desktop */}
+          <div className="hidden md:block space-y-2">
+            {[
+              { label: 'Log a Meal', icon: Camera, path: '/meal-log' },
+              { label: 'Weekly Insights', icon: TrendingUp, path: '/weekly-insights' },
+              { label: 'Scan Receipt', icon: Clock, path: '/add-food' },
+            ].map(action => (
+              <button
+                key={action.label}
+                onClick={() => navigate(action.path)}
+                className="w-full glass-card p-3.5 flex items-center gap-3 text-left"
+              >
+                <div className="icon-container bg-primary/8">
+                  <action.icon className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-xs font-bold">{action.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
