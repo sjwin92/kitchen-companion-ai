@@ -46,6 +46,7 @@ export default function MealPlanner() {
   const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
   const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
+  const { saveMeal, saveBatch, trackSignal, fetchLibrary } = useMealLibrary();
   const {
     draggingPlanId, dragOverTarget,
     handleDragStart, handleDragEnd, handleDragOver, handleDragLeave,
