@@ -145,6 +145,14 @@ export default function MealPlanner() {
         newPlans.push({ id: '', recipe_id: recipeId, title: meal.title, planned_date: meal.date, meal_slot: meal.slot, image: image ?? null, status: 'planned', created_at: '' });
       }
     }
+    // Batch-save generated meals to library
+    const libraryInserts = draft.map(meal => ({
+      title: meal.title,
+      source: 'generated' as const,
+      generation_context: { search_term: meal.search_term, slot: meal.slot, date: meal.date },
+    }));
+    await saveBatch(libraryInserts);
+
     clearDraft();
     toast.success(`Added ${added} meals`);
     if (added > 0) {
