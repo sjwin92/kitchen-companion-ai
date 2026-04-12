@@ -195,6 +195,11 @@
     @apply text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground;
   }
 
+  .font-display {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 800;
+  }
+
   .gradient-text {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
