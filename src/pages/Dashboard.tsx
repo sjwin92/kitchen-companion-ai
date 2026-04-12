@@ -5,18 +5,16 @@ import {
   Refrigerator,
   Snowflake,
   Package,
-  AlertTriangle,
-  ChefHat,
-  ShoppingCart,
   ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  Clock,
+  Zap,
   Leaf,
   CalendarDays,
   Camera,
   TrendingUp,
-  CheckCircle2,
-  Clock,
-  Sparkles,
-  Zap,
+  ShoppingCart,
 } from 'lucide-react';
 import { StorageLocation } from '@/types';
 import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
@@ -31,13 +29,6 @@ const LOCATION_LABELS: Record<StorageLocation, string> = {
   fridge: 'Fridge',
   freezer: 'Freezer',
   cupboard: 'Pantry',
-};
-
-const SLOT_EMOJI: Record<MealSlot, string> = {
-  breakfast: '🌅',
-  lunch: '☀️',
-  dinner: '🌙',
-  snack: '🍎',
 };
 
 export default function Dashboard() {
@@ -58,14 +49,14 @@ export default function Dashboard() {
     : 100;
 
   return (
-    <div className="p-4 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
-      {/* Hero greeting - two column on desktop */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+    <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      {/* Hero greeting — editorial style */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
         <div className="pt-2">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight font-display">
             {greeting}{displayName}.
           </h1>
-          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-md">
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-md">
             {useSoonItems.length > 0 && (
               <>{useSoonItems.length} ingredient{useSoonItems.length > 1 ? 's' : ''} need attention today. </>
             )}
@@ -85,13 +76,13 @@ export default function Dashboard() {
       <FirstWinCard />
 
       {/* Main two-column layout */}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 mt-5">
-        {/* Left column - Main content */}
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8 mt-6">
+        {/* Left column */}
+        <div className="space-y-8">
           {/* Use Soon */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-bold tracking-tight">Use Soon</h2>
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold tracking-tight">Use Soon</h2>
               <button
                 onClick={() => navigate('/use-soon')}
                 className="text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground hover:text-primary transition-colors"
@@ -113,7 +104,7 @@ export default function Dashboard() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">{item.name}</p>
                       <p className="text-[11px] text-muted-foreground">
-                        {item.status === 'use-today' ? 'Expires today' : 'Expiring soon'}
+                        {item.status === 'use-today' ? 'Expires today' : `${item.daysUntilExpiry} days remaining`}
                       </p>
                     </div>
                     <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md whitespace-nowrap ${
@@ -130,9 +121,9 @@ export default function Dashboard() {
                 <p className="text-sm text-muted-foreground">No items need immediate attention. Great job!</p>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* Featured Recommendation */}
+          {/* Featured Recommendation — large editorial card */}
           <button
             onClick={() => navigate('/meals')}
             className="w-full rounded-xl overflow-hidden text-left group"
@@ -156,34 +147,37 @@ export default function Dashboard() {
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   Find recipes that use your ingredients. Prioritize expiring items to reduce waste.
                 </p>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
-                  View Recipes <ArrowRight className="w-3.5 h-3.5" />
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">
+                  Start Cooking <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </div>
           </button>
 
-          {/* Today's Schedule */}
-          <div>
-            <h2 className="text-lg font-bold tracking-tight mb-3">Today's Schedule</h2>
+          {/* Today's Schedule — timeline style */}
+          <section>
+            <h2 className="text-xl font-bold tracking-tight mb-4">Today's Schedule</h2>
             <div className="glass-card p-4 space-y-0">
               {todayPlans.length > 0 ? (
                 MEAL_SLOTS.map(slot => {
                   const plan = todayPlans.find(p => p.meal_slot === slot);
                   if (!plan) return null;
+                  const isActive = slot === 'lunch';
                   return (
                     <button
                       key={slot}
                       onClick={() => navigate('/meal-planner')}
-                      className="w-full flex items-center gap-3.5 py-3 border-b border-border/40 last:border-0 text-left hover:bg-surface-low/50 transition-colors rounded-lg px-2"
+                      className={`w-full flex items-center gap-4 py-3.5 border-b border-border/40 last:border-0 text-left transition-colors rounded-lg px-3 ${isActive ? 'bg-primary/5' : 'hover:bg-surface-low/50'}`}
                     >
-                      <span className="text-xs font-bold text-muted-foreground w-12 shrink-0">
+                      <span className={`text-sm font-bold w-14 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                         {slot === 'breakfast' ? '08:00' : slot === 'lunch' ? '12:30' : slot === 'dinner' ? '19:00' : '15:00'}
                       </span>
+                      <div className={`w-px h-8 shrink-0 ${isActive ? 'bg-primary' : 'bg-border'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold truncate">{plan.title}</p>
                         <p className="text-[11px] text-muted-foreground capitalize">
-                          {plan.meal_slot} • Planned
+                          {plan.status === 'planned' ? 'Planned' : plan.status === 'cooked' ? 'Completed' : plan.status}
+                          {isActive && ' · Active Task'}
                         </p>
                       </div>
                       {plan.image && (
@@ -208,7 +202,7 @@ export default function Dashboard() {
                 </button>
               )}
             </div>
-          </div>
+          </section>
 
           {/* Quick actions - mobile only */}
           <div className="md:hidden space-y-3">
@@ -235,14 +229,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right column - Sidebar */}
+        {/* Right column — sidebar */}
         <div className="space-y-5">
           {/* Inventory Status */}
           <div className="glass-card p-5">
-            <h3 className="section-title mb-4">Inventory Status</h3>
-            <div className="space-y-4">
+            <h3 className="section-title mb-5">Inventory Status</h3>
+            <div className="space-y-5">
               {(Object.keys(counts) as StorageLocation[]).map((loc) => {
-                const capacity = loc === 'fridge' ? 50 : loc === 'freezer' ? 30 : 100;
+                const capacity = loc === 'fridge' ? 50 : loc === 'freezer' ? 30 : 150;
                 const percent = Math.min(100, Math.round((counts[loc] / capacity) * 100));
                 return (
                   <button
@@ -250,7 +244,7 @@ export default function Dashboard() {
                     onClick={() => navigate('/inventory')}
                     className="w-full text-left group"
                   >
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2.5">
                         {LOCATION_ICONS[loc]}
                         <span className="text-sm font-semibold">{LOCATION_LABELS[loc]}</span>
@@ -278,12 +272,11 @@ export default function Dashboard() {
               <h3 className="section-title">Shopping List</h3>
               <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground mt-2">View and manage your shopping list</p>
           </button>
 
           {/* Weekly Impact */}
           <div className="glass-card p-5">
-            <p className="section-title mb-2">Weekly Impact</p>
+            <p className="section-title mb-3">Weekly Impact</p>
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-4 h-4 text-primary" />
               <p className="text-sm font-bold">Zero Waste Goal</p>
@@ -293,7 +286,7 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Quick Actions - desktop */}
+          {/* Quick Actions — desktop */}
           <div className="hidden md:block space-y-2">
             {[
               { label: 'Log a Meal', icon: Camera, path: '/meal-log' },
