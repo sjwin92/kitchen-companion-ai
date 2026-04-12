@@ -1,6 +1,7 @@
 import { ThumbsUp, ThumbsDown, EyeOff, Pin } from 'lucide-react';
 import { useInteractions } from '@/hooks/useInteractions';
 import { useStapleMeals } from '@/hooks/useStapleMeals';
+import { useMealLibrary } from '@/hooks/useMealLibrary';
 import { toast } from 'sonner';
 
 interface Props {
@@ -14,10 +15,17 @@ interface Props {
 export default function RecipeFeedbackBar({ recipeId, recipeTitle, recipeImage, recipeCategory, compact }: Props) {
   const { track } = useInteractions();
   const { isStaple, toggleStaple } = useStapleMeals();
+  const { saveMeal } = useMealLibrary();
   const stapled = isStaple(recipeId);
 
   const handleLike = async () => {
     await track('recipe_liked', { recipeId, recipeTitle });
+    // Also save to meal library as a positive signal
+    await saveMeal({
+      title: recipeTitle, image: recipeImage, category: recipeCategory,
+      external_recipe_id: recipeId, source: 'external',
+      generation_context: { signal: 'liked' },
+    });
     toast.success('Liked!');
   };
 
