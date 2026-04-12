@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
+import TopNav from "@/components/TopNav";
 import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
