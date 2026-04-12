@@ -141,7 +141,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateItem = useCallback(async (id: string, updates: Partial<FoodItem>) => {
-    const dbUpdates: Record<string, unknown> = {};
+    const dbUpdates: { name?: string; quantity?: string; location?: string; days_until_expiry?: number; expiry_date?: string; status?: string } = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
     if (updates.quantity !== undefined) dbUpdates.quantity = updates.quantity;
     if (updates.location !== undefined) dbUpdates.location = updates.location;
