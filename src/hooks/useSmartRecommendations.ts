@@ -95,6 +95,23 @@ export function useSmartRecommendations() {
         }
       });
 
+      // Fetch promoted library meals
+      const { data: libMeals } = await supabase
+        .from('meal_library')
+        .select('title, external_recipe_id, is_promoted, times_cooked, avg_rating')
+        .eq('user_id', userId)
+        .order('times_cooked', { ascending: false })
+        .limit(100);
+
+      const libraryPromotedTitles = (libMeals || [])
+        .filter((m: any) => m.is_promoted)
+        .map((m: any) => m.title?.toLowerCase())
+        .filter(Boolean);
+
+      const libraryRecipeIds = (libMeals || [])
+        .map((m: any) => m.external_recipe_id)
+        .filter(Boolean);
+
       const result: RecommendationSignals = {
         likedRecipeIds,
         dislikedRecipeIds,
@@ -104,6 +121,8 @@ export function useSmartRecommendations() {
         avoidedIngredients,
         frequentlyLoggedTitles,
         mealSlotPreferences,
+        libraryPromotedTitles,
+        libraryRecipeIds,
       };
 
       setSignals(result);
