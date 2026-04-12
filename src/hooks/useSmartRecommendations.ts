@@ -169,6 +169,7 @@ export function useSmartRecommendations() {
     loadSignals,
     shouldExclude,
     isRecommended,
+    isInLibrary,
     getAllAvoidedIngredients,
   };
 }
