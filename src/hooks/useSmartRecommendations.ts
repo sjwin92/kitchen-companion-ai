@@ -138,12 +138,19 @@ export function useSmartRecommendations() {
     return signals.dislikedRecipeIds.includes(recipeId) || signals.hiddenRecipeIds.includes(recipeId);
   }, [signals]);
 
-  /** Check if a recipe is highly recommended */
+  /** Check if a recipe is highly recommended (includes library-promoted meals) */
   const isRecommended = useCallback((recipeId: string): boolean => {
     if (!signals) return false;
     return signals.likedRecipeIds.includes(recipeId) ||
            signals.topRatedRecipeIds.includes(recipeId) ||
-           signals.stapleRecipeIds.includes(recipeId);
+           signals.stapleRecipeIds.includes(recipeId) ||
+           signals.libraryRecipeIds.includes(recipeId);
+  }, [signals]);
+
+  /** Check if a recipe exists in the user's meal library */
+  const isInLibrary = useCallback((recipeId: string): boolean => {
+    if (!signals) return false;
+    return signals.libraryRecipeIds.includes(recipeId);
   }, [signals]);
 
   /** Get all ingredients to avoid (profile + interaction-based) */
