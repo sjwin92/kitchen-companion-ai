@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
+import TopNav from "@/components/TopNav";
 import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
@@ -50,26 +51,29 @@ function AppContent() {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/add-food" element={<AddFood />} />
-        <Route path="/barcode" element={<BarcodeScanner />} />
-        <Route path="/use-soon" element={<UseSoon />} />
-        <Route path="/meals" element={<MealSuggestions />} />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
-        <Route path="/missing/:id" element={<MissingIngredients />} />
-        <Route path="/saved-lists" element={<SavedLists />} />
-        <Route path="/shopping-list" element={<ShoppingList />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/waste" element={<WasteTracker />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/meal-planner" element={<MealPlanner />} />
-        <Route path="/meal-log" element={<MealLog />} />
-        <Route path="/meal-history" element={<MealHistory />} />
-        <Route path="/weekly-insights" element={<WeeklyInsights />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <TopNav />
+      <div className="md:pt-14">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/add-food" element={<AddFood />} />
+          <Route path="/barcode" element={<BarcodeScanner />} />
+          <Route path="/use-soon" element={<UseSoon />} />
+          <Route path="/meals" element={<MealSuggestions />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/missing/:id" element={<MissingIngredients />} />
+          <Route path="/saved-lists" element={<SavedLists />} />
+          <Route path="/shopping-list" element={<ShoppingList />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/waste" element={<WasteTracker />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/meal-planner" element={<MealPlanner />} />
+          <Route path="/meal-log" element={<MealLog />} />
+          <Route path="/meal-history" element={<MealHistory />} />
+          <Route path="/weekly-insights" element={<WeeklyInsights />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
       <BottomNav />
     </>
   );

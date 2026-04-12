@@ -11,7 +11,7 @@ const NAV_ITEMS = [
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="max-w-lg mx-auto px-3 pb-1">
         <div
           className="flex items-end rounded-t-xl border border-b-0 border-border/40"
