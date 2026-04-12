@@ -108,6 +108,11 @@ export default function MealPlanner() {
     const success = await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image);
     if (success) {
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
+      const entry = await saveMeal({
+        title, image, external_recipe_id: recipeId, source: 'external',
+        generation_context: { added_via: 'guided', slot: guidedSlot.slot },
+      });
+      if (entry) await trackSignal(entry.id, 'planned');
       toast.success(`Added ${title}`);
       setGuidedSlot(null);
     } else toast.error('Failed to add meal');
