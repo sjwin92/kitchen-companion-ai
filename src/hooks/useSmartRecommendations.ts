@@ -10,7 +10,11 @@ interface RecommendationSignals {
   topRatedRecipeIds: string[];
   avoidedIngredients: string[];
   frequentlyLoggedTitles: string[];
-  mealSlotPreferences: Record<string, string[]>; // slot -> recipe titles
+  mealSlotPreferences: Record<string, string[]>;
+  /** Promoted meals from the library ranked by success score */
+  libraryPromotedTitles: string[];
+  /** Recipe IDs that exist in the meal library */
+  libraryRecipeIds: string[];
 }
 
 export function useSmartRecommendations() {
