@@ -29,6 +29,15 @@ export interface MealLibraryEntry {
   last_planned_at: string | null;
   last_cooked_at: string | null;
   is_promoted: boolean;
+  lifecycle_status: 'private' | 'validated' | 'shared';
+  quality_score: number;
+  promotion_score: number;
+  recommendation_reason: string | null;
+  effort_level: string | null;
+  original_user_id: string | null;
+  content_status: string | null;
+  content_score: number;
+  youtube_ready: boolean;
   created_at: string;
   updated_at: string;
 }
