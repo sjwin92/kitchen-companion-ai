@@ -478,6 +478,52 @@ export default function MealSuggestions() {
                 </div>
               )}
 
+              {/* Action buttons */}
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="flex-1 rounded-xl text-xs gap-1.5"
+                  onClick={async () => {
+                    if (!session?.user) { toast.error('Please sign in'); return; }
+                    const today = new Date();
+                    const dateStr = today.toISOString().split('T')[0];
+                    const { error } = await supabase.from('meal_plans').insert({
+                      user_id: session.user.id,
+                      recipe_id: savedMealId || generatedRecipe.title,
+                      title: generatedRecipe.title,
+                      planned_date: dateStr,
+                      meal_slot: 'dinner',
+                      image: generatedRecipe.image || null,
+                    });
+                    if (!error) {
+                      if (savedMealId) await trackSignal(savedMealId, 'planned');
+                      toast.success('Added to meal plan!');
+                    } else {
+                      toast.error('Failed to add to plan');
+                    }
+                  }}
+                >
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  Add to Plan
+                </Button>
+                <Button
+                  size="sm"
+                  variant={isFavorite(savedMealId || generatedRecipe.title) ? 'default' : 'outline'}
+                  className="rounded-xl text-xs gap-1.5"
+                  onClick={() => {
+                    toggleFavorite(
+                      savedMealId || generatedRecipe.title,
+                      generatedRecipe.title,
+                      generatedRecipe.image || undefined,
+                      generatedRecipe.cuisine || undefined
+                    );
+                  }}
+                >
+                  <Heart className={`w-3.5 h-3.5 ${isFavorite(savedMealId || generatedRecipe.title) ? 'fill-current' : ''}`} />
+                  {isFavorite(savedMealId || generatedRecipe.title) ? 'Favorited' : 'Favorite'}
+                </Button>
+              </div>
+
               {/* Feedback */}
               {savedMealId && (
                 <MealFeedbackPanel
