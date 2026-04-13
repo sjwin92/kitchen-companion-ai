@@ -51,19 +51,55 @@ export default function MealSuggestions() {
 
   const filteredMeals = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
+
+    // Build dietary exclusion lists from user preferences
+    const nonVeganIngredients = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'bacon', 'steak', 'turkey', 'egg', 'cheese', 'cream', 'butter', 'milk', 'yogurt', 'honey', 'duck', 'crab', 'lobster', 'anchov', 'gelatin', 'lard', 'suet', 'whey'];
+    const nonVegIngredients = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'bacon', 'steak', 'turkey', 'duck', 'crab', 'lobster', 'anchov', 'gelatin', 'lard', 'suet'];
+
+    const prefs = preferences.dietaryPreferences.map(p => p.toLowerCase());
+    const isVegan = prefs.some(p => p.includes('vegan') && !p.includes('non'));
+    const isVegetarian = prefs.some(p => p.includes('vegetarian') || p.includes('plant'));
+    const isGlutenFree = prefs.some(p => p.includes('gluten'));
+    const isDairyFree = prefs.some(p => p.includes('dairy'));
+
+    const containsAny = (meal: MealWithStatus, terms: string[]) => {
+      const text = [meal.title, ...meal.ingredients].join(' ').toLowerCase();
+      return terms.some(t => text.includes(t));
+    };
+
     return mealsWithStatus.filter(meal => {
       if (meal.matchPercent < minMatchPercent) return false;
+
+      // Apply user dietary preference filters automatically
+      if (isVegan && containsAny(meal, nonVeganIngredients)) return false;
+      if (isVegetarian && containsAny(meal, nonVegIngredients)) return false;
+      if (isGlutenFree && containsAny(meal, ['flour', 'bread', 'pasta', 'wheat', 'barley', 'rye', 'couscous', 'noodle', 'spaghetti', 'penne', 'macaroni'])) return false;
+      if (isDairyFree && containsAny(meal, ['cheese', 'cream', 'butter', 'milk', 'yogurt', 'whey'])) return false;
+
+      // Apply disliked ingredients filter
+      if (preferences.dislikedIngredients.length > 0) {
+        const disliked = preferences.dislikedIngredients.map(d => d.toLowerCase());
+        if (containsAny(meal, disliked)) return false;
+      }
+
+      // Apply allergy filter
+      if (preferences.allergies.length > 0) {
+        const allergies = preferences.allergies.map(a => a.toLowerCase());
+        if (containsAny(meal, allergies)) return false;
+      }
+
+      // Search term filtering
       if (!query) return true;
       const dietaryTerms: Record<string, (m: MealWithStatus) => boolean> = {
-        vegan: m => { const nonVegan = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'bacon', 'steak', 'turkey', 'egg', 'cheese', 'cream', 'butter', 'milk', 'yogurt', 'honey']; return !nonVegan.some(nv => m.title.toLowerCase().includes(nv) || m.ingredients.map(i => i.toLowerCase()).join(' ').includes(nv)); },
-        vegetarian: m => { const nonVeg = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'shrimp', 'bacon', 'steak', 'turkey']; return !nonVeg.some(nv => m.title.toLowerCase().includes(nv) || m.ingredients.map(i => i.toLowerCase()).join(' ').includes(nv)); },
+        vegan: m => !containsAny(m, nonVeganIngredients),
+        vegetarian: m => !containsAny(m, nonVegIngredients),
       };
       for (const [term, filterFn] of Object.entries(dietaryTerms)) {
         if (query === term || query === term.slice(0, -1)) return filterFn(meal);
       }
       return meal.title.toLowerCase().includes(query) || (meal.category || '').toLowerCase().includes(query) || meal.ingredients.some(ing => ing.toLowerCase().includes(query));
     });
-  }, [mealsWithStatus, searchTerm, minMatchPercent]);
+  }, [mealsWithStatus, searchTerm, minMatchPercent, preferences.dietaryPreferences, preferences.dislikedIngredients, preferences.allergies]);
 
   const visibleMeals = useMemo(() => filteredMeals.slice(0, MAX_VISIBLE_MEALS), [filteredMeals]);
 
