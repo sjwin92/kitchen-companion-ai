@@ -132,6 +132,30 @@ export default function MealSuggestions() {
       });
       if (error || data?.error) throw new Error(data?.error || 'Generation failed');
       setGeneratedRecipe(data);
+      
+      // Auto-save generated meal to library
+      const entry = await saveMeal({
+        title: data.title,
+        description: data.description,
+        instructions: data.instructions?.join('\n') || null,
+        ingredients: data.ingredients?.map((ing: string) => ({ name: ing })) || [],
+        nutrition: data.nutrition || {},
+        dietary_tags: data.dietary_tags || [],
+        cuisine: data.cuisine || null,
+        prep_time: data.prep_time || null,
+        source: 'generated',
+        use_soon_items_used: data.pantry_items_used || [],
+        generation_context: {
+          servings: generatorServings,
+          dietary: preferences.dietaryPreferences,
+          inventory_count: inventory.length,
+        },
+      });
+      if (entry) {
+        setSavedMealId(entry.id);
+        await trackSignal(entry.id, 'viewed');
+      }
+      
       toast.success(`Generated: ${data.title}`);
     } catch (e: any) {
       toast.error(e.message || 'Failed to generate recipe');
