@@ -108,6 +108,31 @@ export default function MealSuggestions() {
   // Find the top featured meal with an image and expiring ingredients
   const featured = visibleMeals.find(m => m.image && m.matchPercent >= 50);
 
+  const generateRecipe = async () => {
+    if (!session?.user) { toast.error('Please sign in first'); return; }
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-recipe', {
+        body: {
+          inventoryItems: inventory.map(i => ({ name: i.name, daysUntilExpiry: i.daysUntilExpiry })),
+          dietaryPreferences: preferences.dietaryPreferences,
+          allergies: preferences.allergies,
+          dislikedIngredients: preferences.dislikedIngredients,
+          servings: generatorServings,
+          cuisinePreferences: preferences.preferredCuisines,
+          cookingTime: preferences.cookingTime,
+        },
+      });
+      if (error || data?.error) throw new Error(data?.error || 'Generation failed');
+      setGeneratedRecipe(data);
+      toast.success(`Generated: ${data.title}`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to generate recipe');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const addAllMissing = async (meal: MealWithStatus) => {
     if (!session?.user) return;
     const items = meal.missing.map(name => ({ user_id: session.user.id, name, quantity: '1' }));
