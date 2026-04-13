@@ -11,11 +11,13 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search, Plus, ArrowRight, Heart, CalendarDays, Sparkles, Users } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus, ArrowRight, Heart, CalendarDays, Sparkles, Users, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
 import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
+import ProductInfoDialog from '@/components/ProductInfoDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MAX_VISIBLE_MEALS = 30;
 
@@ -28,7 +30,8 @@ export default function MealSuggestions() {
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
-
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
   const configuredSource = getConfiguredRecipeSource();
 
   useEffect(() => {
@@ -106,6 +109,31 @@ export default function MealSuggestions() {
   // Find the top featured meal with an image and expiring ingredients
   const featured = visibleMeals.find(m => m.image && m.matchPercent >= 50);
 
+  const generateRecipe = async () => {
+    if (!session?.user) { toast.error('Please sign in first'); return; }
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-recipe', {
+        body: {
+          inventoryItems: inventory.map(i => ({ name: i.name, daysUntilExpiry: i.daysUntilExpiry })),
+          dietaryPreferences: preferences.dietaryPreferences,
+          allergies: preferences.allergies,
+          dislikedIngredients: preferences.dislikedIngredients,
+          servings: generatorServings,
+          cuisinePreferences: preferences.preferredCuisines,
+          cookingTime: preferences.cookingTime,
+        },
+      });
+      if (error || data?.error) throw new Error(data?.error || 'Generation failed');
+      setGeneratedRecipe(data);
+      toast.success(`Generated: ${data.title}`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to generate recipe');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const addAllMissing = async (meal: MealWithStatus) => {
     if (!session?.user) return;
     const items = meal.missing.map(name => ({ user_id: session.user.id, name, quantity: '1' }));
@@ -167,8 +195,15 @@ export default function MealSuggestions() {
               <span>{preferences.dietaryPreferences.join(', ')}</span>
             )}
           </div>
-          <Button size="sm" className="ml-auto rounded-xl text-xs gap-1.5" style={{ background: 'var(--gradient-primary)' }}>
-            <Sparkles className="w-3.5 h-3.5" /> Generate Recipe
+          <Button
+            size="sm"
+            className="ml-auto rounded-xl text-xs gap-1.5"
+            style={{ background: 'var(--gradient-primary)' }}
+            onClick={generateRecipe}
+            disabled={isGenerating}
+          >
+            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {isGenerating ? 'Generating…' : 'Generate Recipe'}
           </Button>
         </div>
       </div>
@@ -298,6 +333,122 @@ export default function MealSuggestions() {
           );
         })}
       </div>
+
+      {/* Generated Recipe Dialog */}
+      {generatedRecipe && (
+        <Dialog open={!!generatedRecipe} onOpenChange={open => { if (!open) setGeneratedRecipe(null); }}>
+          <DialogContent className="max-w-sm max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base flex items-center gap-2">
+                {generatedRecipe.emoji && <span className="text-xl">{generatedRecipe.emoji}</span>}
+                {generatedRecipe.title}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">{generatedRecipe.description}</p>
+
+              {/* Meta badges */}
+              <div className="flex flex-wrap gap-2">
+                {generatedRecipe.prep_time && (
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Prep: {generatedRecipe.prep_time}
+                  </span>
+                )}
+                {generatedRecipe.cook_time && (
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border flex items-center gap-1">
+                    🔥 Cook: {generatedRecipe.cook_time}
+                  </span>
+                )}
+                {generatedRecipe.servings && (
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border flex items-center gap-1">
+                    <Users className="w-3 h-3" /> Serves {generatedRecipe.servings}
+                  </span>
+                )}
+                {generatedRecipe.cuisine && (
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    {generatedRecipe.cuisine}
+                  </span>
+                )}
+              </div>
+
+              {/* Dietary tags */}
+              {generatedRecipe.dietary_tags?.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {generatedRecipe.dietary_tags.map((tag: string) => (
+                    <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-accent text-accent-foreground">{tag}</span>
+                  ))}
+                </div>
+              )}
+
+              {/* Pantry items used */}
+              {generatedRecipe.pantry_items_used?.length > 0 && (
+                <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Using from your pantry</p>
+                  <p className="text-sm">{generatedRecipe.pantry_items_used.join(', ')}</p>
+                </div>
+              )}
+
+              {/* Ingredients */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Ingredients</p>
+                <div className="bg-muted/40 rounded-xl border border-border/40 p-3 space-y-1.5">
+                  {generatedRecipe.ingredients?.map((ing: string, i: number) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                      <span>{ing}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Instructions */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Instructions</p>
+                <div className="space-y-3">
+                  {generatedRecipe.instructions?.map((step: string, i: number) => (
+                    <div key={i} className="flex gap-3">
+                      <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {i + 1}
+                      </span>
+                      <p className="text-sm leading-relaxed">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nutrition */}
+              {generatedRecipe.nutrition && (
+                <div className="grid grid-cols-4 gap-2 text-center p-3 rounded-xl bg-muted/40 border border-border/40">
+                  <div>
+                    <p className="text-sm font-bold">{generatedRecipe.nutrition.calories}</p>
+                    <p className="text-[10px] text-muted-foreground">kcal</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-blue-500">{generatedRecipe.nutrition.protein_g}g</p>
+                    <p className="text-[10px] text-muted-foreground">Protein</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-amber-500">{generatedRecipe.nutrition.carbs_g}g</p>
+                    <p className="text-[10px] text-muted-foreground">Carbs</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-rose-500">{generatedRecipe.nutrition.fat_g}g</p>
+                    <p className="text-[10px] text-muted-foreground">Fat</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Tip */}
+              {generatedRecipe.tips && (
+                <div className="flex items-start gap-2 p-3 rounded-xl bg-accent/50 border border-border/40">
+                  <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <p className="text-sm">{generatedRecipe.tips}</p>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
