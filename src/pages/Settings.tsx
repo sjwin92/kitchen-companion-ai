@@ -182,11 +182,11 @@ export default function Settings() {
               {CONFIDENCE_LABELS[preferences.cookingConfidence]?.desc || 'Comfortable with most recipes'}
             </p>
             <Slider
-              value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 50]}
+              value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 33]}
               max={100}
               step={1}
               onValueChange={([v]) => {
-                const conf = v < 30 ? 'beginner' : v < 70 ? 'intermediate' : 'advanced';
+                const conf = v < 20 ? 'beginner' : v < 50 ? 'intermediate' : v < 80 ? 'advanced' : 'master';
                 setPreferences({ cookingConfidence: conf as CookingConfidence });
               }}
               className="mb-2"
@@ -194,6 +194,7 @@ export default function Settings() {
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               <span>Novice</span>
               <span>Competent</span>
+              <span>Advanced</span>
               <span>Master</span>
             </div>
           </section>
