@@ -178,6 +178,17 @@ export default function MealPlanner() {
     if (!error) {
       const eventMap: Record<string, string> = { cooked: 'meal_marked_cooked', eaten: 'meal_marked_eaten', skipped: 'meal_skipped' };
       if (eventMap[newStatus]) await track(eventMap[newStatus] as any, { recipeId, recipeTitle: title, mealPlanId: planId });
+      
+      // Track signal in meal library for scoring
+      const libEntry = meals.find(m => m.external_recipe_id === recipeId || m.title === title);
+      if (libEntry) {
+        if (newStatus === 'cooked' || newStatus === 'eaten') {
+          await trackSignal(libEntry.id, 'cooked');
+        } else if (newStatus === 'skipped') {
+          await trackSignal(libEntry.id, 'skipped');
+        }
+      }
+      
       await refetchPlans();
       toast.success(newStatus === 'planned' ? 'Reset' : `Marked as ${newStatus}`);
     }
