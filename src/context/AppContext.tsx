@@ -164,6 +164,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           household_size: next.householdSize,
           dietary_preferences: next.dietaryPreferences,
           cooking_time: next.cookingTime,
+          max_prep_time: next.maxPrepTime,
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
           display_name: next.displayName,

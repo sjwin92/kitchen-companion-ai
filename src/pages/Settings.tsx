@@ -22,10 +22,10 @@ const DIETARY_OPTIONS = [
 
 const CUISINE_OPTIONS = ['Mediterranean', 'Japanese', 'French', 'Nordic', 'Thai', 'Mexican', 'Indian', 'Italian', 'Korean', 'Chinese', 'American', 'British', 'Middle Eastern'];
 
-const CONFIDENCE_LABELS: Record<string, string> = {
-  beginner: 'Novice',
-  intermediate: 'Competent',
-  advanced: 'Advanced Amateur',
+const CONFIDENCE_LABELS: Record<string, { label: string; desc: string }> = {
+  beginner: { label: 'Novice', desc: 'Simple recipes, minimal techniques, basic equipment' },
+  intermediate: { label: 'Competent', desc: 'Comfortable with most recipes and common techniques' },
+  advanced: { label: 'Advanced Amateur', desc: 'Complex recipes, advanced techniques, specialty dishes' },
 };
 
 const CONFIDENCE_SLIDER: Record<string, number> = {
@@ -33,6 +33,15 @@ const CONFIDENCE_SLIDER: Record<string, number> = {
   intermediate: 50,
   advanced: 80,
 };
+
+const PREP_TIME_MARKS = [
+  { value: 15, label: '15 min' },
+  { value: 30, label: '30 min' },
+  { value: 45, label: '45 min' },
+  { value: 60, label: '1 hr' },
+  { value: 90, label: '1.5 hr' },
+  { value: 120, label: '2 hr' },
+];
 
 export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
