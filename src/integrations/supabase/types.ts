@@ -83,14 +83,85 @@ export type Database = {
         }
         Relationships: []
       }
+      ingredient_prices: {
+        Row: {
+          estimated_price_gbp: number
+          id: string
+          ingredient_name: string
+          last_updated: string
+          retailer: string | null
+          retailer_product_id: string | null
+          retailer_product_url: string | null
+          unit: string
+        }
+        Insert: {
+          estimated_price_gbp?: number
+          id?: string
+          ingredient_name: string
+          last_updated?: string
+          retailer?: string | null
+          retailer_product_id?: string | null
+          retailer_product_url?: string | null
+          unit?: string
+        }
+        Update: {
+          estimated_price_gbp?: number
+          id?: string
+          ingredient_name?: string
+          last_updated?: string
+          retailer?: string | null
+          retailer_product_id?: string | null
+          retailer_product_url?: string | null
+          unit?: string
+        }
+        Relationships: []
+      }
+      meal_feedback: {
+        Row: {
+          created_at: string
+          feedback_type: string
+          id: string
+          meal_id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback_type: string
+          id?: string
+          meal_id: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          meal_id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_feedback_meal_id_fkey"
+            columns: ["meal_id"]
+            isOneToOne: false
+            referencedRelation: "meal_library"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_library: {
         Row: {
           avg_rating: number | null
           category: string | null
+          content_score: number | null
+          content_status: string | null
           created_at: string
           cuisine: string | null
           description: string | null
           dietary_tags: string[]
+          effort_level: string | null
           external_recipe_id: string | null
           generation_context: Json | null
           id: string
@@ -100,9 +171,16 @@ export type Database = {
           is_promoted: boolean
           last_cooked_at: string | null
           last_planned_at: string | null
+          lifecycle_status: string
+          media_prompt: string | null
           missing_ingredients: Json
           nutrition: Json | null
+          original_user_id: string | null
           prep_time: string | null
+          promotion_score: number
+          quality_score: number
+          recommendation_reason: string | null
+          script_seed: string | null
           source: string
           substitutions: Json
           times_cooked: number
@@ -113,14 +191,19 @@ export type Database = {
           updated_at: string
           use_soon_items_used: string[]
           user_id: string
+          video_queue_status: string | null
+          youtube_ready: boolean | null
         }
         Insert: {
           avg_rating?: number | null
           category?: string | null
+          content_score?: number | null
+          content_status?: string | null
           created_at?: string
           cuisine?: string | null
           description?: string | null
           dietary_tags?: string[]
+          effort_level?: string | null
           external_recipe_id?: string | null
           generation_context?: Json | null
           id?: string
@@ -130,9 +213,16 @@ export type Database = {
           is_promoted?: boolean
           last_cooked_at?: string | null
           last_planned_at?: string | null
+          lifecycle_status?: string
+          media_prompt?: string | null
           missing_ingredients?: Json
           nutrition?: Json | null
+          original_user_id?: string | null
           prep_time?: string | null
+          promotion_score?: number
+          quality_score?: number
+          recommendation_reason?: string | null
+          script_seed?: string | null
           source?: string
           substitutions?: Json
           times_cooked?: number
@@ -143,14 +233,19 @@ export type Database = {
           updated_at?: string
           use_soon_items_used?: string[]
           user_id: string
+          video_queue_status?: string | null
+          youtube_ready?: boolean | null
         }
         Update: {
           avg_rating?: number | null
           category?: string | null
+          content_score?: number | null
+          content_status?: string | null
           created_at?: string
           cuisine?: string | null
           description?: string | null
           dietary_tags?: string[]
+          effort_level?: string | null
           external_recipe_id?: string | null
           generation_context?: Json | null
           id?: string
@@ -160,9 +255,16 @@ export type Database = {
           is_promoted?: boolean
           last_cooked_at?: string | null
           last_planned_at?: string | null
+          lifecycle_status?: string
+          media_prompt?: string | null
           missing_ingredients?: Json
           nutrition?: Json | null
+          original_user_id?: string | null
           prep_time?: string | null
+          promotion_score?: number
+          quality_score?: number
+          recommendation_reason?: string | null
+          script_seed?: string | null
           source?: string
           substitutions?: Json
           times_cooked?: number
@@ -173,6 +275,8 @@ export type Database = {
           updated_at?: string
           use_soon_items_used?: string[]
           user_id?: string
+          video_queue_status?: string | null
+          youtube_ready?: boolean | null
         }
         Relationships: []
       }
@@ -596,7 +700,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      recalculate_meal_scores: {
+        Args: { p_meal_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -29,6 +29,15 @@ export interface MealLibraryEntry {
   last_planned_at: string | null;
   last_cooked_at: string | null;
   is_promoted: boolean;
+  lifecycle_status: 'private' | 'validated' | 'shared';
+  quality_score: number;
+  promotion_score: number;
+  recommendation_reason: string | null;
+  effort_level: string | null;
+  original_user_id: string | null;
+  content_status: string | null;
+  content_score: number;
+  youtube_ready: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -50,20 +59,29 @@ export function useMealLibrary() {
     promotedOnly?: boolean;
     source?: string;
     limit?: number;
+    includeShared?: boolean;
+    lifecycleStatus?: 'private' | 'validated' | 'shared';
   }) => {
     if (!userId) return [];
     setLoading(true);
     let q = supabase
       .from('meal_library')
       .select('*')
-      .eq('user_id', userId)
+      .order('quality_score', { ascending: false })
       .order('times_cooked', { ascending: false })
-      .order('avg_rating', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .limit(opts?.limit ?? 200);
 
+    if (opts?.includeShared) {
+      // Fetch both own meals and shared meals
+      q = q.or(`user_id.eq.${userId},lifecycle_status.eq.shared`);
+    } else {
+      q = q.eq('user_id', userId);
+    }
+
     if (opts?.promotedOnly) q = q.eq('is_promoted', true);
     if (opts?.source) q = q.eq('source', opts.source);
+    if (opts?.lifecycleStatus) q = q.eq('lifecycle_status', opts.lifecycleStatus);
 
     const { data } = await q;
     const entries = (data || []) as unknown as MealLibraryEntry[];
@@ -241,6 +259,26 @@ export function useMealLibrary() {
     ));
   }, []);
 
+  /** Promote a validated meal to the shared library */
+  const promoteToShared = useCallback(async (libraryId: string) => {
+    const meal = meals.find(m => m.id === libraryId);
+    if (!meal) return;
+    
+    await supabase
+      .from('meal_library')
+      .update({
+        lifecycle_status: 'shared',
+        original_user_id: meal.user_id,
+        // Clear user-specific context when sharing
+        generation_context: {},
+      } as any)
+      .eq('id', libraryId);
+    
+    setMeals(prev => prev.map(m =>
+      m.id === libraryId ? { ...m, lifecycle_status: 'shared' as const, original_user_id: meal.user_id } : m
+    ));
+  }, [meals]);
+
   /** Auto-promote meals that meet success criteria */
   const autoPromote = useCallback(async () => {
     if (!userId) return;
@@ -323,6 +361,7 @@ export function useMealLibrary() {
     updateRating,
     promoteMeal,
     demoteMeal,
+    promoteToShared,
     autoPromote,
     findByRecipeId,
     getRankedMeals,

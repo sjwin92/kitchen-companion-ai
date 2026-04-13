@@ -11,12 +11,15 @@ import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/meal
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search, Plus, ArrowRight, Heart, CalendarDays, Sparkles, Users, Loader2 } from 'lucide-react';
+import { Clock, Check, ShoppingCart, Search, Plus, ArrowRight, Heart, CalendarDays, Sparkles, Users, Loader2, BookmarkPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useMealLibrary } from '@/hooks/useMealLibrary';
+import { useMealFeedback } from '@/hooks/useMealFeedback';
 import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 import ProductInfoDialog from '@/components/ProductInfoDialog';
+import MealFeedbackPanel from '@/components/MealFeedbackPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MAX_VISIBLE_MEALS = 30;
@@ -30,8 +33,11 @@ export default function MealSuggestions() {
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { saveMeal, trackSignal } = useMealLibrary();
+  const { submitFeedback } = useMealFeedback();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
+  const [savedMealId, setSavedMealId] = useState<string | null>(null);
   const configuredSource = getConfiguredRecipeSource();
 
   useEffect(() => {
@@ -126,6 +132,30 @@ export default function MealSuggestions() {
       });
       if (error || data?.error) throw new Error(data?.error || 'Generation failed');
       setGeneratedRecipe(data);
+      
+      // Auto-save generated meal to library
+      const entry = await saveMeal({
+        title: data.title,
+        description: data.description,
+        instructions: data.instructions?.join('\n') || null,
+        ingredients: data.ingredients?.map((ing: string) => ({ name: ing })) || [],
+        nutrition: data.nutrition || {},
+        dietary_tags: data.dietary_tags || [],
+        cuisine: data.cuisine || null,
+        prep_time: data.prep_time || null,
+        source: 'generated',
+        use_soon_items_used: data.pantry_items_used || [],
+        generation_context: {
+          servings: generatorServings,
+          dietary: preferences.dietaryPreferences,
+          inventory_count: inventory.length,
+        },
+      });
+      if (entry) {
+        setSavedMealId(entry.id);
+        await trackSignal(entry.id, 'viewed');
+      }
+      
       toast.success(`Generated: ${data.title}`);
     } catch (e: any) {
       toast.error(e.message || 'Failed to generate recipe');
@@ -444,6 +474,17 @@ export default function MealSuggestions() {
                   <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <p className="text-sm">{generatedRecipe.tips}</p>
                 </div>
+              )}
+
+              {/* Feedback */}
+              {savedMealId && (
+                <MealFeedbackPanel
+                  mealId={savedMealId}
+                  onSubmit={async (id, type, note) => {
+                    await submitFeedback(id, type, note);
+                    toast.success('Feedback saved!');
+                  }}
+                />
               )}
             </div>
           </DialogContent>
