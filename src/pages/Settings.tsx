@@ -170,12 +170,15 @@ export default function Settings() {
 
           {/* Cooking Confidence — slider */}
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-bold tracking-tight">Cooking Confidence</h2>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                {CONFIDENCE_LABELS[preferences.cookingConfidence] || 'Competent'}
+                {CONFIDENCE_LABELS[preferences.cookingConfidence]?.label || 'Competent'}
               </span>
             </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              {CONFIDENCE_LABELS[preferences.cookingConfidence]?.desc || 'Comfortable with most recipes'}
+            </p>
             <Slider
               value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 50]}
               max={100}
@@ -190,6 +193,35 @@ export default function Settings() {
               <span>Novice</span>
               <span>Competent</span>
               <span>Master</span>
+            </div>
+          </section>
+
+          {/* Max Prep Time — slider */}
+          <section>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-bold tracking-tight">Maximum Prep Time</h2>
+              <span className="text-sm font-bold text-primary">
+                {preferences.maxPrepTime <= 60
+                  ? `${preferences.maxPrepTime} min`
+                  : `${Math.floor(preferences.maxPrepTime / 60)}h ${preferences.maxPrepTime % 60 > 0 ? `${preferences.maxPrepTime % 60}m` : ''}`
+                }
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Recipes and AI-generated meals will stay within this time limit.
+            </p>
+            <Slider
+              value={[preferences.maxPrepTime]}
+              min={15}
+              max={120}
+              step={5}
+              onValueChange={([v]) => setPreferences({ maxPrepTime: v })}
+              className="mb-2"
+            />
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {PREP_TIME_MARKS.map(m => (
+                <span key={m.value}>{m.label}</span>
+              ))}
             </div>
           </section>
 
