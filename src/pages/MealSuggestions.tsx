@@ -475,6 +475,17 @@ export default function MealSuggestions() {
                   <p className="text-sm">{generatedRecipe.tips}</p>
                 </div>
               )}
+
+              {/* Feedback */}
+              {savedMealId && (
+                <MealFeedbackPanel
+                  mealId={savedMealId}
+                  onSubmit={async (id, type, note) => {
+                    await submitFeedback(id, type, note);
+                    toast.success('Feedback saved!');
+                  }}
+                />
+              )}
             </div>
           </DialogContent>
         </Dialog>
