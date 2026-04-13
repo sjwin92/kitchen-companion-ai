@@ -36,7 +36,8 @@ export interface UserPreferences {
   householdSize: number;
   dietaryPreferences: string[];
   cookingTime: string;
-  maxPrepTime: number; // in minutes
+  maxPrepTime: number;
+  dailyCalorieGoal: number;
   dislikedIngredients: string[];
   onboardingComplete: boolean;
   displayName: string;
