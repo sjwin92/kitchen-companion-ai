@@ -184,11 +184,12 @@ export default function MealPlanner() {
   };
 
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
+  const DISPLAY_SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner'];
   const emptySlotCount = useMemo(() => {
     let count = 0;
     days.forEach(day => {
       const dayStr = format(day, 'yyyy-MM-dd');
-      MEAL_SLOTS.forEach(slot => { if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++; });
+      DISPLAY_SLOTS.forEach(slot => { if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++; });
     });
     return count;
   }, [days, plans]);
