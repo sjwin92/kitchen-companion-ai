@@ -167,6 +167,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           dietary_preferences: next.dietaryPreferences,
           cooking_time: next.cookingTime,
           max_prep_time: next.maxPrepTime,
+          daily_calorie_goal: next.dailyCalorieGoal,
           disliked_ingredients: next.dislikedIngredients,
           onboarding_complete: next.onboardingComplete,
           display_name: next.displayName,

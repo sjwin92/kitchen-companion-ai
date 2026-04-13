@@ -25,13 +25,15 @@ const CUISINE_OPTIONS = ['Mediterranean', 'Japanese', 'French', 'Nordic', 'Thai'
 const CONFIDENCE_LABELS: Record<string, { label: string; desc: string }> = {
   beginner: { label: 'Novice', desc: 'Simple recipes, minimal techniques, basic equipment' },
   intermediate: { label: 'Competent', desc: 'Comfortable with most recipes and common techniques' },
-  advanced: { label: 'Advanced Amateur', desc: 'Complex recipes, advanced techniques, specialty dishes' },
+  advanced: { label: 'Advanced', desc: 'Complex recipes, advanced techniques, specialty dishes' },
+  master: { label: 'Master', desc: 'Professional-level skills, any cuisine, any technique' },
 };
 
 const CONFIDENCE_SLIDER: Record<string, number> = {
   beginner: 0,
-  intermediate: 50,
-  advanced: 80,
+  intermediate: 33,
+  advanced: 66,
+  master: 100,
 };
 
 const PREP_TIME_MARKS = [
