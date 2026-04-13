@@ -139,6 +139,7 @@ export default function MealSuggestions() {
       const entry = await saveMeal({
         title: data.title,
         description: data.description,
+        image: data.image || null,
         instructions: data.instructions?.join('\n') || null,
         ingredients: data.ingredients?.map((ing: string) => ({ name: ing })) || [],
         nutrition: data.nutrition || {},
@@ -377,6 +378,14 @@ export default function MealSuggestions() {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              {/* Generated image */}
+              {generatedRecipe.image && (
+                <img
+                  src={generatedRecipe.image}
+                  alt={generatedRecipe.title}
+                  className="w-full h-48 rounded-xl object-cover"
+                />
+              )}
               <p className="text-sm text-muted-foreground">{generatedRecipe.description}</p>
 
               {/* Meta badges */}

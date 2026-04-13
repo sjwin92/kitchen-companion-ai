@@ -6,6 +6,33 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function generateFoodImage(title: string, apiKey: string): Promise<string | null> {
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3.1-flash-image-preview",
+        messages: [
+          {
+            role: "user",
+            content: `Generate a beautiful, appetizing overhead food photograph of "${title}". The dish should be plated on a simple ceramic plate, natural lighting, clean background, professional food photography style. No text or watermarks.`,
+          },
+        ],
+        modalities: ["image", "text"],
+      }),
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.choices?.[0]?.message?.images?.[0]?.image_url?.url || null;
+  } catch {
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -13,12 +40,12 @@ serve(async (req) => {
 
   try {
     const {
-      slots,       // Array of { date: string, slot: string }
-      profile,     // { dietaryPreferences, allergies, dislikedIngredients, preferredCuisines, cookingTime, cookingConfidence, budgetSensitivity, primaryGoal, householdSize }
-      slotSettings, // Array of { slot, target_prep_time, complexity, cuisine_preference, quick_bias, family_friendly_bias, pantry_first_bias, budget_friendly_bias }
-      inventory,   // Array of { name: string }
-      existingPlans, // Array of { title: string, slot: string }
-      ratings,     // Array of { title: string, rating: number, would_repeat: boolean }
+      slots,
+      profile,
+      slotSettings,
+      inventory,
+      existingPlans,
+      ratings,
     } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -138,8 +165,21 @@ ${ratedPoorly ? `User didn't enjoy: ${ratedPoorly}` : ''}`,
     if (!toolCall?.function?.arguments) throw new Error("No response from AI");
 
     const parsed = JSON.parse(toolCall.function.arguments);
+    const meals = parsed.meals || [];
 
-    return new Response(JSON.stringify(parsed), {
+    // Generate images for all meals in parallel (max 5 concurrent)
+    const batchSize = 5;
+    for (let i = 0; i < meals.length; i += batchSize) {
+      const batch = meals.slice(i, i + batchSize);
+      const images = await Promise.all(
+        batch.map((meal: any) => generateFoodImage(meal.title, LOVABLE_API_KEY))
+      );
+      images.forEach((img, idx) => {
+        if (img) meals[i + idx].image = img;
+      });
+    }
+
+    return new Response(JSON.stringify({ meals }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

@@ -12,6 +12,7 @@ interface GeneratedMeal {
   slot: string;
   title: string;
   search_term: string;
+  image?: string;
 }
 
 export function useAutoPlan() {
