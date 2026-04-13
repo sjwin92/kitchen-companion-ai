@@ -194,8 +194,15 @@ export default function MealSuggestions() {
               <span>{preferences.dietaryPreferences.join(', ')}</span>
             )}
           </div>
-          <Button size="sm" className="ml-auto rounded-xl text-xs gap-1.5" style={{ background: 'var(--gradient-primary)' }}>
-            <Sparkles className="w-3.5 h-3.5" /> Generate Recipe
+          <Button
+            size="sm"
+            className="ml-auto rounded-xl text-xs gap-1.5"
+            style={{ background: 'var(--gradient-primary)' }}
+            onClick={generateRecipe}
+            disabled={isGenerating}
+          >
+            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {isGenerating ? 'Generating…' : 'Generate Recipe'}
           </Button>
         </div>
       </div>
