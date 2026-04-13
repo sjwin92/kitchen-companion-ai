@@ -288,7 +288,7 @@ export default function MealPlanner() {
                         <div
                           key={slot}
                           className="p-3 min-h-[100px] flex flex-col"
-                          onDragOver={e => { e.preventDefault(); handleDragOver(dayStr, slot as MealSlot); }}
+                          onDragOver={e => { e.preventDefault(); handleDragOver(e, dayStr, slot as MealSlot); }}
                           onDragLeave={handleDragLeave}
                           onDrop={e => handleDrop(e, day, slot as MealSlot)}
                         >
