@@ -128,6 +128,8 @@ export default function MealSuggestions() {
           servings: generatorServings,
           cuisinePreferences: preferences.preferredCuisines,
           cookingTime: preferences.cookingTime,
+          cookingConfidence: preferences.cookingConfidence,
+          maxPrepTime: preferences.maxPrepTime,
         },
       });
       if (error || data?.error) throw new Error(data?.error || 'Generation failed');

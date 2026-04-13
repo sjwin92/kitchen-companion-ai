@@ -22,10 +22,10 @@ const DIETARY_OPTIONS = [
 
 const CUISINE_OPTIONS = ['Mediterranean', 'Japanese', 'French', 'Nordic', 'Thai', 'Mexican', 'Indian', 'Italian', 'Korean', 'Chinese', 'American', 'British', 'Middle Eastern'];
 
-const CONFIDENCE_LABELS: Record<string, string> = {
-  beginner: 'Novice',
-  intermediate: 'Competent',
-  advanced: 'Advanced Amateur',
+const CONFIDENCE_LABELS: Record<string, { label: string; desc: string }> = {
+  beginner: { label: 'Novice', desc: 'Simple recipes, minimal techniques, basic equipment' },
+  intermediate: { label: 'Competent', desc: 'Comfortable with most recipes and common techniques' },
+  advanced: { label: 'Advanced Amateur', desc: 'Complex recipes, advanced techniques, specialty dishes' },
 };
 
 const CONFIDENCE_SLIDER: Record<string, number> = {
@@ -33,6 +33,15 @@ const CONFIDENCE_SLIDER: Record<string, number> = {
   intermediate: 50,
   advanced: 80,
 };
+
+const PREP_TIME_MARKS = [
+  { value: 15, label: '15 min' },
+  { value: 30, label: '30 min' },
+  { value: 45, label: '45 min' },
+  { value: 60, label: '1 hr' },
+  { value: 90, label: '1.5 hr' },
+  { value: 120, label: '2 hr' },
+];
 
 export default function Settings() {
   const { preferences, setPreferences, signOut, session } = useApp();
@@ -161,12 +170,15 @@ export default function Settings() {
 
           {/* Cooking Confidence — slider */}
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-bold tracking-tight">Cooking Confidence</h2>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                {CONFIDENCE_LABELS[preferences.cookingConfidence] || 'Competent'}
+                {CONFIDENCE_LABELS[preferences.cookingConfidence]?.label || 'Competent'}
               </span>
             </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              {CONFIDENCE_LABELS[preferences.cookingConfidence]?.desc || 'Comfortable with most recipes'}
+            </p>
             <Slider
               value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 50]}
               max={100}
@@ -181,6 +193,35 @@ export default function Settings() {
               <span>Novice</span>
               <span>Competent</span>
               <span>Master</span>
+            </div>
+          </section>
+
+          {/* Max Prep Time — slider */}
+          <section>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-bold tracking-tight">Maximum Prep Time</h2>
+              <span className="text-sm font-bold text-primary">
+                {preferences.maxPrepTime <= 60
+                  ? `${preferences.maxPrepTime} min`
+                  : `${Math.floor(preferences.maxPrepTime / 60)}h ${preferences.maxPrepTime % 60 > 0 ? `${preferences.maxPrepTime % 60}m` : ''}`
+                }
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Recipes and AI-generated meals will stay within this time limit.
+            </p>
+            <Slider
+              value={[preferences.maxPrepTime]}
+              min={15}
+              max={120}
+              step={5}
+              onValueChange={([v]) => setPreferences({ maxPrepTime: v })}
+              className="mb-2"
+            />
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {PREP_TIME_MARKS.map(m => (
+                <span key={m.value}>{m.label}</span>
+              ))}
             </div>
           </section>
 

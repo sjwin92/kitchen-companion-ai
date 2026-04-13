@@ -20,6 +20,8 @@ serve(async (req) => {
       servings,
       cuisinePreferences,
       cookingTime,
+      cookingConfidence,
+      maxPrepTime,
     } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -42,6 +44,16 @@ serve(async (req) => {
       constraints.push(`Preferred cuisines: ${cuisinePreferences.join(", ")}`);
     if (cookingTime)
       constraints.push(`Target cooking time: ${cookingTime}`);
+    if (maxPrepTime)
+      constraints.push(`Maximum total prep+cook time: ${maxPrepTime} minutes. The recipe MUST be completable within this time.`);
+    if (cookingConfidence) {
+      const confMap: Record<string, string> = {
+        beginner: "Keep this recipe SIMPLE. Use basic techniques only (boiling, frying, baking). No complex knife skills, no specialty equipment. Maximum 6 ingredients, maximum 5 steps.",
+        intermediate: "This recipe can use standard cooking techniques. Keep ingredients reasonable (8-12). Clear instructions.",
+        advanced: "This recipe can use advanced techniques, complex flavor profiles, and specialty ingredients. Be creative and ambitious.",
+      };
+      if (confMap[cookingConfidence]) constraints.push(`Cooking skill level: ${cookingConfidence}. ${confMap[cookingConfidence]}`);
+    }
 
     const constraintBlock = constraints.length
       ? `\n\nCONSTRAINTS:\n${constraints.map(c => `- ${c}`).join("\n")}`
