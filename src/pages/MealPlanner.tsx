@@ -184,11 +184,12 @@ export default function MealPlanner() {
   };
 
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
+  const DISPLAY_SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner'];
   const emptySlotCount = useMemo(() => {
     let count = 0;
     days.forEach(day => {
       const dayStr = format(day, 'yyyy-MM-dd');
-      MEAL_SLOTS.forEach(slot => { if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++; });
+      DISPLAY_SLOTS.forEach(slot => { if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++; });
     });
     return count;
   }, [days, plans]);
@@ -224,7 +225,7 @@ export default function MealPlanner() {
               </Button>
             </div>
 
-            {isAuto && emptySlotCount > 0 && (
+            {emptySlotCount > 0 && (
               <Button size="sm" className="rounded-xl text-xs gap-1.5 ml-auto" disabled={autoGenerating} onClick={handleAutoGenerate} style={{ background: 'var(--gradient-primary)' }}>
                 {autoGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                 {autoGenerating ? 'Generating...' : 'Auto-Plan'}
@@ -259,68 +260,98 @@ export default function MealPlanner() {
           {loading && <div className="glass-card p-6 text-center text-sm text-muted-foreground shimmer">Loading…</div>}
 
           {/* Day cards — horizontal grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="space-y-3">
             {days.map(day => {
               const dayStr = format(day, 'yyyy-MM-dd');
-              const dayPlans = plans.filter(p => p.planned_date === dayStr);
               const today = isToday(day);
-              const hasPlan = dayPlans.length > 0;
-              const dinnerPlan = dayPlans.find(p => p.meal_slot === 'dinner') || dayPlans[0];
 
               return (
                 <div
                   key={dayStr}
-                  className={`glass-card overflow-hidden flex flex-col ${today ? 'ring-2 ring-primary/30 bg-primary/3' : ''}`}
+                  className={`glass-card overflow-hidden ${today ? 'ring-2 ring-primary/30 bg-primary/3' : ''}`}
                 >
                   {/* Day header */}
-                  <div className="px-3 py-2.5 flex items-center justify-between border-b border-border/40">
+                  <div className="px-4 py-2.5 flex items-center justify-between border-b border-border/40">
                     <span className={`text-[10px] font-bold uppercase tracking-[0.14em] ${today ? 'text-primary' : 'text-muted-foreground'}`}>
                       {format(day, 'EEEE')}
                     </span>
                     <span className="text-xs text-muted-foreground">{format(day, 'MMM d')}</span>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-3 flex-1 flex flex-col justify-end min-h-[120px]">
-                    {hasPlan && dinnerPlan ? (
-                      <>
-                        {dinnerPlan.image && (
-                          <img src={dinnerPlan.image} alt="" className="w-16 h-16 rounded-lg object-cover mb-2" />
-                        )}
-                        <h4 className="text-sm font-bold leading-tight">{dinnerPlan.title}</h4>
-                        {dayPlans.length > 1 && (
-                          <p className="text-[11px] text-muted-foreground mt-0.5">
-                            +{dayPlans.length - 1} more meal{dayPlans.length > 2 ? 's' : ''}
-                          </p>
-                        )}
+                  {/* Meal slots row */}
+                  <div className="grid grid-cols-3 divide-x divide-border/30">
+                    {DISPLAY_SLOTS.map(slot => {
+                      const plan = plans.find(p => p.planned_date === dayStr && p.meal_slot === slot);
+                      const slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
 
-                        {/* Status & actions */}
-                        <div className="flex items-center gap-1 mt-2">
-                          {dinnerPlan.status !== 'planned' && (
-                            <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                              dinnerPlan.status === 'eaten' ? 'bg-success/10 text-success' :
-                              dinnerPlan.status === 'cooked' ? 'bg-warning/10 text-warning' :
-                              'bg-muted text-muted-foreground'
-                            }`}>
-                              {dinnerPlan.status}
-                            </span>
+                      return (
+                        <div
+                          key={slot}
+                          className="p-3 min-h-[100px] flex flex-col"
+                          onDragOver={e => { e.preventDefault(); handleDragOver(e, dayStr, slot as MealSlot); }}
+                          onDragLeave={handleDragLeave}
+                          onDrop={e => handleDrop(e, day, slot as MealSlot)}
+                        >
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-2">{slotLabel}</p>
+
+                          {plan ? (
+                            <div className="flex-1 flex flex-col">
+                              {plan.image && (
+                                <img
+                                  src={plan.image}
+                                  alt=""
+                                  className="w-full h-14 rounded-lg object-cover mb-1.5 cursor-pointer"
+                                  onClick={() => setProductInfoName(plan.title)}
+                                />
+                              )}
+                              <p className="text-xs font-semibold leading-tight line-clamp-2 cursor-pointer hover:text-primary transition-colors"
+                                onClick={() => setProductInfoName(plan.title)}>
+                                {plan.title}
+                              </p>
+                              {plan.status !== 'planned' && (
+                                <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded mt-1 w-fit ${
+                                  plan.status === 'eaten' ? 'bg-primary/10 text-primary' :
+                                  plan.status === 'cooked' ? 'bg-amber-500/10 text-amber-600' :
+                                  'bg-muted text-muted-foreground'
+                                }`}>
+                                  {plan.status}
+                                </span>
+                              )}
+                              <div className="flex items-center gap-1 mt-auto pt-1.5">
+                                <button
+                                  onClick={() => setRatingTarget({ recipeId: plan.recipe_id, title: plan.title, slot: plan.meal_slot, planId: plan.id })}
+                                  className="p-0.5 rounded hover:bg-foreground/10"
+                                  title="Rate"
+                                >
+                                  <Star className="w-3 h-3 text-muted-foreground" />
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'eaten' ? 'planned' : 'eaten')}
+                                  className="p-0.5 rounded hover:bg-foreground/10"
+                                  title={plan.status === 'eaten' ? 'Reset' : 'Mark eaten'}
+                                >
+                                  <Check className="w-3 h-3 text-muted-foreground" />
+                                </button>
+                                <button onClick={() => handleRemovePlan(plan.id, plan.recipe_id, plan.title)} className="p-0.5 rounded hover:bg-foreground/10 ml-auto">
+                                  <X className="w-3 h-3 text-muted-foreground" />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                if (isGuided) setGuidedSlot({ date: day, slot: slot as MealSlot });
+                                else setAddDialog({ date: day, slot: slot as MealSlot });
+                              }}
+                              className="flex-1 flex flex-col items-center justify-center border border-dashed border-border/60 rounded-lg hover:bg-muted/30 transition-colors"
+                            >
+                              <Plus className="w-4 h-4 text-muted-foreground mb-0.5" />
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Add</span>
+                            </button>
                           )}
-                          <button onClick={() => handleRemovePlan(dinnerPlan.id, dinnerPlan.recipe_id, dinnerPlan.title)} className="p-0.5 rounded hover:bg-foreground/10 ml-auto">
-                            <X className="w-3 h-3 text-muted-foreground" />
-                          </button>
                         </div>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => setAddDialog({ date: day, slot: 'dinner' })}
-                        className="flex flex-col items-center justify-center flex-1 border border-dashed border-border/60 rounded-lg hover:bg-surface-low/50 transition-colors"
-                      >
-                        <Plus className="w-5 h-5 text-muted-foreground mb-1" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                          {isGuided ? 'Gap Identified' : 'Plan Dinner'}
-                        </span>
-                      </button>
-                    )}
+                      );
+                    })}
                   </div>
                 </div>
               );
