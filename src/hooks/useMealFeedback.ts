@@ -71,7 +71,7 @@ export function useMealFeedback() {
     }));
 
     // Trigger score recalculation
-    await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any).catch(() => {});
+    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {}
 
     return entry;
   }, [userId]);
