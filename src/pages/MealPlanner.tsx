@@ -224,7 +224,7 @@ export default function MealPlanner() {
               </Button>
             </div>
 
-            {isAuto && emptySlotCount > 0 && (
+            {emptySlotCount > 0 && (
               <Button size="sm" className="rounded-xl text-xs gap-1.5 ml-auto" disabled={autoGenerating} onClick={handleAutoGenerate} style={{ background: 'var(--gradient-primary)' }}>
                 {autoGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                 {autoGenerating ? 'Generating...' : 'Auto-Plan'}
