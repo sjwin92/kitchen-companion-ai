@@ -104,7 +104,7 @@ export function useMealFeedback() {
       ...prev,
       [mealId]: (prev[mealId] || []).filter(f => f.id !== feedbackId),
     }));
-    await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any).catch(() => {});
+    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {}
   }, []);
 
   return {
