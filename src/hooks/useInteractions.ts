@@ -14,7 +14,10 @@ export type InteractionEvent =
   | 'meal_marked_eaten'
   | 'meal_skipped'
   | 'meal_saved_as_staple'
-  | 'meal_logged';
+  | 'meal_logged'
+  | 'meal_favorited'
+  | 'meal_repeated'
+  | 'meal_swapped';
 
 export function useInteractions() {
   const { session } = useApp();
