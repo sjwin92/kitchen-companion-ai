@@ -288,7 +288,7 @@ export default function MealSuggestions() {
         <div className="flex flex-wrap gap-2">
           {[0, 25, 50, 75].map(pct => (
             <Button key={pct} type="button" variant={minMatchPercent === pct ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setMinMatchPercent(pct)}>
-              {pct === 0 ? 'All' : `${pct}%+`}
+              {pct === 0 ? 'All' : `${pct}%`}
             </Button>
           ))}
         </div>
