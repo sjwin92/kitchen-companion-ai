@@ -101,14 +101,28 @@ export default function MealSuggestions() {
         <p className="text-sm text-muted-foreground mb-3">
           Create a custom recipe using your current inventory and dietary preferences.
         </p>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
               <Users className="w-4 h-4 text-primary" />
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Servings</p>
-              <p className="text-sm font-bold">{preferences.householdSize}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <button
+                  onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))}
+                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors text-xs font-bold"
+                >
+                  −
+                </button>
+                <span className="text-sm font-bold w-5 text-center">{generatorServings}</span>
+                <button
+                  onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))}
+                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors text-xs font-bold"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
           <div className="text-sm text-muted-foreground">
