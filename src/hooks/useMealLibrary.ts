@@ -361,6 +361,7 @@ export function useMealLibrary() {
     updateRating,
     promoteMeal,
     demoteMeal,
+    promoteToShared,
     autoPromote,
     findByRecipeId,
     getRankedMeals,
