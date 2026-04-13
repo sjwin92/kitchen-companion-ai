@@ -139,6 +139,7 @@ export default function MealSuggestions() {
       const entry = await saveMeal({
         title: data.title,
         description: data.description,
+        image: data.image || null,
         instructions: data.instructions?.join('\n') || null,
         ingredients: data.ingredients?.map((ing: string) => ({ name: ing })) || [],
         nutrition: data.nutrition || {},
