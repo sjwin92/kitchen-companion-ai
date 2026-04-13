@@ -329,7 +329,15 @@ export default function Settings() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Daily Calorie Target</span>
-                <span className="text-sm font-bold">2,000 <span className="text-xs text-muted-foreground font-normal">KCAL</span></span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.max(1000, preferences.dailyCalorieGoal - 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="text-sm font-bold w-14 text-center">{preferences.dailyCalorieGoal.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">kcal</span></span>
+                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.min(5000, preferences.dailyCalorieGoal + 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -364,19 +372,6 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Workspace image */}
-          <div className="rounded-xl overflow-hidden relative h-48">
-            <img
-              src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=600"
-              alt="Kitchen workspace"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-4 left-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">Workspace Setting</p>
-              <p className="text-sm font-bold text-white">Culinary Studio Mode Active</p>
-            </div>
-          </div>
 
           {/* Calorie Tracker */}
           <CalorieTracker />
