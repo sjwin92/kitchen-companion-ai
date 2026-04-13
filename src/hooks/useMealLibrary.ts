@@ -259,6 +259,26 @@ export function useMealLibrary() {
     ));
   }, []);
 
+  /** Promote a validated meal to the shared library */
+  const promoteToShared = useCallback(async (libraryId: string) => {
+    const meal = meals.find(m => m.id === libraryId);
+    if (!meal) return;
+    
+    await supabase
+      .from('meal_library')
+      .update({
+        lifecycle_status: 'shared',
+        original_user_id: meal.user_id,
+        // Clear user-specific context when sharing
+        generation_context: {},
+      } as any)
+      .eq('id', libraryId);
+    
+    setMeals(prev => prev.map(m =>
+      m.id === libraryId ? { ...m, lifecycle_status: 'shared' as const, original_user_id: meal.user_id } : m
+    ));
+  }, [meals]);
+
   /** Auto-promote meals that meet success criteria */
   const autoPromote = useCallback(async () => {
     if (!userId) return;
