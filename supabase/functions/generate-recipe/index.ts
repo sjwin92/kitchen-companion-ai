@@ -6,6 +6,35 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function generateFoodImage(title: string, apiKey: string): Promise<string | null> {
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3.1-flash-image-preview",
+        messages: [
+          {
+            role: "user",
+            content: `Generate a beautiful, appetizing overhead food photograph of "${title}". The dish should be plated on a simple ceramic plate, natural lighting, clean background, professional food photography style. No text or watermarks.`,
+          },
+        ],
+        modalities: ["image", "text"],
+      }),
+    });
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    return imageUrl || null;
+  } catch {
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -110,6 +139,12 @@ Return ONLY valid JSON, no markdown.${constraintBlock}`,
       .replace(/```\n?/g, "")
       .trim();
     const recipe = JSON.parse(cleaned);
+
+    // Generate a food image for the recipe
+    const imageUrl = await generateFoodImage(recipe.title, LOVABLE_API_KEY);
+    if (imageUrl) {
+      recipe.image = imageUrl;
+    }
 
     return new Response(JSON.stringify(recipe), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
