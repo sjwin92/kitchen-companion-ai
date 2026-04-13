@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
 import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 import ProductInfoDialog from '@/components/ProductInfoDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MAX_VISIBLE_MEALS = 30;
 
