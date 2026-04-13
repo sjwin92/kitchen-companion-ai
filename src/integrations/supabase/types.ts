@@ -489,6 +489,7 @@ export type Database = {
           display_name: string | null
           household_size: number | null
           id: string
+          max_prep_time: number | null
           onboarding_complete: boolean | null
           planning_style: string | null
           preferred_cuisines: string[] | null
@@ -507,6 +508,7 @@ export type Database = {
           display_name?: string | null
           household_size?: number | null
           id: string
+          max_prep_time?: number | null
           onboarding_complete?: boolean | null
           planning_style?: string | null
           preferred_cuisines?: string[] | null
@@ -525,6 +527,7 @@ export type Database = {
           display_name?: string | null
           household_size?: number | null
           id?: string
+          max_prep_time?: number | null
           onboarding_complete?: boolean | null
           planning_style?: string | null
           preferred_cuisines?: string[] | null
