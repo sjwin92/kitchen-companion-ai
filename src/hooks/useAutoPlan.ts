@@ -32,9 +32,10 @@ export function useAutoPlan() {
 
     // Find empty slots
     const emptySlots: { date: string; slot: string }[] = [];
+    const displaySlots: MealSlot[] = ['breakfast', 'lunch', 'dinner'];
     days.forEach(day => {
       const dayStr = format(day, 'yyyy-MM-dd');
-      MEAL_SLOTS.forEach(slot => {
+      displaySlots.forEach(slot => {
         if (!existingPlans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) {
           emptySlots.push({ date: dayStr, slot });
         }
