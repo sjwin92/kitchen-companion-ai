@@ -29,7 +29,8 @@ export default function MealSuggestions() {
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
-
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
   const configuredSource = getConfiguredRecipeSource();
 
   useEffect(() => {
