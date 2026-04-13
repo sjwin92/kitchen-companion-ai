@@ -51,6 +51,7 @@ serve(async (req) => {
         beginner: "Keep this recipe SIMPLE. Use basic techniques only (boiling, frying, baking). No complex knife skills, no specialty equipment. Maximum 6 ingredients, maximum 5 steps.",
         intermediate: "This recipe can use standard cooking techniques. Keep ingredients reasonable (8-12). Clear instructions.",
         advanced: "This recipe can use advanced techniques, complex flavor profiles, and specialty ingredients. Be creative and ambitious.",
+        master: "No restrictions on technique or complexity. Use professional-level methods, rare ingredients, multi-step preparations. Create a restaurant-quality dish.",
       };
       if (confMap[cookingConfidence]) constraints.push(`Cooking skill level: ${cookingConfidence}. ${confMap[cookingConfidence]}`);
     }

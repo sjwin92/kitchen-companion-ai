@@ -25,13 +25,15 @@ const CUISINE_OPTIONS = ['Mediterranean', 'Japanese', 'French', 'Nordic', 'Thai'
 const CONFIDENCE_LABELS: Record<string, { label: string; desc: string }> = {
   beginner: { label: 'Novice', desc: 'Simple recipes, minimal techniques, basic equipment' },
   intermediate: { label: 'Competent', desc: 'Comfortable with most recipes and common techniques' },
-  advanced: { label: 'Advanced Amateur', desc: 'Complex recipes, advanced techniques, specialty dishes' },
+  advanced: { label: 'Advanced', desc: 'Complex recipes, advanced techniques, specialty dishes' },
+  master: { label: 'Master', desc: 'Professional-level skills, any cuisine, any technique' },
 };
 
 const CONFIDENCE_SLIDER: Record<string, number> = {
   beginner: 0,
-  intermediate: 50,
-  advanced: 80,
+  intermediate: 33,
+  advanced: 66,
+  master: 100,
 };
 
 const PREP_TIME_MARKS = [
@@ -180,11 +182,11 @@ export default function Settings() {
               {CONFIDENCE_LABELS[preferences.cookingConfidence]?.desc || 'Comfortable with most recipes'}
             </p>
             <Slider
-              value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 50]}
+              value={[CONFIDENCE_SLIDER[preferences.cookingConfidence] ?? 33]}
               max={100}
               step={1}
               onValueChange={([v]) => {
-                const conf = v < 30 ? 'beginner' : v < 70 ? 'intermediate' : 'advanced';
+                const conf = v < 20 ? 'beginner' : v < 50 ? 'intermediate' : v < 80 ? 'advanced' : 'master';
                 setPreferences({ cookingConfidence: conf as CookingConfidence });
               }}
               className="mb-2"
@@ -192,6 +194,7 @@ export default function Settings() {
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               <span>Novice</span>
               <span>Competent</span>
+              <span>Advanced</span>
               <span>Master</span>
             </div>
           </section>
@@ -326,7 +329,15 @@ export default function Settings() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Daily Calorie Target</span>
-                <span className="text-sm font-bold">2,000 <span className="text-xs text-muted-foreground font-normal">KCAL</span></span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.max(1000, preferences.dailyCalorieGoal - 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="text-sm font-bold w-14 text-center">{preferences.dailyCalorieGoal.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">kcal</span></span>
+                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.min(5000, preferences.dailyCalorieGoal + 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -361,19 +372,6 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Workspace image */}
-          <div className="rounded-xl overflow-hidden relative h-48">
-            <img
-              src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=600"
-              alt="Kitchen workspace"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-4 left-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">Workspace Setting</p>
-              <p className="text-sm font-bold text-white">Culinary Studio Mode Active</p>
-            </div>
-          </div>
 
           {/* Calorie Tracker */}
           <CalorieTracker />

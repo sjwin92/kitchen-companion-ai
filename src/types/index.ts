@@ -29,14 +29,15 @@ export interface MealSuggestion {
 
 export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
 export type BudgetSensitivity = 'low' | 'medium' | 'high';
-export type CookingConfidence = 'beginner' | 'intermediate' | 'advanced';
+export type CookingConfidence = 'beginner' | 'intermediate' | 'advanced' | 'master';
 export type PrimaryGoal = 'save-time' | 'eat-healthier' | 'reduce-waste' | 'family-friendly' | 'variety';
 
 export interface UserPreferences {
   householdSize: number;
   dietaryPreferences: string[];
   cookingTime: string;
-  maxPrepTime: number; // in minutes
+  maxPrepTime: number;
+  dailyCalorieGoal: number;
   dislikedIngredients: string[];
   onboardingComplete: boolean;
   displayName: string;
