@@ -129,14 +129,14 @@ export default function MealPlanner() {
     for (const meal of draft) {
       const date = new Date(meal.date + 'T00:00:00');
       let recipeId = `custom-${Date.now()}-${added}`;
-      let image: string | undefined;
+      let image: string | undefined = meal.image;
       if (meal.search_term) {
         try {
           const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${meal.search_term}`)}`;
           const res = await fetch(url, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
           const data = await res.json();
           const match = data?.meals?.[0];
-          if (match) { recipeId = `mealdb-${match.idMeal}`; image = match.strMealThumb; }
+          if (match) { recipeId = `mealdb-${match.idMeal}`; if (match.strMealThumb) image = match.strMealThumb; }
         } catch { /* fallback */ }
       }
       const success = await addPlan(recipeId, meal.title, date, meal.slot as MealSlot, image);
