@@ -59,20 +59,29 @@ export function useMealLibrary() {
     promotedOnly?: boolean;
     source?: string;
     limit?: number;
+    includeShared?: boolean;
+    lifecycleStatus?: 'private' | 'validated' | 'shared';
   }) => {
     if (!userId) return [];
     setLoading(true);
     let q = supabase
       .from('meal_library')
       .select('*')
-      .eq('user_id', userId)
+      .order('quality_score', { ascending: false })
       .order('times_cooked', { ascending: false })
-      .order('avg_rating', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .limit(opts?.limit ?? 200);
 
+    if (opts?.includeShared) {
+      // Fetch both own meals and shared meals
+      q = q.or(`user_id.eq.${userId},lifecycle_status.eq.shared`);
+    } else {
+      q = q.eq('user_id', userId);
+    }
+
     if (opts?.promotedOnly) q = q.eq('is_promoted', true);
     if (opts?.source) q = q.eq('source', opts.source);
+    if (opts?.lifecycleStatus) q = q.eq('lifecycle_status', opts.lifecycleStatus);
 
     const { data } = await q;
     const entries = (data || []) as unknown as MealLibraryEntry[];
