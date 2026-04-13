@@ -53,7 +53,7 @@ export default function MealPlanner() {
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = useMealDragDrop();
 
-  useEffect(() => { fetchRatings(); }, [fetchRatings]);
+  useEffect(() => { fetchRatings(); fetchLibrary(); }, [fetchRatings, fetchLibrary]);
 
   const isGuided = preferences.planningStyle === 'help-choose';
   const isAuto = preferences.planningStyle === 'do-it-for-me';
