@@ -6,6 +6,40 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function extractJsonFromResponse(response: string): any {
+  let cleaned = response.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+  const jsonStart = cleaned.search(/[\{\[]/);
+  if (jsonStart === -1) throw new Error("No JSON found in response");
+  const startChar = cleaned[jsonStart];
+  const endChar = startChar === '[' ? ']' : '}';
+  const jsonEnd = cleaned.lastIndexOf(endChar);
+  if (jsonEnd === -1) throw new Error("No closing bracket found");
+  cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    cleaned = cleaned
+      .replace(/,\s*}/g, "}")
+      .replace(/,\s*]/g, "]")
+      .replace(/[\x00-\x1F\x7F]/g, "");
+    try {
+      return JSON.parse(cleaned);
+    } catch {
+      let braces = 0, brackets = 0;
+      for (const char of cleaned) {
+        if (char === '{') braces++;
+        if (char === '}') braces--;
+        if (char === '[') brackets++;
+        if (char === ']') brackets--;
+      }
+      let repaired = cleaned;
+      while (brackets > 0) { repaired += ']'; brackets--; }
+      while (braces > 0) { repaired += '}'; braces--; }
+      return JSON.parse(repaired);
+    }
+  }
+}
+
 async function generateFoodImage(title: string, apiKey: string): Promise<string | null> {
   try {
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
