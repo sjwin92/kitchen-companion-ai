@@ -134,11 +134,7 @@ Return ONLY valid JSON, no markdown.${constraintBlock}`,
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content ?? "";
-    const cleaned = content
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
-    const recipe = JSON.parse(cleaned);
+    const recipe = extractJsonFromResponse(content);
 
     // Generate a food image for the recipe
     const imageUrl = await generateFoodImage(recipe.title, LOVABLE_API_KEY);
