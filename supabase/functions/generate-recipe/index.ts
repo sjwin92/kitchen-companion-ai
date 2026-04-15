@@ -166,8 +166,20 @@ Return ONLY valid JSON, no markdown.${constraintBlock}`,
       }
     );
 
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("AI API error:", response.status, errText);
+      throw new Error(`AI returned ${response.status}: ${errText.substring(0, 200)}`);
+    }
+
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content ?? "";
+    console.log("AI response length:", content.length, "preview:", content.substring(0, 100));
+    
+    if (!content || content.length < 10) {
+      throw new Error("AI returned empty or too-short response");
+    }
+    
     const recipe = extractJsonFromResponse(content);
 
     // Generate a food image for the recipe
