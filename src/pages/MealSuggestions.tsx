@@ -285,12 +285,15 @@ export default function MealSuggestions() {
             />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[0, 25, 50, 75].map(pct => (
-            <Button key={pct} type="button" variant={minMatchPercent === pct ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setMinMatchPercent(pct)}>
-              {pct === 0 ? 'All' : `${pct}%`}
-            </Button>
-          ))}
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Pantry match — % of ingredients you already have</p>
+          <div className="flex flex-wrap gap-2">
+            {[0, 25, 50, 75].map(pct => (
+              <Button key={pct} type="button" variant={minMatchPercent === pct ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setMinMatchPercent(pct)}>
+                {pct === 0 ? 'All' : `${pct}%`}
+              </Button>
+            ))}
+          </div>
         </div>
         {!isLoading && (
           <p className="text-xs text-muted-foreground">{Math.min(MAX_VISIBLE_MEALS, filteredMeals.length)} of {filteredMeals.length} recipes</p>
