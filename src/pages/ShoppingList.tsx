@@ -4,10 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import type { FoodItem } from '@/types';
 import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
+import { useBasketCompare } from '@/hooks/useBasketCompare';
 
 interface ShoppingItem {
   id: string;
@@ -24,6 +25,7 @@ export default function ShoppingList() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [prices, setPrices] = useState<Map<string, number>>(new Map());
+  const { baskets, loading: comparingPrices, error: compareError, compare, clear: clearCompare } = useBasketCompare();
 
   const load = useCallback(async () => {
     if (!session?.user) return;
@@ -197,22 +199,108 @@ export default function ShoppingList() {
         )}
       </div>
 
-      {/* Basket cost estimate */}
+      {/* Basket cost estimate + retailer comparison */}
       {unchecked.length > 0 && (
-        <div className="max-w-xl mb-6 glass-card p-4 flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground mb-1">
-              Estimated basket
-            </p>
-            <p className="text-2xl font-extrabold font-display">
-              £{basketTotal.toFixed(2)}
-            </p>
-          </div>
-          <p className="text-xs text-muted-foreground text-right">
-            {pricedCount} of {unchecked.length} items priced
-            <br />
-            <span className="text-[10px]">UK average estimates</span>
-          </p>
+        <div className="max-w-xl mb-6 space-y-3">
+          {/* Single estimate from cached prices */}
+          {basketTotal > 0 && (
+            <div className="glass-card p-4 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground mb-1">
+                  Estimated basket
+                </p>
+                <p className="text-2xl font-extrabold font-display">
+                  £{basketTotal.toFixed(2)}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground text-right">
+                {pricedCount} of {unchecked.length} items priced
+                <br />
+                <span className="text-[10px]">UK average estimates</span>
+              </p>
+            </div>
+          )}
+
+          {/* Retailer price comparison */}
+          {baskets.length === 0 && !comparingPrices && (
+            <button
+              onClick={() => compare(unchecked.map(i => i.name))}
+              className="w-full glass-card p-4 flex items-center gap-3 hover:bg-surface-low/60 transition-colors text-left"
+            >
+              <div className="icon-container bg-muted shrink-0">
+                <BarChart2 className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-bold">Compare supermarket prices</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  See which retailer has the cheapest basket
+                </p>
+              </div>
+              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Compare →
+              </span>
+            </button>
+          )}
+
+          {comparingPrices && (
+            <div className="glass-card p-4 flex items-center gap-3 text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+              <span className="text-sm">Checking prices across supermarkets…</span>
+            </div>
+          )}
+
+          {compareError && !comparingPrices && (
+            <div className="glass-card p-4 text-xs text-muted-foreground">
+              {compareError} —{' '}
+              <button className="underline" onClick={() => compare(unchecked.map(i => i.name))}>
+                retry
+              </button>
+            </div>
+          )}
+
+          {baskets.length > 0 && (
+            <div className="glass-card overflow-hidden">
+              <div className="px-5 py-3 border-b border-border/40 flex items-center justify-between">
+                <h3 className="text-base font-bold">Price Comparison</h3>
+                <button
+                  onClick={clearCompare}
+                  className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="divide-y divide-border/30">
+                {baskets.map((basket, idx) => (
+                  <div key={basket.retailer} className="flex items-center gap-3 px-5 py-3.5">
+                    {idx === 0 && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 w-12 shrink-0">
+                        Cheapest
+                      </span>
+                    )}
+                    {idx > 0 && (
+                      <span className="w-12 shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        +£{(basket.total - baskets[0].total).toFixed(2)}
+                      </span>
+                    )}
+                    <span className="flex-1 text-sm font-semibold">{basket.retailer_name}</span>
+                    {basket.not_found.length > 0 && (
+                      <span className="text-[10px] text-muted-foreground">
+                        {basket.not_found.length} missing
+                      </span>
+                    )}
+                    <span className="text-sm font-extrabold tabular-nums font-display">
+                      £{basket.total.toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-5 py-2 border-t border-border/40">
+                <p className="text-[10px] text-muted-foreground">
+                  {baskets[0]?.items.length ?? 0} of {unchecked.length} items matched · live prices
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
