@@ -23,6 +23,7 @@ export default function ShoppingList() {
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [prices, setPrices] = useState<Map<string, number>>(new Map());
 
   const load = useCallback(async () => {
     if (!session?.user) return;
