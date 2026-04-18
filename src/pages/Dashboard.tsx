@@ -234,6 +234,9 @@ export default function Dashboard() {
 
         {/* Right column — sidebar */}
         <div className="space-y-5">
+          {/* One-tap weekly planning */}
+          <PlanMyWeekButton />
+
           {/* Calorie Tracker */}
           <CalorieTracker />
 
