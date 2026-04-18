@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { getDietaryKeywordsForSlot, passesUserDietaryFilters } from '@/lib/dietaryFilter';
+import { useSmartRecommendations } from '@/hooks/useSmartRecommendations';
+import { explainSuggestion, reasonChipClass } from '@/lib/recommendationReason';
 
 interface Suggestion {
   id: string;
