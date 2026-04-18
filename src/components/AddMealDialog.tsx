@@ -7,6 +7,7 @@ import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CalendarDays, Search, Loader2, Apple, Plus, Flame } from 'lucide-react';
+import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import {
   Dialog,
   DialogContent,
@@ -45,9 +46,9 @@ function matchesSlot(category: string | null, slot: MealSlot): boolean {
 
 export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: AddMealDialogProps) {
   const navigate = useNavigate();
-  const { inventory, removeItem, updateItem } = useApp();
+  const { inventory, removeItem, updateItem, preferences } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; name: string; thumb: string }>>([]);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; name: string; thumb: string; ingredients: string[] }>>([]);
   const [searching, setSearching] = useState(false);
   const [customName, setCustomName] = useState('');
   const [catalogFilter, setCatalogFilter] = useState('');
@@ -70,8 +71,16 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     return inventoryItems.filter(i => i.name.toLowerCase().includes(q));
   }, [inventoryItems, customName]);
 
-  // Catalog items filtered by slot + search
-  const catalogGroups = useMemo(() => getCatalogForSlot(slot, catalogFilter), [slot, catalogFilter]);
+  // Catalog items filtered by slot + search + dietary preferences
+  const catalogGroups = useMemo(() => {
+    const groups = getCatalogForSlot(slot, catalogFilter);
+    return groups.map(group => ({
+      ...group,
+      items: group.items.filter(item =>
+        passesUserDietaryFilters(item.name, [], preferences)
+      ),
+    })).filter(group => group.items.length > 0);
+  }, [slot, catalogFilter, preferences]);
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -86,14 +95,25 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
         headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` },
       });
       const data = await res.json();
-      const meals = (data.meals ?? []).map((m: any) => ({ id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb }));
+      const meals = (data.meals ?? [])
+        .map((m: any) => {
+          const ingredients: string[] = [];
+          for (let i = 1; i <= 20; i++) {
+            const ing = m[`strIngredient${i}`];
+            if (ing && ing.trim()) ingredients.push(ing.trim());
+          }
+          return { id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb, ingredients };
+        })
+        .filter((m: { name: string; ingredients: string[] }) =>
+          passesUserDietaryFilters(m.name, m.ingredients, preferences)
+        );
       setSearchResults(meals);
     } catch {
       toast.error('Search failed');
     } finally {
       setSearching(false);
     }
-  }, []);
+  }, [preferences]);
 
   // Auto-search with debounce
   useEffect(() => {

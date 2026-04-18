@@ -5,11 +5,13 @@ import type { SlotSettings } from '@/hooks/useMealSlotSettings';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { getDietaryKeywordsForSlot, passesUserDietaryFilters } from '@/lib/dietaryFilter';
 
 interface Suggestion {
   id: string;
   name: string;
   thumb: string;
+  ingredients: string[];
 }
 
 interface Props {
@@ -18,13 +20,6 @@ interface Props {
   slotSettings?: SlotSettings;
   onSelect: (recipeId: string, title: string, image?: string) => Promise<void>;
 }
-
-const SLOT_KEYWORDS: Record<MealSlot, string[]> = {
-  breakfast: ['pancake', 'egg', 'porridge', 'omelette', 'toast'],
-  lunch: ['salad', 'soup', 'sandwich', 'wrap', 'rice'],
-  dinner: ['chicken', 'beef', 'pasta', 'curry', 'steak'],
-  snack: ['cookie', 'fruit', 'yogurt', 'smoothie', 'cake'],
-};
 
 export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
   const { preferences } = useApp();
@@ -37,40 +32,37 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      // Build keyword pool: slot defaults + slot cuisine pref + profile cuisines
-      const keywords = [...SLOT_KEYWORDS[slot]];
-      if (slotSettings?.cuisine_preference) {
-        keywords.push(slotSettings.cuisine_preference);
-      }
-      if (preferences.preferredCuisines.length > 0) {
-        keywords.push(...preferences.preferredCuisines);
-      }
-      const keyword = keywords[Math.floor(Math.random() * keywords.length)];
+      // Build keyword pool using diet-aware helper
+      const keywords = getDietaryKeywordsForSlot(slot, preferences);
+      if (slotSettings?.cuisine_preference) keywords.push(slotSettings.cuisine_preference);
+      const keyword = keywords[Math.floor(Math.random() * keywords.length)] ?? 'vegetable';
 
       const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${keyword}`)}`;
       const res = await fetch(url, {
         headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
       });
       const data = await res.json();
-      const meals = (data.meals ?? [])
-        .map((m: any) => ({ id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb }))
-        .filter((m: Suggestion) => {
-          const lower = m.name.toLowerCase();
-          // Filter out disliked ingredients
-          if (preferences.dislikedIngredients.some(d => lower.includes(d.toLowerCase()))) return false;
-          // Filter out allergens from title
-          if (preferences.allergies.some(a => lower.includes(a.toLowerCase()))) return false;
-          return true;
-        })
+
+      const meals: Suggestion[] = (data.meals ?? []).map((m: any) => {
+        const ingredients: string[] = [];
+        for (let i = 1; i <= 20; i++) {
+          const ing = m[`strIngredient${i}`];
+          if (ing && ing.trim()) ingredients.push(ing.trim());
+        }
+        return { id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb, ingredients };
+      });
+
+      const filtered = meals
+        .filter(m => passesUserDietaryFilters(m.name, m.ingredients, preferences))
         .slice(0, 3);
 
-      setSuggestions(meals);
+      setSuggestions(filtered);
     } catch {
       toast.error('Failed to load suggestions');
     } finally {
       setLoading(false);
     }
-  }, [slot, slotSettings?.cuisine_preference, preferences.preferredCuisines, preferences.dislikedIngredients, preferences.allergies]);
+  }, [slot, slotSettings?.cuisine_preference, preferences]);
 
   useEffect(() => { fetchSuggestions(); }, [fetchSuggestions]);
 
