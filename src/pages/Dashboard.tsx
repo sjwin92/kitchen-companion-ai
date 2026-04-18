@@ -236,6 +236,8 @@ export default function Dashboard() {
           {/* Calorie Tracker */}
           <CalorieTracker />
 
+          {/* Taste Profile — what the AI has learned */}
+          <TasteProfileCard />
           {/* Inventory Status */}
           <div className="glass-card p-5">
             <h3 className="section-title mb-5">Inventory Status</h3>
