@@ -4,8 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, ShoppingBag, Search, Share2, Printer } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus } from 'lucide-react';
 import { toast } from 'sonner';
+import type { FoodItem } from '@/types';
 
 interface ShoppingItem {
   id: string;
@@ -27,7 +28,7 @@ function categorize(name: string): string {
 }
 
 export default function ShoppingList() {
-  const { session } = useApp();
+  const { session, addItems } = useApp();
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -85,6 +86,29 @@ export default function ShoppingList() {
     }
     setItems(prev => prev.filter(i => !i.checked));
     toast.success(`Cleared ${checked.length} item${checked.length > 1 ? 's' : ''}`);
+  };
+
+  const moveCheckedToInventory = async () => {
+    const checkedItems = items.filter(i => i.checked);
+    if (checkedItems.length === 0) return;
+
+    const foodItems: FoodItem[] = checkedItems.map(item => ({
+      id: `shopping-${Date.now()}-${item.id}`,
+      name: item.name,
+      quantity: item.quantity,
+      location: 'fridge' as const,
+      dateAdded: new Date().toISOString().split('T')[0],
+      daysUntilExpiry: 7,
+      status: 'okay' as const,
+    }));
+
+    addItems(foodItems);
+
+    for (const item of checkedItems) {
+      await supabase.from('shopping_list').delete().eq('id', item.id);
+    }
+    setItems(prev => prev.filter(i => !i.checked));
+    toast.success(`Added ${checkedItems.length} item${checkedItems.length > 1 ? 's' : ''} to inventory`);
   };
 
   const unchecked = items.filter(i => !i.checked);
@@ -147,9 +171,14 @@ export default function ShoppingList() {
           <Plus className="w-3.5 h-3.5" /> Quick Add
         </Button>
         {checked.length > 0 && (
-          <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={clearChecked}>
-            Clear Done ({checked.length})
-          </Button>
+          <>
+            <Button size="sm" className="rounded-xl text-xs gap-1.5 font-bold" onClick={moveCheckedToInventory}>
+              <PackagePlus className="w-3.5 h-3.5" /> Move to Inventory ({checked.length})
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={clearChecked}>
+              Clear Done
+            </Button>
+          </>
         )}
       </div>
 

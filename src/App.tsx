@@ -27,6 +27,7 @@ import MealHistory from "@/pages/MealHistory";
 import WeeklyInsights from "@/pages/WeeklyInsights";
 import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ function AppContent() {
     <>
       <TopNav />
       <div className="md:pt-14">
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/inventory" element={<Inventory />} />
@@ -73,6 +75,7 @@ function AppContent() {
           <Route path="/weekly-insights" element={<WeeklyInsights />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </ErrorBoundary>
       </div>
       <BottomNav />
     </>
