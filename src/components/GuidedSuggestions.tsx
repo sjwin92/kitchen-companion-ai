@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { getDietaryKeywordsForSlot, passesUserDietaryFilters } from '@/lib/dietaryFilter';
+import { useSmartRecommendations } from '@/hooks/useSmartRecommendations';
+import { explainSuggestion, reasonChipClass } from '@/lib/recommendationReason';
 
 interface Suggestion {
   id: string;
@@ -22,9 +24,12 @@ interface Props {
 }
 
 export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
-  const { preferences } = useApp();
+  const { preferences, inventory } = useApp();
+  const { signals, loadSignals } = useSmartRecommendations();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => { loadSignals(); }, [loadSignals]);
 
   const fetchSuggestions = useCallback(async () => {
     setLoading(true);
@@ -95,18 +100,36 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
         </p>
       )}
       <div className="space-y-1.5">
-        {suggestions.map(s => (
-          <button
-            key={s.id}
-            onClick={() => onSelect(`mealdb-${s.id}`, s.name, s.thumb)}
-            className="w-full flex items-center gap-2.5 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
-          >
-            {s.thumb && (
-              <img src={s.thumb} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-            )}
-            <p className="text-xs font-medium truncate flex-1">{s.name}</p>
-          </button>
-        ))}
+        {suggestions.map(s => {
+          const reason = explainSuggestion({
+            recipeId: `mealdb-${s.id}`,
+            title: s.name,
+            ingredients: s.ingredients,
+            signals,
+            inventory,
+            preferredCuisines: preferences.preferredCuisines,
+            cuisine: slotSettings?.cuisine_preference,
+          });
+          return (
+            <button
+              key={s.id}
+              onClick={() => onSelect(`mealdb-${s.id}`, s.name, s.thumb)}
+              className="w-full flex items-center gap-2.5 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
+            >
+              {s.thumb && (
+                <img src={s.thumb} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium truncate">{s.name}</p>
+                {reason && (
+                  <span className={`inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${reasonChipClass(reason.kind)}`}>
+                    {reason.text}
+                  </span>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
