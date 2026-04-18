@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FirstWinCard from '@/components/FirstWinCard';
 import CalorieTracker from '@/components/CalorieTracker';
 import TasteProfileCard from '@/components/TasteProfileCard';
+import PlanMyWeekButton from '@/components/PlanMyWeekButton';
 import {
   Refrigerator,
   Snowflake,
