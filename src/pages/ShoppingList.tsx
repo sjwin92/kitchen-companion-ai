@@ -197,23 +197,51 @@ export default function ShoppingList() {
         )}
       </div>
 
+      {/* Basket cost estimate */}
+      {unchecked.length > 0 && (
+        <div className="max-w-xl mb-6 glass-card p-4 flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground mb-1">
+              Estimated basket
+            </p>
+            <p className="text-2xl font-extrabold font-display">
+              £{basketTotal.toFixed(2)}
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground text-right">
+            {pricedCount} of {unchecked.length} items priced
+            <br />
+            <span className="text-[10px]">UK average estimates</span>
+          </p>
+        </div>
+      )}
+
       {/* Floating print button */}
       <button className="fixed bottom-24 md:bottom-8 right-6 z-40 bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:shadow-xl transition-shadow">
         <Printer className="w-4 h-4" /> Print List
       </button>
 
-      {/* Items grouped by category */}
+      {/* Items grouped by aisle */}
       <div className="max-w-xl space-y-6">
-        {Object.entries(grouped).map(([category, catItems]) => (
+        {grouped.map(([category, catItems]) => {
+          const aisleTotal = catItems.reduce((sum, it) => {
+            const p = prices.get(it.name);
+            const qty = parseFloat(it.quantity) || 1;
+            return sum + (p ? p * qty : 0);
+          }, 0);
+          return (
           <div key={category} className="glass-card overflow-hidden">
             <div className="px-5 py-3 flex items-center justify-between border-b border-border/40">
               <h3 className="text-base font-bold">{category}</h3>
               <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                {catItems.length} Items
+                {catItems.length} Items{aisleTotal > 0 ? ` · £${aisleTotal.toFixed(2)}` : ''}
               </span>
             </div>
             <div className="divide-y divide-border/30">
-              {catItems.map(item => (
+              {catItems.map(item => {
+                const price = prices.get(item.name);
+                const cheaper = getCheaperAlternative(item.name);
+                return (
                 <div key={item.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-low/50 transition-colors">
                   <Checkbox
                     checked={item.checked}
@@ -221,20 +249,32 @@ export default function ShoppingList() {
                     className="rounded-lg"
                   />
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold">{item.name}</span>
-                    {item.quantity !== '1' && (
-                      <span className="text-xs text-muted-foreground ml-2">({item.quantity})</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold">{item.name}</span>
+                      {item.quantity !== '1' && (
+                        <span className="text-xs text-muted-foreground">({item.quantity})</span>
+                      )}
+                    </div>
+                    {cheaper && (
+                      <div className="flex items-center gap-1 mt-0.5 text-[11px] text-muted-foreground">
+                        <Lightbulb className="w-3 h-3" />
+                        <span>Try <span className="font-semibold text-foreground">{cheaper}</span> to save</span>
+                      </div>
                     )}
                   </div>
-                  <span className="text-sm text-muted-foreground font-medium">{item.quantity}</span>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                  {price !== undefined && (
+                    <span className="text-sm font-bold tabular-nums">
+                      £{(price * (parseFloat(item.quantity) || 1)).toFixed(2)}
+                    </span>
+                  )}
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl opacity-60 hover:opacity-100 hover:bg-destructive/10" onClick={() => remove(item.id)}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
-              ))}
+              );})}
             </div>
           </div>
-        ))}
+        );})}
 
         {/* Checked items */}
         {checked.length > 0 && (
