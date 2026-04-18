@@ -24,9 +24,12 @@ interface Props {
 }
 
 export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
-  const { preferences } = useApp();
+  const { preferences, inventory } = useApp();
+  const { signals, loadSignals } = useSmartRecommendations();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => { loadSignals(); }, [loadSignals]);
 
   const fetchSuggestions = useCallback(async () => {
     setLoading(true);
