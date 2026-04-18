@@ -106,16 +106,39 @@ export default function ShoppingList() {
   const unchecked = items.filter(i => !i.checked);
   const checked = items.filter(i => i.checked);
 
-  // Group unchecked by category
+  // Refresh prices when unchecked items change
+  useEffect(() => {
+    if (unchecked.length === 0) { setPrices(new Map()); return; }
+    fetchPricesFor(unchecked.map(i => i.name)).then(setPrices);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unchecked.length, unchecked.map(i => i.name).join('|')]);
+
+  // Group unchecked by aisle in canonical order
   const grouped = useMemo(() => {
     const groups: Record<string, ShoppingItem[]> = {};
     unchecked.forEach(item => {
-      const cat = categorize(item.name);
+      const cat = getAisle(item.name);
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(item);
     });
-    return groups;
+    return AISLE_ORDER
+      .filter(a => groups[a]?.length)
+      .map(a => [a, groups[a]] as [Aisle, ShoppingItem[]]);
   }, [unchecked]);
+
+  // Basket total: sum prices × numeric qty (defaults to 1)
+  const basketTotal = useMemo(() => {
+    let total = 0;
+    for (const item of unchecked) {
+      const p = prices.get(item.name);
+      if (p === undefined) continue;
+      const qty = parseFloat(item.quantity) || 1;
+      total += p * qty;
+    }
+    return total;
+  }, [unchecked, prices]);
+
+  const pricedCount = unchecked.filter(i => prices.has(i.name)).length;
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
