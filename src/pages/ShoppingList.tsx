@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import type { FoodItem } from '@/types';
+import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
 
 interface ShoppingItem {
   id: string;
@@ -15,17 +16,7 @@ interface ShoppingItem {
   checked: boolean;
 }
 
-// Categorize shopping items
-function categorize(name: string): string {
-  const n = name.toLowerCase();
-  const produce = ['tomato', 'onion', 'garlic', 'pepper', 'carrot', 'potato', 'spinach', 'kale', 'lettuce', 'zucchini', 'broccoli', 'mushroom', 'celery', 'cucumber', 'avocado', 'lemon', 'lime', 'parsley', 'cilantro', 'basil', 'herb', 'apple', 'banana', 'orange', 'berry', 'grape'];
-  const dairy = ['milk', 'cheese', 'yogurt', 'butter', 'cream', 'ricotta', 'mozzarella', 'parmesan', 'egg'];
-  const pantry = ['rice', 'pasta', 'flour', 'sugar', 'salt', 'oil', 'vinegar', 'sauce', 'spice', 'can', 'bean', 'lentil', 'stock', 'broth'];
-  if (produce.some(p => n.includes(p))) return 'Produce';
-  if (dairy.some(d => n.includes(d))) return 'Dairy';
-  if (pantry.some(p => n.includes(p))) return 'Pantry';
-  return 'Other';
-}
+const AISLE_ORDER: Aisle[] = ['Produce', 'Meat & Fish', 'Dairy & Eggs', 'Bakery', 'Pantry', 'Frozen', 'Other'];
 
 export default function ShoppingList() {
   const { session, addItems } = useApp();
