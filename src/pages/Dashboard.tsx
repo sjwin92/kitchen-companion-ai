@@ -1,6 +1,7 @@
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import FirstWinCard from '@/components/FirstWinCard';
+import CalorieTracker from '@/components/CalorieTracker';
 import {
   Refrigerator,
   Snowflake,
@@ -231,6 +232,9 @@ export default function Dashboard() {
 
         {/* Right column — sidebar */}
         <div className="space-y-5">
+          {/* Calorie Tracker */}
+          <CalorieTracker />
+
           {/* Inventory Status */}
           <div className="glass-card p-5">
             <h3 className="section-title mb-5">Inventory Status</h3>

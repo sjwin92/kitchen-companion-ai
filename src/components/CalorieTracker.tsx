@@ -40,32 +40,27 @@ interface PlannedMeal {
 }
 
 export default function CalorieTracker() {
-  const { session } = useApp();
+  const { session, preferences, setPreferences } = useApp();
   const navigate = useNavigate();
   const [meals, setMeals] = useState<MealLogEntry[]>([]);
   const [planned, setPlanned] = useState<PlannedMeal[]>([]);
-  const [calorieGoal, setCalorieGoal] = useState(2000);
+  const [calorieGoal, setCalorieGoal] = useState(preferences.dailyCalorieGoal || 2000);
   const [editingGoal, setEditingGoal] = useState(false);
-  const [goalInput, setGoalInput] = useState('2000');
+  const [goalInput, setGoalInput] = useState(String(preferences.dailyCalorieGoal || 2000));
+
+  // Sync goal from context when preferences load
+  useEffect(() => {
+    if (preferences.dailyCalorieGoal) {
+      setCalorieGoal(preferences.dailyCalorieGoal);
+      setGoalInput(String(preferences.dailyCalorieGoal));
+    }
+  }, [preferences.dailyCalorieGoal]);
 
   const today = new Date();
   const todayStr = format(today, 'yyyy-MM-dd');
 
   useEffect(() => {
     if (!session?.user) return;
-    const uid = session.user.id;
-
-    // Load calorie goal from profile
-    supabase
-      .from('profiles')
-      .select('daily_calorie_goal')
-      .eq('id', uid)
-      .single()
-      .then(({ data }) => {
-        const goal = (data as any)?.daily_calorie_goal ?? 2000;
-        setCalorieGoal(goal);
-        setGoalInput(String(goal));
-      });
 
     // Load today's logged meals
     const dayStart = startOfDay(today).toISOString();
@@ -118,6 +113,7 @@ export default function CalorieTracker() {
     setCalorieGoal(val);
     setGoalInput(String(val));
     setEditingGoal(false);
+    setPreferences({ dailyCalorieGoal: val });
     if (session?.user) {
       await supabase
         .from('profiles')

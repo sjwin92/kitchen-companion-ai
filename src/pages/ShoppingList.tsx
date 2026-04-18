@@ -172,7 +172,7 @@ export default function ShoppingList() {
               {catItems.map(item => (
                 <div key={item.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-low/50 transition-colors">
                   <Checkbox
-                    checked={false}
+                    checked={item.checked}
                     onCheckedChange={() => toggleCheck(item)}
                     className="rounded-lg"
                   />
