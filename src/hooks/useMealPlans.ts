@@ -100,6 +100,14 @@ export function useMealPlans(weekStart?: Date) {
     [plans]
   );
 
+  const updatePlanImage = useCallback(
+    async (planId: string, image: string) => {
+      await supabase.from('meal_plans').update({ image }).eq('id', planId);
+      setPlans(prev => prev.map(p => p.id === planId ? { ...p, image } : p));
+    },
+    []
+  );
+
   const batchAddPlans = useCallback(
     async (meals: Array<{ recipeId: string; title: string; date: Date; slot: MealSlot; image?: string }>) => {
       if (!userId || meals.length === 0) return false;
@@ -121,5 +129,5 @@ export function useMealPlans(weekStart?: Date) {
     [userId, fetchPlans]
   );
 
-  return { plans, loading, addPlan, batchAddPlans, removePlan, movePlan, getPlansForDate, refetch: fetchPlans };
+  return { plans, loading, addPlan, batchAddPlans, updatePlanImage, removePlan, movePlan, getPlansForDate, refetch: fetchPlans };
 }

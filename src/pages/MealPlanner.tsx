@@ -21,6 +21,7 @@ import MealRatingDialog from '@/components/MealRatingDialog';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
 import { searchRecipes } from '@/services/recipes/recipeProvider';
+import { pickMeal } from '@/lib/mealSuggestions';
 import { toast } from 'sonner';
 
 export default function MealPlanner() {
@@ -39,13 +40,13 @@ export default function MealPlanner() {
   }, [weekOffset]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
-  const { plans, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
+  const { plans, addPlan, batchAddPlans, updatePlanImage, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
   const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
-  const { generatePlan, generateSlot, generating: autoGenerating, generatingSlot, draft, clearDraft } = useAutoPlan();
+  const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
   const { saveMeal, saveBatch, trackSignal, fetchLibrary, meals } = useMealLibrary();
   const {
     draggingPlanId, dragOverTarget,
@@ -121,24 +122,40 @@ export default function MealPlanner() {
   const handleAutoGenerate = () => generatePlan(days, plans);
 
   const handleAutoSlot = useCallback(async (date: Date, slot: MealSlot) => {
-    await generateSlot(date, slot, plans, async (meal) => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      let recipeId = `custom-${Date.now()}`;
-      let image: string | undefined = meal.image;
-      if (meal.search_term) {
-        try {
-          const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${meal.search_term}`)}`;
-          const res = await fetch(url, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
-          const data = await res.json();
-          const match = data?.meals?.[0];
-          if (match) { recipeId = `mealdb-${match.idMeal}`; if (match.strMealThumb) image = match.strMealThumb; }
-        } catch { /* fallback */ }
-      }
-      await addPlan(recipeId, meal.title, date, slot, image);
-      toast.success(`Added ${meal.title}`);
-    });
-  }, [generateSlot, plans, addPlan]);
+    // Pick instantly from local list — zero network calls needed
+    const dietaryTag = preferences.dietaryPreferences?.includes('vegetarian') ? 'vegetarian'
+      : preferences.dietaryPreferences?.includes('vegan') ? 'vegan' : undefined;
+    const meal = pickMeal(slot, plans.map(p => p.title), dietaryTag);
+
+    const recipeId = `auto-${Date.now()}`;
+    const success = await addPlan(recipeId, meal.title, date, slot);
+    if (!success) { toast.error('Could not add meal'); return; }
+    toast.success(`Added ${meal.title}`);
+
+    // Fetch MealDB image silently in the background
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const dateStr = format(date, 'yyyy-MM-dd');
+    void (async () => {
+      try {
+        const searchPath = encodeURIComponent(`search.php?s=${meal.search_term}`);
+        const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${searchPath}`;
+        const res = await fetch(url, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
+        const data = await res.json();
+        const match = data?.meals?.[0];
+        if (match?.strMealThumb) {
+          const { data: planRow } = await supabase
+            .from('meal_plans')
+            .select('id')
+            .eq('planned_date', dateStr)
+            .eq('meal_slot', slot)
+            .eq('title', meal.title)
+            .maybeSingle();
+          if (planRow?.id) await updatePlanImage(planRow.id, match.strMealThumb);
+        }
+      } catch { /* image is optional */ }
+    })();
+  }, [plans, addPlan, updatePlanImage, preferences.dietaryPreferences]);
 
   const handleAcceptDraft = async () => {
     if (draft.length === 0) return;
@@ -323,6 +340,21 @@ export default function MealPlanner() {
                     {DISPLAY_SLOTS.map(slot => {
                       const plan = plans.find(p => p.planned_date === dayStr && p.meal_slot === slot);
                       const slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
+                      const AddIcon = isAuto ? Sparkles : Plus;
+                      const addLabel = isAuto ? 'Auto' : 'Add';
+                      const addBtn = (
+                        <button
+                          onClick={() => {
+                            if (isAuto) handleAutoSlot(day, slot as MealSlot);
+                            else if (isGuided) setGuidedSlot({ date: day, slot: slot as MealSlot });
+                            else setAddDialog({ date: day, slot: slot as MealSlot });
+                          }}
+                          className="flex-1 flex flex-col items-center justify-center border border-dashed border-border/60 rounded-lg hover:bg-muted/30 transition-colors"
+                        >
+                          <AddIcon className="w-4 h-4 text-muted-foreground mb-0.5" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">{addLabel}</span>
+                        </button>
+                      );
 
                       return (
                         <div
@@ -333,7 +365,6 @@ export default function MealPlanner() {
                           onDrop={e => handleDrop(e, day, slot as MealSlot)}
                         >
                           <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-2">{slotLabel}</p>
-
                           {plan ? (
                             <div className="flex-1 flex flex-col">
                               {plan.image && (
@@ -377,31 +408,7 @@ export default function MealPlanner() {
                                 </button>
                               </div>
                             </div>
-                          ) : (() => {
-                            const slotKey = `${dayStr}-${slot}`;
-                            const isThisSlotGenerating = generatingSlot === slotKey;
-                            return (
-                              <button
-                                disabled={isThisSlotGenerating}
-                                onClick={() => {
-                                  if (isAuto) handleAutoSlot(day, slot as MealSlot);
-                                  else if (isGuided) setGuidedSlot({ date: day, slot: slot as MealSlot });
-                                  else setAddDialog({ date: day, slot: slot as MealSlot });
-                                }}
-                                className="flex-1 flex flex-col items-center justify-center border border-dashed border-border/60 rounded-lg hover:bg-muted/30 transition-colors disabled:opacity-50"
-                              >
-                                {isThisSlotGenerating
-                                  ? <Loader2 className="w-4 h-4 text-muted-foreground animate-spin mb-0.5" />
-                                  : isAuto
-                                    ? <Sparkles className="w-4 h-4 text-muted-foreground mb-0.5" />
-                                    : <Plus className="w-4 h-4 text-muted-foreground mb-0.5" />
-                                }
-                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
-                                  {isThisSlotGenerating ? 'Picking…' : isAuto ? 'Auto' : 'Add'}
-                                </span>
-                              </button>
-                            );
-                          })()}
+                          ) : addBtn}
                         </div>
                       );
                     })}
