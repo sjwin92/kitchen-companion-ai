@@ -4,7 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2, ExternalLink } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { FoodItem } from '@/types';
 import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
@@ -25,6 +27,9 @@ export default function ShoppingList() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [prices, setPrices] = useState<Map<string, number>>(new Map());
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [quickAddText, setQuickAddText] = useState('');
+  const [quickAddLoading, setQuickAddLoading] = useState(false);
   const { baskets, loading: comparingPrices, error: compareError, compare, clear: clearCompare } = useBasketCompare();
 
   const load = useCallback(async () => {
@@ -142,14 +147,82 @@ export default function ShoppingList() {
 
   const pricedCount = unchecked.filter(i => prices.has(i.name)).length;
 
+  const handleQuickAdd = async () => {
+    if (!quickAddText.trim() || !session?.user) return;
+    setQuickAddLoading(true);
+    const lines = quickAddText
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean);
+    let added = 0;
+    for (const line of lines) {
+      // Support "2x Milk" or "Milk x2" or "Milk 2" or just "Milk"
+      const match = line.match(/^(\d+)\s*[xX]?\s+(.+)$/) || line.match(/^(.+?)\s+[xX]?(\d+)$/);
+      let itemName: string;
+      let qty: string;
+      if (match && match.length === 3) {
+        const isLeadingNum = /^\d/.test(line);
+        itemName = isLeadingNum ? match[2].trim() : match[1].trim();
+        qty = isLeadingNum ? match[1] : match[2];
+      } else {
+        itemName = line;
+        qty = '1';
+      }
+      if (!itemName) continue;
+      const { error } = await supabase
+        .from('shopping_list')
+        .insert({ user_id: session.user.id, name: itemName, quantity: qty });
+      if (!error) added++;
+    }
+    setQuickAddLoading(false);
+    setQuickAddText('');
+    setQuickAddOpen(false);
+    if (added > 0) {
+      load();
+      toast.success(`Added ${added} item${added !== 1 ? 's' : ''}`);
+    }
+  };
+
+  const handleExport = () => {
+    if (items.length === 0) { toast('Your list is empty'); return; }
+    const sections: string[] = ['🛒 Shopping List\n'];
+    // Unchecked grouped by aisle
+    for (const [aisle, aisleItems] of grouped) {
+      sections.push(`\n── ${aisle} ──`);
+      for (const item of aisleItems) {
+        const qty = item.quantity !== '1' ? ` (${item.quantity})` : '';
+        sections.push(`• ${item.name}${qty}`);
+      }
+    }
+    if (checked.length > 0) {
+      sections.push('\n── Got ──');
+      for (const item of checked) {
+        sections.push(`✓ ${item.name}`);
+      }
+    }
+    const text = sections.join('\n');
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(() => toast.success('List copied to clipboard'));
+    } else {
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'shopping-list.txt'; a.click();
+      URL.revokeObjectURL(url);
+      toast.success('List downloaded');
+    }
+  };
+
+  const handlePrint = () => window.print();
+
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
-      {/* Editorial header */}
+      {/* Header */}
       <div className="mb-8">
-        <p className="section-title mb-2">Provisioning</p>
+        <p className="section-title mb-2">Shopping</p>
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-display leading-tight">
-          The Weekly<br />
-          <span className="italic">Market List</span>
+          Your Weekly<br />
+          <span className="italic">Shopping List</span>
         </h1>
       </div>
 
@@ -181,10 +254,10 @@ export default function ShoppingList() {
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold">
+        <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold" onClick={handleExport}>
           <Share2 className="w-3.5 h-3.5" /> Export
         </Button>
-        <Button size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold" style={{ background: 'var(--gradient-primary)' }}>
+        <Button size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold" style={{ background: 'var(--gradient-primary)' }} onClick={() => setQuickAddOpen(true)}>
           <Plus className="w-3.5 h-3.5" /> Quick Add
         </Button>
         {checked.length > 0 && (
@@ -258,7 +331,10 @@ export default function ShoppingList() {
             </div>
           )}
 
-          {baskets.length > 0 && (
+          {baskets.length > 0 && (() => {
+            const priced = baskets.filter(b => b.items.length > 0);
+            const unavailable = baskets.filter(b => b.items.length === 0);
+            return (
             <div className="glass-card overflow-hidden">
               <div className="px-5 py-3 border-b border-border/40 flex items-center justify-between">
                 <h3 className="text-base font-bold">Price Comparison</h3>
@@ -270,18 +346,11 @@ export default function ShoppingList() {
                 </button>
               </div>
               <div className="divide-y divide-border/30">
-                {baskets.map((basket, idx) => (
+                {priced.map((basket, idx) => (
                   <div key={basket.retailer} className="flex items-center gap-3 px-5 py-3.5">
-                    {idx === 0 && (
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 w-12 shrink-0">
-                        Cheapest
-                      </span>
-                    )}
-                    {idx > 0 && (
-                      <span className="w-12 shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        +£{(basket.total - baskets[0].total).toFixed(2)}
-                      </span>
-                    )}
+                    <span className={`w-14 shrink-0 text-[10px] font-bold uppercase tracking-wider ${idx === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}`}>
+                      {idx === 0 ? 'Cheapest' : `+£${(basket.total - priced[0].total).toFixed(2)}`}
+                    </span>
                     <span className="flex-1 text-sm font-semibold">{basket.retailer_name}</span>
                     {basket.not_found.length > 0 && (
                       <span className="text-[10px] text-muted-foreground">
@@ -293,21 +362,67 @@ export default function ShoppingList() {
                     </span>
                   </div>
                 ))}
+                {unavailable.length > 0 && (
+                  <div className="px-5 py-2.5 flex items-center gap-2">
+                    <span className="text-[10px] text-muted-foreground">
+                      No results from: {unavailable.map(b => b.retailer_name).join(', ')}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="px-5 py-2 border-t border-border/40">
                 <p className="text-[10px] text-muted-foreground">
-                  {baskets[0]?.items.length ?? 0} of {unchecked.length} items matched · live prices
+                  {priced[0]?.items.length ?? 0} of {unchecked.length} items matched · live prices
                 </p>
               </div>
             </div>
-          )}
+            );
+          })()}
         </div>
       )}
 
       {/* Floating print button */}
-      <button className="fixed bottom-24 md:bottom-8 right-6 z-40 bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:shadow-xl transition-shadow">
+      <button
+        onClick={handlePrint}
+        className="fixed bottom-24 md:bottom-8 right-6 z-40 bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:shadow-xl transition-shadow print:hidden"
+      >
         <Printer className="w-4 h-4" /> Print List
       </button>
+
+      {/* Quick Add dialog */}
+      <Dialog open={quickAddOpen} onOpenChange={setQuickAddOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Quick Add Items</DialogTitle>
+          </DialogHeader>
+          <p className="text-xs text-muted-foreground -mt-1">
+            Type or paste a list — one item per line. Add quantities like <span className="font-mono bg-muted px-1 rounded">2x Milk</span> or <span className="font-mono bg-muted px-1 rounded">Eggs 6</span>.
+          </p>
+          <Textarea
+            autoFocus
+            placeholder={"Milk\n2x Bread\nCheddar cheese\nChicken breast 500g"}
+            value={quickAddText}
+            onChange={e => setQuickAddText(e.target.value)}
+            className="min-h-[160px] font-mono text-sm resize-none"
+            onKeyDown={e => {
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleQuickAdd();
+            }}
+          />
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setQuickAddOpen(false); setQuickAddText(''); }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleQuickAdd}
+              disabled={!quickAddText.trim() || quickAddLoading}
+              style={{ background: 'var(--gradient-primary)' }}
+            >
+              {quickAddLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Add Items
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Items grouped by aisle */}
       <div className="max-w-xl space-y-6">

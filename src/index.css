@@ -223,3 +223,30 @@
     100% { background-position: -100% 0; }
   }
 }
+
+@media print {
+  /* Hide everything except the shopping list content */
+  header, nav, footer,
+  [data-radix-popper-content-wrapper],
+  .fixed, .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .glass-card {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  /* Show the page title cleanly */
+  .section-title { color: #555 !important; }
+
+  /* Keep checkboxes visible */
+  button[role="checkbox"] { border: 1.5px solid #999 !important; }
+}
