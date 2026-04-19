@@ -6,33 +6,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-async function generateFoodImage(title: string, apiKey: string): Promise<string | null> {
-  try {
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.1-flash-image-preview",
-        messages: [
-          {
-            role: "user",
-            content: `Generate a beautiful, appetizing overhead food photograph of "${title}". The dish should be plated on a simple ceramic plate, natural lighting, clean background, professional food photography style. No text or watermarks.`,
-          },
-        ],
-        modalities: ["image", "text"],
-      }),
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data.choices?.[0]?.message?.images?.[0]?.image_url?.url || null;
-  } catch {
-    return null;
-  }
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -61,6 +34,7 @@ serve(async (req) => {
     ).join('\n');
 
     const slotsToFill = (slots || []).map((s: any) => `${s.date} ${s.slot}`).join(', ');
+    const totalSlots = (slots || []).length;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -76,9 +50,12 @@ serve(async (req) => {
             content: `You are a meal planning assistant. Generate a weekly meal plan for a household.
 
 RULES:
+- You MUST generate exactly one meal for EVERY slot listed — all ${totalSlots} of them, no exceptions
 - Each suggestion should be a real, recognizable dish name (not generic like "healthy salad")
 - Use simple, common dish names that could be found in a recipe database
-- For breakfast/snack slots, suggest simpler items (toast, yogurt, fruit, cereal, etc.)
+- For breakfast slots, suggest items like: porridge, scrambled eggs on toast, yogurt with granola, pancakes, avocado toast, cereal
+- For lunch slots, suggest items like: sandwich, soup, salad, wraps, jacket potato
+- For dinner slots, suggest proper meals: pasta, curry, stir fry, roast, casserole, grilled chicken etc.
 - Respect ALL dietary restrictions and allergies strictly
 - Avoid disliked ingredients
 - Prefer dishes from preferred cuisines when specified
@@ -89,11 +66,11 @@ RULES:
 - Include meals the user rated highly occasionally
 - Keep variety across the week
 
-You MUST respond using the generate_plan tool.`,
+You MUST respond using the generate_plan tool with all ${totalSlots} meals filled.`,
           },
           {
             role: "user",
-            content: `Generate meals for these empty slots: ${slotsToFill}
+            content: `Generate meals for ALL of these ${totalSlots} empty slots: ${slotsToFill}
 
 Household: ${profile?.householdSize || 2} people
 Diet: ${(profile?.dietaryPreferences || []).join(', ') || 'None'}
@@ -109,7 +86,9 @@ ${slotSettingsText ? `Slot-specific preferences:\n${slotSettingsText}` : ''}
 ${inventoryList ? `Available in pantry: ${inventoryList}` : ''}
 ${existingList ? `Already planned this week: ${existingList}` : ''}
 ${ratedHighly ? `User enjoyed: ${ratedHighly}` : ''}
-${ratedPoorly ? `User didn't enjoy: ${ratedPoorly}` : ''}`,
+${ratedPoorly ? `User didn't enjoy: ${ratedPoorly}` : ''}
+
+Remember: return exactly ${totalSlots} meal entries, one for each slot listed above.`,
           },
         ],
         tools: [
@@ -166,18 +145,6 @@ ${ratedPoorly ? `User didn't enjoy: ${ratedPoorly}` : ''}`,
 
     const parsed = JSON.parse(toolCall.function.arguments);
     const meals = parsed.meals || [];
-
-    // Generate images for all meals in parallel (max 5 concurrent)
-    const batchSize = 5;
-    for (let i = 0; i < meals.length; i += batchSize) {
-      const batch = meals.slice(i, i + batchSize);
-      const images = await Promise.all(
-        batch.map((meal: any) => generateFoodImage(meal.title, LOVABLE_API_KEY))
-      );
-      images.forEach((img, idx) => {
-        if (img) meals[i + idx].image = img;
-      });
-    }
 
     return new Response(JSON.stringify({ meals }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -100,5 +100,26 @@ export function useMealPlans(weekStart?: Date) {
     [plans]
   );
 
-  return { plans, loading, addPlan, removePlan, movePlan, getPlansForDate, refetch: fetchPlans };
+  const batchAddPlans = useCallback(
+    async (meals: Array<{ recipeId: string; title: string; date: Date; slot: MealSlot; image?: string }>) => {
+      if (!userId || meals.length === 0) return false;
+      const rows = meals.map(m => ({
+        user_id: userId,
+        recipe_id: m.recipeId,
+        title: m.title,
+        image: m.image ?? null,
+        planned_date: format(m.date, 'yyyy-MM-dd'),
+        meal_slot: m.slot,
+        status: 'planned',
+      }));
+      const { error } = await supabase
+        .from('meal_plans')
+        .upsert(rows, { onConflict: 'user_id,planned_date,meal_slot' });
+      if (!error) { await fetchPlans(); return true; }
+      return false;
+    },
+    [userId, fetchPlans]
+  );
+
+  return { plans, loading, addPlan, batchAddPlans, removePlan, movePlan, getPlansForDate, refetch: fetchPlans };
 }
