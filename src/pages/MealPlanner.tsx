@@ -39,7 +39,7 @@ export default function MealPlanner() {
   }, [weekOffset]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
-  const { plans, loading, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
+  const { plans, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
@@ -298,8 +298,6 @@ export default function MealPlanner() {
               </div>
             </div>
           )}
-
-          {loading && <div className="glass-card p-6 text-center text-sm text-muted-foreground shimmer">Loading…</div>}
 
           {/* Day cards — horizontal grid */}
           <div className="space-y-3">
