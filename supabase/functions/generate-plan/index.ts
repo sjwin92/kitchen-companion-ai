@@ -37,6 +37,24 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Cache lookup — same plan request returns same suggestions for 7 days
+    const cache = getCacheClient();
+    const inputHash = await sha256(JSON.stringify({ slots, profile, slotSettings, inventory, existingPlans, ratings: (ratings || []).slice(0, 10) }));
+    if (cache) {
+      try {
+        const { data: cached } = await cache
+          .from("ai_cache").select("response")
+          .eq("function_name", "generate-plan").eq("input_hash", inputHash)
+          .gt("expires_at", new Date().toISOString()).maybeSingle();
+        if (cached?.response) {
+          return new Response(JSON.stringify(cached.response), {
+            headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+          });
+        }
+      } catch (e) { console.warn("cache lookup failed", e); }
+    }
+
+
     const inventoryList = (inventory || []).map((i: any) => i.name).join(", ");
     const existingList = (existingPlans || []).map((p: any) => p.title).join(", ");
     const ratedHighly = (ratings || []).filter((r: any) => r.rating >= 4 && r.would_repeat).map((r: any) => r.title).join(", ");
