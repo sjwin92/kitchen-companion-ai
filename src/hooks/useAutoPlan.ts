@@ -117,11 +117,21 @@ export function useAutoPlan() {
   ) => {
     if (!session?.user) { toast.error('Please sign in first'); return []; }
 
-    const displaySlots: MealSlot[] = ['breakfast', 'lunch', 'dinner'];
+    const displaySlots: MealSlot[] = (preferences.lunchboxCount ?? 0) > 0
+      ? ['breakfast', 'lunch', 'dinner', 'lunchbox']
+      : ['breakfast', 'lunch', 'dinner'];
     const emptySlots: { date: string; slot: string }[] = [];
     days.forEach(day => {
       const dayStr = format(day, 'yyyy-MM-dd');
       displaySlots.forEach(slot => {
+        if (slot === 'lunchbox') {
+          const dow = day.getDay();
+          if (dow === 0 || dow === 6) return;
+          const weekdayIndex = days
+            .slice(0, days.indexOf(day) + 1)
+            .filter(d => d.getDay() !== 0 && d.getDay() !== 6).length;
+          if (weekdayIndex > (preferences.lunchboxCount ?? 0)) return;
+        }
         if (!existingPlans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) {
           emptySlots.push({ date: dayStr, slot });
         }
@@ -132,9 +142,10 @@ export function useAutoPlan() {
 
     setGenerating(true);
     try {
-      const meals = await callGeneratePlan(buildRequestBody(emptySlots, existingPlans));
+      const budget = await computeBudget();
+      const meals = await callGeneratePlan(buildRequestBody(emptySlots, existingPlans, budget));
       setDraft(meals);
-      toast.success(`Generated ${meals.length} meal suggestion${meals.length !== 1 ? 's' : ''}`);
+      toast.success(`Generated ${meals.length} meal suggestion${meals.length !== 1 ? 's' : ''}${budget ? ` · within £${budget.weeklyCapGbp.toFixed(0)} cap` : ''}`);
       return meals;
     } catch (err: any) {
       console.error(err);
@@ -143,7 +154,7 @@ export function useAutoPlan() {
     } finally {
       setGenerating(false);
     }
-  }, [session, buildRequestBody, callGeneratePlan, setDraft]);
+  }, [session, buildRequestBody, callGeneratePlan, setDraft, preferences.lunchboxCount, computeBudget]);
 
   /** Auto-fill a single slot immediately — no draft, calls onAdd directly */
   const generateSlot = useCallback(async (
@@ -157,8 +168,9 @@ export function useAutoPlan() {
     const slotKey = `${format(date, 'yyyy-MM-dd')}-${slot}`;
     setGeneratingSlot(slotKey);
     try {
+      const budget = await computeBudget();
       const meals = await callGeneratePlan(
-        buildRequestBody([{ date: format(date, 'yyyy-MM-dd'), slot }], existingPlans)
+        buildRequestBody([{ date: format(date, 'yyyy-MM-dd'), slot }], existingPlans, budget)
       );
       if (meals.length > 0) {
         await onAdd(meals[0]);
@@ -171,7 +183,7 @@ export function useAutoPlan() {
     } finally {
       setGeneratingSlot(null);
     }
-  }, [session, buildRequestBody, callGeneratePlan]);
+  }, [session, buildRequestBody, callGeneratePlan, computeBudget]);
 
   return { generatePlan, generateSlot, generating, generatingSlot, draft, clearDraft };
 }
