@@ -234,15 +234,71 @@ export default function MealPlanner() {
   };
 
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
-  const DISPLAY_SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner'];
+  const showLunchbox = (preferences.lunchboxCount ?? 0) > 0;
+  const DISPLAY_SLOTS: MealSlot[] = showLunchbox
+    ? ['breakfast', 'lunch', 'dinner', 'lunchbox']
+    : ['breakfast', 'lunch', 'dinner'];
   const emptySlotCount = useMemo(() => {
     let count = 0;
-    days.forEach(day => {
+    days.forEach((day, idx) => {
       const dayStr = format(day, 'yyyy-MM-dd');
-      DISPLAY_SLOTS.forEach(slot => { if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++; });
+      DISPLAY_SLOTS.forEach(slot => {
+        // Lunchbox only counts on first N weekdays
+        if (slot === 'lunchbox') {
+          const dow = day.getDay(); // 0=Sun, 6=Sat
+          if (dow === 0 || dow === 6) return;
+          // Index among weekdays so far
+          const weekdayIndex = days.slice(0, idx + 1).filter(d => d.getDay() !== 0 && d.getDay() !== 6).length;
+          if (weekdayIndex > (preferences.lunchboxCount ?? 0)) return;
+        }
+        if (!plans.find(p => p.planned_date === dayStr && p.meal_slot === slot)) count++;
+      });
     });
     return count;
-  }, [days, plans]);
+  }, [days, plans, showLunchbox, preferences.lunchboxCount]);
+
+  const handleSuggestBulkCook = async () => {
+    // Find dinners followed by an empty lunch within 1-2 days. Create leftover plans.
+    const dinners = plans.filter(p => p.meal_slot === 'dinner').sort((a, b) => a.planned_date.localeCompare(b.planned_date));
+    let created = 0;
+    const suggestions: { from: typeof dinners[0]; targetDate: Date; targetSlot: MealSlot }[] = [];
+    for (const d of dinners) {
+      const dDate = new Date(d.planned_date + 'T00:00:00');
+      for (let offset = 1; offset <= 2; offset++) {
+        const target = addDays(dDate, offset);
+        const targetStr = format(target, 'yyyy-MM-dd');
+        const lunch = plans.find(p => p.planned_date === targetStr && p.meal_slot === 'lunch');
+        if (!lunch && days.some(day => format(day, 'yyyy-MM-dd') === targetStr)) {
+          suggestions.push({ from: d, targetDate: target, targetSlot: 'lunch' });
+          break;
+        }
+      }
+    }
+    if (suggestions.length === 0) {
+      toast.info('No empty lunch slots after planned dinners — try planning more dinners first.');
+      return;
+    }
+    // Insert as bulk-cook leftovers
+    const rows = suggestions.slice(0, 3).map(s => ({
+      recipeId: s.from.recipe_id,
+      title: `${s.from.title} (leftovers)`,
+      date: s.targetDate,
+      slot: s.targetSlot,
+      image: s.from.image || undefined,
+    }));
+    const success = await batchAddPlans(rows);
+    if (success) {
+      // Mark the original dinners as bulk-cooked
+      await Promise.all(suggestions.slice(0, 3).map(s =>
+        supabase.from('meal_plans').update({ bulk_servings: 2 } as any).eq('id', s.from.id)
+      ));
+      created = rows.length;
+      toast.success(`Added ${created} leftover meal${created > 1 ? 's' : ''} — cook double those dinners`);
+      await refetchPlans();
+    } else {
+      toast.error('Failed to add leftover suggestions');
+    }
+  };
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
@@ -295,6 +351,11 @@ export default function MealPlanner() {
               {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
               Grocery List
             </Button>
+            <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5"
+              disabled={plans.filter(p => p.meal_slot === 'dinner').length === 0}
+              onClick={handleSuggestBulkCook}>
+              <UtensilsCrossed className="w-3.5 h-3.5" /> Bulk Cook
+            </Button>
           </div>
 
           {/* Draft plan acceptance */}
@@ -336,10 +397,26 @@ export default function MealPlanner() {
                   </div>
 
                   {/* Meal slots row */}
-                  <div className="grid grid-cols-3 divide-x divide-border/30">
+                  <div
+                    className="grid divide-x divide-border/30"
+                    style={{ gridTemplateColumns: `repeat(${DISPLAY_SLOTS.length}, minmax(0, 1fr))` }}
+                  >
                     {DISPLAY_SLOTS.map(slot => {
+                      // Hide lunchbox on weekends or past the user's weekly count
+                      if (slot === 'lunchbox') {
+                        const dow = day.getDay();
+                        if (dow === 0 || dow === 6) {
+                          return <div key={slot} className="p-3 min-h-[100px] bg-muted/20" />;
+                        }
+                        const weekdayIndex = days
+                          .slice(0, days.indexOf(day) + 1)
+                          .filter(d => d.getDay() !== 0 && d.getDay() !== 6).length;
+                        if (weekdayIndex > (preferences.lunchboxCount ?? 0)) {
+                          return <div key={slot} className="p-3 min-h-[100px] bg-muted/20" />;
+                        }
+                      }
                       const plan = plans.find(p => p.planned_date === dayStr && p.meal_slot === slot);
-                      const slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
+                      const slotLabel = slot === 'lunchbox' ? 'Lunchbox' : slot.charAt(0).toUpperCase() + slot.slice(1);
                       const AddIcon = isAuto ? Sparkles : Plus;
                       const addLabel = isAuto ? 'Auto' : 'Add';
                       const addBtn = (

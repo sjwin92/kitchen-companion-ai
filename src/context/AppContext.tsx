@@ -32,6 +32,8 @@ const defaultPreferences: UserPreferences = {
   primaryGoal: 'reduce-waste',
   planningStyle: 'help-choose',
   allergies: [],
+  monthlyBudgetGbp: null,
+  lunchboxCount: 0,
 };
 
 const AppContext = createContext<AppState | null>(null);
@@ -88,6 +90,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           primaryGoal: (data as any).primary_goal ?? 'reduce-waste',
           planningStyle: (data as any).planning_style ?? 'help-choose',
           allergies: (data as any).allergies ?? [],
+          monthlyBudgetGbp: (data as any).monthly_budget_gbp ?? null,
+          lunchboxCount: (data as any).lunchbox_count ?? 0,
         });
       }
     };
@@ -177,6 +181,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           primary_goal: next.primaryGoal,
           planning_style: next.planningStyle,
           allergies: next.allergies,
+          monthly_budget_gbp: next.monthlyBudgetGbp,
+          lunchbox_count: next.lunchboxCount,
         } as any).eq('id', session.user.id).then();
       }
 

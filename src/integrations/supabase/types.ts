@@ -374,9 +374,11 @@ export type Database = {
       }
       meal_plans: {
         Row: {
+          bulk_servings: number | null
           created_at: string
           id: string
           image: string | null
+          is_leftover_of: string | null
           meal_slot: string
           planned_date: string
           recipe_id: string
@@ -385,9 +387,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          bulk_servings?: number | null
           created_at?: string
           id?: string
           image?: string | null
+          is_leftover_of?: string | null
           meal_slot?: string
           planned_date: string
           recipe_id: string
@@ -396,9 +400,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          bulk_servings?: number | null
           created_at?: string
           id?: string
           image?: string | null
+          is_leftover_of?: string | null
           meal_slot?: string
           planned_date?: string
           recipe_id?: string
@@ -406,7 +412,15 @@ export type Database = {
           title?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "meal_plans_is_leftover_of_fkey"
+            columns: ["is_leftover_of"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meal_ratings: {
         Row: {
@@ -516,7 +530,9 @@ export type Database = {
           display_name: string | null
           household_size: number | null
           id: string
+          lunchbox_count: number | null
           max_prep_time: number | null
+          monthly_budget_gbp: number | null
           onboarding_complete: boolean | null
           planning_style: string | null
           preferred_cuisines: string[] | null
@@ -535,7 +551,9 @@ export type Database = {
           display_name?: string | null
           household_size?: number | null
           id: string
+          lunchbox_count?: number | null
           max_prep_time?: number | null
+          monthly_budget_gbp?: number | null
           onboarding_complete?: boolean | null
           planning_style?: string | null
           preferred_cuisines?: string[] | null
@@ -554,12 +572,47 @@ export type Database = {
           display_name?: string | null
           household_size?: number | null
           id?: string
+          lunchbox_count?: number | null
           max_prep_time?: number | null
+          monthly_budget_gbp?: number | null
           onboarding_complete?: boolean | null
           planning_style?: string | null
           preferred_cuisines?: string[] | null
           primary_goal?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      receipt_reconciliations: {
+        Row: {
+          created_at: string
+          id: string
+          matched_items: Json
+          receipt_date: string | null
+          retailer: string | null
+          total_gbp: number
+          unmatched_items: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matched_items?: Json
+          receipt_date?: string | null
+          retailer?: string | null
+          total_gbp?: number
+          unmatched_items?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matched_items?: Json
+          receipt_date?: string | null
+          retailer?: string | null
+          total_gbp?: number
+          unmatched_items?: Json
+          user_id?: string
         }
         Relationships: []
       }

@@ -47,4 +47,6 @@ export interface UserPreferences {
   primaryGoal: PrimaryGoal;
   planningStyle: PlanningStyle;
   allergies: string[];
+  monthlyBudgetGbp: number | null;
+  lunchboxCount: number;
 }

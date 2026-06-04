@@ -32,6 +32,7 @@ serve(async (req) => {
       inventory,
       existingPlans,
       ratings,
+      budget,
     } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -39,7 +40,7 @@ serve(async (req) => {
 
     // Cache lookup — same plan request returns same suggestions for 7 days
     const cache = getCacheClient();
-    const inputHash = await sha256(JSON.stringify({ slots, profile, slotSettings, inventory, existingPlans, ratings: (ratings || []).slice(0, 10) }));
+    const inputHash = await sha256(JSON.stringify({ slots, profile, slotSettings, inventory, existingPlans, ratings: (ratings || []).slice(0, 10), budget }));
     if (cache) {
       try {
         const { data: cached } = await cache
@@ -87,6 +88,7 @@ RULES:
 - For breakfast slots, suggest items like: porridge, scrambled eggs on toast, yogurt with granola, pancakes, avocado toast, cereal
 - For lunch slots, suggest items like: sandwich, soup, salad, wraps, jacket potato
 - For dinner slots, suggest proper meals: pasta, curry, stir fry, roast, casserole, grilled chicken etc.
+- For lunchbox slots (school/work lunchboxes): suggest portable, kid-friendly options that hold up at room temperature for several hours — sandwiches, wraps, pasta salads, hummus & veg, rice bowls. AVOID anything needing reheating or that goes soggy.
 - Respect ALL dietary restrictions and allergies strictly
 - Avoid disliked ingredients
 - Prefer dishes from preferred cuisines when specified
@@ -96,6 +98,14 @@ RULES:
 - Avoid meals the user rated poorly
 - Include meals the user rated highly occasionally
 - Keep variety across the week
+${budget?.weeklyCapGbp ? `
+BUDGET (HARD CAP):
+- The user has £${budget.weeklyCapGbp.toFixed(2)} left to spend on groceries for this week.
+- Their typical UK weekly basket runs £40–£80 for 2 people, scaled by household size (${profile?.householdSize || 2}).
+- ONLY suggest meals whose ingredients (assuming the user already owns pantry items) fit within this weekly cap.
+- Favor cheap-and-cheerful staples: pasta, rice, lentils, beans, eggs, frozen veg, chicken thighs, seasonal produce.
+- AVOID: steak, fresh seafood, expensive cheeses, exotic imports, restaurant-style dishes.
+- If the cap is tight (<£30), lean heavily on legume- and grain-based meals.` : ''}
 
 You MUST respond using the generate_plan tool with all ${totalSlots} meals filled.`,
           },
@@ -110,7 +120,8 @@ Disliked ingredients: ${(profile?.dislikedIngredients || []).join(', ') || 'None
 Preferred cuisines: ${(profile?.preferredCuisines || []).join(', ') || 'Any'}
 Max cooking time: ${profile?.cookingTime || '30 min'}
 Cooking confidence: ${profile?.cookingConfidence || 'intermediate'}
-Budget: ${profile?.budgetSensitivity || 'medium'}
+Budget sensitivity: ${profile?.budgetSensitivity || 'medium'}
+${budget?.weeklyCapGbp ? `Weekly budget remaining: £${budget.weeklyCapGbp.toFixed(2)} (HARD CAP)` : ''}
 Primary goal: ${profile?.primaryGoal || 'variety'}
 
 ${slotSettingsText ? `Slot-specific preferences:\n${slotSettingsText}` : ''}

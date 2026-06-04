@@ -30,6 +30,7 @@ const SLOT_CATEGORIES: Record<MealSlot, string[]> = {
   lunch: ['beef', 'chicken', 'lamb', 'pork', 'seafood', 'pasta', 'vegetarian', 'vegan', 'goat', 'miscellaneous', 'side'],
   dinner: ['beef', 'chicken', 'lamb', 'pork', 'seafood', 'pasta', 'vegetarian', 'vegan', 'goat', 'miscellaneous', 'side'],
   snack: ['dessert', 'starter', 'miscellaneous', 'breakfast'],
+  lunchbox: ['side', 'vegetarian', 'miscellaneous', 'starter', 'pasta', 'chicken'],
 };
 
 const SLOT_SEARCH_HINTS: Record<MealSlot, string> = {
@@ -37,6 +38,7 @@ const SLOT_SEARCH_HINTS: Record<MealSlot, string> = {
   lunch: 'e.g. salad, sandwich, soup',
   dinner: 'e.g. curry, pasta, steak',
   snack: 'e.g. cookies, fruit salad, hummus',
+  lunchbox: 'e.g. wrap, pasta salad, sandwich',
 };
 
 function matchesSlot(category: string | null, slot: MealSlot): boolean {
