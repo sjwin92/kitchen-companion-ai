@@ -176,9 +176,17 @@ Remember: return exactly ${totalSlots} meal entries, one for each slot listed ab
 
     const parsed = JSON.parse(toolCall.function.arguments);
     const meals = parsed.meals || [];
+    const result = { meals };
 
-    return new Response(JSON.stringify({ meals }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    if (cache) {
+      cache.from("ai_cache").upsert(
+        { function_name: "generate-plan", input_hash: inputHash, response: result },
+        { onConflict: "function_name,input_hash" },
+      ).then(({ error }: any) => { if (error) console.warn("cache write failed", error); });
+    }
+
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
     });
   } catch (e) {
     console.error("generate-plan error:", e);
