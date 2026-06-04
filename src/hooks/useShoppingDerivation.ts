@@ -115,13 +115,21 @@ export function useShoppingDerivation() {
         } catch { /* skip */ }
       }
 
-      // Subtract inventory
-      const inventoryNames = new Set(inventory.map(i => i.name.toLowerCase().trim()));
+      // Subtract inventory — word-boundary match avoids "egg" matching "eggplant"
+      const normalize = (s: string) =>
+        s.toLowerCase().trim().replace(/(es|s)$/i, '').replace(/[^a-z\s]/g, ' ').trim();
+      const inventoryTokens = inventory.map(i => normalize(i.name)).filter(Boolean);
       const missing: DerivedItem[] = [];
       for (const [key, item] of ingredientMap) {
-        if (![...inventoryNames].some(inv => key.includes(inv) || inv.includes(key))) {
-          missing.push(item);
-        }
+        const kn = normalize(key);
+        const knWords = new Set(kn.split(/\s+/).filter(Boolean));
+        const owned = inventoryTokens.some(inv => {
+          if (!inv) return false;
+          // exact token match either direction
+          const invWords = inv.split(/\s+/).filter(Boolean);
+          return invWords.every(w => knWords.has(w)) || knWords.size > 0 && [...knWords].every(w => invWords.includes(w));
+        });
+        if (!owned) missing.push(item);
       }
 
       // Fetch price estimates
