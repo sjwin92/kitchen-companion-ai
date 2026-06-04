@@ -351,6 +351,11 @@ export default function MealPlanner() {
               {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
               Grocery List
             </Button>
+            <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5"
+              disabled={plans.filter(p => p.meal_slot === 'dinner').length === 0}
+              onClick={handleSuggestBulkCook}>
+              <UtensilsCrossed className="w-3.5 h-3.5" /> Bulk Cook
+            </Button>
           </div>
 
           {/* Draft plan acceptance */}
