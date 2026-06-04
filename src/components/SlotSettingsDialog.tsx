@@ -12,6 +12,7 @@ const SLOT_LABELS: Record<MealSlot, string> = {
   lunch: '☀️ Lunch',
   dinner: '🌙 Dinner',
   snack: '🍎 Snack',
+  lunchbox: '🥪 Lunchbox',
 };
 
 const TIME_OPTIONS = ['10 min', '15 min', '20 min', '30 min', '45 min', '60+ min'];
