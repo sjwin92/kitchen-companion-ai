@@ -3,8 +3,9 @@ import { useApp } from '@/context/AppContext';
 import { useMealSlotSettings } from './useMealSlotSettings';
 import { useMealRatings } from './useMealRatings';
 import type { MealPlan, MealSlot } from './useMealPlans';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, differenceInCalendarDays } from 'date-fns';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const DRAFT_KEY = 'mealplan-draft';
 
