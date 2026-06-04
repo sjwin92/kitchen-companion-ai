@@ -14,7 +14,7 @@ export type MealPlan = {
   created_at: string;
 };
 
-export const MEAL_SLOTS = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+export const MEAL_SLOTS = ['breakfast', 'lunch', 'dinner', 'snack', 'lunchbox'] as const;
 export type MealSlot = typeof MEAL_SLOTS[number];
 
 export function useMealPlans(weekStart?: Date) {
