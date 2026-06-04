@@ -6,11 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2 } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2, Receipt } from 'lucide-react';
 import { toast } from 'sonner';
 import type { FoodItem } from '@/types';
 import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
 import { useBasketCompare } from '@/hooks/useBasketCompare';
+import ReceiptReconcileDialog from '@/components/ReceiptReconcileDialog';
 
 interface ShoppingItem {
   id: string;
@@ -30,6 +31,7 @@ export default function ShoppingList() {
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddText, setQuickAddText] = useState('');
   const [quickAddLoading, setQuickAddLoading] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
   const { baskets, loading: comparingPrices, error: compareError, compare, clear: clearCompare } = useBasketCompare();
 
   const load = useCallback(async () => {
@@ -259,6 +261,9 @@ export default function ShoppingList() {
         </Button>
         <Button size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold" style={{ background: 'var(--gradient-primary)' }} onClick={() => setQuickAddOpen(true)}>
           <Plus className="w-3.5 h-3.5" /> Quick Add
+        </Button>
+        <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5 uppercase tracking-wider font-bold" onClick={() => setScanOpen(true)}>
+          <Receipt className="w-3.5 h-3.5" /> Scan Receipt
         </Button>
         {checked.length > 0 && (
           <>
