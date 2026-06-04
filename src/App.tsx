@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -8,28 +9,46 @@ import TopNav from "@/components/TopNav";
 import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
-import Inventory from "@/pages/Inventory";
-import AddFood from "@/pages/AddFood";
-import BarcodeScanner from "@/pages/BarcodeScanner";
-import UseSoon from "@/pages/UseSoon";
-import MealSuggestions from "@/pages/MealSuggestions";
-import RecipeDetail from "@/pages/RecipeDetail";
-import MissingIngredients from "@/pages/MissingIngredients";
-import SavedLists from "@/pages/SavedLists";
-import ShoppingList from "@/pages/ShoppingList";
-
-import Settings from "@/pages/Settings";
-import WasteTracker from "@/pages/WasteTracker";
-import Favorites from "@/pages/Favorites";
-import MealPlanner from "@/pages/MealPlanner";
-import MealLog from "@/pages/MealLog";
-import MealHistory from "@/pages/MealHistory";
-import WeeklyInsights from "@/pages/WeeklyInsights";
-import NotFound from "@/pages/NotFound";
 import { Loader2 } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-const queryClient = new QueryClient();
+// Lazy-loaded routes — cut initial bundle size
+const Inventory = lazy(() => import("@/pages/Inventory"));
+const AddFood = lazy(() => import("@/pages/AddFood"));
+const BarcodeScanner = lazy(() => import("@/pages/BarcodeScanner"));
+const UseSoon = lazy(() => import("@/pages/UseSoon"));
+const MealSuggestions = lazy(() => import("@/pages/MealSuggestions"));
+const RecipeDetail = lazy(() => import("@/pages/RecipeDetail"));
+const MissingIngredients = lazy(() => import("@/pages/MissingIngredients"));
+const SavedLists = lazy(() => import("@/pages/SavedLists"));
+const ShoppingList = lazy(() => import("@/pages/ShoppingList"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const WasteTracker = lazy(() => import("@/pages/WasteTracker"));
+const Favorites = lazy(() => import("@/pages/Favorites"));
+const MealPlanner = lazy(() => import("@/pages/MealPlanner"));
+const MealLog = lazy(() => import("@/pages/MealLog"));
+const MealHistory = lazy(() => import("@/pages/MealHistory"));
+const WeeklyInsights = lazy(() => import("@/pages/WeeklyInsights"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      gcTime: 5 * 60_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+function RouteFallback() {
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center">
+      <Loader2 className="w-6 h-6 text-primary animate-spin" />
+    </div>
+  );
+}
 
 function AppContent() {
   const { preferences, session, loading } = useApp();
@@ -55,26 +74,28 @@ function AppContent() {
       <TopNav />
       <div className="md:pt-14">
         <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/add-food" element={<AddFood />} />
-          <Route path="/barcode" element={<BarcodeScanner />} />
-          <Route path="/use-soon" element={<UseSoon />} />
-          <Route path="/meals" element={<MealSuggestions />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/missing/:id" element={<MissingIngredients />} />
-          <Route path="/saved-lists" element={<SavedLists />} />
-          <Route path="/shopping-list" element={<ShoppingList />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/waste" element={<WasteTracker />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/meal-planner" element={<MealPlanner />} />
-          <Route path="/meal-log" element={<MealLog />} />
-          <Route path="/meal-history" element={<MealHistory />} />
-          <Route path="/weekly-insights" element={<WeeklyInsights />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/add-food" element={<AddFood />} />
+              <Route path="/barcode" element={<BarcodeScanner />} />
+              <Route path="/use-soon" element={<UseSoon />} />
+              <Route path="/meals" element={<MealSuggestions />} />
+              <Route path="/recipe/:id" element={<RecipeDetail />} />
+              <Route path="/missing/:id" element={<MissingIngredients />} />
+              <Route path="/saved-lists" element={<SavedLists />} />
+              <Route path="/shopping-list" element={<ShoppingList />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/waste" element={<WasteTracker />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/meal-planner" element={<MealPlanner />} />
+              <Route path="/meal-log" element={<MealLog />} />
+              <Route path="/meal-history" element={<MealHistory />} />
+              <Route path="/weekly-insights" element={<WeeklyInsights />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </div>
       <BottomNav />
