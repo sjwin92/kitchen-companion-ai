@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_cache: {
+        Row: {
+          created_at: string
+          expires_at: string
+          function_name: string
+          id: string
+          input_hash: string
+          response: Json
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          function_name: string
+          id?: string
+          input_hash: string
+          response: Json
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          function_name?: string
+          id?: string
+          input_hash?: string
+          response?: Json
+        }
+        Relationships: []
+      }
       favorite_recipes: {
         Row: {
           category: string | null
