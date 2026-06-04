@@ -49,9 +49,28 @@ export function useAutoPlan() {
     localStorage.removeItem(DRAFT_KEY);
   }, []);
 
+  const computeBudget = useCallback(async () => {
+    if (!preferences.monthlyBudgetGbp || !session?.user) return null;
+    const now = new Date();
+    const start = startOfMonth(now);
+    const end = endOfMonth(now);
+    const { data } = await supabase
+      .from('receipt_reconciliations')
+      .select('total_gbp')
+      .eq('user_id', session.user.id)
+      .gte('created_at', start.toISOString())
+      .lte('created_at', end.toISOString());
+    const spent = (data || []).reduce((s: number, r: any) => s + Number(r.total_gbp || 0), 0);
+    const remaining = Math.max(0, preferences.monthlyBudgetGbp - spent);
+    const daysLeft = Math.max(1, differenceInCalendarDays(end, now) + 1);
+    const weeklyCapGbp = (remaining / daysLeft) * 7;
+    return { weeklyCapGbp, monthlyBudget: preferences.monthlyBudgetGbp, monthSpent: spent };
+  }, [preferences.monthlyBudgetGbp, session?.user?.id]);
+
   const buildRequestBody = useCallback((
     slots: { date: string; slot: string }[],
     existingPlans: MealPlan[],
+    budget: { weeklyCapGbp: number; monthlyBudget: number; monthSpent: number } | null,
   ) => ({
     slots,
     profile: {
@@ -82,6 +101,7 @@ export function useAutoPlan() {
       rating: r.rating,
       would_repeat: r.would_repeat,
     })),
+    budget,
   }), [preferences, slotSettings, inventory, ratings]);
 
   const callGeneratePlan = useCallback(async (body: object): Promise<GeneratedMeal[]> => {
