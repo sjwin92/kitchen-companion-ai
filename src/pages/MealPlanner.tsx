@@ -392,10 +392,26 @@ export default function MealPlanner() {
                   </div>
 
                   {/* Meal slots row */}
-                  <div className="grid grid-cols-3 divide-x divide-border/30">
+                  <div
+                    className="grid divide-x divide-border/30"
+                    style={{ gridTemplateColumns: `repeat(${DISPLAY_SLOTS.length}, minmax(0, 1fr))` }}
+                  >
                     {DISPLAY_SLOTS.map(slot => {
+                      // Hide lunchbox on weekends or past the user's weekly count
+                      if (slot === 'lunchbox') {
+                        const dow = day.getDay();
+                        if (dow === 0 || dow === 6) {
+                          return <div key={slot} className="p-3 min-h-[100px] bg-muted/20" />;
+                        }
+                        const weekdayIndex = days
+                          .slice(0, days.indexOf(day) + 1)
+                          .filter(d => d.getDay() !== 0 && d.getDay() !== 6).length;
+                        if (weekdayIndex > (preferences.lunchboxCount ?? 0)) {
+                          return <div key={slot} className="p-3 min-h-[100px] bg-muted/20" />;
+                        }
+                      }
                       const plan = plans.find(p => p.planned_date === dayStr && p.meal_slot === slot);
-                      const slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
+                      const slotLabel = slot === 'lunchbox' ? 'Lunchbox' : slot.charAt(0).toUpperCase() + slot.slice(1);
                       const AddIcon = isAuto ? Sparkles : Plus;
                       const addLabel = isAuto ? 'Auto' : 'Add';
                       const addBtn = (
