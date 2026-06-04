@@ -514,6 +514,13 @@ export default function ShoppingList() {
           </div>
         )}
       </div>
+
+      <ReceiptReconcileDialog
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        shoppingItems={items}
+        onReconciled={load}
+      />
     </div>
   );
 }
