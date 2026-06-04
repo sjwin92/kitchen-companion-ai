@@ -1,10 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+async function sha256(s: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function getCacheClient() {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -16,6 +29,28 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Cache lookup
+    const cache = getCacheClient();
+    const inputHash = await sha256(JSON.stringify({ title, category, area, ingredients }));
+    if (cache) {
+      try {
+        const { data: cached } = await cache
+          .from("ai_cache")
+          .select("response")
+          .eq("function_name", "suggest-pairings")
+          .eq("input_hash", inputHash)
+          .gt("expires_at", new Date().toISOString())
+          .maybeSingle();
+        if (cached?.response) {
+          return new Response(JSON.stringify(cached.response), {
+            headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+          });
+        }
+      } catch (e) {
+        console.warn("cache lookup failed", e);
+      }
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -96,8 +131,16 @@ You MUST respond using the suggest_pairings tool.`,
 
     const parsed = JSON.parse(toolCall.function.arguments);
 
+    // Persist to cache (best-effort)
+    if (cache) {
+      cache.from("ai_cache").upsert(
+        { function_name: "suggest-pairings", input_hash: inputHash, response: parsed },
+        { onConflict: "function_name,input_hash" },
+      ).then(({ error }) => { if (error) console.warn("cache write failed", error); });
+    }
+
     return new Response(JSON.stringify(parsed), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
     });
   } catch (e) {
     console.error("suggest-pairings error:", e);
