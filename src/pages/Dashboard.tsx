@@ -4,6 +4,8 @@ import FirstWinCard from '@/components/FirstWinCard';
 import CalorieTracker from '@/components/CalorieTracker';
 import TasteProfileCard from '@/components/TasteProfileCard';
 import PlanMyWeekButton from '@/components/PlanMyWeekButton';
+import BudgetCard from '@/components/BudgetCard';
+import MonthlyRecapCard from '@/components/MonthlyRecapCard';
 import {
   Refrigerator,
   Snowflake,
@@ -237,8 +239,14 @@ export default function Dashboard() {
           {/* One-tap weekly planning */}
           <PlanMyWeekButton />
 
+          {/* Budget */}
+          <BudgetCard />
+
           {/* Calorie Tracker */}
           <CalorieTracker />
+
+          {/* Last month recap */}
+          <MonthlyRecapCard />
 
           {/* Taste Profile — what the AI has learned */}
           <TasteProfileCard />
