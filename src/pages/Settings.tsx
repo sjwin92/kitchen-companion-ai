@@ -339,6 +339,42 @@ export default function Settings() {
                   </button>
                 </div>
               </div>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-sm">Monthly Budget</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-muted-foreground">£</span>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={preferences.monthlyBudgetGbp ?? ''}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setPreferences({ monthlyBudgetGbp: v === '' ? null : Number(v) });
+                    }}
+                    placeholder="400"
+                    className="w-20 h-8 text-right text-sm font-bold"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UtensilsCrossed className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-sm">Lunchboxes / Week</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setPreferences({ lunchboxCount: Math.max(0, preferences.lunchboxCount - 1) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="text-lg font-bold w-6 text-center">{preferences.lunchboxCount}</span>
+                  <button onClick={() => setPreferences({ lunchboxCount: Math.min(7, preferences.lunchboxCount + 1) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
