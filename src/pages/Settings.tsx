@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
-import CalorieTracker from '@/components/CalorieTracker';
 import { deleteAccount, downloadAccountExport } from '@/services/accountPrivacy';
 import { DIETARY_OPTIONS, removeRedundantDislikes, toggleDietaryPreference } from '@/lib/onboardingPreferences';
 
@@ -476,11 +475,6 @@ export default function Settings() {
               ))}
             </div>
           </div>
-
-
-          {/* Calorie Tracker */}
-          <CalorieTracker />
-
           <div className="glass-card p-5 space-y-4">
             <div className="flex items-start gap-3">
               <ShieldCheck className="w-5 h-5 text-primary mt-0.5" />

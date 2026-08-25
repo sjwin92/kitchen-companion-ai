@@ -39,7 +39,7 @@ interface PlannedMeal {
   image: string | null;
 }
 
-export default function CalorieTracker() {
+export default function CalorieTracker({ prominent = false }: { prominent?: boolean }) {
   const { session, preferences, setPreferences } = useApp();
   const navigate = useNavigate();
   const [meals, setMeals] = useState<MealLogEntry[]>([]);
@@ -133,11 +133,30 @@ export default function CalorieTracker() {
 
   return (
     <div className="space-y-3">
-      <h2 className="section-title px-1">Calorie Tracker</h2>
+      <div className="flex items-end justify-between gap-4 px-1">
+        <div>
+          <h2 className={prominent ? 'text-xl md:text-2xl font-bold tracking-tight' : 'section-title'}>
+            Today's calorie tracker
+          </h2>
+          {prominent && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Track what you eat as food moves from your kitchen into meals.
+            </p>
+          )}
+        </div>
+        {prominent && (
+          <button
+            onClick={() => navigate('/meal-history')}
+            className="text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground hover:text-primary transition-colors shrink-0"
+          >
+            View history
+          </button>
+        )}
+      </div>
 
       {/* Main ring card */}
-      <Card className="p-5 animate-fade-in">
-        <div className="flex items-center gap-5">
+      <Card className={`p-5 animate-fade-in ${prominent ? 'md:p-6 border-primary/20 bg-primary/[0.025]' : ''}`}>
+        <div className={`flex items-center gap-5 ${prominent ? 'md:gap-8' : ''}`}>
           {/* Progress ring */}
           <div className="relative shrink-0">
             <svg width={size} height={size} className="-rotate-90">
@@ -305,7 +324,7 @@ export default function CalorieTracker() {
       {/* Quick actions */}
       <div className="flex gap-2">
         <Button
-          variant="outline"
+          variant={prominent ? 'default' : 'outline'}
           size="sm"
           className="flex-1 rounded-xl gap-1.5 text-xs"
           onClick={() => navigate('/meal-log')}
@@ -316,9 +335,9 @@ export default function CalorieTracker() {
           variant="outline"
           size="sm"
           className="flex-1 rounded-xl gap-1.5 text-xs"
-          onClick={() => navigate('/meal-history')}
+          onClick={() => navigate(prominent ? '/weekly-insights' : '/meal-history')}
         >
-          <Flame className="w-3.5 h-3.5" /> View History
+          <Flame className="w-3.5 h-3.5" /> {prominent ? 'Weekly Insights' : 'View History'}
         </Button>
       </div>
     </div>

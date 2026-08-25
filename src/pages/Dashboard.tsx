@@ -77,6 +77,11 @@ export default function Dashboard() {
         </button>
       </div>
 
+      {/* Daily nutrition is a primary kitchen loop, not a settings-only feature. */}
+      <div className="mb-6">
+        <CalorieTracker prominent />
+      </div>
+
       {/* First-win activation */}
       <FirstWinCard />
 
@@ -241,9 +246,6 @@ export default function Dashboard() {
 
           {/* Budget */}
           <BudgetCard />
-
-          {/* Calorie Tracker */}
-          <CalorieTracker />
 
           {/* Last month recap */}
           <MonthlyRecapCard />
