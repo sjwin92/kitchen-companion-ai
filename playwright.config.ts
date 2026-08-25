@@ -19,5 +19,10 @@ export default defineConfig({
     command: 'npm run dev -- --host 127.0.0.1 --port 8091',
     url: 'http://127.0.0.1:8091',
     reuseExistingServer: !process.env.CI,
+    env: {
+      VITE_SUPABASE_PROJECT_ID: process.env.VITE_SUPABASE_PROJECT_ID ?? 'playwright-local',
+      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? 'http://127.0.0.1:54321',
+      VITE_SUPABASE_PUBLISHABLE_KEY: process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? 'playwright-public-test-key',
+    },
   },
 });
