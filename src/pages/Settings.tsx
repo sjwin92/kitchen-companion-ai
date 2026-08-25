@@ -13,13 +13,18 @@ import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
 import CalorieTracker from '@/components/CalorieTracker';
 import { deleteAccount, downloadAccountExport } from '@/services/accountPrivacy';
+import { DIETARY_OPTIONS, toggleDietaryPreference } from '@/lib/onboardingPreferences';
 
-const DIETARY_OPTIONS = [
-  { label: 'Plant-Based', icon: <Leaf className="w-5 h-5" />, desc: 'Prioritizing whole foods from plant sources.' },
-  { label: 'Omnivore', icon: <UtensilsCrossed className="w-5 h-5" />, desc: 'Customized restrictions for your lifestyle.' },
-  { label: 'Pescatarian', icon: <UtensilsCrossed className="w-5 h-5" />, desc: 'Customized restrictions for your lifestyle.' },
-  { label: 'High Protein', icon: <UtensilsCrossed className="w-5 h-5" />, desc: 'Customized restrictions for your lifestyle.' },
-];
+const DIETARY_DESCRIPTIONS: Record<(typeof DIETARY_OPTIONS)[number], string> = {
+  Vegetarian: 'Exclude meat and fish.',
+  Vegan: 'Exclude meat, fish, dairy, eggs, honey, and other animal products.',
+  'Gluten-Free': 'Exclude ingredients containing gluten.',
+  'Dairy-Free': 'Exclude milk and dairy ingredients.',
+  Keto: 'Prioritise low-carbohydrate meals.',
+  Halal: 'Filter out ingredients that are not halal-compatible.',
+  Kosher: 'Filter out ingredients that are not kosher-compatible.',
+  None: 'No dietary restrictions.',
+};
 
 const CUISINE_OPTIONS = ['Mediterranean', 'Japanese', 'French', 'Nordic', 'Thai', 'Mexican', 'Indian', 'Italian', 'Korean', 'Chinese', 'American', 'British', 'Middle Eastern'];
 
@@ -119,8 +124,7 @@ export default function Settings() {
   };
 
   const toggleDietary = (pref: string) => {
-    const current = preferences.dietaryPreferences;
-    const next = current.includes(pref) ? current.filter(p => p !== pref) : [...current, pref];
+    const next = toggleDietaryPreference(preferences.dietaryPreferences, pref);
     setPreferences({ dietaryPreferences: next });
   };
 
@@ -176,22 +180,24 @@ export default function Settings() {
           <section>
             <h2 className="text-xl font-bold tracking-tight mb-4">Dietary Preferences</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {DIETARY_OPTIONS.map(opt => {
-                const active = preferences.dietaryPreferences.includes(opt.label);
+              {DIETARY_OPTIONS.map(option => {
+                const active = preferences.dietaryPreferences.includes(option);
                 return (
                   <button
-                    key={opt.label}
-                    onClick={() => toggleDietary(opt.label)}
+                    key={option}
+                    onClick={() => toggleDietary(option)}
                     className={`glass-card p-5 text-left transition-all ${active ? 'ring-2 ring-primary' : ''}`}
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <div className="text-primary">{opt.icon}</div>
+                      <div className="text-primary">
+                        {option === 'None' ? <UtensilsCrossed className="w-5 h-5" /> : <Leaf className="w-5 h-5" />}
+                      </div>
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${active ? 'border-primary bg-primary' : 'border-border'}`}>
                         {active && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold mb-1">{opt.label}</h3>
-                    <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                    <h3 className="text-sm font-bold mb-1">{option}</h3>
+                    <p className="text-xs text-muted-foreground">{DIETARY_DESCRIPTIONS[option]}</p>
                   </button>
                 );
               })}

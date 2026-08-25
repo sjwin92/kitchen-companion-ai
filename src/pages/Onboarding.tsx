@@ -9,10 +9,15 @@ import {
 } from 'lucide-react';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
 import { toast } from 'sonner';
+import {
+  COMMON_DISLIKES,
+  DIETARY_OPTIONS,
+  getSuggestedDislikes,
+  removeRedundantDislikes,
+  toggleDietaryPreference,
+} from '@/lib/onboardingPreferences';
 
-const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'None'];
 const TIME_OPTIONS = ['15 min', '30 min', '45 min', '60+ min'];
-const COMMON_DISLIKES = ['Cilantro', 'Mushrooms', 'Olives', 'Anchovies', 'Blue Cheese', 'Liver', 'Eggplant'];
 const COMMON_ALLERGIES = ['Peanuts', 'Tree Nuts', 'Shellfish', 'Dairy', 'Eggs', 'Soy', 'Wheat', 'Fish', 'Sesame'];
 const CUISINE_OPTIONS = ['Italian', 'Mexican', 'Indian', 'Chinese', 'Japanese', 'Thai', 'Mediterranean', 'Middle Eastern', 'Korean', 'French', 'American', 'British'];
 
@@ -69,6 +74,12 @@ export default function Onboarding() {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
   };
 
+  const handleDietaryToggle = (option: string) => {
+    const nextDietary = toggleDietaryPreference(dietary, option);
+    setDietary(nextDietary);
+    setDislikes(current => removeRedundantDislikes(current, nextDietary));
+  };
+
   const handleFinish = async () => {
     setFinishing(true);
     try {
@@ -77,7 +88,7 @@ export default function Onboarding() {
         householdSize,
         dietaryPreferences: dietary,
         cookingTime,
-        dislikedIngredients: dislikes,
+        dislikedIngredients: removeRedundantDislikes(dislikes, dietary),
         preferredCuisines: cuisines,
         budgetSensitivity: budget,
         cookingConfidence: confidence,
@@ -91,8 +102,6 @@ export default function Onboarding() {
       setFinishing(false);
     }
   };
-
-  const TOTAL_STEPS = 9;
 
   const chipClass = (active: boolean, variant: 'primary' | 'destructive' = 'primary') => {
     const base = 'px-4 py-2.5 rounded-xl text-sm font-medium border transition-all active:scale-95';
@@ -164,7 +173,7 @@ export default function Onboarding() {
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {DIETARY_OPTIONS.map(opt => (
-          <button key={opt} onClick={() => toggleItem(dietary, opt, setDietary)} className={chipClass(dietary.includes(opt))}>
+          <button key={opt} onClick={() => handleDietaryToggle(opt)} className={chipClass(dietary.includes(opt))}>
             {opt}
           </button>
         ))}
@@ -218,7 +227,7 @@ export default function Onboarding() {
         <p className="text-muted-foreground mt-1">Not allergic, just… no thanks</p>
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
-        {COMMON_DISLIKES.map(opt => (
+        {getSuggestedDislikes(dietary).map(opt => (
           <button key={opt} onClick={() => toggleItem(dislikes, opt, setDislikes)} className={chipClass(dislikes.includes(opt), 'destructive')}>
             {opt}
           </button>
@@ -379,7 +388,7 @@ export default function Onboarding() {
         </div>
         {step > 0 && (
           <div className="flex gap-1 mb-8">
-            {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+            {Array.from({ length: steps.length - 1 }, (_, i) => (
               <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-primary' : 'bg-border'}`} />
             ))}
           </div>
@@ -392,9 +401,9 @@ export default function Onboarding() {
         {step > 0 && (
           <div className="flex gap-3 mt-8">
             <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1 rounded-xl">Back</Button>
-            <Button disabled={finishing} onClick={step === TOTAL_STEPS ? handleFinish : () => setStep(step + 1)} className="flex-1 rounded-xl">
+            <Button disabled={finishing} onClick={step === steps.length - 1 ? handleFinish : () => setStep(step + 1)} className="flex-1 rounded-xl">
               {finishing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {step === TOTAL_STEPS ? '🎉 Start Cooking' : 'Next'}
+              {step === steps.length - 1 ? '🎉 Start Cooking' : 'Next'}
             </Button>
           </div>
         )}

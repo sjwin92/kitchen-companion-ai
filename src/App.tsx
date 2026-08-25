@@ -9,8 +9,9 @@ import TopNav from "@/components/TopNav";
 import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { Button } from "@/components/ui/button";
 
 // Lazy-loaded routes — cut initial bundle size
 const Inventory = lazy(() => import("@/pages/Inventory"));
@@ -55,7 +56,7 @@ function RouteFallback() {
 }
 
 function AppContent() {
-  const { preferences, session, loading } = useApp();
+  const { preferences, session, loading, profileError, retryProfile, signOut } = useApp();
 
   if (loading) {
     return (
@@ -77,6 +78,22 @@ function AppContent() {
 
   if (!session) {
     return <Auth />;
+  }
+
+  if (profileError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <div className="w-full max-w-md text-center space-y-4">
+          <AlertTriangle className="w-10 h-10 text-destructive mx-auto" />
+          <h1 className="text-xl font-bold">Your profile did not load</h1>
+          <p className="text-sm text-muted-foreground">{profileError}</p>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={retryProfile}>Retry</Button>
+            <Button variant="outline" onClick={() => void signOut()}>Sign out</Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!preferences.onboardingComplete) {

@@ -8,6 +8,7 @@ interface AppState {
   preferences: UserPreferences;
   session: Session | null;
   loading: boolean;
+  profileError: string | null;
   addItems: (items: FoodItem[]) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   transitionItem: (id: string, state: InventoryLifecycle, reason?: string) => Promise<void>;
@@ -17,6 +18,7 @@ interface AppState {
   completeOnboarding: (prefs?: Partial<UserPreferences>) => Promise<void>;
   signOut: () => Promise<void>;
   refreshInventory: () => Promise<void>;
+  retryProfile: () => void;
 }
 
 const defaultPreferences: UserPreferences = {
@@ -55,23 +57,35 @@ export function deriveFreshness(expiryDate?: string): FoodItem['status'] {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileReload, setProfileReload] = useState(0);
   const [inventory, setInventory] = useState<FoodItem[]>([]);
   const [preferences, setPrefs] = useState<UserPreferences>(defaultPreferences);
 
-  // Auth listener
+  // Auth listener. Keep the app gated until the signed-in user's profile is loaded.
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) {
+    let currentUserId: string | null = null;
+    const applySession = (nextSession: Session | null) => {
+      const nextUserId = nextSession?.user.id ?? null;
+      if (nextUserId !== currentUserId) {
+        currentUserId = nextUserId;
+        setLoading(Boolean(nextSession));
+        setProfileError(null);
+      }
+      setSession(nextSession);
+      if (!nextSession) {
         setInventory([]);
         setPrefs(defaultPreferences);
         setLoading(false);
       }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      applySession(nextSession);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      applySession(initialSession);
     });
 
     return () => subscription.unsubscribe();
@@ -81,37 +95,66 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!session?.user) return;
     
+    let cancelled = false;
     const loadProfile = async () => {
-      const { data } = await supabase
+      setLoading(true);
+      setProfileError(null);
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (data) {
+      if (cancelled) return;
+      if (error) {
+        setProfileError('We could not load your saved kitchen profile. Your data has not been changed.');
+        setLoading(false);
+        return;
+      }
+
+      let profile = data;
+      if (!profile) {
+        const { data: created, error: createError } = await supabase
+          .from('profiles')
+          .upsert({ id: session.user.id }, { onConflict: 'id' })
+          .select('*')
+          .single();
+
+        if (cancelled) return;
+        if (createError) {
+          setProfileError('We could not create your kitchen profile. Please retry before continuing.');
+          setLoading(false);
+          return;
+        }
+        profile = created;
+      }
+
+      if (profile) {
         setPrefs({
-          householdSize: data.household_size ?? 2,
-          dietaryPreferences: data.dietary_preferences ?? [],
-          cookingTime: data.cooking_time ?? '30 min',
-          maxPrepTime: (data as any).max_prep_time ?? 60,
-          dailyCalorieGoal: data.daily_calorie_goal ?? 2000,
-          dislikedIngredients: data.disliked_ingredients ?? [],
-          onboardingComplete: data.onboarding_complete ?? false,
-          displayName: data.display_name ?? '',
-          preferredCuisines: (data as any).preferred_cuisines ?? [],
-          budgetSensitivity: (data as any).budget_sensitivity ?? 'medium',
-          cookingConfidence: (data as any).cooking_confidence ?? 'intermediate',
-          primaryGoal: (data as any).primary_goal ?? 'reduce-waste',
-          planningStyle: (data as any).planning_style ?? 'help-choose',
-          allergies: (data as any).allergies ?? [],
-          monthlyBudgetGbp: (data as any).monthly_budget_gbp ?? null,
-          lunchboxCount: (data as any).lunchbox_count ?? 0,
+          householdSize: profile.household_size ?? 2,
+          dietaryPreferences: profile.dietary_preferences ?? [],
+          cookingTime: profile.cooking_time ?? '30 min',
+          maxPrepTime: profile.max_prep_time ?? 60,
+          dailyCalorieGoal: profile.daily_calorie_goal ?? 2000,
+          dislikedIngredients: profile.disliked_ingredients ?? [],
+          onboardingComplete: profile.onboarding_complete ?? false,
+          displayName: profile.display_name ?? '',
+          preferredCuisines: profile.preferred_cuisines ?? [],
+          budgetSensitivity: (profile.budget_sensitivity as UserPreferences['budgetSensitivity']) ?? 'medium',
+          cookingConfidence: (profile.cooking_confidence as UserPreferences['cookingConfidence']) ?? 'intermediate',
+          primaryGoal: (profile.primary_goal as UserPreferences['primaryGoal']) ?? 'reduce-waste',
+          planningStyle: (profile.planning_style as UserPreferences['planningStyle']) ?? 'help-choose',
+          allergies: profile.allergies ?? [],
+          monthlyBudgetGbp: profile.monthly_budget_gbp ?? null,
+          lunchboxCount: profile.lunchbox_count ?? 0,
         });
       }
+      setLoading(false);
     };
 
-    loadProfile();
-  }, [session?.user?.id]);
+    void loadProfile();
+    return () => { cancelled = true; };
+  }, [session?.user?.id, profileReload]);
 
   // Load inventory when session changes
   const refreshInventory = useCallback(async () => {
@@ -205,7 +248,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const persistPreferences = useCallback(async (next: UserPreferences) => {
     if (!session?.user) return;
-    const { error } = await supabase.from('profiles').update({
+    const { error } = await supabase.from('profiles').upsert({
+      id: session.user.id,
       household_size: next.householdSize,
       dietary_preferences: next.dietaryPreferences,
       cooking_time: next.cookingTime,
@@ -222,7 +266,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       allergies: next.allergies,
       monthly_budget_gbp: next.monthlyBudgetGbp,
       lunchbox_count: next.lunchboxCount,
-    } as never).eq('id', session.user.id);
+    }, { onConflict: 'id' });
     if (error) throw error;
   }, [session?.user]);
 
@@ -241,17 +285,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const completeOnboarding = useCallback(async (updates: Partial<UserPreferences> = {}) => {
     const next = { ...preferences, ...updates, onboardingComplete: true };
-    const { error } = await supabase.rpc('complete_onboarding' as never, { p_preferences: next } as never);
-    if (error) throw error;
+    await persistPreferences(next);
     setPrefs(next);
-  }, [preferences]);
+  }, [preferences, persistPreferences]);
+
+  const retryProfile = useCallback(() => setProfileReload(current => current + 1), []);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
 
   return (
-    <AppContext.Provider value={{ inventory, preferences, session, loading, addItems, removeItem, transitionItem, updateItem, setPreferences, savePreferences, completeOnboarding, signOut, refreshInventory }}>
+    <AppContext.Provider value={{ inventory, preferences, session, loading, profileError, addItems, removeItem, transitionItem, updateItem, setPreferences, savePreferences, completeOnboarding, signOut, refreshInventory, retryProfile }}>
       {children}
     </AppContext.Provider>
   );
