@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
 import { z } from "npm:zod@3.25.76";
+import { findDietaryConflicts, foodTextMatchesTerm } from "../_shared/dietary-rules.ts";
 
 const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
 
@@ -191,6 +192,17 @@ Deno.serve(async (req) => {
     const text = outputText(payload);
     if (!text) throw new Error("Recipe draft returned no content");
     const recipe = recipeSchema.parse(JSON.parse(text));
+    const recipeFoods = [recipe.title, ...recipe.ingredients];
+    const dietaryConflicts = findDietaryConflicts(recipeFoods, profile.dietary_preferences ?? []);
+    const allergyConflict = recipeFoods.some((food) =>
+      (profile.allergies ?? []).some((allergy) => foodTextMatchesTerm(food, allergy))
+    );
+    const dislikeConflict = recipeFoods.some((food) =>
+      (profile.disliked_ingredients ?? []).some((dislike) => foodTextMatchesTerm(food, dislike))
+    );
+    if (dietaryConflicts.length > 0 || allergyConflict || dislikeConflict) {
+      throw new Error("Recipe draft did not satisfy your saved food requirements. Please try again.");
+    }
 
     const { data: savedDraft, error: saveError } = await userClient
       .from("user_recipes")

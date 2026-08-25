@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { FoodItem, InventoryLifecycle, UserPreferences } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
+import { canonicalizeDietaryPreferences, dietExcludesFood } from '../../supabase/functions/_shared/dietary-rules';
 
 interface AppState {
   inventory: FoodItem[];
@@ -41,6 +42,17 @@ const defaultPreferences: UserPreferences = {
 };
 
 const AppContext = createContext<AppState | null>(null);
+
+function normalizePreferences(next: UserPreferences): UserPreferences {
+  const dietaryPreferences = canonicalizeDietaryPreferences(next.dietaryPreferences);
+  return {
+    ...next,
+    dietaryPreferences,
+    dislikedIngredients: next.dislikedIngredients.filter(
+      (ingredient) => !dietExcludesFood(ingredient, dietaryPreferences),
+    ),
+  };
+}
 
 export function deriveFreshness(expiryDate?: string): FoodItem['status'] {
   if (!expiryDate) return 'unknown';
@@ -130,9 +142,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (profile) {
-        setPrefs({
+        setPrefs(normalizePreferences({
           householdSize: profile.household_size ?? 2,
-          dietaryPreferences: profile.dietary_preferences ?? [],
+          dietaryPreferences: canonicalizeDietaryPreferences(profile.dietary_preferences ?? []),
           cookingTime: profile.cooking_time ?? '30 min',
           maxPrepTime: profile.max_prep_time ?? 60,
           dailyCalorieGoal: profile.daily_calorie_goal ?? 2000,
@@ -147,7 +159,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           allergies: profile.allergies ?? [],
           monthlyBudgetGbp: profile.monthly_budget_gbp ?? null,
           lunchboxCount: profile.lunchbox_count ?? 0,
-        });
+        }));
       }
       setLoading(false);
     };
@@ -248,43 +260,45 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const persistPreferences = useCallback(async (next: UserPreferences) => {
     if (!session?.user) return;
+    const normalized = normalizePreferences(next);
     const { error } = await supabase.from('profiles').upsert({
       id: session.user.id,
-      household_size: next.householdSize,
-      dietary_preferences: next.dietaryPreferences,
-      cooking_time: next.cookingTime,
-      max_prep_time: next.maxPrepTime,
-      daily_calorie_goal: next.dailyCalorieGoal,
-      disliked_ingredients: next.dislikedIngredients,
-      onboarding_complete: next.onboardingComplete,
-      display_name: next.displayName,
-      preferred_cuisines: next.preferredCuisines,
-      budget_sensitivity: next.budgetSensitivity,
-      cooking_confidence: next.cookingConfidence,
-      primary_goal: next.primaryGoal,
-      planning_style: next.planningStyle,
-      allergies: next.allergies,
-      monthly_budget_gbp: next.monthlyBudgetGbp,
-      lunchbox_count: next.lunchboxCount,
+      household_size: normalized.householdSize,
+      dietary_preferences: normalized.dietaryPreferences,
+      cooking_time: normalized.cookingTime,
+      max_prep_time: normalized.maxPrepTime,
+      daily_calorie_goal: normalized.dailyCalorieGoal,
+      disliked_ingredients: normalized.dislikedIngredients,
+      onboarding_complete: normalized.onboardingComplete,
+      display_name: normalized.displayName,
+      preferred_cuisines: normalized.preferredCuisines,
+      budget_sensitivity: normalized.budgetSensitivity,
+      cooking_confidence: normalized.cookingConfidence,
+      primary_goal: normalized.primaryGoal,
+      planning_style: normalized.planningStyle,
+      allergies: normalized.allergies,
+      monthly_budget_gbp: normalized.monthlyBudgetGbp,
+      lunchbox_count: normalized.lunchboxCount,
     }, { onConflict: 'id' });
     if (error) throw error;
   }, [session?.user]);
 
   const savePreferences = useCallback(async (next: UserPreferences) => {
-    await persistPreferences(next);
-    setPrefs(next);
+    const normalized = normalizePreferences(next);
+    await persistPreferences(normalized);
+    setPrefs(normalized);
   }, [persistPreferences]);
 
   const setPreferences = useCallback((prefs: Partial<UserPreferences>) => {
     setPrefs(prev => {
-      const next = { ...prev, ...prefs };
+      const next = normalizePreferences({ ...prev, ...prefs });
       void persistPreferences(next);
       return next;
     });
   }, [persistPreferences]);
 
   const completeOnboarding = useCallback(async (updates: Partial<UserPreferences> = {}) => {
-    const next = { ...preferences, ...updates, onboardingComplete: true };
+    const next = normalizePreferences({ ...preferences, ...updates, onboardingComplete: true });
     await persistPreferences(next);
     setPrefs(next);
   }, [preferences, persistPreferences]);

@@ -1,4 +1,6 @@
 import type { CatalogRecipe, FoodItem, RecipeIngredient, RecipeRecommendation, UserPreferences } from '@/types';
+import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
+import { dietaryRuleKey } from '../../supabase/functions/_shared/dietary-rules';
 
 export interface RecipeMemorySnapshot {
   recipeId: string;
@@ -41,18 +43,13 @@ function hasHardConflict(recipe: CatalogRecipe, preferences: UserPreferences) {
   const recipeAllergens = recipe.allergenTags.map(normalize);
   if (preferences.allergies.some((allergy) => recipeAllergens.some((tag) => tokenMatch(tag, allergy)))) return true;
 
-  const diet = preferences.dietaryPreferences.map(normalize);
   const tags = recipe.dietaryTags.map(normalize);
   const ingredientNames = recipe.ingredients.map((ingredient) => normalize(ingredient.name));
-  if (diet.some((value) => value.includes('vegan') || value.includes('plant based'))) {
-    const animalProducts = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'tuna', 'egg', 'milk', 'cheese', 'butter', 'yogurt', 'honey'];
-    if (!tags.includes('vegan') || ingredientNames.some((name) => animalProducts.some((item) => tokenMatch(name, item)))) return true;
-  }
-  if (diet.some((value) => value.includes('vegetarian'))) {
-    const meat = ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'tuna', 'anchovy'];
-    if (!tags.includes('vegetarian') || ingredientNames.some((name) => meat.some((item) => tokenMatch(name, item)))) return true;
-  }
-  return preferences.dislikedIngredients.some((dislike) => ingredientNames.some((name) => tokenMatch(name, dislike)));
+  const dietRules = preferences.dietaryPreferences.map(dietaryRuleKey);
+  if (dietRules.includes('vegan') && !tags.includes('vegan')) return true;
+  if (dietRules.includes('vegetarian') && !tags.some((tag) => tag === 'vegetarian' || tag === 'vegan')) return true;
+
+  return !passesUserDietaryFilters(recipe.title, ingredientNames, preferences);
 }
 
 function ingredientMatchesInventory(ingredient: RecipeIngredient, inventory: FoodItem[]) {
@@ -85,8 +82,11 @@ export function recommendRecipes(context: RecommendationContext): RecipeRecommen
       const cookedRecently = prior?.lastCookedAt ? Date.now() - new Date(prior.lastCookedAt).getTime() < 14 * 86400000 : false;
       const varietyFit = cookedRecently ? 0 : clamp(1 - (prior?.timesCooked ?? 0) / 12);
       const calories = Number(recipe.nutrition.calories ?? 0);
+      const protein = Number(recipe.nutrition.protein_g ?? recipe.nutrition.protein ?? 0);
       const targetPerMeal = context.preferences.dailyCalorieGoal > 0 ? context.preferences.dailyCalorieGoal / 3 : 667;
-      const nutritionFit = calories > 0 ? clamp(1 - Math.abs(calories - targetPerMeal) / targetPerMeal) : 0.6;
+      const calorieFit = calories > 0 ? clamp(1 - Math.abs(calories - targetPerMeal) / targetPerMeal) : 0.6;
+      const highProtein = context.preferences.dietaryPreferences.map(dietaryRuleKey).includes('high-protein');
+      const nutritionFit = highProtein ? calorieFit * 0.4 + clamp(protein / 40) * 0.6 : calorieFit;
 
       const components = {
         pantry: pantryRatio * 30,

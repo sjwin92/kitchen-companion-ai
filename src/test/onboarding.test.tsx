@@ -28,6 +28,10 @@ describe('Onboarding', () => {
     expect(screen.queryByRole('button', { name: 'Anchovies' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Blue Cheese' })).not.toBeInTheDocument();
 
+    fireEvent.change(screen.getByPlaceholderText('Add other...'), { target: { value: 'Liver' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    expect(screen.queryByRole('button', { name: 'Liver ×' })).not.toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));

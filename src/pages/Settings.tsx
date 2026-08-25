@@ -13,16 +13,18 @@ import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
 import CalorieTracker from '@/components/CalorieTracker';
 import { deleteAccount, downloadAccountExport } from '@/services/accountPrivacy';
-import { DIETARY_OPTIONS, toggleDietaryPreference } from '@/lib/onboardingPreferences';
+import { DIETARY_OPTIONS, removeRedundantDislikes, toggleDietaryPreference } from '@/lib/onboardingPreferences';
 
 const DIETARY_DESCRIPTIONS: Record<(typeof DIETARY_OPTIONS)[number], string> = {
   Vegetarian: 'Exclude meat and fish.',
   Vegan: 'Exclude meat, fish, dairy, eggs, honey, and other animal products.',
+  Pescatarian: 'Exclude meat while allowing fish and seafood.',
   'Gluten-Free': 'Exclude ingredients containing gluten.',
   'Dairy-Free': 'Exclude milk and dairy ingredients.',
   Keto: 'Prioritise low-carbohydrate meals.',
-  Halal: 'Filter out ingredients that are not halal-compatible.',
-  Kosher: 'Filter out ingredients that are not kosher-compatible.',
+  'High-Protein': 'Prioritise meals with more protein.',
+  Halal: 'Exclude clear conflicts such as pork and alcohol; certification still matters.',
+  Kosher: 'Exclude clear conflicts such as pork and shellfish; certification still matters.',
   None: 'No dietary restrictions.',
 };
 
@@ -125,7 +127,10 @@ export default function Settings() {
 
   const toggleDietary = (pref: string) => {
     const next = toggleDietaryPreference(preferences.dietaryPreferences, pref);
-    setPreferences({ dietaryPreferences: next });
+    setPreferences({
+      dietaryPreferences: next,
+      dislikedIngredients: removeRedundantDislikes(preferences.dislikedIngredients, next),
+    });
   };
 
   const toggleCuisine = (item: string) => {
@@ -137,6 +142,11 @@ export default function Settings() {
   const addDisliked = () => {
     const val = dislikedInput.trim();
     if (!val || preferences.dislikedIngredients.includes(val)) return;
+    if (removeRedundantDislikes([val], preferences.dietaryPreferences).length === 0) {
+      toast.info(`${val} is already excluded by your dietary choices.`);
+      setDislikedInput('');
+      return;
+    }
     setPreferences({ dislikedIngredients: [...preferences.dislikedIngredients, val] });
     setDislikedInput('');
   };

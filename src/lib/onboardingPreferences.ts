@@ -1,13 +1,9 @@
-export const DIETARY_OPTIONS = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Dairy-Free',
-  'Keto',
-  'Halal',
-  'Kosher',
-  'None',
-] as const;
+import {
+  DIETARY_OPTIONS,
+  dietExcludesFood,
+} from '../../supabase/functions/_shared/dietary-rules';
+
+export { DIETARY_OPTIONS };
 
 export const COMMON_DISLIKES = [
   'Cilantro',
@@ -19,12 +15,6 @@ export const COMMON_DISLIKES = [
   'Eggplant',
 ] as const;
 
-const DIETARY_REDUNDANT_DISLIKES: Record<string, readonly string[]> = {
-  vegan: ['Anchovies', 'Blue Cheese', 'Liver'],
-  vegetarian: ['Anchovies', 'Liver'],
-  'dairy-free': ['Blue Cheese'],
-};
-
 export function toggleDietaryPreference(current: string[], option: string): string[] {
   if (option === 'None') return current.includes('None') ? [] : ['None'];
 
@@ -35,20 +25,12 @@ export function toggleDietaryPreference(current: string[], option: string): stri
 }
 
 export function getSuggestedDislikes(dietaryPreferences: string[]): string[] {
-  const redundant = new Set(
-    dietaryPreferences.flatMap(
-      (preference) => DIETARY_REDUNDANT_DISLIKES[preference.toLowerCase()] ?? [],
-    ),
-  );
-
-  return COMMON_DISLIKES.filter((ingredient) => !redundant.has(ingredient));
+  return COMMON_DISLIKES.filter((ingredient) => !dietExcludesFood(ingredient, dietaryPreferences));
 }
 
 export function removeRedundantDislikes(
   dislikedIngredients: string[],
   dietaryPreferences: string[],
 ): string[] {
-  const suggestions = new Set(getSuggestedDislikes(dietaryPreferences));
-  const common = new Set<string>(COMMON_DISLIKES);
-  return dislikedIngredients.filter((ingredient) => !common.has(ingredient) || suggestions.has(ingredient));
+  return dislikedIngredients.filter((ingredient) => !dietExcludesFood(ingredient, dietaryPreferences));
 }

@@ -80,6 +80,18 @@ export default function Onboarding() {
     setDislikes(current => removeRedundantDislikes(current, nextDietary));
   };
 
+  const addCustomDislike = () => {
+    const value = customDislike.trim();
+    if (!value || dislikes.includes(value)) return;
+    if (removeRedundantDislikes([value], dietary).length === 0) {
+      toast.info(`${value} is already excluded by your dietary choices.`);
+      setCustomDislike('');
+      return;
+    }
+    setDislikes(current => [...current, value]);
+    setCustomDislike('');
+  };
+
   const handleFinish = async () => {
     setFinishing(true);
     try {
@@ -169,7 +181,7 @@ export default function Onboarding() {
           <Leaf className="w-7 h-7 text-primary" />
         </div>
         <h2 className="text-2xl font-bold">Dietary Preferences</h2>
-        <p className="text-muted-foreground mt-1">We'll filter recipes to match</p>
+        <p className="text-muted-foreground mt-1">We'll filter and rank recipes to match</p>
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {DIETARY_OPTIONS.map(opt => (
@@ -225,6 +237,11 @@ export default function Onboarding() {
         </div>
         <h2 className="text-2xl font-bold">Disliked Ingredients</h2>
         <p className="text-muted-foreground mt-1">Not allergic, just… no thanks</p>
+        {dietary.some((preference) => preference !== 'None') && (
+          <p className="text-xs text-primary mt-2">
+            Ingredients already excluded by your dietary choices are removed automatically.
+          </p>
+        )}
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {getSuggestedDislikes(dietary).map(opt => (
@@ -244,12 +261,12 @@ export default function Onboarding() {
           ref={customInputRef}
           value={customDislike}
           onChange={e => setCustomDislike(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') { const v = customDislike.trim(); if (v && !dislikes.includes(v)) setDislikes(p => [...p, v]); setCustomDislike(''); }}}
+          onKeyDown={e => { if (e.key === 'Enter') addCustomDislike(); }}
           placeholder="Add other..."
           className="flex-1 rounded-xl"
         />
         <Button variant="outline" size="sm" className="rounded-xl"
-          onClick={() => { const v = customDislike.trim(); if (v && !dislikes.includes(v)) setDislikes(p => [...p, v]); setCustomDislike(''); }}
+          onClick={addCustomDislike}
           disabled={!customDislike.trim()}>Add</Button>
       </div>
     </div>,

@@ -41,6 +41,21 @@ describe('recommendRecipes', () => {
     expect(result).toHaveLength(0);
   });
 
+  it('applies non-vegan dietary restrictions to catalogue recommendations', () => {
+    const containingPork = recipe({
+      dietaryTags: [],
+      ingredients: [{ id: 'pork', name: 'Pork sausage', normalizedName: 'pork sausage', quantity: 1, unit: 'each', optional: false, aisle: 'Meat' }],
+    });
+    const result = recommendRecipes({
+      recipes: [containingPork],
+      inventory,
+      preferences: { ...preferences, dietaryPreferences: ['Halal'] },
+      userSeed: 'u1',
+      weekKey: '2026-W35',
+    });
+    expect(result).toHaveLength(0);
+  });
+
   it('is deterministic for the same user and week', () => {
     const recipes = [recipe(), recipe({ id: 'r2', slug: 'second', title: 'Second' })];
     const input = { recipes, inventory, preferences, userSeed: 'u1', weekKey: '2026-W35' };

@@ -60,8 +60,11 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
 
   const filteredFavorites = useMemo(() => {
     if (!addDialog) return [];
-    return favorites.filter(f => matchesSlot(f.category, addDialog.slot));
-  }, [favorites, addDialog]);
+    return favorites.filter(f =>
+      matchesSlot(f.category, addDialog.slot) &&
+      passesUserDietaryFilters(f.title, [], preferences)
+    );
+  }, [favorites, addDialog, preferences]);
 
   const inventoryItems = useMemo(() => {
     if (!inventory.length) return [];
@@ -121,6 +124,10 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
   const handleAddCustom = async () => {
     const name = customName.trim();
     if (!name) return;
+    if (!passesUserDietaryFilters(name, [], preferences)) {
+      toast.error('That meal conflicts with your saved food preferences. Update it or change your preferences first.');
+      return;
+    }
     await onAdd(`custom-${Date.now()}`, name, undefined);
     setCustomName('');
   };
