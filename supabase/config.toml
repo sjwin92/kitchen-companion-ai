@@ -24,6 +24,9 @@ verify_jwt = true
 [functions.delete-account]
 verify_jwt = true
 
+[functions.compare-prices]
+verify_jwt = true
+
 [auth.hook.before_user_created]
 enabled = true
 uri = "pg-functions://postgres/private/hook_require_beta_invite"
