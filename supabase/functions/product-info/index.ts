@@ -1,81 +1,109 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.25.76";
+import { authenticate, consumeQuota, errorResponse, guardRequest, HttpError, json, structuredResponse } from "../_shared/kitchen-ai.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const infoSchema = z.object({
+  name: z.string().min(1).max(120),
+  emoji: z.string().min(1).max(12),
+  tagline: z.string().min(1).max(180),
+  benefits: z.array(z.string().min(1).max(100)).max(3),
+  nutrients: z.object({
+    calories: z.number().min(0).max(5000), protein_g: z.number().min(0).max(500),
+    carbs_g: z.number().min(0).max(1000), fat_g: z.number().min(0).max(500),
+    fiber_g: z.number().min(0).max(250), sugar_g: z.number().min(0).max(500),
+  }),
+  serving_size: z.string().min(1).max(100),
+  vitamins: z.array(z.string().min(1).max(80)).max(4),
+  category: z.enum(["fruit", "vegetable", "dairy", "grain", "protein", "snack", "beverage", "other"]),
+});
+const jsonSchema = {
+  type: "object", additionalProperties: false,
+  required: ["name", "emoji", "tagline", "benefits", "nutrients", "serving_size", "vitamins", "category"],
+  properties: {
+    name: { type: "string" }, emoji: { type: "string" }, tagline: { type: "string" },
+    benefits: { type: "array", maxItems: 3, items: { type: "string" } },
+    nutrients: {
+      type: "object", additionalProperties: false,
+      required: ["calories", "protein_g", "carbs_g", "fat_g", "fiber_g", "sugar_g"],
+      properties: {
+        calories: { type: "number", minimum: 0, maximum: 5000 }, protein_g: { type: "number", minimum: 0, maximum: 500 },
+        carbs_g: { type: "number", minimum: 0, maximum: 1000 }, fat_g: { type: "number", minimum: 0, maximum: 500 },
+        fiber_g: { type: "number", minimum: 0, maximum: 250 }, sugar_g: { type: "number", minimum: 0, maximum: 500 },
+      },
+    },
+    serving_size: { type: "string" }, vitamins: { type: "array", maxItems: 4, items: { type: "string" } },
+    category: { type: "string", enum: ["fruit", "vegetable", "dairy", "grain", "protein", "snack", "beverage", "other"] },
+  },
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+function number(value: unknown) {
+  const parsed = Number(value ?? 0);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
+Deno.serve(async (req) => {
+  const guarded = guardRequest(req);
+  if (guarded) return guarded;
   try {
-    const { productName, includeRecipe } = await req.json();
-    if (!productName) throw new Error("productName is required");
+    const { user, userClient, serviceClient } = await authenticate(req);
+    const body = await req.json() as Record<string, unknown>;
+    const productName = typeof body.productName === "string" ? body.productName.trim().slice(0, 120) : "";
+    if (!productName) throw new HttpError(400, "productName is required");
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    if (body.includeRecipe === true) {
+      const { data: recipe, error } = await userClient
+        .from("recipes")
+        .select("title,description,servings,prep_minutes,cook_minutes,dietary_tags,nutrition,instructions,recipe_ingredients(name,quantity,unit,preparation)")
+        .ilike("title", productName)
+        .eq("review_status", "approved")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      if (!recipe) throw new HttpError(404, "No reviewed catalogue recipe found. Use the optional AI draft action if you want a new recipe.");
+      const nutrition = (recipe.nutrition ?? {}) as Record<string, unknown>;
+      const instructions = Array.isArray(recipe.instructions)
+        ? recipe.instructions.map((step: unknown) => typeof step === "string" ? step : String((step as { text?: unknown })?.text ?? "")).filter(Boolean)
+        : [];
+      const ingredients = Array.isArray(recipe.recipe_ingredients)
+        ? recipe.recipe_ingredients.map((ingredient: { name: string; quantity: number | null; unit: string | null; preparation: string | null }) =>
+          [ingredient.quantity, ingredient.unit, ingredient.name, ingredient.preparation].filter(Boolean).join(" "))
+        : [];
+      return json(req, {
+        name: recipe.title,
+        emoji: "🍽️",
+        tagline: recipe.description ?? "A reviewed Kitchen Companion recipe.",
+        benefits: [],
+        nutrients: {
+          calories: number(nutrition.calories), protein_g: number(nutrition.protein_g), carbs_g: number(nutrition.carbs_g),
+          fat_g: number(nutrition.fat_g), fiber_g: number(nutrition.fiber_g), sugar_g: number(nutrition.sugar_g),
+        },
+        serving_size: "1 serving",
+        vitamins: [],
+        category: "other",
+        ingredients,
+        instructions,
+        prep_time: `${recipe.prep_minutes} min`,
+        cook_time: `${recipe.cook_minutes} min`,
+        servings: Number(recipe.servings),
+        provenance: "reviewed_catalogue",
+      });
+    }
 
-    const recipeFields = includeRecipe
-      ? `
-- "ingredients": array of ingredient strings with quantities (e.g. ["2 cups red lentils", "1 onion, diced", "3 cloves garlic, minced"])
-- "instructions": array of step-by-step cooking instructions (each step is a string, max 2 sentences per step)
-- "prep_time": string (e.g. "10 min")
-- "cook_time": string (e.g. "25 min")
-- "servings": number (default 4)`
-      : "";
-
-    const recipeNote = includeRecipe
-      ? "\nThis is a planned meal, so provide a COMPLETE, practical recipe with real measurements and clear cooking steps. The recipe should be easy to follow for a home cook."
-      : "";
-
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: `You are a nutritionist and recipe assistant. Given a food/meal name, return a JSON object with:
-- "name": cleaned product name
-- "emoji": a single emoji representing the food
-- "tagline": a short 1-sentence health benefit (max 15 words)
-- "benefits": array of 3 key health benefits (each max 8 words)
-- "nutrients": object with keys "calories", "protein_g", "carbs_g", "fat_g", "fiber_g", "sugar_g" — values are numbers for a typical single serving
-- "serving_size": string describing the serving (e.g. "1 medium apple (182g)", "100g")
-- "vitamins": array of up to 4 notable vitamins/minerals (e.g. ["Vitamin C", "Potassium"])
-- "category": one of "fruit", "vegetable", "dairy", "grain", "protein", "snack", "beverage", "other"${recipeFields}
-
-Return ONLY valid JSON, no markdown.${recipeNote}`,
-          },
-          {
-            role: "user",
-            content: productName,
-          },
-        ],
-        temperature: 0.3,
+    await consumeQuota(serviceClient, user.id, "text");
+    const info = infoSchema.parse(await structuredResponse({
+      userId: user.id,
+      model: "gpt-5.6-luna",
+      instructions: "You provide concise, conservative general nutrition estimates. Do not make medical claims.",
+      prompt: JSON.stringify({
+        product_name: productName,
+        task: "Estimate nutrition for a clearly stated typical single serving.",
+        rules: ["Use a realistic serving size.", "Nutrition values are estimates.", "Benefits must be modest evidence-aligned statements, not treatment claims."],
       }),
-    });
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? "";
-    
-    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    const info = JSON.parse(cleaned);
-
-    return new Response(JSON.stringify(info), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+      schemaName: "product_nutrition",
+      schema: jsonSchema,
+      maxOutputTokens: 1000,
+    }));
+    return json(req, { ...info, provenance: "ai_estimate", disclaimer: "General estimate only; packaging and preparation can differ." });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse(req, error, "Product information failed");
   }
 });

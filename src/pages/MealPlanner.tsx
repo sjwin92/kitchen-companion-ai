@@ -20,8 +20,6 @@ import GuidedSuggestions from '@/components/GuidedSuggestions';
 import MealRatingDialog from '@/components/MealRatingDialog';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
-import { searchRecipes } from '@/services/recipes/recipeProvider';
-import { pickMeal } from '@/lib/mealSuggestions';
 import { toast } from 'sonner';
 
 export default function MealPlanner() {
@@ -40,13 +38,13 @@ export default function MealPlanner() {
   }, [weekOffset]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
-  const { plans, addPlan, batchAddPlans, updatePlanImage, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
+  const { plans, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
-  const { ratings, fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
+  const { fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
-  const { generatePlan, generating: autoGenerating, draft, clearDraft } = useAutoPlan();
+  const { generatePlan, generateSlot, generating: autoGenerating, generatingSlot, draft, clearDraft } = useAutoPlan();
   const { saveMeal, saveBatch, trackSignal, fetchLibrary, meals } = useMealLibrary();
   const {
     draggingPlanId, dragOverTarget,
@@ -63,7 +61,6 @@ export default function MealPlanner() {
   const expiringItems = inventory.filter(i => i.status === 'use-today' || i.status === 'use-soon');
 
   // Calculate sustainability score
-  const planRecipeIds = plans.map(p => p.recipe_id);
   const usesInventory = plans.length > 0 ? Math.min(100, Math.round((plans.filter(p => !p.recipe_id.startsWith('custom-')).length / plans.length) * 100)) : 0;
 
   const handleDrop = async (e: React.DragEvent, day: Date, slot: MealSlot) => {
@@ -122,63 +119,25 @@ export default function MealPlanner() {
   const handleAutoGenerate = () => generatePlan(days, plans);
 
   const handleAutoSlot = useCallback(async (date: Date, slot: MealSlot) => {
-    // Pick instantly from local list — zero network calls needed
-    const dietaryTag = preferences.dietaryPreferences?.includes('vegetarian') ? 'vegetarian'
-      : preferences.dietaryPreferences?.includes('vegan') ? 'vegan' : undefined;
-    const meal = pickMeal(slot, plans.map(p => p.title), dietaryTag);
-
-    const recipeId = `auto-${Date.now()}`;
-    const success = await addPlan(recipeId, meal.title, date, slot);
-    if (!success) { toast.error('Could not add meal'); return; }
-    toast.success(`Added ${meal.title}`);
-
-    // Fetch MealDB image silently in the background
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    const dateStr = format(date, 'yyyy-MM-dd');
-    void (async () => {
-      try {
-        const searchPath = encodeURIComponent(`search.php?s=${meal.search_term}`);
-        const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${searchPath}`;
-        const res = await fetch(url, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
-        const data = await res.json();
-        const match = data?.meals?.[0];
-        if (match?.strMealThumb) {
-          const { data: planRow } = await supabase
-            .from('meal_plans')
-            .select('id')
-            .eq('planned_date', dateStr)
-            .eq('meal_slot', slot)
-            .eq('title', meal.title)
-            .maybeSingle();
-          if (planRow?.id) await updatePlanImage(planRow.id, match.strMealThumb);
-        }
-      } catch { /* image is optional */ }
-    })();
-  }, [plans, addPlan, updatePlanImage, preferences.dietaryPreferences]);
+    await generateSlot(date, slot, plans, async (meal) => {
+      const success = await addPlan(meal.recipe_id, meal.title, date, slot, meal.image);
+      if (!success) {
+        toast.error('Could not add meal');
+        return;
+      }
+      toast.success(`Added ${meal.title} from your recipe catalogue`);
+    });
+  }, [addPlan, generateSlot, plans]);
 
   const handleAcceptDraft = async () => {
     if (draft.length === 0) return;
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-    // Resolve MealDB IDs + images for all meals in parallel
-    const resolved = await Promise.all(
-      draft.map(async (meal) => {
-        let recipeId = `custom-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-        let image: string | undefined = meal.image;
-        if (meal.search_term) {
-          try {
-            const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${meal.search_term}`)}`;
-            const res = await fetch(url, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
-            const data = await res.json();
-            const match = data?.meals?.[0];
-            if (match) { recipeId = `mealdb-${match.idMeal}`; if (match.strMealThumb) image = match.strMealThumb; }
-          } catch { /* fallback */ }
-        }
-        return { recipeId, title: meal.title, date: new Date(meal.date + 'T00:00:00'), slot: meal.slot as MealSlot, image };
-      })
-    );
+    const resolved = draft.map((meal) => ({
+      recipeId: meal.recipe_id,
+      title: meal.title,
+      date: new Date(`${meal.date}T00:00:00`),
+      slot: meal.slot as MealSlot,
+      image: meal.image,
+    }));
 
     // Single batch insert — much faster than N sequential upserts
     const success = await batchAddPlans(resolved);
@@ -186,16 +145,15 @@ export default function MealPlanner() {
     if (success) {
       await saveBatch(draft.map(meal => ({
         title: meal.title,
-        source: 'generated' as const,
-        generation_context: { search_term: meal.search_term, slot: meal.slot, date: meal.date },
+        external_recipe_id: meal.recipe_id,
+        image: meal.image,
+        source: 'external' as const,
+        generation_context: { source: 'catalogue', slot: meal.slot, date: meal.date },
       })));
       clearDraft();
-      toast.success(`Added ${resolved.length} meals to your plan`);
-      const mealDbOnes = resolved.filter(r => r.recipeId.startsWith('mealdb-'));
-      if (mealDbOnes.length > 0) {
-        toast.info('Checking pantry…');
-        await generate(plans);
-      }
+      await refetchPlans();
+      toast.success(`Added ${resolved.length} catalogue meals to your plan`);
+      toast.info('Use “Build shopping list” to add only the ingredients you are missing.');
     } else {
       toast.error('Failed to save plan — please try again');
     }
@@ -322,20 +280,20 @@ export default function MealPlanner() {
               <p className="text-xs text-muted-foreground mt-2">Tap any empty slot and we'll suggest meals for it.</p>
             )}
             {preferences.planningStyle === 'do-it-for-me' && (
-              <p className="text-xs text-muted-foreground mt-2">Tap any empty slot to auto-fill it, or use Auto-Plan to fill the whole week.</p>
+              <p className="text-xs text-muted-foreground mt-2">Tap any empty slot to select a reviewed catalogue recipe, or fill the whole week at once.</p>
             )}
           </div>
 
           {/* Week nav + actions */}
           <div className="flex flex-wrap items-center gap-2 mb-5">
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w - 1)}>
+              <Button aria-label="Previous week" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w - 1)}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
               <Button variant={weekOffset === 0 ? 'default' : 'outline'} size="sm" className="rounded-xl text-xs h-8 px-3" onClick={() => setWeekOffset(0)}>
                 This Week
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w + 1)}>
+              <Button aria-label="Next week" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w + 1)}>
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
@@ -343,7 +301,7 @@ export default function MealPlanner() {
             {emptySlotCount > 0 && (
               <Button size="sm" className="rounded-xl text-xs gap-1.5 ml-auto" disabled={autoGenerating} onClick={handleAutoGenerate} style={{ background: 'var(--gradient-primary)' }}>
                 {autoGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                {autoGenerating ? 'Generating...' : 'Auto-Plan'}
+                {autoGenerating ? 'Selecting...' : 'Plan from catalogue'}
               </Button>
             )}
 
@@ -427,9 +385,14 @@ export default function MealPlanner() {
                             else setAddDialog({ date: day, slot: slot as MealSlot });
                           }}
                           className="flex-1 flex flex-col items-center justify-center border border-dashed border-border/60 rounded-lg hover:bg-muted/30 transition-colors"
+                          disabled={generatingSlot === `${format(day, 'yyyy-MM-dd')}-${slot}`}
                         >
-                          <AddIcon className="w-4 h-4 text-muted-foreground mb-0.5" />
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">{addLabel}</span>
+                          {generatingSlot === `${format(day, 'yyyy-MM-dd')}-${slot}`
+                            ? <Loader2 className="w-4 h-4 text-muted-foreground mb-0.5 animate-spin" />
+                            : <AddIcon className="w-4 h-4 text-muted-foreground mb-0.5" />}
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+                            {generatingSlot === `${format(day, 'yyyy-MM-dd')}-${slot}` ? 'Selecting' : addLabel}
+                          </span>
                         </button>
                       );
 
@@ -467,6 +430,7 @@ export default function MealPlanner() {
                               )}
                               <div className="flex items-center gap-1 mt-auto pt-1.5">
                                 <button
+                                  aria-label={`Rate ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
                                   onClick={() => setRatingTarget({ recipeId: plan.recipe_id, title: plan.title, slot: plan.meal_slot, planId: plan.id })}
                                   className="p-0.5 rounded hover:bg-foreground/10"
                                   title="Rate"
@@ -474,13 +438,14 @@ export default function MealPlanner() {
                                   <Star className="w-3 h-3 text-muted-foreground" />
                                 </button>
                                 <button
+                                  aria-label={`${plan.status === 'eaten' ? 'Reset' : 'Mark eaten'} ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
                                   onClick={() => handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'eaten' ? 'planned' : 'eaten')}
                                   className="p-0.5 rounded hover:bg-foreground/10"
                                   title={plan.status === 'eaten' ? 'Reset' : 'Mark eaten'}
                                 >
                                   <Check className="w-3 h-3 text-muted-foreground" />
                                 </button>
-                                <button onClick={() => handleRemovePlan(plan.id, plan.recipe_id, plan.title)} className="p-0.5 rounded hover:bg-foreground/10 ml-auto">
+                                <button aria-label={`Remove ${plan.title} from ${plan.meal_slot} on ${plan.planned_date}`} onClick={() => handleRemovePlan(plan.id, plan.recipe_id, plan.title)} className="p-0.5 rounded hover:bg-foreground/10 ml-auto">
                                   <X className="w-3 h-3 text-muted-foreground" />
                                 </button>
                               </div>
@@ -557,7 +522,7 @@ export default function MealPlanner() {
           <div className="w-full max-w-sm glass-card p-4 space-y-3 animate-fade-in rounded-t-2xl">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold">{guidedSlot.slot} · {format(guidedSlot.date, 'EEE, MMM d')}</p>
-              <button onClick={() => setGuidedSlot(null)} className="p-1 rounded hover:bg-muted"><X className="w-4 h-4" /></button>
+              <button aria-label="Close guided suggestions" onClick={() => setGuidedSlot(null)} className="p-1 rounded hover:bg-muted"><X className="w-4 h-4" /></button>
             </div>
             <GuidedSuggestions slot={guidedSlot.slot} date={guidedSlot.date} slotSettings={getSlotSettings(guidedSlot.slot)} onSelect={handleGuidedSelect} />
             <Button variant="outline" size="sm" className="w-full rounded-xl text-xs"

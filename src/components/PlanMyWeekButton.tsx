@@ -1,37 +1,29 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { useAutoPlan } from '@/hooks/useAutoPlan';
-import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
+import { useAutoPlan, type PlannedCatalogMeal } from '@/hooks/useAutoPlan';
+import { useMealPlans } from '@/hooks/useMealPlans';
 import { useShoppingDerivation } from '@/hooks/useShoppingDerivation';
 import { supabase } from '@/integrations/supabase/client';
 import { Sparkles, Loader2, Check, ShoppingCart, CalendarDays, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { startOfWeek, addDays, format } from 'date-fns';
+import { startOfWeek, addDays } from 'date-fns';
 import { toast } from 'sonner';
-
-interface GeneratedMeal {
-  date: string;
-  slot: string;
-  title: string;
-  search_term: string;
-  image?: string;
-}
 
 type Stage = 'idle' | 'planning' | 'saving' | 'shopping' | 'done';
 
 export default function PlanMyWeekButton() {
   const navigate = useNavigate();
   const { session } = useApp();
-  const { generatePlan, generating } = useAutoPlan();
+  const { generatePlan, generating, clearDraft } = useAutoPlan();
   const { plans, refetch } = useMealPlans();
   const { deriveFromPlans, addDerivedToShoppingList, derivedItems, totalEstimate } =
     useShoppingDerivation();
 
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<Stage>('idle');
-  const [savedMeals, setSavedMeals] = useState<GeneratedMeal[]>([]);
+  const [savedMeals, setSavedMeals] = useState<PlannedCatalogMeal[]>([]);
   const [missingCount, setMissingCount] = useState(0);
   const [estimate, setEstimate] = useState(0);
 
@@ -47,7 +39,7 @@ export default function PlanMyWeekButton() {
     const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
     const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-    // 1. Generate plan
+    // 1. Select reviewed catalogue recipes
     const meals = await generatePlan(days, plans);
     if (meals.length === 0) {
       setStage('idle');
@@ -59,7 +51,7 @@ export default function PlanMyWeekButton() {
     setStage('saving');
     const rows = meals.map(m => ({
       user_id: session.user.id,
-      recipe_id: m.search_term ? `auto-${m.search_term}-${m.date}-${m.slot}` : `auto-${Date.now()}`,
+      recipe_id: m.recipe_id,
       title: m.title,
       image: m.image ?? null,
       planned_date: m.date,
@@ -77,6 +69,7 @@ export default function PlanMyWeekButton() {
       return;
     }
     setSavedMeals(meals);
+    clearDraft();
     await refetch();
 
     // 3. Derive shopping list
@@ -140,7 +133,7 @@ export default function PlanMyWeekButton() {
               done={stage === 'saving' || stage === 'shopping' || stage === 'done'}
               active={stage === 'planning'}
               icon={<CalendarDays className="w-4 h-4" />}
-              label="Generating meal suggestions"
+              label="Selecting reviewed catalogue recipes"
             />
             <Step
               done={stage === 'shopping' || stage === 'done'}

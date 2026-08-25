@@ -27,16 +27,7 @@ import {
   ChefHat,
   Star,
 } from 'lucide-react';
-
-interface MealAnalysis {
-  title: string;
-  calories: number;
-  protein_g: number;
-  carbs_g: number;
-  fat_g: number;
-  ingredients: { name: string; amount: string }[];
-  matched_inventory_ids: string[];
-}
+import type { NutritionEstimate } from '@/types';
 
 interface CombinedRecipe {
   id: string;
@@ -49,16 +40,17 @@ interface CombinedRecipe {
 export default function MealLog() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { inventory, removeItem, session, preferences } = useApp();
+  const { inventory, session, preferences, refreshInventory } = useApp();
   const { plans: todayPlans } = useMealPlans();
   const { track } = useInteractions();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePath, setImagePath] = useState<string | null>(null);
   const [mealTitle, setMealTitle] = useState('');
   const [mealNotes, setMealNotes] = useState('');
   const [mealRating, setMealRating] = useState<number>(0);
   const [analyzing, setAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
+  const [analysis, setAnalysis] = useState<NutritionEstimate | null>(null);
   const [saving, setSaving] = useState(false);
   const [deductItems, setDeductItems] = useState<string[]>([]);
   const [linkedPlanId, setLinkedPlanId] = useState<string | null>(null);
@@ -91,9 +83,10 @@ export default function MealLog() {
         canvas.width = w;
         canvas.height = h;
         canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
-        const base64 = canvas.toDataURL('image/jpeg', 0.7);
-        setImagePreview(base64);
-        setImageBase64(base64);
+        setImagePreview(canvas.toDataURL('image/jpeg', 0.78));
+        canvas.toBlob((blob) => {
+          if (blob) setImageFile(new File([blob], 'meal.jpg', { type: 'image/jpeg' }));
+        }, 'image/jpeg', 0.78);
       };
       img.src = reader.result as string;
     };
@@ -106,9 +99,18 @@ export default function MealLog() {
   };
 
   const analyze = async () => {
-    if (!imageBase64) return;
+    if (!imageFile || !session?.user) return;
     setAnalyzing(true);
+    let uploadedPath = imagePath;
     try {
+      if (!uploadedPath) {
+        uploadedPath = `${session.user.id}/${crypto.randomUUID()}.jpg`;
+        const { error: uploadError } = await supabase.storage
+          .from('meal-photos')
+          .upload(uploadedPath, imageFile, { contentType: 'image/jpeg', upsert: false });
+        if (uploadError) throw uploadError;
+        setImagePath(uploadedPath);
+      }
       const todayStr = format(new Date(), 'yyyy-MM-dd');
       const todayOnly = todayPlans.filter(p => p.planned_date === todayStr);
       let recipeContext: { ingredients: string[]; measures: string[] } | undefined;
@@ -137,7 +139,7 @@ export default function MealLog() {
 
       const { data, error } = await supabase.functions.invoke('log-meal', {
         body: {
-          imageBase64,
+          imagePath: uploadedPath,
           mealTitle: mealTitle || combinedTitle || undefined,
           inventoryItems: inventory.map(i => ({ id: i.id, name: i.name, quantity: i.quantity })),
           servings: passedServings || preferences.householdSize || 4,
@@ -145,7 +147,7 @@ export default function MealLog() {
         },
       });
       if (error) throw error;
-      setAnalysis(data as MealAnalysis);
+      setAnalysis(data as NutritionEstimate);
       setDeductItems(data.matched_inventory_ids || []);
       const title = data.title || mealTitle || combinedTitle;
       if (data.title && !mealTitle) setMealTitle(data.title);
@@ -176,26 +178,20 @@ export default function MealLog() {
   };
 
   const saveMealLog = async () => {
-    if (!analysis || !session?.user) return;
+    if (!analysis || !session?.user || !imagePath) return;
     setSaving(true);
     try {
       const source = isCombinedMeal ? 'cook_together' : linkedPlanId ? 'planned' : 'manual';
       const title = mealTitle || analysis.title;
-      const { error } = await supabase.from('meal_log').insert({
-        user_id: session.user.id,
-        title,
-        calories: analysis.calories,
-        protein_g: analysis.protein_g,
-        carbs_g: analysis.carbs_g,
-        fat_g: analysis.fat_g,
-        identified_ingredients: analysis.ingredients as any,
-        deducted_item_ids: deductItems as any,
-        meal_plan_id: linkedPlanId,
-        image_url: imagePreview,
-        source,
-        notes: mealNotes || null,
-        rating: mealRating > 0 ? mealRating : null,
-      } as any);
+      const { error } = await supabase.rpc('confirm_meal_log' as never, {
+        p_estimate: { ...analysis, title },
+        p_inventory_item_ids: deductItems,
+        p_meal_plan_id: linkedPlanId,
+        p_image_path: imagePath,
+        p_source: source,
+        p_notes: mealNotes || null,
+        p_rating: mealRating > 0 ? mealRating : null,
+      } as never);
       if (error) throw error;
 
       // Track interaction
@@ -209,11 +205,8 @@ export default function MealLog() {
         metadata: { source, rating: mealRating > 0 ? mealRating : undefined },
       });
 
-      for (const id of deductItems) {
-        await removeItem(id);
-      }
-
-      toast.success('Meal logged! ' + (deductItems.length > 0 ? `${deductItems.length} items removed from inventory.` : ''));
+      await refreshInventory();
+      toast.success('Meal logged! ' + (deductItems.length > 0 ? `${deductItems.length} inventory item${deductItems.length === 1 ? '' : 's'} marked consumed.` : ''));
       navigate('/meal-history');
     } catch (err: any) {
       toast.error(err.message || 'Failed to save meal log');
@@ -299,7 +292,13 @@ export default function MealLog() {
                 variant="destructive"
                 size="icon"
                 className="absolute top-2 right-2 w-8 h-8 rounded-full"
-                onClick={() => { setImagePreview(null); setImageBase64(null); setAnalysis(null); }}
+                onClick={async () => {
+                  if (imagePath) await supabase.storage.from('meal-photos').remove([imagePath]);
+                  setImagePreview(null);
+                  setImageFile(null);
+                  setImagePath(null);
+                  setAnalysis(null);
+                }}
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -323,29 +322,45 @@ export default function MealLog() {
         {/* Analysis results */}
         {analysis && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Nutrition card */}
+            {/* Nutrition card — estimates become history only after review. */}
             <Card className="p-4">
-              <h2 className="font-semibold text-foreground mb-1">{analysis.title}</h2>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <h2 className="font-semibold text-foreground">{analysis.title}</h2>
+                  <p className="text-xs text-muted-foreground mt-1">Photo estimate · {Math.round(analysis.confidence * 100)}% confidence</p>
+                </div>
+                <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Review</span>
+              </div>
               {isCombinedMeal && (
                 <p className="text-[10px] text-muted-foreground mb-3 flex items-center gap-1">
                   <UtensilsCrossed className="w-2.5 h-2.5" />
                   Combined nutrition for entire meal
                 </p>
               )}
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { label: 'Calories', value: `${analysis.calories}`, icon: Flame, color: 'text-orange-500' },
-                  { label: 'Protein', value: `${analysis.protein_g}g`, icon: Beef, color: 'text-red-500' },
-                  { label: 'Carbs', value: `${analysis.carbs_g}g`, icon: Wheat, color: 'text-amber-500' },
-                  { label: 'Fat', value: `${analysis.fat_g}g`, icon: Droplets, color: 'text-blue-500' },
-                ].map(({ label, value, icon: Icon, color }) => (
+                  { key: 'calories' as const, label: 'Calories', value: analysis.calories, range: analysis.ranges.calories, icon: Flame, color: 'text-orange-500', suffix: '' },
+                  { key: 'protein_g' as const, label: 'Protein', value: analysis.protein_g, range: analysis.ranges.protein_g, icon: Beef, color: 'text-red-500', suffix: 'g' },
+                  { key: 'carbs_g' as const, label: 'Carbs', value: analysis.carbs_g, range: analysis.ranges.carbs_g, icon: Wheat, color: 'text-amber-500', suffix: 'g' },
+                  { key: 'fat_g' as const, label: 'Fat', value: analysis.fat_g, range: analysis.ranges.fat_g, icon: Droplets, color: 'text-blue-500', suffix: 'g' },
+                ].map(({ key, label, value, range, icon: Icon, color, suffix }) => (
                   <div key={label} className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
                     <Icon className={`w-4 h-4 ${color} mb-1`} />
-                    <span className="text-sm font-bold text-foreground">{value}</span>
-                    <span className="text-[10px] text-muted-foreground">{label}</span>
+                    <Input
+                      aria-label={`${label} estimate`}
+                      type="number"
+                      min={0}
+                      value={value}
+                      onChange={(event) => setAnalysis((current) => current ? { ...current, [key]: Number(event.target.value) } : current)}
+                      className="h-8 px-1 text-center font-bold"
+                    />
+                    <span className="text-[10px] text-muted-foreground">{label}{suffix ? ` (${suffix})` : ''}</span>
+                    <span className="text-[9px] text-muted-foreground">likely {Math.round(range.low)}–{Math.round(range.high)}</span>
                   </div>
                 ))}
               </div>
+              {analysis.notes.length > 0 && <p className="mt-3 text-[11px] text-muted-foreground">{analysis.notes.join(' ')}</p>}
+              <p className="mt-2 text-[11px] text-muted-foreground">Guidance only, not medical advice. Your edits are what get saved.</p>
             </Card>
 
             {/* Ingredients — separate cards per dish for combined meals */}

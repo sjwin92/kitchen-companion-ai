@@ -17,6 +17,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { getCatalogForSlot } from '@/data/mealCatalog';
+import { searchRecipes } from '@/services/recipes/recipeProvider';
 
 interface AddMealDialogProps {
   addDialog: { date: Date; slot: MealSlot } | null;
@@ -90,28 +91,19 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     if (q.length < 2) { setSearchResults([]); return; }
     setSearching(true);
     try {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${q}`)}`;
-      const res = await fetch(url, {
-        headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` },
-      });
-      const data = await res.json();
-      const meals = (data.meals ?? [])
-        .map((m: any) => {
-          const ingredients: string[] = [];
-          for (let i = 1; i <= 20; i++) {
-            const ing = m[`strIngredient${i}`];
-            if (ing && ing.trim()) ingredients.push(ing.trim());
-          }
-          return { id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb, ingredients };
-        })
+      const meals = (await searchRecipes(q))
+        .map((meal) => ({
+          id: meal.id,
+          name: meal.title,
+          thumb: meal.image ?? '',
+          ingredients: meal.ingredients,
+        }))
         .filter((m: { name: string; ingredients: string[] }) =>
           passesUserDietaryFilters(m.name, m.ingredients, preferences)
         );
       setSearchResults(meals);
     } catch {
-      toast.error('Search failed');
+      toast.error('Catalogue search failed');
     } finally {
       setSearching(false);
     }
@@ -301,7 +293,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
                   <button
                     key={meal.id}
                     className="w-full flex items-center gap-3 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
-                    onClick={() => onAdd(`mealdb-${meal.id}`, meal.name, meal.thumb)}
+                    onClick={() => onAdd(meal.id, meal.name, meal.thumb)}
                   >
                     {meal.thumb && (
                       <img src={meal.thumb} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />

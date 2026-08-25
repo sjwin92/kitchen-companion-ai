@@ -29,6 +29,10 @@ const MealPlanner = lazy(() => import("@/pages/MealPlanner"));
 const MealLog = lazy(() => import("@/pages/MealLog"));
 const MealHistory = lazy(() => import("@/pages/MealHistory"));
 const WeeklyInsights = lazy(() => import("@/pages/WeeklyInsights"));
+const RecipeBooks = lazy(() => import("@/pages/RecipeBooks"));
+const RecipeBookDetail = lazy(() => import("@/pages/RecipeBookDetail"));
+const CatalogueReview = lazy(() => import("@/pages/CatalogueReview"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -61,6 +65,16 @@ function AppContent() {
     );
   }
 
+  if (window.location.pathname === "/reset-password") {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<RouteFallback />}>
+          <ResetPassword />
+        </Suspense>
+      </ErrorBoundary>
+    );
+  }
+
   if (!session) {
     return <Auth />;
   }
@@ -82,6 +96,9 @@ function AppContent() {
               <Route path="/barcode" element={<BarcodeScanner />} />
               <Route path="/use-soon" element={<UseSoon />} />
               <Route path="/meals" element={<MealSuggestions />} />
+              <Route path="/recipe-books" element={<RecipeBooks />} />
+              <Route path="/recipe-books/:id" element={<RecipeBookDetail />} />
+              <Route path="/admin/catalogue" element={<CatalogueReview />} />
               <Route path="/recipe/:id" element={<RecipeDetail />} />
               <Route path="/missing/:id" element={<MissingIngredients />} />
               <Route path="/saved-lists" element={<SavedLists />} />

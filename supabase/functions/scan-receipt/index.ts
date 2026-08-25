@@ -1,185 +1,84 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.25.76";
+import { authenticateAndQuota, errorResponse, guardRequest, json, structuredResponse, validateImageDataUrl } from "../_shared/kitchen-ai.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const itemSchema = z.object({
+  name: z.string().min(1).max(120),
+  quantity: z.string().min(1).max(80),
+  location: z.enum(["fridge", "freezer", "cupboard"]),
+  daysUntilExpiry: z.number().int().min(0).max(3650),
+  confidence: z.number().min(0).max(1),
+});
+const resultSchema = z.object({ items: z.array(itemSchema).max(80) });
+const jsonSchema = {
+  type: "object", additionalProperties: false, required: ["items"],
+  properties: {
+    items: {
+      type: "array", maxItems: 80, items: {
+        type: "object", additionalProperties: false,
+        required: ["name", "quantity", "location", "daysUntilExpiry", "confidence"],
+        properties: {
+          name: { type: "string" }, quantity: { type: "string" },
+          location: { type: "string", enum: ["fridge", "freezer", "cupboard"] },
+          daysUntilExpiry: { type: "integer", minimum: 0, maximum: 3650 },
+          confidence: { type: "number", minimum: 0, maximum: 1 },
+        },
+      },
+    },
+  },
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
+Deno.serve(async (req) => {
+  const guarded = guardRequest(req);
+  if (guarded) return guarded;
   try {
-    const { imageBase64, mode = "receipt", storageLocation, dietaryPreferences } = await req.json();
-    if (!imageBase64) {
-      return new Response(JSON.stringify({ error: "No image provided" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const dietaryNote = Array.isArray(dietaryPreferences) && dietaryPreferences.length > 0
-      ? `\n\nIMPORTANT: The user follows these dietary preferences: ${dietaryPreferences.join(", ")}. Do NOT identify items that clearly contradict these preferences unless you can actually see them with high confidence. For example, if the user is vegan, do not guess "chicken" unless you can clearly read a label or see raw meat. When uncertain, skip the item rather than guessing wrong.`
-      : "";
-
-    const systemPrompt = mode === "fridge"
-      ? `You are a kitchen inventory scanner. Look at this photo of the inside of a fridge, freezer, or cupboard and identify all visible food items.
-For each item return: name (common name), quantity (best estimate e.g. "1 bottle", "2", "~500g"), and location (the most logical storage: "fridge", "freezer", or "cupboard").
-
-Rules:
-- ONLY identify items you can clearly see — do NOT guess or assume items that aren't visible
-- Be specific: "Cheddar Cheese" not just "cheese", "Semi-Skimmed Milk" not just "milk"
-- If you cannot clearly identify an item, skip it rather than guessing
-- Estimate quantity from what's visible (number of items, approximate weight/volume)
-- Estimate days until expiry: fresh produce 5-7, dairy 7-14, meat 3-5, condiments/sauces 90, frozen 60
-- Skip non-food items (cleaning products, containers without food, etc.)
-- STORAGE LOCATION RULES (very important):
-  * FRIDGE: dairy (milk, cheese, yogurt, butter), fresh meat, fish, fresh juice, opened sauces, salads, cooked leftovers, eggs, fresh herbs
-  * FREEZER: frozen meals, ice cream, frozen vegetables, frozen meat, frozen fish, items labeled "frozen"
-  * CUPBOARD: bread, rice, pasta, flour, sugar, cereal, canned goods, biscuits, crackers, chips/crisps, tea, coffee, oil, vinegar, honey, jam, peanut butter, dried fruit, nuts, chocolate, spices, salt, pepper, soy sauce (unopened), stock cubes, dried beans/lentils, oats, granola, bars, snacks
-  * When in doubt: if it's shelf-stable and doesn't need refrigeration, choose cupboard. Bread ALWAYS goes to cupboard unless sliced bread the user puts in freezer.${dietaryNote}
-
-You MUST respond using the extract_items tool.`
-      : `You are a grocery receipt parser. Extract food items from the receipt image. 
-For each item return: name (clean product name, not brand), quantity (e.g. "1", "500g", "2 lbs"), and location (best guess: "fridge", "freezer", or "cupboard").
-
-Rules:
-- Only extract FOOD items, skip non-food products, taxes, totals, store info
-- Clean up names: "BNLS CHKN BRST" → "Chicken Breast"
-- Guess reasonable storage locations based on the item type using these rules:
-  * FRIDGE: dairy (milk, cheese, yogurt, butter), fresh meat, fish, fresh juice, opened sauces, salads, eggs, fresh herbs
-  * FREEZER: frozen meals, ice cream, frozen vegetables, frozen meat/fish
-  * CUPBOARD: bread, rice, pasta, flour, sugar, cereal, canned goods, biscuits, crackers, chips/crisps, tea, coffee, oil, vinegar, honey, jam, peanut butter, nuts, chocolate, spices, dried goods, bars, snacks, oats, granola
-  * Default to cupboard for shelf-stable items. Bread ALWAYS goes to cupboard.
-- Estimate days until expiry based on item type: fresh produce 5-7, dairy 7-14, meat 3-5, frozen 60, pantry/cupboard 90, bread 5
-
-You MUST respond using the extract_items tool.`;
-
-    const userText = mode === "fridge"
-      ? "Identify all food items visible in this photo of my fridge/kitchen storage."
-      : "Extract all food items from this grocery receipt.";
-
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
-    }
-
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            {
-              role: "system",
-              content: systemPrompt,
-            },
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: userText,
-                },
-                {
-                  type: "image_url",
-                  image_url: { url: imageBase64 },
-                },
-              ],
-            },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "extract_items",
-                description: "Extract structured food items from a receipt",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    items: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string", description: "Clean food item name" },
-                          quantity: { type: "string", description: "Quantity with unit" },
-                          location: {
-                            type: "string",
-                            enum: ["fridge", "freezer", "cupboard"],
-                            description: "Suggested storage location",
-                          },
-                          daysUntilExpiry: {
-                            type: "number",
-                            description: "Estimated days until expiry",
-                          },
-                        },
-                        required: ["name", "quantity", "location", "daysUntilExpiry"],
-                        additionalProperties: false,
-                      },
-                    },
-                  },
-                  required: ["items"],
-                  additionalProperties: false,
-                },
-              },
-            },
-          ],
-          tool_choice: { type: "function", function: { name: "extract_items" } },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI credits exhausted. Please add credits in Settings → Workspace → Usage." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const text = await response.text();
-      console.error("AI gateway error:", response.status, text);
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall?.function?.arguments) {
-      throw new Error("No structured response from AI");
-    }
-
-    const parsed = JSON.parse(toolCall.function.arguments);
-    const items = (parsed.items || []).map((item: any) => ({
-      name: item.name,
-      quantity: item.quantity || "1",
-      location: storageLocation || item.location || "fridge",
-      dateAdded: new Date().toISOString().split("T")[0],
-      daysUntilExpiry: item.daysUntilExpiry || 7,
-      status: item.daysUntilExpiry <= 2 ? "use-today" : item.daysUntilExpiry <= 5 ? "use-soon" : "okay",
-    }));
-
-    return new Response(JSON.stringify({ items }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const { user, userClient } = await authenticateAndQuota(req, "vision");
+    const body = await req.json() as Record<string, unknown>;
+    const imageDataUrl = validateImageDataUrl(body.imageBase64);
+    const mode = body.mode === "fridge" ? "fridge" : "receipt";
+    const forcedLocation = ["fridge", "freezer", "cupboard"].includes(String(body.storageLocation))
+      ? String(body.storageLocation)
+      : null;
+    const { data: profile } = await userClient
+      .from("profiles")
+      .select("dietary_preferences,allergies")
+      .single();
+    const prompt = JSON.stringify({
+      mode,
+      task: mode === "fridge"
+        ? "Identify clearly visible food items in this kitchen storage photo."
+        : "Extract food purchase lines from this grocery receipt.",
+      forced_storage_location: forcedLocation,
+      dietary_context_for_avoiding_unsupported_guesses: profile?.dietary_preferences ?? [],
+      allergies_for_avoiding_unsupported_guesses: profile?.allergies ?? [],
+      rules: [
+        "Include only food items visible or legible with reasonable confidence; do not guess.",
+        "Use clean common product names and skip store totals, tax, discounts, and non-food lines.",
+        "Estimate quantity and storage location. Cupboard is the default for shelf-stable food.",
+        "daysUntilExpiry is an estimate unless a clear date is visible.",
+        "Return a confidence from 0 to 1 for each identification.",
+      ],
     });
-  } catch (e) {
-    console.error("scan-receipt error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    const parsed = resultSchema.parse(await structuredResponse({
+      userId: user.id,
+      model: "gpt-5.6-terra",
+      instructions: "You are Kitchen Companion's conservative inventory scanner. Accuracy is more important than item count.",
+      prompt,
+      imageDataUrl,
+      schemaName: "inventory_scan",
+      schema: jsonSchema,
+      maxOutputTokens: 2200,
+    }));
+    const dateAdded = new Date().toISOString().slice(0, 10);
+    return json(req, {
+      items: parsed.items.map((item) => ({
+        ...item,
+        location: forcedLocation ?? item.location,
+        dateAdded,
+        status: item.daysUntilExpiry <= 2 ? "use-today" : item.daysUntilExpiry <= 5 ? "use-soon" : "okay",
+        provenance: mode === "receipt" ? "receipt_estimate" : "vision_estimate",
+      })),
+    });
+  } catch (error) {
+    return errorResponse(req, error, "Inventory scan failed");
   }
 });

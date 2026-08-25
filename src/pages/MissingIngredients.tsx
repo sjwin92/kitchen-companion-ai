@@ -56,7 +56,8 @@ export default function MissingIngredients() {
   const toggleCheck = (ing: string) => {
     setChecked(prev => {
       const next = new Set(prev);
-      next.has(ing) ? next.delete(ing) : next.add(ing);
+      if (next.has(ing)) next.delete(ing);
+      else next.add(ing);
       return next;
     });
   };

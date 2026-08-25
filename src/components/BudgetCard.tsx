@@ -45,7 +45,7 @@ export default function BudgetCard() {
           <p className="section-title">Set a grocery budget</p>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Add your monthly grocery budget in Settings to track spend and let the AI plan within your means.
+          Add your monthly grocery budget in Settings to track spend and rank reviewed recipes within your means.
         </p>
       </button>
     );

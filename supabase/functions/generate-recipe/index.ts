@@ -1,200 +1,229 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
+import { z } from "npm:zod@3.25.76";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
+
+const recipeSchema = z.object({
+  title: z.string().min(1).max(120),
+  emoji: z.string().min(1).max(12),
+  description: z.string().min(1).max(240),
+  category: z.enum(["breakfast", "lunch", "dinner", "snack", "dessert"]),
+  cuisine: z.string().min(1).max(80),
+  prep_time: z.string().min(1).max(40),
+  cook_time: z.string().min(1).max(40),
+  servings: z.number().int().min(1).max(12),
+  ingredients: z.array(z.string().min(1).max(180)).min(2).max(30),
+  instructions: z.array(z.string().min(1).max(500)).min(1).max(20),
+  pantry_items_used: z.array(z.string().min(1).max(100)).max(30),
+  nutrition: z.object({
+    calories: z.number().int().min(0).max(5000),
+    protein_g: z.number().min(0).max(500),
+    carbs_g: z.number().min(0).max(1000),
+    fat_g: z.number().min(0).max(500),
+  }),
+  dietary_tags: z.array(z.string().min(1).max(60)).max(20),
+  tips: z.string().min(1).max(300),
+});
+
+const recipeJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["title", "emoji", "description", "category", "cuisine", "prep_time", "cook_time", "servings", "ingredients", "instructions", "pantry_items_used", "nutrition", "dietary_tags", "tips"],
+  properties: {
+    title: { type: "string" }, emoji: { type: "string" }, description: { type: "string" },
+    category: { type: "string", enum: ["breakfast", "lunch", "dinner", "snack", "dessert"] },
+    cuisine: { type: "string" }, prep_time: { type: "string" }, cook_time: { type: "string" },
+    servings: { type: "integer", minimum: 1, maximum: 12 },
+    ingredients: { type: "array", minItems: 2, maxItems: 30, items: { type: "string" } },
+    instructions: { type: "array", minItems: 1, maxItems: 20, items: { type: "string" } },
+    pantry_items_used: { type: "array", maxItems: 30, items: { type: "string" } },
+    nutrition: {
+      type: "object", additionalProperties: false,
+      required: ["calories", "protein_g", "carbs_g", "fat_g"],
+      properties: {
+        calories: { type: "integer", minimum: 0, maximum: 5000 },
+        protein_g: { type: "number", minimum: 0, maximum: 500 },
+        carbs_g: { type: "number", minimum: 0, maximum: 1000 },
+        fat_g: { type: "number", minimum: 0, maximum: 500 },
+      },
+    },
+    dietary_tags: { type: "array", maxItems: 20, items: { type: "string" } },
+    tips: { type: "string" },
+  },
 };
 
-function extractJsonFromResponse(response: string): any {
-  let cleaned = response.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
-  const jsonStart = cleaned.search(/[\{\[]/);
-  if (jsonStart === -1) throw new Error("No JSON found in response");
-  const startChar = cleaned[jsonStart];
-  const endChar = startChar === '[' ? ']' : '}';
-  const jsonEnd = cleaned.lastIndexOf(endChar);
-  if (jsonEnd === -1) throw new Error("No closing bracket found");
-  cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    cleaned = cleaned
-      .replace(/,\s*}/g, "}")
-      .replace(/,\s*]/g, "]")
-      .replace(/[\x00-\x1F\x7F]/g, "");
-    try {
-      return JSON.parse(cleaned);
-    } catch {
-      let braces = 0, brackets = 0;
-      for (const char of cleaned) {
-        if (char === '{') braces++;
-        if (char === '}') braces--;
-        if (char === '[') brackets++;
-        if (char === ']') brackets--;
-      }
-      let repaired = cleaned;
-      while (brackets > 0) { repaired += ']'; brackets--; }
-      while (braces > 0) { repaired += '}'; braces--; }
-      return JSON.parse(repaired);
-    }
-  }
+function allowedOrigins() {
+  return [...DEFAULT_ORIGINS, ...(Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",").map((value) => value.trim()).filter(Boolean)];
 }
 
-async function generateFoodImage(title: string, apiKey: string): Promise<string | null> {
+function corsHeaders(req: Request) {
+  const origin = req.headers.get("origin") ?? "";
+  return {
+    "Access-Control-Allow-Origin": allowedOrigins().includes(origin) ? origin : DEFAULT_ORIGINS[0],
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
+
+function json(req: Request, body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders(req), "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+}
+
+function outputText(payload: Record<string, unknown>): string | null {
+  if (typeof payload.output_text === "string") return payload.output_text;
+  for (const item of Array.isArray(payload.output) ? payload.output : []) {
+    if (!item || typeof item !== "object") continue;
+    const content = Array.isArray((item as { content?: unknown[] }).content) ? (item as { content: unknown[] }).content : [];
+    for (const part of content) {
+      if (part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string") {
+        return (part as { text: string }).text;
+      }
+    }
+  }
+  return null;
+}
+
+async function safetyIdentifier(userId: string) {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(userId));
+  return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
+  if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
+  const origin = req.headers.get("origin");
+  if (origin && !allowedOrigins().includes(origin)) return json(req, { error: "Origin not allowed" }, 403);
+
   try {
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const openAiKey = Deno.env.get("OPENAI_API_KEY");
+    if (!supabaseUrl || !anonKey || !serviceRoleKey || !openAiKey) throw new Error("Server configuration is incomplete");
+
+    const authorization = req.headers.get("authorization");
+    if (!authorization) return json(req, { error: "Authentication required" }, 401);
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authorization } },
+      auth: { persistSession: false },
+    });
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) return json(req, { error: "Authentication required" }, 401);
+
+    const requestBody = await req.json() as Record<string, unknown>;
+    const requestedServings = Number(requestBody.servings ?? 4);
+    const servings = Number.isInteger(requestedServings) ? Math.min(12, Math.max(1, requestedServings)) : 4;
+
+    const serviceClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+    const { data: quotaAllowed, error: quotaError } = await serviceClient.rpc("consume_ai_quota", {
+      p_user_id: user.id,
+      p_usage_kind: "text",
+    });
+    if (quotaError) throw quotaError;
+    if (!quotaAllowed) return json(req, { error: "Daily AI recipe draft limit reached" }, 429);
+
+    const [{ data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
+      userClient.from("current_inventory").select("name,quantity,quantity_value,unit,expiry_date,freshness_state").limit(80),
+      userClient.from("profiles").select("household_size,dietary_preferences,allergies,disliked_ingredients,preferred_cuisines,cooking_confidence,max_prep_time").single(),
+    ]);
+    if (inventoryError || profileError || !profile) throw new Error("Kitchen profile could not be loaded");
+
+    const pantry = (inventory ?? []).map((item) => ({
+      name: item.name,
+      quantity: item.quantity_value ?? item.quantity,
+      unit: item.unit,
+      expires: item.expiry_date,
+      freshness: item.freshness_state,
+    }));
+    const prompt = JSON.stringify({
+      task: "Draft one original recipe only because the user explicitly requested an AI fallback.",
+      servings,
+      pantry,
+      constraints: {
+        dietary_requirements: profile.dietary_preferences ?? [],
+        allergies_must_never_include: profile.allergies ?? [],
+        disliked_ingredients_avoid: profile.disliked_ingredients ?? [],
+        preferred_cuisines: profile.preferred_cuisines ?? [],
+        cooking_confidence: profile.cooking_confidence ?? "intermediate",
+        maximum_total_minutes: profile.max_prep_time ?? 60,
       },
-      body: JSON.stringify({
-        model: "google/gemini-3.1-flash-image-preview",
-        messages: [
-          {
-            role: "user",
-            content: `Generate a beautiful, appetizing overhead food photograph of "${title}". The dish should be plated on a simple ceramic plate, natural lighting, clean background, professional food photography style. No text or watermarks.`,
-          },
-        ],
-        modalities: ["image", "text"],
-      }),
+      priorities: [
+        "Use food marked expired, use_today, or use_soon only when it is safe and appropriate; never imply expired food is safe.",
+        "Use as many suitable pantry ingredients as practical without inventing availability.",
+        "List every missing ingredient explicitly in the full ingredients list.",
+        "Nutrition values are rough per-serving estimates and must not be presented as medical advice.",
+      ],
     });
 
-    if (!response.ok) return null;
-    const data = await response.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    return imageUrl || null;
-  } catch {
-    return null;
-  }
-}
-
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const {
-      inventoryItems,
-      dietaryPreferences,
-      allergies,
-      dislikedIngredients,
-      servings,
-      cuisinePreferences,
-      cookingTime,
-      cookingConfidence,
-      maxPrepTime,
-    } = await req.json();
-
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const inventoryList = (inventoryItems || [])
-      .map((i: { name: string; daysUntilExpiry?: number }) =>
-        `${i.name}${i.daysUntilExpiry !== undefined ? ` (expires in ${i.daysUntilExpiry} days)` : ""}`
-      )
-      .join(", ");
-
-    const constraints: string[] = [];
-    if (dietaryPreferences?.length)
-      constraints.push(`Dietary requirements: ${dietaryPreferences.join(", ")}. These are STRICT — never include ingredients that violate them.`);
-    if (allergies?.length)
-      constraints.push(`Allergies (MUST AVOID completely): ${allergies.join(", ")}`);
-    if (dislikedIngredients?.length)
-      constraints.push(`Disliked ingredients (avoid): ${dislikedIngredients.join(", ")}`);
-    if (cuisinePreferences?.length)
-      constraints.push(`Preferred cuisines: ${cuisinePreferences.join(", ")}`);
-    if (cookingTime)
-      constraints.push(`Target cooking time: ${cookingTime}`);
-    if (maxPrepTime)
-      constraints.push(`Maximum total prep+cook time: ${maxPrepTime} minutes. The recipe MUST be completable within this time.`);
-    if (cookingConfidence) {
-      const confMap: Record<string, string> = {
-        beginner: "Keep this recipe SIMPLE. Use basic techniques only (boiling, frying, baking). No complex knife skills, no specialty equipment. Maximum 6 ingredients, maximum 5 steps.",
-        intermediate: "This recipe can use standard cooking techniques. Keep ingredients reasonable (8-12). Clear instructions.",
-        advanced: "This recipe can use advanced techniques, complex flavor profiles, and specialty ingredients. Be creative and ambitious.",
-        master: "No restrictions on technique or complexity. Use professional-level methods, rare ingredients, multi-step preparations. Create a restaurant-quality dish.",
-      };
-      if (confMap[cookingConfidence]) constraints.push(`Cooking skill level: ${cookingConfidence}. ${confMap[cookingConfidence]}`);
-    }
-
-    const constraintBlock = constraints.length
-      ? `\n\nCONSTRAINTS:\n${constraints.map(c => `- ${c}`).join("\n")}`
-      : "";
-
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
+    let response: Response;
+    try {
+      response = await fetch("https://api.openai.com/v1/responses", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        },
+        signal: controller.signal,
+        headers: { Authorization: `Bearer ${openAiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            {
-              role: "system",
-              content: `You are a creative chef and nutritionist. Generate a complete, original recipe that prioritizes using the provided pantry items (especially those expiring soon).
-
-Return ONLY valid JSON with these fields:
-- "title": creative recipe name
-- "emoji": single emoji for the dish
-- "description": 1-sentence description (max 20 words)
-- "category": one of "breakfast", "lunch", "dinner", "snack", "dessert"
-- "cuisine": cuisine type (e.g. "Italian", "Thai", "Mexican")
-- "prep_time": string (e.g. "15 min")
-- "cook_time": string (e.g. "30 min")
-- "servings": number
-- "ingredients": array of ingredient strings with quantities, scaled for ${servings || 4} servings
-- "instructions": array of step-by-step cooking instructions (each step max 2 sentences)
-- "pantry_items_used": array of pantry item names used from the provided list
-- "nutrition": object with "calories", "protein_g", "carbs_g", "fat_g" per serving
-- "dietary_tags": array of applicable tags like "vegan", "gluten-free", "dairy-free", etc.
-- "tips": one short cooking tip
-
-Return ONLY valid JSON, no markdown.${constraintBlock}`,
-            },
-            {
-              role: "user",
-              content: `My pantry contains: ${inventoryList || "No items specified — suggest a simple meal"}.\n\nGenerate a recipe for ${servings || 4} servings.`,
-            },
-          ],
-          temperature: 0.7,
+          model: "gpt-5.6-luna",
+          store: false,
+          safety_identifier: await safetyIdentifier(user.id),
+          instructions: "You are Kitchen Companion's recipe drafting assistant. Follow allergies and dietary restrictions strictly. Produce concise, practical recipes. This is an AI draft, not reviewed catalogue content.",
+          input: [{ role: "user", content: [{ type: "input_text", text: prompt }] }],
+          text: { format: { type: "json_schema", name: "recipe_draft", strict: true, schema: recipeJsonSchema } },
+          max_output_tokens: 2400,
         }),
-      }
-    );
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.error("AI API error:", response.status, errText);
-      throw new Error(`AI returned ${response.status}: ${errText.substring(0, 200)}`);
+      console.error("OpenAI recipe draft failed", { status: response.status, requestId: response.headers.get("x-request-id") });
+      if (response.status === 429) return json(req, { error: "Recipe drafting is busy. Try again shortly." }, 429);
+      throw new Error("Recipe draft could not be created");
     }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? "";
-    console.log("AI response length:", content.length, "preview:", content.substring(0, 100));
-    
-    if (!content || content.length < 10) {
-      throw new Error("AI returned empty or too-short response");
-    }
-    
-    const recipe = extractJsonFromResponse(content);
+    const payload = await response.json() as Record<string, unknown>;
+    const text = outputText(payload);
+    if (!text) throw new Error("Recipe draft returned no content");
+    const recipe = recipeSchema.parse(JSON.parse(text));
 
-    // Generate a food image for the recipe
-    const imageUrl = await generateFoodImage(recipe.title, LOVABLE_API_KEY);
-    if (imageUrl) {
-      recipe.image = imageUrl;
-    }
+    const { data: savedDraft, error: saveError } = await userClient
+      .from("user_recipes")
+      .insert({
+        user_id: user.id,
+        title: recipe.title,
+        description: recipe.description,
+        servings: recipe.servings,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        nutrition: recipe.nutrition,
+        provenance: "ai_assisted",
+      })
+      .select("id")
+      .single();
+    if (saveError) throw new Error("Recipe draft could not be saved");
 
-    return new Response(JSON.stringify(recipe), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return json(req, {
+      ...recipe,
+      user_recipe_id: savedDraft.id,
+      model: "gpt-5.6-luna",
+      provenance: "ai_assisted",
+      review_status: "private_draft",
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const message = error instanceof Error && error.name === "AbortError"
+      ? "Recipe drafting timed out. Try again."
+      : error instanceof z.ZodError
+      ? "Recipe draft returned an invalid result"
+      : error instanceof Error
+      ? error.message
+      : "Recipe drafting failed";
+    console.error("Recipe drafting error", { message });
+    return json(req, { error: message }, 500);
   }
 });

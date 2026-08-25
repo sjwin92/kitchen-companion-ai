@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import { captureException } from '@/lib/monitoring';
 
 interface Props {
   children: ReactNode;
@@ -21,6 +22,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: { componentStack: string }) {
     console.error('ErrorBoundary caught:', error, info.componentStack);
+    captureException(error);
   }
 
   reset = () => this.setState({ hasError: false, error: null });

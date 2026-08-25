@@ -1,172 +1,172 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
+import { z } from "npm:zod@3.25.76";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
+
+function rangeSchema(type: "integer" | "number") {
+  return { type: "object", additionalProperties: false, required: ["low", "high"], properties: { low: { type, minimum: 0 }, high: { type, minimum: 0 } } };
+}
+
+const nutritionSchema = z.object({
+  title: z.string().min(1).max(120),
+  calories: z.number().int().min(0).max(5000),
+  protein_g: z.number().min(0).max(500),
+  carbs_g: z.number().min(0).max(1000),
+  fat_g: z.number().min(0).max(500),
+  ranges: z.object({
+    calories: z.object({ low: z.number().int().min(0), high: z.number().int().min(0) }),
+    protein_g: z.object({ low: z.number().min(0), high: z.number().min(0) }),
+    carbs_g: z.object({ low: z.number().min(0), high: z.number().min(0) }),
+    fat_g: z.object({ low: z.number().min(0), high: z.number().min(0) }),
+  }),
+  confidence: z.number().min(0).max(1),
+  ingredients: z.array(z.object({ name: z.string().min(1).max(100), amount: z.string().min(1).max(80), confidence: z.number().min(0).max(1) })).max(40),
+  matched_inventory_ids: z.array(z.string().uuid()).max(40),
+  notes: z.array(z.string().max(160)).max(8),
+});
+
+const jsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["title", "calories", "protein_g", "carbs_g", "fat_g", "ranges", "confidence", "ingredients", "matched_inventory_ids", "notes"],
+  properties: {
+    title: { type: "string" }, calories: { type: "integer", minimum: 0, maximum: 5000 },
+    protein_g: { type: "number", minimum: 0, maximum: 500 }, carbs_g: { type: "number", minimum: 0, maximum: 1000 }, fat_g: { type: "number", minimum: 0, maximum: 500 },
+    ranges: { type: "object", additionalProperties: false, required: ["calories", "protein_g", "carbs_g", "fat_g"], properties: { calories: rangeSchema("integer"), protein_g: rangeSchema("number"), carbs_g: rangeSchema("number"), fat_g: rangeSchema("number") } },
+    confidence: { type: "number", minimum: 0, maximum: 1 },
+    ingredients: { type: "array", maxItems: 40, items: { type: "object", additionalProperties: false, required: ["name", "amount", "confidence"], properties: { name: { type: "string" }, amount: { type: "string" }, confidence: { type: "number", minimum: 0, maximum: 1 } } } },
+    matched_inventory_ids: { type: "array", maxItems: 40, items: { type: "string", format: "uuid" } },
+    notes: { type: "array", maxItems: 8, items: { type: "string" } },
+  },
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+function allowedOrigins() {
+  return [...DEFAULT_ORIGINS, ...(Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",").map((value) => value.trim()).filter(Boolean)];
+}
+
+function corsHeaders(req: Request) {
+  const origin = req.headers.get("origin") ?? "";
+  return {
+    "Access-Control-Allow-Origin": allowedOrigins().includes(origin) ? origin : DEFAULT_ORIGINS[0],
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
+
+function json(req: Request, body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders(req), "Content-Type": "application/json", "Cache-Control": "no-store" } });
+}
+
+function getOutputText(payload: Record<string, unknown>): string | null {
+  if (typeof payload.output_text === "string") return payload.output_text;
+  for (const item of Array.isArray(payload.output) ? payload.output : []) {
+    if (!item || typeof item !== "object") continue;
+    const content = Array.isArray((item as { content?: unknown[] }).content) ? (item as { content: unknown[] }).content : [];
+    for (const part of content) {
+      if (part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string") return (part as { text: string }).text;
+    }
   }
+  return null;
+}
+
+async function safetyIdentifier(userId: string) {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(userId));
+  return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
+  if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
+  const origin = req.headers.get("origin");
+  if (origin && !allowedOrigins().includes(origin)) return json(req, { error: "Origin not allowed" }, 403);
 
   try {
-    const { imageBase64, mealTitle, inventoryItems, servings, recipeContext } = await req.json();
-    if (!imageBase64) {
-      return new Response(JSON.stringify({ error: "No image provided" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const openAiKey = Deno.env.get("OPENAI_API_KEY");
+    if (!supabaseUrl || !anonKey || !serviceRoleKey || !openAiKey) throw new Error("Server configuration is incomplete");
 
-    const inventoryContext = Array.isArray(inventoryItems) && inventoryItems.length > 0
-      ? `\n\nThe user currently has these items in their inventory:\n${inventoryItems.map((i: any) => `- ${i.name} (${i.quantity})`).join("\n")}\nWhen identifying ingredients, try to match them to these inventory items by name. Return matched inventory item IDs in the matched_inventory_ids array.`
-      : "";
+    const authorization = req.headers.get("authorization");
+    if (!authorization) return json(req, { error: "Authentication required" }, 401);
+    const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authorization } }, auth: { persistSession: false } });
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) return json(req, { error: "Authentication required" }, 401);
 
-    const servingCount = servings || 1;
-    const recipeIngredientContext = recipeContext?.ingredients?.length > 0
-      ? `\n\nIMPORTANT — The user is cooking from a known recipe with these ingredients and quantities (for ~4 servings):\n${
-          recipeContext.ingredients.map((ing: string, i: number) => {
-            const measure = recipeContext.measures?.[i] || '';
-            return `- ${ing}: ${measure}`;
-          }).join("\n")
-        }\nThe user is cooking for ${servingCount} people. Scale the recipe quantities proportionally (×${(servingCount / 4).toFixed(2)}) and calculate nutrition for ONE person's serving from that scaled batch.\nThis recipe data is MORE RELIABLE than guessing from the photo alone — use it as the primary source for ingredient identification and amounts, using the photo only to confirm.`
-      : "";
+    const body = await req.json();
+    const imagePath = typeof body.imagePath === "string" ? body.imagePath : "";
+    if (!imagePath.startsWith(`${user.id}/`)) return json(req, { error: "Invalid meal image path" }, 400);
 
-    const systemPrompt = `You are a precise meal nutrition analyzer modeled after professional food-tracking apps. Analyze this photo of a meal for ONE SINGLE SERVING (what one person would eat in one sitting).
+    const serviceClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+    const { data: quotaAllowed, error: quotaError } = await serviceClient.rpc("consume_ai_quota", { p_user_id: user.id, p_usage_kind: "vision" });
+    if (quotaError) throw quotaError;
+    if (!quotaAllowed) return json(req, { error: "Daily Nutrition Scan limit reached" }, 429);
 
-Steps:
-1. Identify the dish and its visible ingredients
-2. Estimate realistic single-serving portion sizes based on what is visible on the plate
-3. Calculate nutritional content by summing per-ingredient macros using USDA-standard values
+    const { data: imageBlob, error: downloadError } = await serviceClient.storage.from("meal-photos").download(imagePath);
+    if (downloadError || !imageBlob) return json(req, { error: "Meal image not found" }, 404);
+    if (imageBlob.size > MAX_IMAGE_BYTES) return json(req, { error: "Meal image is too large" }, 413);
+    if (!["image/jpeg", "image/png", "image/webp"].includes(imageBlob.type)) return json(req, { error: "Unsupported meal image type" }, 415);
 
-Critical rules for accuracy:
-- This is ONE person's plate, not the whole recipe. A typical single serving of meat/protein is 120-180g (4-6oz), not the full recipe amount.
-- Use USDA nutrient database reference values per 100g for each ingredient, then scale to the estimated portion
-- Protein per 100g references: chicken breast ~31g, chicken thigh ~26g, beef ~26g, salmon ~20g, eggs ~13g, rice ~2.7g, pasta ~5g, tofu ~8g
-- Do NOT inflate protein — a 150g chicken serving = ~39-45g protein, not 80g
-- Calories should reflect the sum of (protein×4 + carbs×4 + fat×9) — verify your numbers are internally consistent
-- When in doubt, estimate conservatively rather than generously
-- If the meal title is provided, use it as context but still base portions on what's visible${recipeIngredientContext}${inventoryContext}
+    const bytes = new Uint8Array(await imageBlob.arrayBuffer());
+    let binary = "";
+    for (let index = 0; index < bytes.length; index += 0x8000) binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+    const imageDataUrl = `data:${imageBlob.type};base64,${btoa(binary)}`;
 
-You MUST respond using the analyze_meal tool.`;
+    const { data: inventory } = await userClient.from("current_inventory").select("id,name,quantity,quantity_value,unit").limit(80);
+    const inventoryText = (inventory ?? []).map((item) => `- ${item.name} (${item.quantity_value ?? item.quantity}${item.unit ? ` ${item.unit}` : ""}) [${item.id}]`).join("\n");
+    const mealTitle = typeof body.mealTitle === "string" ? body.mealTitle.trim().slice(0, 120) : "";
+    const recipeContext = body.recipeContext && typeof body.recipeContext === "object" ? JSON.stringify(body.recipeContext).slice(0, 6000) : "none";
+    const prompt = `Estimate nutrition for the single serving shown. Treat every number as an estimate, not medical advice. Return a point estimate and an honest low/high range for calories and each macro. Use the visible portion as primary evidence and recipe context only as supporting evidence. Match inventory IDs only when clear. Ensure low <= point <= high.\n\nMeal title: ${mealTitle || "not provided"}\nRecipe context: ${recipeContext}\nInventory:\n${inventoryText || "none"}`;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
-    }
-
-    const userText = mealTitle
-      ? `Analyze this meal photo. The dish is: ${mealTitle}`
-      : "Analyze this meal photo and estimate its nutritional content.";
-
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
+    let response: Response;
+    try {
+      response = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST", signal: controller.signal,
+        headers: { Authorization: `Bearer ${openAiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: systemPrompt },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: userText },
-                { type: "image_url", image_url: { url: imageBase64 } },
-              ],
-            },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "analyze_meal",
-                description: "Return structured meal analysis with nutrition and ingredients",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    title: { type: "string", description: "Name of the dish" },
-                    calories: { type: "number", description: "Estimated total calories" },
-                    protein_g: { type: "number", description: "Estimated protein in grams" },
-                    carbs_g: { type: "number", description: "Estimated carbs in grams" },
-                    fat_g: { type: "number", description: "Estimated fat in grams" },
-                    ingredients: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string", description: "Ingredient name" },
-                          amount: { type: "string", description: "Estimated amount used" },
-                        },
-                        required: ["name", "amount"],
-                        additionalProperties: false,
-                      },
-                    },
-                    matched_inventory_ids: {
-                      type: "array",
-                      items: { type: "string" },
-                      description: "IDs of inventory items that match identified ingredients",
-                    },
-                  },
-                  required: ["title", "calories", "protein_g", "carbs_g", "fat_g", "ingredients"],
-                  additionalProperties: false,
-                },
-              },
-            },
-          ],
-          tool_choice: { type: "function", function: { name: "analyze_meal" } },
+          model: "gpt-5.6-terra", store: false, safety_identifier: await safetyIdentifier(user.id),
+          instructions: "You are Kitchen Companion's nutrition estimation assistant. Be conservative, uncertainty-aware, and concise. Never claim medical or laboratory accuracy.",
+          input: [{ role: "user", content: [{ type: "input_text", text: prompt }, { type: "input_image", image_url: imageDataUrl, detail: "high" }] }],
+          text: { format: { type: "json_schema", name: "nutrition_estimate", strict: true, schema: jsonSchema } },
+          max_output_tokens: 1800,
         }),
-      }
-    );
+      });
+    } finally { clearTimeout(timeout); }
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      const providerError = await response.json().catch(() => ({})) as { error?: { code?: string; type?: string } };
+      const errorCode = providerError.error?.code ?? providerError.error?.type ?? "unknown";
+      console.error("OpenAI Nutrition Scan failed", { status: response.status, errorCode, requestId: response.headers.get("x-request-id") });
+      if (errorCode === "credit_balance_exhausted" || errorCode === "insufficient_quota") {
+        return json(req, { error: "Nutrition Scan is temporarily unavailable" }, 503);
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI credits exhausted. Please add credits in Settings → Workspace → Usage." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const text = await response.text();
-      console.error("AI gateway error:", response.status, text);
-      throw new Error(`AI gateway error: ${response.status}`);
+      if (response.status === 429) return json(req, { error: "Nutrition Scan is busy. Try again shortly." }, 429);
+      throw new Error("Nutrition Scan could not analyze this image");
     }
-
-    const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall?.function?.arguments) {
-      throw new Error("No structured response from AI");
-    }
-
-    const parsed = JSON.parse(toolCall.function.arguments);
-
-    return new Response(JSON.stringify({
-      title: parsed.title || mealTitle || "Logged Meal",
-      calories: parsed.calories || 0,
-      protein_g: parsed.protein_g || 0,
-      carbs_g: parsed.carbs_g || 0,
-      fat_g: parsed.fat_g || 0,
-      ingredients: parsed.ingredients || [],
-      matched_inventory_ids: parsed.matched_inventory_ids || [],
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const payload = await response.json() as Record<string, unknown>;
+    const outputText = getOutputText(payload);
+    if (!outputText) throw new Error("Nutrition Scan returned no estimate");
+    const parsed = nutritionSchema.parse(JSON.parse(outputText));
+    const rangesValid = Object.entries(parsed.ranges).every(([key, range]) => {
+      const point = parsed[key as "calories" | "protein_g" | "carbs_g" | "fat_g"];
+      return range.low <= point && range.high >= point;
     });
-  } catch (e) {
-    console.error("log-meal error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    if (!rangesValid) throw new Error("Nutrition Scan returned inconsistent ranges");
+    const macroCalories = parsed.protein_g * 4 + parsed.carbs_g * 4 + parsed.fat_g * 9;
+    const mismatch = parsed.calories > 0 ? Math.abs(macroCalories - parsed.calories) / parsed.calories : 0;
+    return json(req, {
+      ...parsed,
+      confidence: mismatch > 0.3 ? Math.min(parsed.confidence, 0.45) : parsed.confidence,
+      notes: mismatch > 0.3 ? [...parsed.notes, "Calories and macro-derived energy differ; review before confirming."] : parsed.notes,
+      model: "gpt-5.6-terra", provenance: "vision_estimate", image_path: imagePath,
+    });
+  } catch (error) {
+    const message = error instanceof Error && error.name === "AbortError" ? "Nutrition Scan timed out. Try a clearer photo." : error instanceof z.ZodError ? "Nutrition Scan returned an invalid estimate" : error instanceof Error ? error.message : "Nutrition Scan failed";
+    console.error("Nutrition Scan error", { message });
+    return json(req, { error: message }, 500);
   }
 });

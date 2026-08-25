@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 import type { FoodItem } from '@/types';
@@ -14,23 +13,22 @@ interface Props {
 }
 
 export default function WasteDialog({ item, open, onClose }: Props) {
-  const { removeItem, session } = useApp();
+  const { transitionItem } = useApp();
   const [reason, setReason] = useState('expired');
   const [loading, setLoading] = useState(false);
 
   const handleDiscard = async () => {
-    if (!item || !session?.user) return;
+    if (!item) return;
     setLoading(true);
-    await supabase.from('waste_log').insert({
-      user_id: session.user.id,
-      name: item.name,
-      quantity: item.quantity,
-      reason,
-    });
-    await removeItem(item.id);
-    setLoading(false);
-    toast.success(`${item.name} logged as waste`);
-    onClose();
+    try {
+      await transitionItem(item.id, 'wasted', reason);
+      toast.success(`${item.name} logged as waste`);
+      onClose();
+    } catch {
+      toast.error('Could not log this item as waste');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

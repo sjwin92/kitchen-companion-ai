@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { searchTheMealDbRecipes } from '@/services/recipes/theMealDbProvider';
 import { useApp } from '@/context/AppContext';
 import { useMealPlans } from '@/hooks/useMealPlans';
 import { chooseComplementaryRecipe, getBlockedProteins } from '@/lib/pairingFilters';
 import type { MealSuggestion } from '@/types';
+import { catalogRecipeToMealSuggestion, listCatalogRecipes } from '@/services/betaCatalog';
 import { Button } from '@/components/ui/button';
 import { Loader2, Sparkles, ChefHat, Clock, CalendarPlus, Check, UtensilsCrossed } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,7 +12,6 @@ import { toast } from 'sonner';
 interface PairingSuggestion {
   name: string;
   reason: string;
-  search_term: string;
 }
 
 interface PairingWithRecipe extends PairingSuggestion {
@@ -59,37 +57,25 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
   const fetchPairings = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('suggest-pairings', {
-        body: { title: recipeTitle, category, area, ingredients },
-      });
-      if (error) throw error;
-
-      const suggestions: PairingSuggestion[] = data.pairings || [];
-      const withRecipes: PairingWithRecipe[] = suggestions.map(s => ({ ...s, loading: true }));
-      setPairings(withRecipes);
-      setLoaded(true);
-
       const blockedProteins = getBlockedProteins(category, ingredients);
-      const updatePairingAt = (idx: number, updates: Partial<PairingWithRecipe>) => {
-        setPairings(prev => prev.map((pairing, i) => (i === idx ? { ...pairing, ...updates } : pairing)));
-      };
-
-      await Promise.all(
-        suggestions.map(async (suggestion, idx) => {
-          try {
-            const queries = Array.from(new Set([suggestion.name, suggestion.search_term].filter(Boolean)));
-            const candidatesByQuery = await Promise.all(queries.map(query => searchTheMealDbRecipes(query)));
-            const selectedRecipe = chooseComplementaryRecipe(candidatesByQuery.flat(), blockedProteins);
-
-            updatePairingAt(idx, {
-              recipe: selectedRecipe,
-              loading: false,
-            });
-          } catch {
-            updatePairingAt(idx, { loading: false });
-          }
-        })
-      );
+      const catalogue = (await listCatalogRecipes())
+        .map(catalogRecipeToMealSuggestion)
+        .filter((candidate) => candidate.title.toLowerCase() !== recipeTitle.toLowerCase())
+        .filter((candidate) => Boolean(chooseComplementaryRecipe([candidate], blockedProteins)));
+      const sideWords = ['side', 'salad', 'rice', 'bread', 'potato', 'vegetable', 'sauce'];
+      const ranked = catalogue.sort((left, right) => {
+        const sideScore = (meal: MealSuggestion) => sideWords.some((word) => `${meal.title} ${meal.category}`.toLowerCase().includes(word)) ? 1 : 0;
+        return sideScore(right) - sideScore(left) || left.title.localeCompare(right.title);
+      }).slice(0, 3);
+      setPairings(ranked.map((recipe) => ({
+        name: recipe.title,
+        reason: area && recipe.area === area
+          ? `A reviewed ${area} recipe that complements the main dish.`
+          : 'A reviewed catalogue recipe chosen without repeating the main protein.',
+        recipe,
+        loading: false,
+      })));
+      setLoaded(true);
     } catch (err) {
       console.error('Pairing error:', err);
     } finally {
@@ -105,10 +91,10 @@ export default function PairingSuggestions({ recipeTitle, category, area, ingred
           <h2 className="font-semibold text-sm">Pairs well with</h2>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Get AI-powered side dish suggestions to complete this meal
+          Find complementary reviewed recipes without repeating the main protein.
         </p>
         <Button variant="outline" size="sm" className="w-full gap-2" onClick={fetchPairings}>
-          <Sparkles className="w-3.5 h-3.5" /> Get Pairing Suggestions
+          <Sparkles className="w-3.5 h-3.5" /> Find catalogue pairings
         </Button>
       </div>
     );

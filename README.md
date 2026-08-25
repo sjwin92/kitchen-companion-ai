@@ -1,73 +1,65 @@
-# Welcome to your Lovable project
+# Kitchen Companion
 
-## Project info
+Kitchen Companion is an invite-only household food app that closes the loop between inventory, expiry, recipe discovery, meal planning, shopping, consumption, nutrition guidance and waste.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+The beta is catalogue-first: reviewed recipes and creator recipe books are reused and ranked deterministically. AI is a supporting feature for Nutrition Scan, receipt/storage capture and explicit recipe creation; it is not the product or the default source of every meal.
 
-## How can I edit this code?
+## Product loop
 
-There are several ways of editing your application.
+`Add food → monitor expiry → choose or plan meals → buy missing items → confirm consumption or waste → improve future recommendations`
 
-**Use Lovable**
+Recipe books are designed as a future collectable content layer: creators, editions, media links, attribution, versioning and access records exist now. Payments and a marketplace do not.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Local development
 
-Changes made via Lovable will be committed automatically to this repo.
+Requirements: Node.js 22+, npm 10+, Supabase CLI 2.109+ and Docker for the local Supabase stack.
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+1. Copy `.env.example` to `.env.local` and provide the staging project's public Supabase values.
+2. Keep `OPENAI_API_KEY` server-only. For deployed Edge Functions, set it with Supabase secrets; never prefix it with `VITE_`.
+3. Install and verify:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm ci
+npm run typecheck
+npm run lint
+npm test
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+Start the app with `npm run dev`. Run browser tests with `npm run test:e2e`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Supabase environments
 
-**Use GitHub Codespaces**
+Use separate `kitchen-companion-staging` and `kitchen-companion-beta` projects. Do not link or modify the legacy Lovable project.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Each project must:
 
-## What technologies are used for this project?
+- apply all migrations;
+- enable the Before User Created Auth hook at `pg-functions://postgres/private/hook_require_beta_invite`;
+- set `OPENAI_API_KEY` and `ALLOWED_ORIGINS` as Edge Function secrets;
+- keep `meal-photos` private and schedule deletion of images whose `meal_log.image_delete_after` has passed;
+- use explicit Data API grants and RLS policies from migrations.
 
-This project is built with:
+## AI defaults
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Nutrition/receipt/storage vision: `gpt-5.6-terra`
+- Explicit text recipe assistance: `gpt-5.6-luna`
+- Editorial image generation: `gpt-image-2`
+- Daily limits: 20 vision, 20 text and 5 image requests per user
 
-## How can I deploy this project?
+Nutrition estimates show ranges, confidence and provenance and require user confirmation. They are guidance, not medical advice.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Public-beta gates
 
-## Can I connect a custom domain to my Lovable project?
+- 300 original, human-reviewed catalogue recipes
+- cross-user RLS tests and atomic transition tests pass
+- typecheck, lint, unit, browser and production build pass
+- no critical/high production dependency advisories
+- private-image retention and account export/deletion are verified
+- staged rollout: 5 users, then 25, then 100
 
-Yes, you can!
+Operational guides:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- [`docs/public-beta-runbook.md`](docs/public-beta-runbook.md)
+- [`docs/catalogue-operations.md`](docs/catalogue-operations.md)
+- [`docs/creator-partner-pilot.md`](docs/creator-partner-pilot.md)

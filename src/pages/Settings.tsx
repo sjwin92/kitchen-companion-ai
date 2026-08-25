@@ -6,12 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
-import { LogOut, User, Users, Clock, Ban, X, Loader2, Moon, TrendingDown, Bell, ChevronRight, Globe, Wallet, Gauge, Target, Wand2, AlertTriangle, Leaf, UtensilsCrossed, Minus, Plus } from 'lucide-react';
+import { LogOut, User, X, Loader2, Moon, TrendingDown, Bell, ChevronRight, Wallet, Leaf, UtensilsCrossed, Minus, Plus, Download, Trash2, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
 import CalorieTracker from '@/components/CalorieTracker';
+import { deleteAccount, downloadAccountExport } from '@/services/accountPrivacy';
 
 const DIETARY_OPTIONS = [
   { label: 'Plant-Based', icon: <Leaf className="w-5 h-5" />, desc: 'Prioritizing whole foods from plant sources.' },
@@ -46,24 +47,75 @@ const PREP_TIME_MARKS = [
 ];
 
 export default function Settings() {
-  const { preferences, setPreferences, signOut, session } = useApp();
+  const { preferences: savedPreferences, savePreferences, signOut, session } = useApp();
+  const [preferences, setDraftPreferences] = useState(savedPreferences);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const setPreferences = (updates: Partial<typeof preferences>) => {
+    setDraftPreferences(current => ({ ...current, ...updates }));
+  };
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
   const [allergyInput, setAllergyInput] = useState('');
   const { enabled: notificationsEnabled, permission: notifPermission, toggle: toggleNotifications } = useNotifications();
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
+  const [privacyAction, setPrivacyAction] = useState<'export' | 'delete' | null>(null);
 
   useEffect(() => {
     if (darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); }
     else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }
   }, [darkMode]);
 
+  useEffect(() => {
+    setDraftPreferences(savedPreferences);
+  }, [savedPreferences]);
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    try {
+      await savePreferences(preferences);
+      toast.success('Profile updated');
+    } catch {
+      toast.error('Failed to update profile');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   const handleSignOut = async () => {
     setSigningOut(true);
     try { await signOut(); toast.success('Signed out'); }
     catch { toast.error('Failed to sign out'); }
     finally { setSigningOut(false); }
+  };
+
+  const handleExport = async () => {
+    if (!session?.user) return;
+    setPrivacyAction('export');
+    try {
+      await downloadAccountExport(session.user.id, session.user.email);
+      toast.success('Your data export has downloaded');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Export failed');
+    } finally {
+      setPrivacyAction(null);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmation = window.prompt('This permanently deletes your account and private meal photos. Type DELETE to continue.');
+    if (confirmation !== 'DELETE') return;
+    setPrivacyAction('delete');
+    try {
+      await deleteAccount();
+      await signOut();
+      toast.success('Account deleted');
+      navigate('/', { replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Account deletion failed');
+    } finally {
+      setPrivacyAction(null);
+    }
   };
 
   const toggleDietary = (pref: string) => {
@@ -211,7 +263,7 @@ export default function Settings() {
               </span>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
-              Recipes and AI-generated meals will stay within this time limit.
+              Reviewed recipes and any optional AI fallback will stay within this time limit.
             </p>
             <Slider
               value={[preferences.maxPrepTime]}
@@ -271,11 +323,12 @@ export default function Settings() {
 
           {/* Action buttons */}
           <div className="flex gap-3 pt-4">
-            <Button variant="outline" className="rounded-xl text-xs font-bold uppercase tracking-wider">
+            <Button variant="outline" onClick={() => setDraftPreferences(savedPreferences)} disabled={savingProfile} className="rounded-xl text-xs font-bold uppercase tracking-wider">
               Discard Changes
             </Button>
-            <Button className="rounded-xl text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--gradient-primary)' }}>
-              Update Profile
+            <Button onClick={handleSaveProfile} disabled={savingProfile} className="rounded-xl text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--gradient-primary)' }}>
+              {savingProfile && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Save Profile
             </Button>
           </div>
         </div>
@@ -385,7 +438,7 @@ export default function Settings() {
               {([
                 { value: 'pick-myself' as PlanningStyle, label: 'The Curated Week', desc: 'Full planning every Sunday including prep lists and inventory synchronization.' },
                 { value: 'help-choose' as PlanningStyle, label: 'Spontaneous Utility', desc: 'Recipe suggestions based on what is currently in the pantry. Minimal prep.' },
-                { value: 'do-it-for-me' as PlanningStyle, label: 'Automated', desc: 'AI generates your weekly plan based on preferences and inventory.' },
+                { value: 'do-it-for-me' as PlanningStyle, label: 'Automated', desc: 'Builds your weekly plan from reviewed catalogue recipes, preferences and inventory.' },
               ]).map(opt => (
                 <button
                   key={opt.value}
@@ -411,6 +464,26 @@ export default function Settings() {
 
           {/* Calorie Tracker */}
           <CalorieTracker />
+
+          <div className="glass-card p-5 space-y-4">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-primary mt-0.5" />
+              <div>
+                <h3 className="text-base font-bold">Your data & privacy</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Nutrition values are estimates for general wellbeing, not medical advice. Meal photos are private and removed after 90 days.
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" onClick={handleExport} disabled={privacyAction !== null} className="w-full rounded-xl">
+              {privacyAction === 'export' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+              Download my data
+            </Button>
+            <Button variant="outline" onClick={handleDeleteAccount} disabled={privacyAction !== null} className="w-full rounded-xl text-destructive border-destructive/20 hover:bg-destructive/5">
+              {privacyAction === 'delete' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Delete account
+            </Button>
+          </div>
 
           {/* Sign out */}
           <Button variant="outline" onClick={handleSignOut} disabled={signingOut} className="w-full rounded-xl text-destructive border-destructive/20 hover:bg-destructive/5">

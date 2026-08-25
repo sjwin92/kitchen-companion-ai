@@ -1,4 +1,29 @@
-project_id = "aqnlsncpxedesthaduud"
+project_id = "kitchen-companion"
 
 [functions.scan-receipt]
-verify_jwt = false
+verify_jwt = true
+
+[functions.log-meal]
+verify_jwt = true
+
+[functions.generate-recipe]
+verify_jwt = true
+
+[functions.product-info]
+verify_jwt = true
+
+[functions.reconcile-receipt]
+verify_jwt = true
+
+[functions.scan-expiry]
+verify_jwt = true
+
+[functions.send-expiry-reminders]
+verify_jwt = true
+
+[functions.delete-account]
+verify_jwt = true
+
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/private/hook_require_beta_invite"

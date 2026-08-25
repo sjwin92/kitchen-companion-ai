@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { FoodItem, UserPreferences } from '@/types';
+import { FoodItem, InventoryLifecycle, UserPreferences } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 
@@ -8,11 +8,13 @@ interface AppState {
   preferences: UserPreferences;
   session: Session | null;
   loading: boolean;
-  addItems: (items: FoodItem[]) => void;
-  removeItem: (id: string) => void;
-  updateItem: (id: string, updates: Partial<FoodItem>) => void;
+  addItems: (items: FoodItem[]) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  transitionItem: (id: string, state: InventoryLifecycle, reason?: string) => Promise<void>;
+  updateItem: (id: string, updates: Partial<FoodItem>) => Promise<void>;
   setPreferences: (prefs: Partial<UserPreferences>) => void;
-  completeOnboarding: () => void;
+  savePreferences: (prefs: UserPreferences) => Promise<void>;
+  completeOnboarding: (prefs?: Partial<UserPreferences>) => Promise<void>;
   signOut: () => Promise<void>;
   refreshInventory: () => Promise<void>;
 }
@@ -37,6 +39,18 @@ const defaultPreferences: UserPreferences = {
 };
 
 const AppContext = createContext<AppState | null>(null);
+
+export function deriveFreshness(expiryDate?: string): FoodItem['status'] {
+  if (!expiryDate) return 'unknown';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiry = new Date(`${expiryDate}T00:00:00`);
+  const days = Math.round((expiry.getTime() - today.getTime()) / 86_400_000);
+  if (days < 0) return 'expired';
+  if (days === 0) return 'use-today';
+  if (days <= 3) return 'use-soon';
+  return 'okay';
+}
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -109,7 +123,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       .order('created_at', { ascending: false });
 
     if (data) {
-      setInventory(data.map(item => ({
+      setInventory(data
+        .filter(item => !('lifecycle_state' in item) || ['available', 'reserved'].includes(String((item as Record<string, unknown>).lifecycle_state)))
+        .map(item => ({
         id: item.id,
         name: item.name,
         quantity: item.quantity,
@@ -117,7 +133,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         dateAdded: item.date_added,
         daysUntilExpiry: item.days_until_expiry,
         expiryDate: (item as any).expiry_date || undefined,
-        status: item.status as FoodItem['status'],
+        status: deriveFreshness((item as Record<string, unknown>).expiry_date as string | undefined),
+        quantityValue: (item as Record<string, unknown>).quantity_value as number | undefined,
+        unit: (item as Record<string, unknown>).unit as string | undefined,
+        lifecycleState: ((item as Record<string, unknown>).lifecycle_state as InventoryLifecycle | undefined) ?? 'available',
+        provenance: (item as Record<string, unknown>).provenance as FoodItem['provenance'],
+        confidence: (item as Record<string, unknown>).confidence as number | undefined,
       })));
     }
   }, [session?.user?.id]);
@@ -137,6 +158,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       days_until_expiry: item.daysUntilExpiry,
       expiry_date: item.expiryDate || null,
       status: item.status,
+      quantity_value: item.quantityValue ?? null,
+      unit: item.unit ?? null,
+      lifecycle_state: item.lifecycleState ?? 'available',
+      provenance: item.provenance ?? 'user',
+      confidence: item.confidence ?? null,
     }));
 
     const { error } = await supabase.from('food_items').insert(rows);
@@ -144,8 +170,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [session?.user?.id, refreshInventory]);
 
   const removeItem = useCallback(async (id: string) => {
-    const { error } = await supabase.from('food_items').delete().eq('id', id);
+    const { error } = await supabase.rpc('transition_inventory_item' as never, {
+      p_item_id: id,
+      p_to_state: 'consumed',
+      p_quantity_delta: null,
+      p_reason: 'Marked as used',
+    } as never);
     if (!error) setInventory(prev => prev.filter(i => i.id !== id));
+  }, []);
+
+  const transitionItem = useCallback(async (id: string, state: InventoryLifecycle, reason?: string) => {
+    const { error } = await supabase.rpc('transition_inventory_item' as never, {
+      p_item_id: id,
+      p_to_state: state,
+      p_quantity_delta: null,
+      p_reason: reason ?? null,
+    } as never);
+    if (error) throw error;
+    setInventory(prev => ['available', 'reserved'].includes(state) ? prev.map(item => item.id === id ? { ...item, lifecycleState: state } : item) : prev.filter(item => item.id !== id));
   }, []);
 
   const updateItem = useCallback(async (id: string, updates: Partial<FoodItem>) => {
@@ -161,45 +203,55 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!error) setInventory(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
   }, []);
 
-  const setPreferences = useCallback(async (prefs: Partial<UserPreferences>) => {
+  const persistPreferences = useCallback(async (next: UserPreferences) => {
+    if (!session?.user) return;
+    const { error } = await supabase.from('profiles').update({
+      household_size: next.householdSize,
+      dietary_preferences: next.dietaryPreferences,
+      cooking_time: next.cookingTime,
+      max_prep_time: next.maxPrepTime,
+      daily_calorie_goal: next.dailyCalorieGoal,
+      disliked_ingredients: next.dislikedIngredients,
+      onboarding_complete: next.onboardingComplete,
+      display_name: next.displayName,
+      preferred_cuisines: next.preferredCuisines,
+      budget_sensitivity: next.budgetSensitivity,
+      cooking_confidence: next.cookingConfidence,
+      primary_goal: next.primaryGoal,
+      planning_style: next.planningStyle,
+      allergies: next.allergies,
+      monthly_budget_gbp: next.monthlyBudgetGbp,
+      lunchbox_count: next.lunchboxCount,
+    } as never).eq('id', session.user.id);
+    if (error) throw error;
+  }, [session?.user]);
+
+  const savePreferences = useCallback(async (next: UserPreferences) => {
+    await persistPreferences(next);
+    setPrefs(next);
+  }, [persistPreferences]);
+
+  const setPreferences = useCallback((prefs: Partial<UserPreferences>) => {
     setPrefs(prev => {
       const next = { ...prev, ...prefs };
-
-      if (session?.user) {
-        supabase.from('profiles').update({
-          household_size: next.householdSize,
-          dietary_preferences: next.dietaryPreferences,
-          cooking_time: next.cookingTime,
-          max_prep_time: next.maxPrepTime,
-          daily_calorie_goal: next.dailyCalorieGoal,
-          disliked_ingredients: next.dislikedIngredients,
-          onboarding_complete: next.onboardingComplete,
-          display_name: next.displayName,
-          preferred_cuisines: next.preferredCuisines,
-          budget_sensitivity: next.budgetSensitivity,
-          cooking_confidence: next.cookingConfidence,
-          primary_goal: next.primaryGoal,
-          planning_style: next.planningStyle,
-          allergies: next.allergies,
-          monthly_budget_gbp: next.monthlyBudgetGbp,
-          lunchbox_count: next.lunchboxCount,
-        } as any).eq('id', session.user.id).then();
-      }
-
+      void persistPreferences(next);
       return next;
     });
-  }, [session?.user?.id]);
+  }, [persistPreferences]);
 
-  const completeOnboarding = useCallback(() => {
-    setPreferences({ onboardingComplete: true });
-  }, [setPreferences]);
+  const completeOnboarding = useCallback(async (updates: Partial<UserPreferences> = {}) => {
+    const next = { ...preferences, ...updates, onboardingComplete: true };
+    const { error } = await supabase.rpc('complete_onboarding' as never, { p_preferences: next } as never);
+    if (error) throw error;
+    setPrefs(next);
+  }, [preferences]);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
 
   return (
-    <AppContext.Provider value={{ inventory, preferences, session, loading, addItems, removeItem, updateItem, setPreferences, completeOnboarding, signOut, refreshInventory }}>
+    <AppContext.Provider value={{ inventory, preferences, session, loading, addItems, removeItem, transitionItem, updateItem, setPreferences, savePreferences, completeOnboarding, signOut, refreshInventory }}>
       {children}
     </AppContext.Provider>
   );

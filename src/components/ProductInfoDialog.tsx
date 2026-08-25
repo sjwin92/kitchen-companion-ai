@@ -31,6 +31,8 @@ interface ProductInfo {
   prep_time?: string;
   cook_time?: string;
   servings?: number;
+  provenance?: 'reviewed_catalogue' | 'ai_estimate';
+  disclaimer?: string;
 }
 
 interface ProductInfoDialogProps {
@@ -67,7 +69,7 @@ export default function ProductInfoDialog({ productName, onClose, includeRecipe 
       .invoke('product-info', { body: { productName, includeRecipe } })
       .then(({ data, error: fnError }) => {
         if (fnError || data?.error) {
-          setError('Could not load info');
+          setError(data?.error || 'Could not load info');
         } else {
           infoCache.set(key, data);
           setInfo(data);
@@ -105,7 +107,7 @@ export default function ProductInfoDialog({ productName, onClose, includeRecipe 
           <div className="flex flex-col items-center gap-3 py-8">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">
-              {includeRecipe ? 'Generating recipe…' : 'Looking up nutrition info…'}
+              {includeRecipe ? 'Loading reviewed recipe…' : 'Estimating nutrition info…'}
             </p>
           </div>
         )}
@@ -116,6 +118,11 @@ export default function ProductInfoDialog({ productName, onClose, includeRecipe 
 
         {info && (
           <div className="space-y-4">
+            {info.provenance === 'ai_estimate' && (
+              <p className="text-xs text-muted-foreground rounded-lg border border-border bg-muted/40 p-2">
+                {info.disclaimer ?? 'General estimate only; packaging and preparation can differ.'}
+              </p>
+            )}
             {/* Tagline */}
             <div className="flex items-start gap-2 p-3 rounded-xl bg-accent/50 border border-border/40">
               <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />

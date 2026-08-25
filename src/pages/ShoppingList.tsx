@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2, ShoppingBag, Search, Share2, Printer, PackagePlus, Lightbulb, BarChart2, Loader2, Receipt } from 'lucide-react';
 import { toast } from 'sonner';
-import type { FoodItem } from '@/types';
 import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
 import { useBasketCompare } from '@/hooks/useBasketCompare';
 import ReceiptReconcileDialog from '@/components/ReceiptReconcileDialog';
@@ -23,7 +22,7 @@ interface ShoppingItem {
 const AISLE_ORDER: Aisle[] = ['Produce', 'Meat & Fish', 'Dairy & Eggs', 'Bakery', 'Pantry', 'Frozen', 'Other'];
 
 export default function ShoppingList() {
-  const { session, addItems } = useApp();
+  const { session, refreshInventory } = useApp();
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -93,23 +92,19 @@ export default function ShoppingList() {
     const checkedItems = items.filter(i => i.checked);
     if (checkedItems.length === 0) return;
 
-    const foodItems: FoodItem[] = checkedItems.map(item => ({
-      id: `shopping-${Date.now()}-${item.id}`,
-      name: item.name,
-      quantity: item.quantity,
-      location: 'fridge' as const,
-      dateAdded: new Date().toISOString().split('T')[0],
-      daysUntilExpiry: 7,
-      status: 'okay' as const,
-    }));
-
-    addItems(foodItems);
-
-    for (const item of checkedItems) {
-      await supabase.from('shopping_list').delete().eq('id', item.id);
+    const payload = checkedItems.map(item => {
+      const aisle = getAisle(item.name);
+      const location = aisle === 'Frozen' ? 'freezer' : ['Produce', 'Meat & Fish', 'Dairy & Eggs'].includes(aisle) ? 'fridge' : 'cupboard';
+      const daysUntilExpiry = aisle === 'Meat & Fish' ? 3 : aisle === 'Produce' || aisle === 'Bakery' ? 5 : aisle === 'Dairy & Eggs' ? 10 : aisle === 'Frozen' ? 60 : aisle === 'Pantry' ? 90 : 30;
+      return { id: item.id, location, daysUntilExpiry };
+    });
+    const { data: moved, error } = await supabase.rpc('move_shopping_items_to_inventory' as never, { p_items: payload } as never);
+    if (error) {
+      toast.error('Nothing was moved. Your shopping list is unchanged.');
+      return;
     }
-    setItems(prev => prev.filter(i => !i.checked));
-    toast.success(`Added ${checkedItems.length} item${checkedItems.length > 1 ? 's' : ''} to inventory`);
+    await Promise.all([load(), refreshInventory()]);
+    toast.success(`Added ${moved ?? checkedItems.length} item${checkedItems.length === 1 ? '' : 's'} to inventory`);
   };
 
   const unchecked = items.filter(i => !i.checked);
@@ -248,7 +243,7 @@ export default function ShoppingList() {
             onKeyDown={e => e.key === 'Enter' && addItem()}
             className="w-16 border-0 bg-transparent shadow-none focus-visible:ring-0 text-center"
           />
-          <Button onClick={addItem} disabled={!name.trim()} size="icon" className="rounded-xl shrink-0" style={{ background: 'var(--gradient-primary)' }}>
+          <Button aria-label="Add shopping item" onClick={addItem} disabled={!name.trim()} size="icon" className="rounded-xl shrink-0" style={{ background: 'var(--gradient-primary)' }}>
             <Plus className="w-4 h-4" />
           </Button>
         </div>
@@ -452,6 +447,7 @@ export default function ShoppingList() {
                 return (
                 <div key={item.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-low/50 transition-colors">
                   <Checkbox
+                    aria-label={`Mark ${item.name} bought`}
                     checked={item.checked}
                     onCheckedChange={() => toggleCheck(item)}
                     className="rounded-lg"
@@ -475,7 +471,7 @@ export default function ShoppingList() {
                       £{(price * (parseFloat(item.quantity) || 1)).toFixed(2)}
                     </span>
                   )}
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl opacity-60 hover:opacity-100 hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                  <Button aria-label={`Remove ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl opacity-60 hover:opacity-100 hover:bg-destructive/10" onClick={() => remove(item.id)}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
@@ -493,9 +489,9 @@ export default function ShoppingList() {
             <div className="divide-y divide-border/30">
               {checked.map(item => (
                 <div key={item.id} className="flex items-center gap-3 px-5 py-3.5">
-                  <Checkbox checked={true} onCheckedChange={() => toggleCheck(item)} className="rounded-lg" />
+                  <Checkbox aria-label={`Mark ${item.name} not bought`} checked={true} onCheckedChange={() => toggleCheck(item)} className="rounded-lg" />
                   <span className="text-sm line-through flex-1 text-muted-foreground">{item.name}</span>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                  <Button aria-label={`Remove ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => remove(item.id)}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>

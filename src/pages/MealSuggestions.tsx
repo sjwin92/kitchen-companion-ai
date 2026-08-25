@@ -2,34 +2,29 @@ import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
-import {
-  getRecipeSuggestions,
-  getConfiguredRecipeSource,
-  getRequestedRecipeSource,
-  hasValidRecipeSourceConfig,
-} from '@/services/recipes/recipeProvider';
-import { getMealieConfigSummary, hasMealieConfig } from '@/services/recipes/mealieProvider';
+import { catalogRecipeToMealSuggestion, listCatalogRecipes } from '@/services/betaCatalog';
+import { recommendRecipes } from '@/lib/recommendationEngine';
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, ShoppingCart, Search, Plus, ArrowRight, Heart, CalendarDays, Sparkles, Users, Loader2, BookmarkPlus } from 'lucide-react';
+import { Clock, Check, Search, Plus, Heart, CalendarDays, Sparkles, Users, Loader2, LibraryBig } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useMealLibrary } from '@/hooks/useMealLibrary';
 import { useMealFeedback } from '@/hooks/useMealFeedback';
-import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
-import ProductInfoDialog from '@/components/ProductInfoDialog';
 import MealFeedbackPanel from '@/components/MealFeedbackPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MAX_VISIBLE_MEALS = 30;
+type RankedMeal = MealWithStatus & { reasons: string[] };
 
 export default function MealSuggestions() {
   const { inventory, session, preferences } = useApp();
   const navigate = useNavigate();
-  const [mealsWithStatus, setMealsWithStatus] = useState<MealWithStatus[]>([]);
+  const [mealsWithStatus, setMealsWithStatus] = useState<RankedMeal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
@@ -39,25 +34,52 @@ export default function MealSuggestions() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
   const [savedMealId, setSavedMealId] = useState<string | null>(null);
-  const configuredSource = getConfiguredRecipeSource();
 
   useEffect(() => {
     let cancelled = false;
     async function loadMeals() {
       setIsLoading(true);
+      setLoadError(null);
       try {
-        const meals = await getRecipeSuggestions(inventory);
+        const recipes = await listCatalogRecipes();
+        const monday = new Date();
+        monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+        const ranked = recommendRecipes({
+          recipes,
+          inventory,
+          preferences,
+          userSeed: session?.user.id ?? 'anonymous',
+          weekKey: monday.toISOString().slice(0, 10),
+          limit: MAX_VISIBLE_MEALS,
+        });
+        const meals: RankedMeal[] = ranked.map(({ recipe, reasons, missingIngredients }) => {
+          const meal = catalogRecipeToMealSuggestion(recipe);
+          const missingIds = new Set(missingIngredients.map((ingredient) => ingredient.id));
+          const required = recipe.ingredients.filter((ingredient) => !ingredient.optional);
+          const owned = required.filter((ingredient) => !missingIds.has(ingredient.id)).map((ingredient) => ingredient.name);
+          const missing = missingIngredients.map((ingredient) => ingredient.name);
+          return {
+            ...meal,
+            owned,
+            missing,
+            matchPercent: required.length === 0 ? 100 : Math.round((owned.length / required.length) * 100),
+            reasons,
+          };
+        });
         if (!cancelled) setMealsWithStatus(meals);
       } catch (error) {
         console.error('Failed to load recipe suggestions', error);
-        if (!cancelled) setMealsWithStatus([]);
+        if (!cancelled) {
+          setMealsWithStatus([]);
+          setLoadError('The reviewed recipe catalogue could not be loaded. Please try again.');
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     }
     void loadMeals();
     return () => { cancelled = true; };
-  }, [inventory, configuredSource]);
+  }, [inventory, preferences, session?.user.id]);
 
   const filteredMeals = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -133,17 +155,6 @@ export default function MealSuggestions() {
     }
   };
 
-  const addAllMissing = async (meal: MealWithStatus) => {
-    if (!session?.user) return;
-    const items = meal.missing.map(name => ({ user_id: session.user.id, name, quantity: '1' }));
-    const { data: existing } = await supabase.from('shopping_list').select('name').eq('user_id', session.user.id);
-    const existingNames = new Set((existing || []).map(e => e.name.toLowerCase()));
-    const newItems = items.filter(i => !existingNames.has(i.name.toLowerCase()));
-    if (newItems.length === 0) { toast.info('All items already in shopping list'); return; }
-    const { error } = await supabase.from('shopping_list').insert(newItems);
-    if (!error) toast.success(`Added ${newItems.length} item${newItems.length > 1 ? 's' : ''} to shopping list`);
-  };
-
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
       {/* Editorial header */}
@@ -151,60 +162,12 @@ export default function MealSuggestions() {
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight font-display leading-tight">
           Daily curation
         </h1>
-        <p className="section-title mt-3 max-w-lg">
-          Intelligent recommendations based on your current pantry and items expiring soon.
+        <p className="section-title mt-3 max-w-2xl">
+          Reviewed recipes from the Kitchen Companion catalogue, ranked for your pantry, expiring food, tastes, time and goals.
         </p>
-      </div>
-
-      {/* AI Recipe Generator card */}
-      <div className="glass-card p-5 mb-6 max-w-xl">
-        <div className="flex items-center gap-3 mb-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <h3 className="text-base font-bold">AI Recipe Generator</h3>
-        </div>
-        <p className="text-sm text-muted-foreground mb-3">
-          Create a custom recipe using your current inventory and dietary preferences.
-        </p>
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Servings</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <button
-                  onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))}
-                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors text-xs font-bold"
-                >
-                  −
-                </button>
-                <span className="text-sm font-bold w-5 text-center">{generatorServings}</span>
-                <button
-                  onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))}
-                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors text-xs font-bold"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {preferences.dietaryPreferences.length > 0 && (
-              <span>{preferences.dietaryPreferences.join(', ')}</span>
-            )}
-          </div>
-          <Button
-            size="sm"
-            className="ml-auto rounded-xl text-xs gap-1.5"
-            style={{ background: 'var(--gradient-primary)' }}
-            onClick={generateRecipe}
-            disabled={isGenerating}
-          >
-            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-            {isGenerating ? 'Generating…' : 'Generate Recipe'}
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" className="mt-4 rounded-xl gap-2" onClick={() => navigate('/recipe-books')}>
+          <LibraryBig className="w-4 h-4" /> Browse recipe books
+        </Button>
       </div>
 
       {/* Featured recipe card */}
@@ -272,7 +235,9 @@ export default function MealSuggestions() {
       )}
 
       {!isLoading && filteredMeals.length === 0 && (
-        <div className="glass-card p-6 text-center text-sm text-muted-foreground max-w-xl">No meal ideas found.</div>
+        <div className="glass-card p-6 text-center text-sm text-muted-foreground max-w-xl">
+          {loadError ?? 'No reviewed catalogue recipes match these filters yet.'}
+        </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -290,8 +255,13 @@ export default function MealSuggestions() {
               style={{ animationDelay: `${i * 40}ms`, animationFillMode: 'backwards' }}
             >
               {/* Image with badges */}
-              <button onClick={() => navigate(`/recipe/${meal.id}`)} className="w-full text-left group">
+              <div className="w-full text-left group">
                 <div className="relative aspect-[4/3] overflow-hidden">
+                  <button
+                    aria-label={`Open ${meal.title}`}
+                    onClick={() => navigate(`/recipe/${meal.id}`)}
+                    className="absolute inset-0 z-10"
+                  />
                   {meal.image ? (
                     <img src={meal.image} alt={meal.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   ) : (
@@ -315,13 +285,14 @@ export default function MealSuggestions() {
 
                   {/* Add button */}
                   <button
+                    aria-label={`Save ${meal.title}`}
                     onClick={(e) => { e.stopPropagation(); toggleFavorite(meal.id, meal.title, meal.image, meal.category); }}
-                    className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors"
+                    className="absolute z-20 bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-              </button>
+              </div>
 
               {/* Info */}
               <div className="p-4">
@@ -330,10 +301,34 @@ export default function MealSuggestions() {
                   <Check className="w-3 h-3 text-primary" />
                   You have {meal.owned.length}/{meal.ingredients.length} ingredients
                 </p>
+                {meal.reasons[0] && <p className="text-xs text-primary mt-2">{meal.reasons[0]}</p>}
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* Explicit fallback: catalogue is always the primary recommendation source. */}
+      <div className="glass-card p-5 mt-8 max-w-xl border-dashed">
+        <div className="flex items-center gap-3 mb-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          <h3 className="text-base font-bold">Can’t find the right fit?</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-3">
+          As an optional fallback, ask Kitchen Companion to draft one new recipe from your pantry. AI drafts are kept separate from reviewed catalogue recipes.
+        </p>
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-primary" />
+            <button aria-label="Decrease servings" onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))} className="w-7 h-7 rounded-md bg-muted font-bold">−</button>
+            <span className="text-sm font-bold w-5 text-center">{generatorServings}</span>
+            <button aria-label="Increase servings" onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))} className="w-7 h-7 rounded-md bg-muted font-bold">+</button>
+          </div>
+          <Button variant="outline" size="sm" className="ml-auto rounded-xl text-xs gap-1.5" onClick={generateRecipe} disabled={isGenerating}>
+            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {isGenerating ? 'Drafting…' : 'Draft one recipe with AI'}
+          </Button>
+        </div>
       </div>
 
       {/* Generated Recipe Dialog */}

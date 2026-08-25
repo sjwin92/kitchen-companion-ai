@@ -1,6 +1,8 @@
 export type StorageLocation = 'fridge' | 'freezer' | 'cupboard';
 
-export type FreshnessStatus = 'use-today' | 'use-soon' | 'okay';
+export type FreshnessStatus = 'unknown' | 'expired' | 'use-today' | 'use-soon' | 'okay';
+export type InventoryLifecycle = 'available' | 'reserved' | 'consumed' | 'wasted' | 'discarded';
+export type DataProvenance = 'actual' | 'user' | 'barcode' | 'receipt_estimate' | 'vision_estimate';
 
 export interface FoodItem {
   id: string;
@@ -11,6 +13,11 @@ export interface FoodItem {
   daysUntilExpiry: number;
   expiryDate?: string;
   status: FreshnessStatus;
+  quantityValue?: number;
+  unit?: string;
+  lifecycleState?: InventoryLifecycle;
+  provenance?: DataProvenance;
+  confidence?: number;
 }
 
 export interface MealSuggestion {
@@ -49,4 +56,92 @@ export interface UserPreferences {
   allergies: string[];
   monthlyBudgetGbp: number | null;
   lunchboxCount: number;
+}
+
+export interface NutritionRange {
+  low: number;
+  high: number;
+}
+
+export interface NutritionEstimate {
+  title: string;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  ranges: {
+    calories: NutritionRange;
+    protein_g: NutritionRange;
+    carbs_g: NutritionRange;
+    fat_g: NutritionRange;
+  };
+  confidence: number;
+  ingredients: Array<{ name: string; amount: string; confidence: number }>;
+  matched_inventory_ids: string[];
+  notes: string[];
+  model: string;
+  provenance: 'vision_estimate';
+  image_path: string;
+}
+
+export interface RecipeIngredient {
+  id: string;
+  name: string;
+  normalizedName: string;
+  quantity: number | null;
+  unit: string | null;
+  optional: boolean;
+  aisle: string | null;
+}
+
+export interface CatalogRecipe {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  creatorId: string | null;
+  servings: number;
+  prepMinutes: number;
+  cookMinutes: number;
+  dietaryTags: string[];
+  allergenTags: string[];
+  cuisineTags: string[];
+  mealTypes: string[];
+  nutrition: Record<string, number>;
+  estimatedCostLowGbp: number | null;
+  estimatedCostHighGbp: number | null;
+  ingredients: RecipeIngredient[];
+  instructions: string[];
+  imagePath: string | null;
+  youtubeUrl: string | null;
+  audioUrl: string | null;
+  creatorName: string | null;
+  sourceType: 'original' | 'creator' | 'user_submission' | 'ai_assisted';
+}
+
+export interface RecipeBook {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  creatorId: string | null;
+  coverPath: string | null;
+  contentVersion: number;
+  accessModel: 'included' | 'invite' | 'purchase_future';
+}
+
+export interface RecipeRecommendation {
+  recipe: CatalogRecipe;
+  score: number;
+  reasons: string[];
+  components: {
+    pantry: number;
+    expiryRescue: number;
+    taste: number;
+    prep: number;
+    budget: number;
+    variety: number;
+    nutrition: number;
+  };
+  missingIngredients: RecipeIngredient[];
 }

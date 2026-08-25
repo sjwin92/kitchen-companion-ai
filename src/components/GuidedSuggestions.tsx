@@ -5,9 +5,10 @@ import type { SlotSettings } from '@/hooks/useMealSlotSettings';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
-import { getDietaryKeywordsForSlot, passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import { useSmartRecommendations } from '@/hooks/useSmartRecommendations';
 import { explainSuggestion, reasonChipClass } from '@/lib/recommendationReason';
+import { listCatalogRecipes } from '@/services/betaCatalog';
+import { recommendRecipes } from '@/lib/recommendationEngine';
 
 interface Suggestion {
   id: string;
@@ -24,7 +25,7 @@ interface Props {
 }
 
 export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
-  const { preferences, inventory } = useApp();
+  const { preferences, inventory, session } = useApp();
   const { signals, loadSignals } = useSmartRecommendations();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -34,40 +35,33 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
   const fetchSuggestions = useCallback(async () => {
     setLoading(true);
     try {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-      // Build keyword pool using diet-aware helper
-      const keywords = getDietaryKeywordsForSlot(slot, preferences);
-      if (slotSettings?.cuisine_preference) keywords.push(slotSettings.cuisine_preference);
-      const keyword = keywords[Math.floor(Math.random() * keywords.length)] ?? 'vegetable';
-
-      const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${keyword}`)}`;
-      const res = await fetch(url, {
-        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+      const recipes = await listCatalogRecipes();
+      const targetSlot = slot === 'lunchbox' ? 'lunch' : slot;
+      const slotRecipes = recipes.filter((recipe) =>
+        recipe.mealTypes.includes(slot) || recipe.mealTypes.includes(targetSlot),
+      );
+      const candidates = slotRecipes.length > 0 ? slotRecipes : recipes;
+      const ranked = recommendRecipes({
+        recipes: candidates,
+        inventory,
+        preferences,
+        userSeed: session?.user.id ?? 'anonymous',
+        weekKey: date.toISOString().slice(0, 10),
+        limit: 3,
       });
-      const data = await res.json();
-
-      const meals: Suggestion[] = (data.meals ?? []).map((m: any) => {
-        const ingredients: string[] = [];
-        for (let i = 1; i <= 20; i++) {
-          const ing = m[`strIngredient${i}`];
-          if (ing && ing.trim()) ingredients.push(ing.trim());
-        }
-        return { id: m.idMeal, name: m.strMeal, thumb: m.strMealThumb, ingredients };
-      });
-
-      const filtered = meals
-        .filter(m => passesUserDietaryFilters(m.name, m.ingredients, preferences))
-        .slice(0, 3);
-
-      setSuggestions(filtered);
-    } catch {
-      toast.error('Failed to load suggestions');
+      setSuggestions(ranked.map(({ recipe }) => ({
+        id: recipe.id,
+        name: recipe.title,
+        thumb: recipe.imagePath ?? '',
+        ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
+      })));
+    } catch (error) {
+      console.error('Failed to load guided catalogue suggestions', error);
+      toast.error('Failed to load catalogue suggestions');
     } finally {
       setLoading(false);
     }
-  }, [slot, slotSettings?.cuisine_preference, preferences]);
+  }, [date, inventory, preferences, session?.user.id, slot]);
 
   useEffect(() => { fetchSuggestions(); }, [fetchSuggestions]);
 
@@ -85,7 +79,7 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-          <Sparkles className="w-3 h-3" /> Suggestions for you
+          <Sparkles className="w-3 h-3" /> From your recipe catalogue
         </p>
         <button onClick={fetchSuggestions} className="text-[10px] text-primary hover:underline flex items-center gap-1">
           <RefreshCw className="w-3 h-3" /> Refresh
@@ -102,7 +96,7 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
       <div className="space-y-1.5">
         {suggestions.map(s => {
           const reason = explainSuggestion({
-            recipeId: `mealdb-${s.id}`,
+            recipeId: s.id,
             title: s.name,
             ingredients: s.ingredients,
             signals,
@@ -113,7 +107,7 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
           return (
             <button
               key={s.id}
-              onClick={() => onSelect(`mealdb-${s.id}`, s.name, s.thumb)}
+              onClick={() => onSelect(s.id, s.name, s.thumb)}
               className="w-full flex items-center gap-2.5 rounded-xl border border-border/50 p-2 hover:bg-accent/50 transition-colors text-left"
             >
               {s.thumb && (

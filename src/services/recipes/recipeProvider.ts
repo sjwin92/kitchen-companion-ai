@@ -1,8 +1,9 @@
 import { FoodItem, MealSuggestion } from '@/types';
 import { getMealsWithStatus, type MealWithStatus } from '@/lib/mealMatching';
-import { getLocalRecipeById, getLocalRecipeSuggestions, loadLocalRecipes } from './localJsonProvider';
+import { getLocalRecipeById, getLocalRecipeSuggestions } from './localJsonProvider';
 import { getMealieRecipeById, getMealieRecipeSuggestions } from './mealieProvider';
 import { getTheMealDbRecipeById, getTheMealDbRecipeSuggestions } from './theMealDbProvider';
+import { catalogRecipeToMealSuggestion, getCatalogRecipe, listCatalogRecipes } from '@/services/betaCatalog';
 
 export type RecipeSource = 'local' | 'mealie' | 'themealdb' | 'hybrid';
 
@@ -85,6 +86,10 @@ export async function getRecipeById(
   id: string,
   source: RecipeSource = getConfiguredRecipeSource()
 ): Promise<MealSuggestion | null> {
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+    const catalogRecipe = await getCatalogRecipe(id);
+    if (catalogRecipe) return catalogRecipeToMealSuggestion(catalogRecipe);
+  }
   if (source === 'mealie') return getMealieRecipeById(id);
   if (source === 'local') return getLocalRecipeById(id);
   if (source === 'themealdb') return getTheMealDbRecipeById(id);
@@ -96,33 +101,18 @@ export async function getRecipeById(
  * Uses TheMealDB search + local fallback.
  */
 export async function searchRecipes(query: string): Promise<MealSuggestion[]> {
-  const projectId = (import.meta.env as Record<string, string | undefined>).VITE_SUPABASE_PROJECT_ID;
-  const anonKey = (import.meta.env as Record<string, string | undefined>).VITE_SUPABASE_PUBLISHABLE_KEY;
-  if (!projectId || !anonKey) return [];
-
   try {
-    const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`search.php?s=${query}`)}`;
-    const res = await fetch(url, {
-      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-    });
-    const data = await res.json();
-    if (data?.meals?.length) {
-      return data.meals.map((m: any) => ({
-        id: `mealdb-${m.idMeal}`,
-        title: m.strMeal,
-        image: m.strMealThumb,
-        ingredients: [],
-        instructions: '',
-        category: m.strCategory ?? '',
-      }));
-    }
-  } catch { /* fallback below */ }
-
-  // Fallback: search local recipes
-  const local = await loadLocalRecipes();
-  const q = query.toLowerCase();
-  return local
-    .filter(r => r.title.toLowerCase().includes(q))
-    .slice(0, 5)
-    .map(r => ({ ...r, ingredients: r.ingredients ?? [], instructions: r.instructions ?? '' }));
+    const catalog = await listCatalogRecipes();
+    const normalizedQuery = query.trim().toLowerCase();
+    return catalog
+      .filter((recipe) =>
+        recipe.title.toLowerCase().includes(normalizedQuery)
+        || recipe.cuisineTags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
+        || recipe.ingredients.some((ingredient) => ingredient.name.toLowerCase().includes(normalizedQuery))
+      )
+      .slice(0, 8)
+      .map(catalogRecipeToMealSuggestion);
+  } catch {
+    return [];
+  }
 }

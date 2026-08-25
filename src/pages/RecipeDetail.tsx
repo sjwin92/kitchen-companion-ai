@@ -144,6 +144,7 @@ export default function RecipeDetail() {
           <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
           <button
+            aria-label="Back to recipes"
             onClick={() => navigate(-1)}
             className="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
           >
@@ -151,12 +152,14 @@ export default function RecipeDetail() {
           </button>
           <div className="absolute top-4 right-4 flex gap-2">
             <button
+              aria-label={`${isFavorite(recipe.id) ? 'Remove' : 'Save'} ${recipe.title}`}
               onClick={() => toggleFavorite(recipe.id, recipe.title, recipe.image, recipe.category)}
               className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
             >
               <Heart className={`w-4 h-4 ${isFavorite(recipe.id) ? 'fill-red-500 text-red-500' : ''}`} />
             </button>
             <button
+              aria-label={`Plan ${recipe.title}`}
               onClick={() => navigate('/meal-planner')}
               className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
             >
@@ -236,6 +239,7 @@ export default function RecipeDetail() {
               <div className="flex items-center gap-2">
                 <Users className="w-3.5 h-3.5 text-muted-foreground" />
                 <button
+                  aria-label="Decrease servings"
                   onClick={() => setServings(Math.max(1, servings - 1))}
                   className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
                 >
@@ -243,6 +247,7 @@ export default function RecipeDetail() {
                 </button>
                 <span className="text-sm font-bold w-4 text-center">{servings}</span>
                 <button
+                  aria-label="Increase servings"
                   onClick={() => setServings(servings + 1)}
                   className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
                 >
@@ -369,6 +374,7 @@ export default function RecipeDetail() {
                   <h2 className="font-semibold text-sm">Cook Together</h2>
                 </div>
                 <button
+                  aria-label="Remove paired recipe"
                   onClick={() => setPairedRecipe(null)}
                   className="w-6 h-6 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors"
                 >

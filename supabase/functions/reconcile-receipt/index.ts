@@ -1,117 +1,64 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.25.76";
+import { authenticateAndQuota, errorResponse, guardRequest, json, structuredResponse, validateImageDataUrl } from "../_shared/kitchen-ai.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const resultSchema = z.object({
+  retailer: z.string().max(120),
+  total: z.number().min(0).max(100000),
+  receipt_date: z.string().max(10),
+  items: z.array(z.object({
+    name: z.string().min(1).max(160),
+    price: z.number().min(0).max(100000),
+    quantity: z.number().min(0).max(10000),
+    confidence: z.number().min(0).max(1),
+  })).max(200),
+});
+const jsonSchema = {
+  type: "object", additionalProperties: false, required: ["retailer", "total", "receipt_date", "items"],
+  properties: {
+    retailer: { type: "string" }, total: { type: "number", minimum: 0, maximum: 100000 }, receipt_date: { type: "string" },
+    items: { type: "array", maxItems: 200, items: {
+      type: "object", additionalProperties: false, required: ["name", "price", "quantity", "confidence"],
+      properties: {
+        name: { type: "string" }, price: { type: "number", minimum: 0, maximum: 100000 },
+        quantity: { type: "number", minimum: 0, maximum: 10000 }, confidence: { type: "number", minimum: 0, maximum: 1 },
+      },
+    } },
+  },
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
+Deno.serve(async (req) => {
+  const guarded = guardRequest(req);
+  if (guarded) return guarded;
   try {
-    const { imageBase64 } = await req.json();
-    if (!imageBase64) {
-      return new Response(JSON.stringify({ error: "No image provided" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
-        messages: [
-          {
-            role: "system",
-            content: `You parse UK grocery receipts. Extract every purchasable item, the grand total in GBP, and the retailer name if visible.
-
-RULES:
-- Clean abbreviated names: "BNLS CHKN BRST" → "Chicken Breast"
-- Include every food item line with its price in GBP (omit price if not legible)
-- SKIP totals, subtotals, VAT/tax lines, savings, discounts, store info, payment method
-- The total is the FINAL amount paid (post-discount, post-tax)
-- Retailer: Tesco, Sainsbury's, Asda, Morrisons, Aldi, Lidl, M&S, Waitrose, Co-op, Iceland, etc.
-- If you can't read the total clearly, return 0
-
-You MUST respond using the parse_receipt tool.`,
-          },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: "Parse this grocery receipt." },
-              { type: "image_url", image_url: { url: imageBase64 } },
-            ],
-          },
+    const { user } = await authenticateAndQuota(req, "vision");
+    const body = await req.json() as Record<string, unknown>;
+    const imageDataUrl = validateImageDataUrl(body.imageBase64);
+    const parsed = resultSchema.parse(await structuredResponse({
+      userId: user.id,
+      model: "gpt-5.6-terra",
+      instructions: "You are a conservative UK grocery receipt parser. Transcribe only legible purchase information.",
+      prompt: JSON.stringify({
+        task: "Extract grocery line items, final GBP total, retailer, and receipt date.",
+        rules: [
+          "Clean common retailer abbreviations without inventing a different product.",
+          "Skip totals, subtotals, VAT, savings, discounts, store details, and payment method from items.",
+          "Use 0 for an illegible individual price or total.",
+          "Use an empty string for unknown retailer or receipt date. Dates use YYYY-MM-DD.",
         ],
-        tools: [{
-          type: "function",
-          function: {
-            name: "parse_receipt",
-            description: "Extract structured receipt data",
-            parameters: {
-              type: "object",
-              properties: {
-                retailer: { type: "string", description: "Supermarket name or empty" },
-                total: { type: "number", description: "Final amount paid in GBP" },
-                items: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      name: { type: "string" },
-                      price: { type: "number", description: "Item price in GBP, 0 if unknown" },
-                    },
-                    required: ["name", "price"],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ["retailer", "total", "items"],
-              additionalProperties: false,
-            },
-          },
-        }],
-        tool_choice: { type: "function", function: { name: "parse_receipt" } },
       }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limited" }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted" }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments) throw new Error("No structured response");
-    const parsed = JSON.parse(toolCall.function.arguments);
-
-    return new Response(JSON.stringify({
+      imageDataUrl,
+      schemaName: "receipt_reconciliation",
+      schema: jsonSchema,
+      maxOutputTokens: 2600,
+    }));
+    return json(req, {
       retailer: parsed.retailer || null,
-      total: Number(parsed.total) || 0,
-      items: (parsed.items || []).filter((i: any) => i?.name).map((i: any) => ({
-        name: String(i.name).trim(),
-        price: Number(i.price) || 0,
-      })),
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (e) {
-    console.error("reconcile-receipt error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+      total: parsed.total,
+      receipt_date: parsed.receipt_date || null,
+      items: parsed.items,
+      provenance: "vision_estimate",
+    });
+  } catch (error) {
+    return errorResponse(req, error, "Receipt reconciliation failed");
   }
 });

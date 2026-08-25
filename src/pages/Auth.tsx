@@ -9,6 +9,7 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,15 +22,31 @@ export default function Auth() {
         if (error) throw error;
         toast.success('Welcome back!');
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { invite_code: inviteCode.trim() } },
+        });
         if (error) throw error;
         toast.success('Check your email to confirm your account!');
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email.trim()) {
+      toast.error('Enter your email address first');
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) toast.error(error.message);
+    else toast.success('Password reset email sent');
   };
 
   return (
@@ -39,7 +56,7 @@ export default function Auth() {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
             <ChefHat className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">CookBuddy</h1>
+          <h1 className="text-2xl font-bold text-foreground">Kitchen Companion</h1>
           <p className="text-sm text-muted-foreground">
             {isLogin ? 'Sign in to your kitchen' : 'Create your account'}
           </p>
@@ -47,31 +64,56 @@ export default function Auth() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-foreground">Email</label>
+            <label htmlFor="auth-email" className="text-sm font-medium text-foreground">Email</label>
             <Input
+              id="auth-email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="you@example.com"
+              autoComplete="email"
               required
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground">Password</label>
+            <label htmlFor="auth-password" className="text-sm font-medium text-foreground">Password</label>
             <Input
+              id="auth-password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
               required
               minLength={6}
             />
           </div>
+          {!isLogin && (
+            <div>
+              <label htmlFor="beta-invite-code" className="text-sm font-medium text-foreground">Beta invitation code</label>
+              <Input
+                id="beta-invite-code"
+                value={inviteCode}
+                onChange={event => setInviteCode(event.target.value)}
+                placeholder="Your one-time invitation"
+                required
+                minLength={12}
+                autoComplete="one-time-code"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Invitation codes are tied to your email and work once.</p>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {isLogin ? 'Sign In' : 'Sign Up'}
           </Button>
         </form>
+
+        {isLogin && (
+          <button type="button" onClick={handlePasswordReset} className="block mx-auto text-xs text-muted-foreground hover:text-primary">
+            Forgot your password?
+          </button>
+        )}
 
         <p className="text-center text-sm text-muted-foreground">
           {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}

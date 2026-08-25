@@ -82,11 +82,12 @@ self.addEventListener('push', (event) => {
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-192.png',
       tag: 'expiry-reminder',
+      data: { url: data.url || '/use-soon' },
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(clients.openWindow('/use-soon'));
+  event.waitUntil(clients.openWindow(event.notification.data?.url || '/use-soon'));
 });

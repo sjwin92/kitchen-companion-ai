@@ -1,0 +1,52 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original beta recipes tested and reviewed by the editorial team.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "weeknight-foundations-volume-1",
+    "title": "Weeknight Foundations, Volume 1",
+    "subtitle": "A structured import example",
+    "description": "Copy this file and replace the example with tested, rights-cleared recipes.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "example-tomato-lentil-pasta",
+      "title": "Example Tomato Lentil Pasta",
+      "description": "Template only—do not publish without cooking and checking it.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": ["Italian-inspired"],
+      "dietary_tags": ["plant-based"],
+      "allergen_tags": ["gluten"],
+      "meal_types": ["dinner"],
+      "instructions": [
+        "Replace this example with a complete, test-kitchen-verified method."
+      ],
+      "nutrition": {},
+      "source_type": "original",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Template content; publication requires an editorial rights check.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        }
+      ]
+    }
+  ]
+}

@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import {
   ChefHat, Users, Clock, Leaf, X, Heart, Globe, Wallet,
   Gauge, Target, Wand2, HandHelping, Sparkles, Timer,
-  Salad, Recycle, Baby, Shuffle, AlertTriangle
+  Salad, Recycle, Baby, Shuffle, AlertTriangle, Loader2
 } from 'lucide-react';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
+import { toast } from 'sonner';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'None'];
 const TIME_OPTIONS = ['15 min', '30 min', '45 min', '60+ min'];
@@ -42,8 +43,9 @@ const BUDGET_OPTIONS: { value: BudgetSensitivity; label: string; desc: string }[
 ];
 
 export default function Onboarding() {
-  const { completeOnboarding, setPreferences } = useApp();
+  const { completeOnboarding, signOut } = useApp();
   const [step, setStep] = useState(0);
+  const [finishing, setFinishing] = useState(false);
 
   // State for all fields
   const [displayName, setDisplayName] = useState('');
@@ -67,21 +69,27 @@ export default function Onboarding() {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
   };
 
-  const handleFinish = () => {
-    setPreferences({
-      displayName,
-      householdSize,
-      dietaryPreferences: dietary,
-      cookingTime,
-      dislikedIngredients: dislikes,
-      preferredCuisines: cuisines,
-      budgetSensitivity: budget,
-      cookingConfidence: confidence,
-      primaryGoal: goal,
-      planningStyle: planningStyle,
-      allergies,
-    });
-    completeOnboarding();
+  const handleFinish = async () => {
+    setFinishing(true);
+    try {
+      await completeOnboarding({
+        displayName,
+        householdSize,
+        dietaryPreferences: dietary,
+        cookingTime,
+        dislikedIngredients: dislikes,
+        preferredCuisines: cuisines,
+        budgetSensitivity: budget,
+        cookingConfidence: confidence,
+        primaryGoal: goal,
+        planningStyle,
+        allergies,
+      });
+    } catch {
+      toast.error('Could not save your setup. Please try again.');
+    } finally {
+      setFinishing(false);
+    }
   };
 
   const TOTAL_STEPS = 9;
@@ -364,6 +372,11 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md">
+        <div className="flex justify-end mb-3">
+          <Button variant="ghost" size="sm" onClick={() => void signOut()} aria-label="Sign out and use another account">
+            Sign out
+          </Button>
+        </div>
         {step > 0 && (
           <div className="flex gap-1 mb-8">
             {Array.from({ length: TOTAL_STEPS }, (_, i) => (
@@ -379,7 +392,8 @@ export default function Onboarding() {
         {step > 0 && (
           <div className="flex gap-3 mt-8">
             <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1 rounded-xl">Back</Button>
-            <Button onClick={step === TOTAL_STEPS ? handleFinish : () => setStep(step + 1)} className="flex-1 rounded-xl">
+            <Button disabled={finishing} onClick={step === TOTAL_STEPS ? handleFinish : () => setStep(step + 1)} className="flex-1 rounded-xl">
+              {finishing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {step === TOTAL_STEPS ? '🎉 Start Cooking' : 'Next'}
             </Button>
           </div>

@@ -180,22 +180,28 @@ export default function Inventory() {
                   </span>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-muted" onClick={() => openEdit(item)}>
+                  <div className="hidden md:flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button aria-label={`Edit ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-muted" onClick={() => openEdit(item)}>
                       <Pencil className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-success/10" onClick={() => removeItem(item.id)}>
+                    <Button aria-label={`Mark ${item.name} used`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-success/10" onClick={() => removeItem(item.id)}>
                       <Check className="w-3.5 h-3.5 text-success" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => setWasteItem(item)}>
+                    <Button aria-label={`Log ${item.name} as waste`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => setWasteItem(item)}>
                       <Trash2 className="w-3.5 h-3.5 text-destructive" />
                     </Button>
                   </div>
 
                   {/* Mobile: three-dot menu */}
                   <div className="md:hidden flex items-center">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => openEdit(item)}>
+                    <Button aria-label={`Edit ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => openEdit(item)}>
                       <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                    <Button aria-label={`Mark ${item.name} used`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => removeItem(item.id)}>
+                      <Check className="w-4 h-4 text-success" />
+                    </Button>
+                    <Button aria-label={`Log ${item.name} as waste`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => setWasteItem(item)}>
+                      <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
                 </div>
