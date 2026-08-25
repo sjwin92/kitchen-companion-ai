@@ -6,6 +6,7 @@ import TasteProfileCard from '@/components/TasteProfileCard';
 import PlanMyWeekButton from '@/components/PlanMyWeekButton';
 import BudgetCard from '@/components/BudgetCard';
 import MonthlyRecapCard from '@/components/MonthlyRecapCard';
+import KitchenLoop from '@/components/KitchenLoop';
 import {
   Refrigerator,
   Snowflake,
@@ -80,6 +81,14 @@ export default function Dashboard() {
       {/* Daily nutrition is a primary kitchen loop, not a settings-only feature. */}
       <div className="mb-6">
         <CalorieTracker prominent />
+      </div>
+
+      <div className="mb-6">
+        <KitchenLoop
+          inventoryCount={activeInventory.length}
+          expiringCount={useSoonItems.length}
+          todayPlanCount={todayPlans.length}
+        />
       </div>
 
       {/* First-win activation */}

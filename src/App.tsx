@@ -29,6 +29,7 @@ const Favorites = lazy(() => import("@/pages/Favorites"));
 const MealPlanner = lazy(() => import("@/pages/MealPlanner"));
 const MealLog = lazy(() => import("@/pages/MealLog"));
 const MealHistory = lazy(() => import("@/pages/MealHistory"));
+const RecordOutcome = lazy(() => import("@/pages/RecordOutcome"));
 const WeeklyInsights = lazy(() => import("@/pages/WeeklyInsights"));
 const RecipeBooks = lazy(() => import("@/pages/RecipeBooks"));
 const RecipeBookDetail = lazy(() => import("@/pages/RecipeBookDetail"));
@@ -126,6 +127,7 @@ function AppContent() {
               <Route path="/meal-planner" element={<MealPlanner />} />
               <Route path="/meal-log" element={<MealLog />} />
               <Route path="/meal-history" element={<MealHistory />} />
+              <Route path="/record" element={<RecordOutcome />} />
               <Route path="/weekly-insights" element={<WeeklyInsights />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
