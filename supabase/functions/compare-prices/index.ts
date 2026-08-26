@@ -15,12 +15,34 @@ const basketItemSchema = z.object({
   image_url: z.string().max(2_000).nullable().optional().default(null),
 }).passthrough();
 
+const adapterErrorSchema = z.object({
+  ingredient: z.string().max(120),
+  retailer: z.string().max(100),
+  code: z.string().max(100),
+  message: z.string().max(500),
+}).passthrough();
+
+const coverageIssueSchema = z.object({
+  ingredient: z.string().max(120),
+  code: z.enum(["no_acceptable_variant", "package_size_unknown", "unit_incompatible"]),
+  message: z.string().max(500),
+  candidate_product_name: z.string().max(240).nullable().optional().default(null),
+}).passthrough();
+
 const retailerBasketSchema = z.object({
   retailer: z.string().min(1).max(100),
   retailer_name: z.string().min(1).max(120),
   total: z.coerce.number().finite().nonnegative(),
   items: z.array(basketItemSchema).max(40),
   not_found: z.array(z.string().max(120)).max(40).optional().default([]),
+  matched_count: z.coerce.number().int().nonnegative().optional(),
+  requested_count: z.coerce.number().int().nonnegative().optional(),
+  is_complete: z.boolean().optional().default(false),
+  availability: z.enum(["available", "partial", "unavailable"]).optional().default("unavailable"),
+  total_is_comparable: z.boolean().optional().default(false),
+  errors: z.array(adapterErrorSchema).max(40).optional().default([]),
+  calculation_mode: z.enum(["one_pack", "quantity_aware"]).optional().default("one_pack"),
+  coverage_issues: z.array(coverageIssueSchema).max(40).optional().default([]),
 }).passthrough();
 
 const responseSchema = z.object({
@@ -69,7 +91,8 @@ Deno.serve(async (req) => {
     if (!pricingApiUrl) throw new HttpError(503, "Live supermarket prices are temporarily unavailable");
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15_000);
+    // Free beta hosting can need extra time for its first request after sleeping.
+    const timeout = setTimeout(() => controller.abort(), 70_000);
     let response: Response;
     try {
       response = await fetch(endpointFor(pricingApiUrl), {
@@ -104,11 +127,21 @@ Deno.serve(async (req) => {
           image_url: item.image_url,
         })),
         not_found: basket.not_found,
+        matched_count: basket.matched_count ?? basket.items.length,
+        requested_count: basket.requested_count ?? uniqueIngredients.length,
+        is_complete: basket.is_complete,
+        availability: basket.availability,
+        total_is_comparable: basket.total_is_comparable,
+        errors: basket.errors,
+        calculation_mode: basket.calculation_mode,
+        coverage_issues: basket.coverage_issues,
       }))
       .sort((a, b) => {
+        if (a.total_is_comparable !== b.total_is_comparable) return a.total_is_comparable ? -1 : 1;
+        if (a.total_is_comparable && b.total_is_comparable) return a.total - b.total;
         if (a.items.length === 0 && b.items.length > 0) return 1;
         if (b.items.length === 0 && a.items.length > 0) return -1;
-        return a.total - b.total;
+        return b.matched_count - a.matched_count;
       });
 
     return json(req, { retailers });

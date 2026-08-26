@@ -17,6 +17,19 @@ export interface RetailerBasket {
   total: number;
   items: BasketItem[];
   not_found: string[];
+  matched_count: number;
+  requested_count: number;
+  is_complete: boolean;
+  availability: 'available' | 'partial' | 'unavailable';
+  total_is_comparable: boolean;
+  errors: Array<{ ingredient: string; retailer: string; code: string; message: string }>;
+  calculation_mode: 'one_pack' | 'quantity_aware';
+  coverage_issues: Array<{
+    ingredient: string;
+    code: 'no_acceptable_variant' | 'package_size_unknown' | 'unit_incompatible';
+    message: string;
+    candidate_product_name: string | null;
+  }>;
 }
 
 function isBasketItem(value: unknown): value is BasketItem {
@@ -32,6 +45,24 @@ function isBasketItem(value: unknown): value is BasketItem {
     && (item.image_url === null || typeof item.image_url === 'string');
 }
 
+function isAdapterError(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const error = value as Record<string, unknown>;
+  return typeof error.ingredient === 'string'
+    && typeof error.retailer === 'string'
+    && typeof error.code === 'string'
+    && typeof error.message === 'string';
+}
+
+function isCoverageIssue(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const issue = value as Record<string, unknown>;
+  return typeof issue.ingredient === 'string'
+    && ['no_acceptable_variant', 'package_size_unknown', 'unit_incompatible'].includes(String(issue.code))
+    && typeof issue.message === 'string'
+    && (issue.candidate_product_name === null || typeof issue.candidate_product_name === 'string');
+}
+
 function isRetailerBasket(value: unknown): value is RetailerBasket {
   if (!value || typeof value !== 'object') return false;
   const basket = value as Record<string, unknown>;
@@ -42,7 +73,19 @@ function isRetailerBasket(value: unknown): value is RetailerBasket {
     && Array.isArray(basket.items)
     && basket.items.every(isBasketItem)
     && Array.isArray(basket.not_found)
-    && basket.not_found.every(item => typeof item === 'string');
+    && basket.not_found.every(item => typeof item === 'string')
+    && typeof basket.matched_count === 'number'
+    && Number.isInteger(basket.matched_count)
+    && typeof basket.requested_count === 'number'
+    && Number.isInteger(basket.requested_count)
+    && typeof basket.is_complete === 'boolean'
+    && ['available', 'partial', 'unavailable'].includes(String(basket.availability))
+    && typeof basket.total_is_comparable === 'boolean'
+    && Array.isArray(basket.errors)
+    && basket.errors.every(isAdapterError)
+    && Array.isArray(basket.coverage_issues)
+    && basket.coverage_issues.every(isCoverageIssue)
+    && ['one_pack', 'quantity_aware'].includes(String(basket.calculation_mode));
 }
 
 export function parseBasketComparison(value: unknown): RetailerBasket[] | null {

@@ -332,7 +332,8 @@ export default function ShoppingList() {
           )}
 
           {baskets.length > 0 && (() => {
-            const priced = baskets.filter(b => b.items.length > 0);
+            const comparable = baskets.filter(b => b.total_is_comparable && b.items.length > 0);
+            const incomplete = baskets.filter(b => !b.total_is_comparable && b.items.length > 0);
             const unavailable = baskets.filter(b => b.items.length === 0);
             return (
             <div className="glass-card overflow-hidden">
@@ -346,10 +347,10 @@ export default function ShoppingList() {
                 </button>
               </div>
               <div className="divide-y divide-border/30">
-                {priced.map((basket, idx) => (
+                {comparable.map((basket, idx) => (
                   <div key={basket.retailer} className="flex items-center gap-3 px-5 py-3.5">
                     <span className={`w-14 shrink-0 text-[10px] font-bold uppercase tracking-wider ${idx === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}`}>
-                      {idx === 0 ? 'Cheapest' : `+£${(basket.total - priced[0].total).toFixed(2)}`}
+                      {idx === 0 ? 'Cheapest' : `+£${(basket.total - comparable[0].total).toFixed(2)}`}
                     </span>
                     <span className="flex-1 text-sm font-semibold">{basket.retailer_name}</span>
                     {basket.not_found.length > 0 && (
@@ -362,6 +363,22 @@ export default function ShoppingList() {
                     </span>
                   </div>
                 ))}
+                {incomplete.map(basket => (
+                  <div key={basket.retailer} className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="w-14 shrink-0 text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                        Partial
+                      </span>
+                      <span className="flex-1 text-sm font-semibold">{basket.retailer_name}</span>
+                      <span className="text-sm font-extrabold tabular-nums font-display">
+                        £{basket.total.toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="mt-1 pl-[4.25rem] text-[10px] text-muted-foreground">
+                      Subtotal only · {basket.matched_count} of {basket.requested_count} items matched
+                    </p>
+                  </div>
+                ))}
                 {unavailable.length > 0 && (
                   <div className="px-5 py-2.5 flex items-center gap-2">
                     <span className="text-[10px] text-muted-foreground">
@@ -372,7 +389,9 @@ export default function ShoppingList() {
               </div>
               <div className="px-5 py-2 border-t border-border/40">
                 <p className="text-[10px] text-muted-foreground">
-                  {priced[0]?.items.length ?? 0} of {unchecked.length} items matched · live prices
+                  {comparable.length > 0
+                    ? `${comparable.length} complete basket${comparable.length === 1 ? '' : 's'} compared · live prices`
+                    : 'No complete basket is available yet · partial subtotals are not ranked'}
                 </p>
               </div>
             </div>

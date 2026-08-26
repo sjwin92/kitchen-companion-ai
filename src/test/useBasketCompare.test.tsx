@@ -23,6 +23,14 @@ const response = {
       image_url: null,
     }],
     not_found: [],
+    matched_count: 1,
+    requested_count: 1,
+    is_complete: true,
+    availability: 'available',
+    total_is_comparable: true,
+    errors: [],
+    calculation_mode: 'one_pack',
+    coverage_issues: [],
   }],
 };
 
