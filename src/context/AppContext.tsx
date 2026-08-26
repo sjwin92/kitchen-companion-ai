@@ -3,6 +3,7 @@ import { FoodItem, InventoryLifecycle, UserPreferences } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import { canonicalizeDietaryPreferences, dietExcludesFood } from '../../supabase/functions/_shared/dietary-rules';
+import { appError } from '@/lib/appError';
 
 interface AppState {
   inventory: FoodItem[];
@@ -10,6 +11,7 @@ interface AppState {
   session: Session | null;
   loading: boolean;
   profileError: string | null;
+  inventoryError: string | null;
   addItems: (items: FoodItem[]) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   transitionItem: (id: string, state: InventoryLifecycle, reason?: string) => Promise<void>;
@@ -70,6 +72,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [inventoryError, setInventoryError] = useState<string | null>(null);
   const [profileReload, setProfileReload] = useState(0);
   const [inventory, setInventory] = useState<FoodItem[]>([]);
   const [preferences, setPrefs] = useState<UserPreferences>(defaultPreferences);
@@ -87,6 +90,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSession(nextSession);
       if (!nextSession) {
         setInventory([]);
+        setInventoryError(null);
         setPrefs(defaultPreferences);
         setLoading(false);
       }
@@ -171,11 +175,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Load inventory when session changes
   const refreshInventory = useCallback(async () => {
     if (!session?.user) return;
-    const { data } = await supabase
+    setInventoryError(null);
+    const { data, error } = await supabase
       .from('food_items')
       .select('*')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
+
+    if (error) {
+      setInventoryError('We could not refresh your inventory. Your saved food has not been changed.');
+      throw appError(error, 'We could not refresh your inventory. Please try again.');
+    }
 
     if (data) {
       setInventory(data
@@ -199,7 +209,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [session?.user?.id]);
 
   useEffect(() => {
-    refreshInventory();
+    void refreshInventory().catch(() => undefined);
   }, [refreshInventory]);
 
   const addItems = useCallback(async (items: FoodItem[]) => {
@@ -221,7 +231,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
 
     const { error } = await supabase.from('food_items').insert(rows);
-    if (!error) refreshInventory();
+    if (error) throw appError(error, 'Your food was not saved. Please try again.');
+    await refreshInventory();
   }, [session?.user?.id, refreshInventory]);
 
   const removeItem = useCallback(async (id: string) => {
@@ -231,7 +242,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       p_quantity_delta: null,
       p_reason: 'Marked as used',
     } as never);
-    if (!error) setInventory(prev => prev.filter(i => i.id !== id));
+    if (error) throw appError(error, 'We could not mark this item as used. Please try again.');
+    setInventory(prev => prev.filter(i => i.id !== id));
   }, []);
 
   const transitionItem = useCallback(async (id: string, state: InventoryLifecycle, reason?: string) => {
@@ -241,9 +253,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       p_quantity_delta: null,
       p_reason: reason ?? null,
     } as never);
-    if (error) throw error;
-    setInventory(prev => ['available', 'reserved'].includes(state) ? prev.map(item => item.id === id ? { ...item, lifecycleState: state } : item) : prev.filter(item => item.id !== id));
-  }, []);
+    if (error) throw appError(error, 'We could not update this item. Please try again.');
+    await refreshInventory();
+  }, [refreshInventory]);
 
   const updateItem = useCallback(async (id: string, updates: Partial<FoodItem>) => {
     const dbUpdates: { name?: string; quantity?: string; location?: string; days_until_expiry?: number; expiry_date?: string; status?: string } = {};
@@ -254,8 +266,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (updates.expiryDate !== undefined) dbUpdates.expiry_date = updates.expiryDate;
     if (updates.status !== undefined) dbUpdates.status = updates.status;
 
-    const { error } = await supabase.from('food_items').update(dbUpdates).eq('id', id);
-    if (!error) setInventory(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
+    const { data, error } = await supabase.from('food_items').update(dbUpdates).eq('id', id).select('id').maybeSingle();
+    if (error) throw appError(error, 'Your changes were not saved. Please try again.');
+    if (!data) throw appError(null, 'This item could not be found. Refresh your inventory and try again.', { code: 'NOT_FOUND', retryable: false });
+    setInventory(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
   }, []);
 
   const persistPreferences = useCallback(async (next: UserPreferences) => {
@@ -290,12 +304,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [persistPreferences]);
 
   const setPreferences = useCallback((prefs: Partial<UserPreferences>) => {
-    setPrefs(prev => {
-      const next = normalizePreferences({ ...prev, ...prefs });
-      void persistPreferences(next);
-      return next;
+    const next = normalizePreferences({ ...preferences, ...prefs });
+    setPrefs(next);
+    void persistPreferences(next).catch(() => {
+      setProfileError('Your latest preference change was not saved. Please retry from Settings.');
     });
-  }, [persistPreferences]);
+  }, [persistPreferences, preferences]);
 
   const completeOnboarding = useCallback(async (updates: Partial<UserPreferences> = {}) => {
     const next = normalizePreferences({ ...preferences, ...updates, onboardingComplete: true });
@@ -306,11 +320,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const retryProfile = useCallback(() => setProfileReload(current => current + 1), []);
 
   const signOut = useCallback(async () => {
+    const userId = session?.user.id;
+    if (userId) localStorage.removeItem(`mealplan-draft:${userId}`);
     await supabase.auth.signOut();
-  }, []);
+  }, [session?.user.id]);
 
   return (
-    <AppContext.Provider value={{ inventory, preferences, session, loading, profileError, addItems, removeItem, transitionItem, updateItem, setPreferences, savePreferences, completeOnboarding, signOut, refreshInventory, retryProfile }}>
+    <AppContext.Provider value={{ inventory, preferences, session, loading, profileError, inventoryError, addItems, removeItem, transitionItem, updateItem, setPreferences, savePreferences, completeOnboarding, signOut, refreshInventory, retryProfile }}>
       {children}
     </AppContext.Provider>
   );

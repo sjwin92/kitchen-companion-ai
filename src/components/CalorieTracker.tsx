@@ -141,12 +141,6 @@ export default function CalorieTracker({ prominent = false, compact = false }: {
     setGoalInput(String(val));
     setEditingGoal(false);
     setPreferences({ dailyCalorieGoal: val });
-    if (userId) {
-      await supabase
-        .from('profiles')
-        .update({ daily_calorie_goal: val })
-        .eq('id', userId);
-    }
   };
 
   const slotOrder = ['breakfast', 'lunch', 'snack', 'dinner'];

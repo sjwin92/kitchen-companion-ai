@@ -378,8 +378,10 @@ export type Database = {
           created_at: string
           id: string
           image: string | null
+          inventory_item_id: string | null
           is_leftover_of: string | null
           meal_slot: string
+          plan_kind: string
           planned_date: string
           recipe_id: string
           status: string
@@ -391,8 +393,10 @@ export type Database = {
           created_at?: string
           id?: string
           image?: string | null
+          inventory_item_id?: string | null
           is_leftover_of?: string | null
           meal_slot?: string
+          plan_kind?: string
           planned_date: string
           recipe_id: string
           status?: string
@@ -404,8 +408,10 @@ export type Database = {
           created_at?: string
           id?: string
           image?: string | null
+          inventory_item_id?: string | null
           is_leftover_of?: string | null
           meal_slot?: string
+          plan_kind?: string
           planned_date?: string
           recipe_id?: string
           status?: string
@@ -413,6 +419,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "meal_plans_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "meal_plans_is_leftover_of_fkey"
             columns: ["is_leftover_of"]
