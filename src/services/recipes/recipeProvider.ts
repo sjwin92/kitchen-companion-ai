@@ -3,7 +3,7 @@ import { getMealsWithStatus, type MealWithStatus } from '@/lib/mealMatching';
 import { getLocalRecipeById, getLocalRecipeSuggestions } from './localJsonProvider';
 import { getMealieRecipeById, getMealieRecipeSuggestions } from './mealieProvider';
 import { getTheMealDbRecipeById, getTheMealDbRecipeSuggestions } from './theMealDbProvider';
-import { catalogRecipeToMealSuggestion, getCatalogRecipe, listCatalogRecipes } from '@/services/betaCatalog';
+import { catalogRecipeToMealSuggestion, getCatalogRecipe, getUserRecipe, listCatalogRecipes } from '@/services/betaCatalog';
 
 export type RecipeSource = 'local' | 'mealie' | 'themealdb' | 'hybrid';
 
@@ -89,6 +89,8 @@ export async function getRecipeById(
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
     const catalogRecipe = await getCatalogRecipe(id);
     if (catalogRecipe) return catalogRecipeToMealSuggestion(catalogRecipe);
+    const userRecipe = await getUserRecipe(id);
+    if (userRecipe) return userRecipe;
   }
   if (source === 'mealie') return getMealieRecipeById(id);
   if (source === 'local') return getLocalRecipeById(id);

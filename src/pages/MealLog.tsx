@@ -1,8 +1,9 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
+import { ingredientMatches } from '@/lib/mealMatching';
 import { useInteractions } from '@/hooks/useInteractions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -37,23 +38,37 @@ interface CombinedRecipe {
   measures?: string[];
 }
 
+interface PlannedMealState {
+  planId: string;
+  recipeId: string;
+  title: string;
+}
+
+function rangeAround(value: number, uncertainty: number) {
+  return {
+    low: Math.max(0, Math.round(value * (1 - uncertainty))),
+    high: Math.round(value * (1 + uncertainty)),
+  };
+}
+
 export default function MealLog() {
   const navigate = useNavigate();
   const location = useLocation();
+  const plannedMeal = (location.state as { plannedMeal?: PlannedMealState } | null)?.plannedMeal;
   const { inventory, session, preferences, refreshInventory } = useApp();
   const { plans: todayPlans } = useMealPlans();
   const { track } = useInteractions();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePath, setImagePath] = useState<string | null>(null);
-  const [mealTitle, setMealTitle] = useState('');
+  const [mealTitle, setMealTitle] = useState(plannedMeal?.title ?? '');
   const [mealNotes, setMealNotes] = useState('');
   const [mealRating, setMealRating] = useState<number>(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<NutritionEstimate | null>(null);
   const [saving, setSaving] = useState(false);
   const [deductItems, setDeductItems] = useState<string[]>([]);
-  const [linkedPlanId, setLinkedPlanId] = useState<string | null>(null);
+  const [linkedPlanId, setLinkedPlanId] = useState<string | null>(plannedMeal?.planId ?? null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
@@ -66,6 +81,56 @@ export default function MealLog() {
   const combinedTitle = isCombinedMeal
     ? combinedRecipes!.map(r => r.title).join(' + ')
     : '';
+
+  useEffect(() => {
+    if (!plannedMeal) return;
+    let cancelled = false;
+    const loadPlannedRecipe = async () => {
+      try {
+        const recipe = await getRecipeById(plannedMeal.recipeId);
+        if (!recipe || cancelled) return;
+        const nutrition = recipe.nutrition;
+        const calories = Number(nutrition?.calories);
+        const protein = Number(nutrition?.protein_g);
+        const carbs = Number(nutrition?.carbs_g);
+        const fat = Number(nutrition?.fat_g);
+        if (![calories, protein, carbs, fat].every(Number.isFinite)) return;
+        const uncertainty = recipe.provenance === 'catalogue' ? 0.1 : 0.2;
+        const matchedIds = inventory
+          .filter((item) => recipe.ingredients.some((ingredient) => ingredientMatches(item.name, ingredient)))
+          .map((item) => item.id);
+        setAnalysis({
+          title: plannedMeal.title,
+          calories: Math.round(calories),
+          protein_g: protein,
+          carbs_g: carbs,
+          fat_g: fat,
+          ranges: {
+            calories: rangeAround(calories, uncertainty),
+            protein_g: rangeAround(protein, uncertainty),
+            carbs_g: rangeAround(carbs, uncertainty),
+            fat_g: rangeAround(fat, uncertainty),
+          },
+          confidence: recipe.provenance === 'catalogue' ? 0.85 : 0.65,
+          ingredients: recipe.ingredients.map((name, index) => ({
+            name,
+            amount: recipe.measures?.[index] || 'Included in recipe',
+            confidence: 1,
+          })),
+          matched_inventory_ids: matchedIds,
+          notes: ['Based on the saved recipe and serving estimate. Review quantities before confirming.'],
+          model: recipe.provenance === 'catalogue' ? 'catalogue_nutrition_v1' : 'private_recipe_nutrition_v1',
+          provenance: 'catalog_estimate',
+          image_path: null,
+        });
+        setDeductItems(matchedIds);
+      } catch {
+        // Recipes without complete saved nutrition can still use Nutrition Scan.
+      }
+    };
+    void loadPlannedRecipe();
+    return () => { cancelled = true; };
+  }, [plannedMeal?.planId, plannedMeal?.recipeId, plannedMeal?.title, inventory]);
 
   const processImage = useCallback((file: File) => {
     const reader = new FileReader();
@@ -178,7 +243,7 @@ export default function MealLog() {
   };
 
   const saveMealLog = async () => {
-    if (!analysis || !session?.user || !imagePath) return;
+    if (!analysis || !session?.user) return;
     setSaving(true);
     try {
       const source = isCombinedMeal ? 'cook_together' : linkedPlanId ? 'planned' : 'manual';
@@ -230,7 +295,11 @@ export default function MealLog() {
             {isCombinedMeal ? 'Log Combined Meal' : 'Log a Meal'}
           </h1>
           <p className="text-xs text-muted-foreground">
-            {isCombinedMeal ? 'Cook Together — track as one meal' : 'Snap your plate to track nutrition & usage'}
+            {isCombinedMeal
+              ? 'Cook Together — track as one meal'
+              : plannedMeal
+              ? 'Review nutrition and inventory before confirming'
+              : 'Snap your plate to track nutrition & usage'}
           </p>
         </div>
       </div>
@@ -271,7 +340,11 @@ export default function MealLog() {
           <Card className="p-6 flex flex-col items-center gap-4 border-dashed border-2 border-primary/30">
             <UtensilsCrossed className="w-12 h-12 text-primary/40" />
             <p className="text-sm text-muted-foreground text-center">
-              {isCombinedMeal ? 'Take a photo of your combined plate' : 'Take a photo of your meal or upload one'}
+              {isCombinedMeal
+                ? 'Take a photo of your combined plate'
+                : plannedMeal && analysis
+                ? 'Recipe nutrition is ready below. Add a photo only if you want a fresh estimate.'
+                : 'Take a photo of your meal or upload one'}
             </p>
             <div className="flex gap-3">
               <Button onClick={() => cameraRef.current?.click()} className="gap-2">

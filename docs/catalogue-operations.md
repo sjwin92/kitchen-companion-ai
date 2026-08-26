@@ -1,6 +1,6 @@
 # Catalogue operations
 
-The beta launches from a reviewed database catalogue, not an endless AI meal feed. The target of 300 recipes is an editorial workload and must not be represented as complete until 300 distinct content versions have a recorded human approval.
+The beta launches from a reviewed database catalogue, not an endless AI meal feed. The bootstrap launch target is 12 strong recipes across three mini-packs. Scale the catalogue only after the loop proves useful.
 
 ## Safe import flow
 
@@ -26,9 +26,9 @@ Every approved recipe version records one reviewer and all five checks:
 
 The reviewer should also verify timings, servings, storage/reheating guidance, dietary tags, image rights and every linked YouTube/audio URL. AI may help normalise draft data, but it cannot be the human reviewer or silently publish a recipe.
 
-## 300-recipe production board
+## Post-beta catalogue production board
 
-Build six useful collections of roughly 50 recipes rather than one undifferentiated list:
+Grow toward six useful collections rather than one undifferentiated list:
 
 - fast weeknights;
 - budget and batch cooking;

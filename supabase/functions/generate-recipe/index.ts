@@ -13,7 +13,12 @@ const recipeSchema = z.object({
   prep_time: z.string().min(1).max(40),
   cook_time: z.string().min(1).max(40),
   servings: z.number().int().min(1).max(12),
-  ingredients: z.array(z.string().min(1).max(180)).min(2).max(30),
+  ingredients: z.array(z.object({
+    name: z.string().min(1).max(100),
+    quantity: z.number().positive().max(10000),
+    unit: z.string().min(1).max(30),
+    optional: z.boolean(),
+  })).min(2).max(30),
   instructions: z.array(z.string().min(1).max(500)).min(1).max(20),
   pantry_items_used: z.array(z.string().min(1).max(100)).max(30),
   nutrition: z.object({
@@ -35,7 +40,19 @@ const recipeJsonSchema = {
     category: { type: "string", enum: ["breakfast", "lunch", "dinner", "snack", "dessert"] },
     cuisine: { type: "string" }, prep_time: { type: "string" }, cook_time: { type: "string" },
     servings: { type: "integer", minimum: 1, maximum: 12 },
-    ingredients: { type: "array", minItems: 2, maxItems: 30, items: { type: "string" } },
+    ingredients: {
+      type: "array", minItems: 2, maxItems: 30,
+      items: {
+        type: "object", additionalProperties: false,
+        required: ["name", "quantity", "unit", "optional"],
+        properties: {
+          name: { type: "string" },
+          quantity: { type: "number", exclusiveMinimum: 0, maximum: 10000 },
+          unit: { type: "string" },
+          optional: { type: "boolean" },
+        },
+      },
+    },
     instructions: { type: "array", minItems: 1, maxItems: 20, items: { type: "string" } },
     pantry_items_used: { type: "array", maxItems: 30, items: { type: "string" } },
     nutrition: {
@@ -192,7 +209,7 @@ Deno.serve(async (req) => {
     const text = outputText(payload);
     if (!text) throw new Error("Recipe draft returned no content");
     const recipe = recipeSchema.parse(JSON.parse(text));
-    const recipeFoods = [recipe.title, ...recipe.ingredients];
+    const recipeFoods = [recipe.title, ...recipe.ingredients.map((ingredient) => ingredient.name)];
     const dietaryConflicts = findDietaryConflicts(recipeFoods, profile.dietary_preferences ?? []);
     const allergyConflict = recipeFoods.some((food) =>
       (profile.allergies ?? []).some((allergy) => foodTextMatchesTerm(food, allergy))

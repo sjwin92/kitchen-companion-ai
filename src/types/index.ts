@@ -32,6 +32,14 @@ export interface MealSuggestion {
   category?: string;
   area?: string;
   youtubeUrl?: string;
+  servings?: number;
+  nutrition?: {
+    calories?: number;
+    protein_g?: number;
+    carbs_g?: number;
+    fat_g?: number;
+  };
+  provenance?: 'catalogue' | 'ai_assisted' | 'external';
 }
 
 export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
@@ -80,8 +88,8 @@ export interface NutritionEstimate {
   matched_inventory_ids: string[];
   notes: string[];
   model: string;
-  provenance: 'vision_estimate';
-  image_path: string;
+  provenance: 'vision_estimate' | 'catalog_estimate' | 'user_estimate';
+  image_path: string | null;
 }
 
 export interface RecipeIngredient {

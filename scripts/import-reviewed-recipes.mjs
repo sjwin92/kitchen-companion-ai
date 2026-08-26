@@ -1,14 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { createClient } from '@supabase/supabase-js';
 
-const inputPath = process.argv[2];
+const validateOnly = process.argv.includes('--validate-only');
+const inputPath = process.argv.slice(2).find(argument => argument !== '--validate-only');
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!inputPath) throw new Error('Usage: npm run catalogue:import -- path/to/catalogue.json');
-if (!supabaseUrl || !serviceRoleKey) {
-  throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required. Never expose the service-role key to Vite.');
-}
+if (!inputPath) throw new Error('Usage: npm run catalogue:validate -- path/to/catalogue.json');
 
 const payload = JSON.parse(await readFile(inputPath, 'utf8'));
 const requiredText = (value, label) => {
@@ -51,6 +49,15 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
   if (!['original', 'creator', 'user_submission', 'ai_assisted'].includes(recipe.source_type)) {
     throw new Error(`${label}.source_type is invalid`);
   }
+}
+
+if (validateOnly) {
+  console.log(`Validated ${recipes.length} recipe drafts in “${book.title}”. Human review is still required before publication.`);
+  process.exit(0);
+}
+
+if (!supabaseUrl || !serviceRoleKey) {
+  throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required. Never expose the service-role key to Vite.');
 }
 
 const supabase = createClient(supabaseUrl, serviceRoleKey, {

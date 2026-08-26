@@ -11,9 +11,6 @@ import { Clock, Check, Search, Plus, Heart, CalendarDays, Sparkles, Users, Loade
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
-import { useMealLibrary } from '@/hooks/useMealLibrary';
-import { useMealFeedback } from '@/hooks/useMealFeedback';
-import MealFeedbackPanel from '@/components/MealFeedbackPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MAX_VISIBLE_MEALS = 30;
@@ -29,11 +26,8 @@ export default function MealSuggestions() {
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { saveMeal, trackSignal } = useMealLibrary();
-  const { submitFeedback } = useMealFeedback();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
-  const [savedMealId, setSavedMealId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -121,31 +115,8 @@ export default function MealSuggestions() {
         },
       });
       if (error || data?.error) throw new Error(data?.error || 'Generation failed');
+      if (!data?.user_recipe_id) throw new Error('Recipe draft could not be saved');
       setGeneratedRecipe(data);
-      
-      // Auto-save generated meal to library
-      const entry = await saveMeal({
-        title: data.title,
-        description: data.description,
-        image: data.image || null,
-        instructions: data.instructions?.join('\n') || null,
-        ingredients: data.ingredients?.map((ing: string) => ({ name: ing })) || [],
-        nutrition: data.nutrition || {},
-        dietary_tags: data.dietary_tags || [],
-        cuisine: data.cuisine || null,
-        prep_time: data.prep_time || null,
-        source: 'generated',
-        use_soon_items_used: data.pantry_items_used || [],
-        generation_context: {
-          servings: generatorServings,
-          dietary: preferences.dietaryPreferences,
-          inventory_count: inventory.length,
-        },
-      });
-      if (entry) {
-        setSavedMealId(entry.id);
-        await trackSignal(entry.id, 'viewed');
-      }
       
       toast.success(`Generated: ${data.title}`);
     } catch (e: any) {
@@ -397,10 +368,10 @@ export default function MealSuggestions() {
               <div className="space-y-2">
                 <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Ingredients</p>
                 <div className="bg-muted/40 rounded-xl border border-border/40 p-3 space-y-1.5">
-                  {generatedRecipe.ingredients?.map((ing: string, i: number) => (
+                  {generatedRecipe.ingredients?.map((ing: string | { name: string; quantity: number; unit: string }, i: number) => (
                     <div key={i} className="flex items-start gap-2 text-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                      <span>{ing}</span>
+                      <span>{typeof ing === 'string' ? ing : `${ing.quantity} ${ing.unit} ${ing.name}`}</span>
                     </div>
                   ))}
                 </div>
@@ -462,14 +433,13 @@ export default function MealSuggestions() {
                     const dateStr = today.toISOString().split('T')[0];
                     const { error } = await supabase.from('meal_plans').insert({
                       user_id: session.user.id,
-                      recipe_id: savedMealId || generatedRecipe.title,
+                      recipe_id: generatedRecipe.user_recipe_id,
                       title: generatedRecipe.title,
                       planned_date: dateStr,
                       meal_slot: 'dinner',
                       image: generatedRecipe.image || null,
                     });
                     if (!error) {
-                      if (savedMealId) await trackSignal(savedMealId, 'planned');
                       toast.success('Added to meal plan!');
                     } else {
                       toast.error('Failed to add to plan');
@@ -481,32 +451,25 @@ export default function MealSuggestions() {
                 </Button>
                 <Button
                   size="sm"
-                  variant={isFavorite(savedMealId || generatedRecipe.title) ? 'default' : 'outline'}
+                  variant={isFavorite(generatedRecipe.user_recipe_id) ? 'default' : 'outline'}
                   className="rounded-xl text-xs gap-1.5"
                   onClick={() => {
                     toggleFavorite(
-                      savedMealId || generatedRecipe.title,
+                      generatedRecipe.user_recipe_id,
                       generatedRecipe.title,
                       generatedRecipe.image || undefined,
                       generatedRecipe.cuisine || undefined
                     );
                   }}
                 >
-                  <Heart className={`w-3.5 h-3.5 ${isFavorite(savedMealId || generatedRecipe.title) ? 'fill-current' : ''}`} />
-                  {isFavorite(savedMealId || generatedRecipe.title) ? 'Favorited' : 'Favorite'}
+                  <Heart className={`w-3.5 h-3.5 ${isFavorite(generatedRecipe.user_recipe_id) ? 'fill-current' : ''}`} />
+                  {isFavorite(generatedRecipe.user_recipe_id) ? 'Favorited' : 'Favorite'}
                 </Button>
               </div>
 
-              {/* Feedback */}
-              {savedMealId && (
-                <MealFeedbackPanel
-                  mealId={savedMealId}
-                  onSubmit={async (id, type, note) => {
-                    await submitFeedback(id, type, note);
-                    toast.success('Feedback saved!');
-                  }}
-                />
-              )}
+              <p className="text-[11px] text-muted-foreground">
+                This private AI draft is saved once to your recipes. It cannot become public without editorial review.
+              </p>
             </div>
           </DialogContent>
         </Dialog>

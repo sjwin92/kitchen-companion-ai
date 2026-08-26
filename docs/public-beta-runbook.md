@@ -1,10 +1,10 @@
 # Public beta runbook
 
-This runbook is the release gate for an invite-only beta of up to 100 adults. Staging and beta are separate Supabase projects with fresh data; the existing production projects are out of scope.
+This runbook is the release gate for a bootstrap beta. Start with five testers, expand to 25, then open the beta link after a 48-hour stability check. Staging and beta remain separate Supabase projects; legacy projects are out of scope.
 
 ## 1. Accounts and spend
 
-- Confirm the Supabase organisation and the additional monthly cost before creating projects.
+- Use the Supabase free plan while the beta remains within its limits; do not add paid infrastructure to the critical path.
 - Add OpenAI API credit and set a conservative project budget/alert. ChatGPT billing does not fund API usage.
 - Create a Sentry project and keep its data collection minimal; no meal photos, prompts, food details or account exports belong in error events.
 - Confirm a privacy/contact mailbox to use as the VAPID subject and public support address.
@@ -23,7 +23,7 @@ This runbook is the release gate for an invite-only beta of up to 100 adults. St
 
 - Import rights-cleared recipe drafts with `npm run catalogue:import -- /absolute/path/to/catalogue.json`.
 - Use `/admin/catalogue` with an account whose `app_metadata.role` is `admin` to record human reviews.
-- Do not count a recipe toward the 300 target until its exact content version has an approved `recipe_reviews` record.
+- Launch with three coherent Kitchen Companion mini-packs containing at least 12 total recipes. Do not count a recipe until its exact content version has an approved `recipe_reviews` record.
 - Create one-time, email-bound codes with `npm run beta:invite -- person@example.com 7`; share codes privately.
 - Creator content requires written permission for recipe text, images and media links. The creator pilot file is a research/approval queue, not authorisation to publish or contact.
 
@@ -47,6 +47,6 @@ Camera permission, notification permission, export download and account deletion
 
 ## 5. Rollout and stop conditions
 
-Roll out to 5 internal testers, then 25 invited testers, then at most 100. Review feedback and error/AI usage after each stage. Stop invitations for any cross-user data exposure, duplicate consumption/waste transition, broken account deletion, unexpected AI spend, nutrition presented as medical certainty, or unlicensed recipe/media publication.
+Roll out to 5 internal testers, then 25 invited testers. After 48 stable hours, open the beta link while retaining the ability to pause new invitations. Review feedback and error/AI usage after each stage. Stop invitations for any cross-user data exposure, duplicate consumption/waste transition, broken account deletion, unexpected AI spend, nutrition presented as medical certainty, or unlicensed recipe/media publication.
 
-The beta is not ready to call public until the 300-recipe editorial target is genuinely met. The software can be deployed earlier as an internal/staging pilot while that content work continues.
+The beta is ready to open when the complete kitchen loop passes, the 12 starter recipes are genuinely reviewed, and the stop conditions above are clear. A larger catalogue, creator packs, payments and direct retailer baskets are post-launch iterations.

@@ -125,6 +125,61 @@ export function catalogRecipeToMealSuggestion(recipe: CatalogRecipe): MealSugges
     category: recipe.dietaryTags[0] ?? 'Recipe',
     area: recipe.cuisineTags[0],
     youtubeUrl: recipe.youtubeUrl ?? undefined,
+    servings: recipe.servings,
+    nutrition: recipe.nutrition,
+    provenance: 'catalogue',
+  };
+}
+
+type UserRecipeRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  image_path: string | null;
+  youtube_url: string | null;
+  servings: number;
+  ingredients: unknown[];
+  instructions: string[];
+  nutrition: Record<string, number> | null;
+  provenance: 'user' | 'ai_assisted' | 'imported';
+};
+
+export async function getUserRecipe(id: string): Promise<MealSuggestion | null> {
+  const { data, error } = await db
+    .from('user_recipes')
+    .select('id,title,description,image_path,youtube_url,servings,ingredients,instructions,nutrition,provenance')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  const recipe = data as unknown as UserRecipeRow;
+  const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const ingredientNames = ingredients.map((ingredient) =>
+    typeof ingredient === 'string'
+      ? ingredient
+      : ingredient && typeof ingredient === 'object' && typeof (ingredient as { name?: unknown }).name === 'string'
+      ? String((ingredient as { name: string }).name)
+      : '',
+  ).filter(Boolean);
+  const measures = ingredients.map((ingredient) => {
+    if (!ingredient || typeof ingredient !== 'object') return '';
+    const row = ingredient as { quantity?: unknown; unit?: unknown };
+    return [row.quantity, row.unit].filter((value) => value !== null && value !== undefined && value !== '').join(' ');
+  });
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    description: recipe.description ?? '',
+    prepTime: 'Flexible',
+    ingredients: ingredientNames,
+    measures,
+    image: getRecipeMediaUrl(recipe.image_path) ?? undefined,
+    instructions: Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '',
+    youtubeUrl: recipe.youtube_url ?? undefined,
+    servings: Number(recipe.servings),
+    nutrition: recipe.nutrition ?? {},
+    provenance: recipe.provenance === 'ai_assisted' ? 'ai_assisted' : 'external',
+    category: recipe.provenance === 'ai_assisted' ? 'Private AI draft' : 'Private recipe',
   };
 }
 

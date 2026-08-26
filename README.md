@@ -51,12 +51,12 @@ Nutrition estimates show ranges, confidence and provenance and require user conf
 
 ## Public-beta gates
 
-- 300 original, human-reviewed catalogue recipes
+- 12 original, human-reviewed starter recipes across three useful mini-packs
 - cross-user RLS tests and atomic transition tests pass
 - typecheck, lint, unit, browser and production build pass
 - no critical/high production dependency advisories
 - private-image retention and account export/deletion are verified
-- staged rollout: 5 users, then 25, then 100
+- staged rollout: 5 users, then 25, then open beta after a 48-hour stability check
 
 Operational guides:
 

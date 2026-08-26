@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(45);
+select plan(47);
 
 select has_table('public', 'creators', 'creator catalogue exists');
 select has_table('public', 'recipe_books', 'recipe books exist');
@@ -12,6 +12,21 @@ select has_table('public', 'push_subscriptions', 'web push subscriptions exist')
 select has_table('public', 'notification_preferences', 'notification preferences exist');
 select has_table('public', 'recipe_reviews', 'human recipe review audit trail exists');
 select has_column('public', 'recipes', 'rights_basis', 'recipes record their publishing rights basis');
+select has_index(
+  'public',
+  'meal_log',
+  'meal_log_one_confirmation_per_plan_idx',
+  'a planned meal can only be confirmed once'
+);
+select ok(
+  not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'meal_library'
+      and policyname = 'Authenticated users can read shared meals'
+  ),
+  'legacy meal memory has no cross-user read policy'
+);
 select has_function(
   'public',
   'review_catalogue_recipe',

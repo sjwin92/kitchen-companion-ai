@@ -7,7 +7,6 @@ import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
 import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
-import { useMealLibrary } from '@/hooks/useMealLibrary';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check, UtensilsCrossed, SkipForward, Leaf } from 'lucide-react';
@@ -45,14 +44,13 @@ export default function MealPlanner() {
   const { fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
   const { generatePlan, generateSlot, generating: autoGenerating, generatingSlot, draft, clearDraft } = useAutoPlan();
-  const { saveMeal, saveBatch, trackSignal, fetchLibrary, meals } = useMealLibrary();
   const {
     draggingPlanId, dragOverTarget,
     handleDragStart, handleDragEnd, handleDragOver, handleDragLeave,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = useMealDragDrop();
 
-  useEffect(() => { fetchRatings(); fetchLibrary(); }, [fetchRatings, fetchLibrary]);
+  useEffect(() => { fetchRatings(); }, [fetchRatings]);
 
   const isGuided = preferences.planningStyle === 'help-choose';
   const isAuto = preferences.planningStyle === 'do-it-for-me';
@@ -90,12 +88,6 @@ export default function MealPlanner() {
     const success = await addPlan(recipeId, title, addDialog.date, addDialog.slot, image);
     if (success) {
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
-      // Persist to meal library
-      const entry = await saveMeal({
-        title, image, external_recipe_id: recipeId, source: 'external',
-        generation_context: { added_via: 'manual', slot: addDialog.slot },
-      });
-      if (entry) await trackSignal(entry.id, 'planned');
       toast.success(`Added ${title}`);
       setAddDialog(null);
     } else toast.error('Failed to add meal');
@@ -106,11 +98,6 @@ export default function MealPlanner() {
     const success = await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image);
     if (success) {
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
-      const entry = await saveMeal({
-        title, image, external_recipe_id: recipeId, source: 'external',
-        generation_context: { added_via: 'guided', slot: guidedSlot.slot },
-      });
-      if (entry) await trackSignal(entry.id, 'planned');
       toast.success(`Added ${title}`);
       setGuidedSlot(null);
     } else toast.error('Failed to add meal');
@@ -143,13 +130,6 @@ export default function MealPlanner() {
     const success = await batchAddPlans(resolved);
 
     if (success) {
-      await saveBatch(draft.map(meal => ({
-        title: meal.title,
-        external_recipe_id: meal.recipe_id,
-        image: meal.image,
-        source: 'external' as const,
-        generation_context: { source: 'catalogue', slot: meal.slot, date: meal.date },
-      })));
       clearDraft();
       await refetchPlans();
       toast.success(`Added ${resolved.length} catalogue meals to your plan`);
@@ -168,27 +148,6 @@ export default function MealPlanner() {
   const handleRemovePlan = async (planId: string, recipeId: string, title: string) => {
     await removePlan(planId);
     await track('meal_removed_from_plan', { recipeId, recipeTitle: title, mealPlanId: planId });
-  };
-
-  const handleStatusChange = async (planId: string, recipeId: string, title: string, newStatus: string) => {
-    const { error } = await supabase.from('meal_plans').update({ status: newStatus } as any).eq('id', planId);
-    if (!error) {
-      const eventMap: Record<string, string> = { cooked: 'meal_marked_cooked', eaten: 'meal_marked_eaten', skipped: 'meal_skipped' };
-      if (eventMap[newStatus]) await track(eventMap[newStatus] as any, { recipeId, recipeTitle: title, mealPlanId: planId });
-      
-      // Track signal in meal library for scoring
-      const libEntry = meals.find(m => m.external_recipe_id === recipeId || m.title === title);
-      if (libEntry) {
-        if (newStatus === 'cooked' || newStatus === 'eaten') {
-          await trackSignal(libEntry.id, 'cooked');
-        } else if (newStatus === 'skipped') {
-          await trackSignal(libEntry.id, 'skipped');
-        }
-      }
-      
-      await refetchPlans();
-      toast.success(newStatus === 'planned' ? 'Reset' : `Marked as ${newStatus}`);
-    }
   };
 
   const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
@@ -438,10 +397,24 @@ export default function MealPlanner() {
                                   <Star className="w-3 h-3 text-muted-foreground" />
                                 </button>
                                 <button
-                                  aria-label={`${plan.status === 'eaten' ? 'Reset' : 'Mark eaten'} ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
-                                  onClick={() => handleStatusChange(plan.id, plan.recipe_id, plan.title, plan.status === 'eaten' ? 'planned' : 'eaten')}
+                                  aria-label={`${plan.status === 'eaten' ? 'View meal log for' : 'Confirm eaten'} ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
+                                  onClick={() => {
+                                    if (plan.status === 'eaten') {
+                                      navigate('/meal-history');
+                                      return;
+                                    }
+                                    navigate('/meal-log', {
+                                      state: {
+                                        plannedMeal: {
+                                          planId: plan.id,
+                                          recipeId: plan.recipe_id,
+                                          title: plan.title,
+                                        },
+                                      },
+                                    });
+                                  }}
                                   className="p-0.5 rounded hover:bg-foreground/10"
-                                  title={plan.status === 'eaten' ? 'Reset' : 'Mark eaten'}
+                                  title={plan.status === 'eaten' ? 'View meal log' : 'Confirm eaten'}
                                 >
                                   <Check className="w-3 h-3 text-muted-foreground" />
                                 </button>

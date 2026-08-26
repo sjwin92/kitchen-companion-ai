@@ -1,20 +1,48 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useApp } from '@/context/AppContext';
+import {
+  aggregateIngredients,
+  subtractInventory,
+  type AggregatedIngredient,
+  type RequiredIngredient,
+} from '@/lib/shoppingDerivation';
 import { toast } from 'sonner';
 
-interface DerivedItem {
-  name: string;
-  quantity: string;
+interface DerivedItem extends AggregatedIngredient {
   estimatedPrice?: number;
-  fromMeals: string[];
+}
+
+type PlannedMeal = { id: string; recipe_id: string; title: string; meal_slot: string };
+const db = supabase as unknown as SupabaseClient;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function parsePrivateIngredients(recipe: { title: string; ingredients: unknown }): RequiredIngredient[] {
+  if (!Array.isArray(recipe.ingredients)) return [];
+  return recipe.ingredients.flatMap((ingredient) => {
+    if (typeof ingredient === 'string') {
+      const name = ingredient.trim();
+      return name ? [{ name, quantity: 1, mealTitle: recipe.title }] : [];
+    }
+    if (!ingredient || typeof ingredient !== 'object') return [];
+    const row = ingredient as Record<string, unknown>;
+    const name = typeof row.name === 'string' ? row.name.trim() : '';
+    if (!name) return [];
+    return [{
+      name,
+      normalizedName: typeof row.normalized_name === 'string' ? row.normalized_name : null,
+      quantity: typeof row.quantity === 'number' || typeof row.quantity === 'string' ? row.quantity : 1,
+      unit: typeof row.unit === 'string' ? row.unit : null,
+      optional: Boolean(row.optional),
+      mealTitle: recipe.title,
+    }];
+  });
 }
 
 /**
- * Derives a shopping list from a weekly meal plan by:
- * 1. Aggregating all ingredients from planned meals (meal_library or MealDB)
- * 2. Subtracting owned inventory
- * 3. Estimating cost using ingredient_prices table
+ * Builds one missing-ingredient list from the canonical recipe catalogue first,
+ * then private AI/user recipes, with legacy/MealDB fallbacks for old plans.
  */
 export function useShoppingDerivation() {
   const { inventory, session } = useApp();
@@ -27,171 +55,174 @@ export function useShoppingDerivation() {
     setDeriving(true);
 
     try {
-      // Fetch plans for current user
-      let query = supabase
+      let query = db
         .from('meal_plans')
-        .select('id, recipe_id, title, meal_slot')
+        .select('id,recipe_id,title,meal_slot')
         .eq('user_id', session.user.id)
         .eq('status', 'planned');
+      if (planIds?.length) query = query.in('id', planIds);
 
-      if (planIds?.length) {
-        query = query.in('id', planIds);
-      }
-
-      const { data: plans } = await query;
-      if (!plans || plans.length === 0) {
+      const { data: planRows, error: planError } = await query;
+      if (planError) throw planError;
+      const plans = (planRows ?? []) as PlannedMeal[];
+      if (plans.length === 0) {
         setDerivedItems([]);
         setTotalEstimate(0);
-        setDeriving(false);
         return [];
       }
 
-      // Check meal_library for ingredient data
-      const titles = plans.map(p => p.title);
-      const { data: libraryMeals } = await supabase
-        .from('meal_library')
-        .select('title, ingredients')
-        .eq('user_id', session.user.id)
-        .in('title', titles);
+      const requirements: RequiredIngredient[] = [];
+      const resolvedPlanIds = new Set<string>();
+      const uuidPlans = plans.filter((plan) => UUID_PATTERN.test(plan.recipe_id));
+      const uuidIds = [...new Set(uuidPlans.map((plan) => plan.recipe_id))];
 
-      // Build ingredient map: ingredient -> { quantity, fromMeals }
-      const ingredientMap = new Map<string, DerivedItem>();
+      if (uuidIds.length > 0) {
+        const { data: catalogueRows, error: catalogueError } = await db
+          .from('recipe_ingredients')
+          .select('recipe_id,name,normalized_name,quantity,unit,optional')
+          .in('recipe_id', uuidIds)
+          .order('position');
+        if (catalogueError) throw catalogueError;
 
-      for (const libMeal of (libraryMeals || [])) {
-        const ingredients = libMeal.ingredients as any[];
-        if (!Array.isArray(ingredients)) continue;
+        for (const row of catalogueRows ?? []) {
+          const matchingPlans = uuidPlans.filter((plan) => plan.recipe_id === row.recipe_id);
+          for (const plan of matchingPlans) {
+            resolvedPlanIds.add(plan.id);
+            requirements.push({
+              name: row.name,
+              normalizedName: row.normalized_name,
+              quantity: row.quantity === null ? null : Number(row.quantity),
+              unit: row.unit,
+              optional: Boolean(row.optional),
+              mealTitle: plan.title,
+            });
+          }
+        }
 
-        for (const ing of ingredients) {
-          const name = (typeof ing === 'string' ? ing : ing?.name || '').toLowerCase().trim();
-          if (!name) continue;
-          const qty = typeof ing === 'object' ? ing?.quantity || '1' : '1';
-
-          if (ingredientMap.has(name)) {
-            const existing = ingredientMap.get(name)!;
-            if (!existing.fromMeals.includes(libMeal.title)) {
-              existing.fromMeals.push(libMeal.title);
+        const unresolvedUuidIds = [...new Set(uuidPlans
+          .filter((plan) => !resolvedPlanIds.has(plan.id))
+          .map((plan) => plan.recipe_id))];
+        if (unresolvedUuidIds.length > 0) {
+          const { data: privateRecipes, error: privateError } = await db
+            .from('user_recipes')
+            .select('id,title,ingredients')
+            .eq('user_id', session.user.id)
+            .in('id', unresolvedUuidIds);
+          if (privateError) throw privateError;
+          for (const privateRecipe of privateRecipes ?? []) {
+            const matchingPlans = uuidPlans.filter((plan) => plan.recipe_id === privateRecipe.id);
+            for (const plan of matchingPlans) {
+              resolvedPlanIds.add(plan.id);
+              requirements.push(...parsePrivateIngredients({ title: plan.title, ingredients: privateRecipe.ingredients }));
             }
-          } else {
-            ingredientMap.set(name, { name, quantity: qty, fromMeals: [libMeal.title] });
           }
         }
       }
 
-      // For MealDB recipes not in library, fetch from proxy
+      const unresolvedPlans = plans.filter((plan) => !resolvedPlanIds.has(plan.id));
+      if (unresolvedPlans.length > 0) {
+        const titles = [...new Set(unresolvedPlans.map((plan) => plan.title))];
+        const { data: legacyMeals, error: legacyError } = await db
+          .from('meal_library')
+          .select('title,ingredients')
+          .eq('user_id', session.user.id)
+          .in('title', titles);
+        if (legacyError) throw legacyError;
+        for (const legacyMeal of legacyMeals ?? []) {
+          requirements.push(...parsePrivateIngredients(legacyMeal as { title: string; ingredients: unknown }));
+          unresolvedPlans
+            .filter((plan) => plan.title === legacyMeal.title)
+            .forEach((plan) => resolvedPlanIds.add(plan.id));
+        }
+      }
+
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-      const mealDbPlans = plans.filter(p => 
-        p.recipe_id.startsWith('mealdb-') && 
-        !(libraryMeals || []).some(lm => lm.title === p.title)
+      const mealDbPlans = plans.filter((plan) =>
+        !resolvedPlanIds.has(plan.id) && plan.recipe_id.startsWith('mealdb-'),
       );
 
       for (const plan of mealDbPlans) {
-        const mealDbId = plan.recipe_id.replace('mealdb-', '');
         try {
-          const url = `https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${encodeURIComponent(`lookup.php?i=${mealDbId}`)}`;
-          const res = await fetch(url, {
+          const mealDbId = plan.recipe_id.replace('mealdb-', '');
+          const path = encodeURIComponent(`lookup.php?i=${mealDbId}`);
+          const response = await fetch(`https://${projectId}.supabase.co/functions/v1/mealdb-proxy?path=${path}`, {
             headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
           });
-          const data = await res.json();
-          const meal = data?.meals?.[0];
+          if (!response.ok) continue;
+          const payload = await response.json();
+          const meal = payload?.meals?.[0];
           if (!meal) continue;
-
-          for (let i = 1; i <= 20; i++) {
-            const ingName = meal[`strIngredient${i}`]?.trim();
-            if (!ingName) continue;
-            const measure = meal[`strMeasure${i}`]?.trim() || '1';
-            const key = ingName.toLowerCase();
-
-            if (ingredientMap.has(key)) {
-              const existing = ingredientMap.get(key)!;
-              if (!existing.fromMeals.includes(plan.title)) {
-                existing.fromMeals.push(plan.title);
-              }
-            } else {
-              ingredientMap.set(key, { name: ingName, quantity: measure, fromMeals: [plan.title] });
-            }
+          for (let index = 1; index <= 20; index += 1) {
+            const name = meal[`strIngredient${index}`]?.trim();
+            if (!name) continue;
+            requirements.push({
+              name,
+              quantity: meal[`strMeasure${index}`]?.trim() || 1,
+              mealTitle: plan.title,
+            });
           }
-        } catch { /* skip */ }
-      }
-
-      // Subtract inventory — word-boundary match avoids "egg" matching "eggplant"
-      const normalize = (s: string) =>
-        s.toLowerCase().trim().replace(/(es|s)$/i, '').replace(/[^a-z\s]/g, ' ').trim();
-      const inventoryTokens = inventory.map(i => normalize(i.name)).filter(Boolean);
-      const missing: DerivedItem[] = [];
-      for (const [key, item] of ingredientMap) {
-        const kn = normalize(key);
-        const knWords = new Set(kn.split(/\s+/).filter(Boolean));
-        const owned = inventoryTokens.some(inv => {
-          if (!inv) return false;
-          // exact token match either direction
-          const invWords = inv.split(/\s+/).filter(Boolean);
-          return invWords.every(w => knWords.has(w)) || knWords.size > 0 && [...knWords].every(w => invWords.includes(w));
-        });
-        if (!owned) missing.push(item);
-      }
-
-      // Fetch price estimates
-      if (missing.length > 0) {
-        const { data: prices } = await supabase
-          .from('ingredient_prices')
-          .select('ingredient_name, estimated_price_gbp')
-          .in('ingredient_name', missing.map(m => m.name.toLowerCase()));
-
-        const priceMap = new Map((prices || []).map((p: any) => [p.ingredient_name, p.estimated_price_gbp]));
-
-        for (const item of missing) {
-          item.estimatedPrice = priceMap.get(item.name.toLowerCase()) as number | undefined;
+        } catch {
+          // Keep successfully resolved recipes when a legacy provider is unavailable.
         }
+      }
 
-        setTotalEstimate(missing.reduce((sum, m) => sum + (m.estimatedPrice || 0), 0));
+      const missing = subtractInventory(
+        aggregateIngredients(requirements),
+        inventory.map((item) => item.name),
+      ) as DerivedItem[];
+
+      if (missing.length > 0) {
+        const { data: prices } = await db
+          .from('ingredient_prices')
+          .select('ingredient_name,estimated_price_gbp')
+          .in('ingredient_name', missing.map((item) => item.normalizedName));
+        const priceMap = new Map((prices ?? []).map((price) => [
+          String(price.ingredient_name).toLowerCase(),
+          Number(price.estimated_price_gbp),
+        ]));
+        for (const item of missing) item.estimatedPrice = priceMap.get(item.normalizedName);
       }
 
       setDerivedItems(missing);
-      setDeriving(false);
+      setTotalEstimate(missing.reduce((total, item) => total + (item.estimatedPrice || 0), 0));
       return missing;
-    } catch (err) {
-      console.error('Shopping derivation failed:', err);
-      setDeriving(false);
+    } catch (error) {
+      console.error('Shopping derivation failed', error);
+      setDerivedItems([]);
+      setTotalEstimate(0);
+      toast.error('Could not build the shopping list from this plan. Please try again.');
       return [];
+    } finally {
+      setDeriving(false);
     }
-  }, [session, inventory]);
+  }, [session?.user, inventory]);
 
   const addDerivedToShoppingList = useCallback(async () => {
     if (!session?.user || derivedItems.length === 0) return;
-
-    const { data: existing } = await supabase
+    const { data: existing } = await db
       .from('shopping_list')
       .select('name')
       .eq('user_id', session.user.id)
       .eq('checked', false);
-
-    const existingNames = new Set((existing || []).map(e => e.name.toLowerCase()));
-    const toAdd = derivedItems.filter(d => !existingNames.has(d.name.toLowerCase()));
-
+    const existingNames = new Set((existing ?? []).map((item) => String(item.name).toLowerCase()));
+    const toAdd = derivedItems.filter((item) => !existingNames.has(item.name.toLowerCase()));
     if (toAdd.length === 0) {
-      toast.info('All items already on your shopping list');
+      toast.info('All items are already on your shopping list');
       return;
     }
 
-    const rows = toAdd.map(d => ({
+    const { error } = await db.from('shopping_list').insert(toAdd.map((item) => ({
       user_id: session.user.id,
-      name: d.name,
-      quantity: d.quantity,
-    }));
-
-    const { error } = await supabase.from('shopping_list').insert(rows);
-    if (!error) {
-      toast.success(`Added ${toAdd.length} items to shopping list`);
+      name: item.name,
+      quantity: item.quantity,
+    })));
+    if (error) {
+      toast.error('Could not update your shopping list');
+      return;
     }
-  }, [session, derivedItems]);
+    toast.success(`Added ${toAdd.length} item${toAdd.length === 1 ? '' : 's'} to your shopping list`);
+  }, [session?.user, derivedItems]);
 
-  return {
-    derivedItems,
-    totalEstimate,
-    deriving,
-    deriveFromPlans,
-    addDerivedToShoppingList,
-  };
+  return { derivedItems, totalEstimate, deriving, deriveFromPlans, addDerivedToShoppingList };
 }
