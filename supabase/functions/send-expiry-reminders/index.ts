@@ -12,8 +12,9 @@ function localParts(timezone: string) {
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  const cronSecret = Deno.env.get("REMINDER_CRON_SECRET");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!serviceRoleKey || req.headers.get("authorization") !== `Bearer ${serviceRoleKey}`) {
+  if (!cronSecret || req.headers.get("authorization") !== `Bearer ${cronSecret}`) {
     return new Response("Unauthorized", { status: 401 });
   }
   const supabaseUrl = Deno.env.get("SUPABASE_URL");

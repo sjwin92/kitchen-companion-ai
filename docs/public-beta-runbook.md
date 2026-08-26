@@ -17,7 +17,7 @@ This runbook is the release gate for a bootstrap beta. Start with five testers, 
 4. Deploy `scan-receipt`, `scan-expiry`, `product-info`, `reconcile-receipt`, `generate-recipe`, `log-meal`, `send-expiry-reminders` and `delete-account`.
 5. Deploy the web app to its staging Vercel URL with `VITE_SUPABASE_PROJECT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_VAPID_PUBLIC_KEY` and `VITE_SENTRY_DSN`.
 6. Set `ALLOWED_ORIGINS` to the exact staging origin. Do not use `*`.
-7. Schedule `send-expiry-reminders` hourly using a secret `Authorization: Bearer <service-role-key>` header. The job also removes private meal photos after their 90-day deadline.
+7. Keep the committed `expiry-reminders` GitHub Action enabled. It calls `send-expiry-reminders` hourly with a dedicated `REMINDER_CRON_SECRET`; never copy the service-role key to GitHub. The job also removes private meal photos after their 90-day deadline.
 
 ## 3. Catalogue and invitations
 
