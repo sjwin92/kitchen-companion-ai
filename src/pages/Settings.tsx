@@ -493,6 +493,11 @@ export default function Settings() {
               {privacyAction === 'delete' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
               Delete account
             </Button>
+            <div className="grid grid-cols-3 gap-2 border-t border-border/50 pt-3 text-center text-xs">
+              <button onClick={() => navigate('/privacy')} className="rounded-lg py-2 text-muted-foreground hover:bg-muted hover:text-foreground">Privacy</button>
+              <button onClick={() => navigate('/terms')} className="rounded-lg py-2 text-muted-foreground hover:bg-muted hover:text-foreground">Terms</button>
+              <button onClick={() => navigate('/support')} className="rounded-lg py-2 text-muted-foreground hover:bg-muted hover:text-foreground">Support</button>
+            </div>
           </div>
 
           {/* Sign out */}

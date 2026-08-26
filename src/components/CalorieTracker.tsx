@@ -40,7 +40,7 @@ interface PlannedMeal {
   image: string | null;
 }
 
-export default function CalorieTracker({ prominent = false }: { prominent?: boolean }) {
+export default function CalorieTracker({ prominent = false, compact = false }: { prominent?: boolean; compact?: boolean }) {
   const { session, preferences, setPreferences } = useApp();
   const userId = session?.user?.id;
   const navigate = useNavigate();
@@ -102,6 +102,31 @@ export default function CalorieTracker({ prominent = false }: { prominent?: bool
 
   const progress = calorieGoal > 0 ? Math.min((totals.calories / calorieGoal) * 100, 100) : 0;
   const remaining = Math.max(calorieGoal - totals.calories, 0);
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        onClick={() => navigate('/meal-log')}
+        className="min-h-[170px] rounded-[1.6rem] bg-[#e9e4da] p-5 text-left text-[#173d32] shadow-[0_15px_40px_rgba(23,61,50,0.08)] transition-transform hover:-translate-y-0.5"
+      >
+        <div className="mb-8 flex items-center justify-between">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/65">
+            <Flame className="h-4 w-4" />
+          </span>
+          <ChevronRight className="h-4 w-4 text-[#173d32]/45" />
+        </div>
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#173d32]/55">Today’s calories</p>
+        <div className="mt-1 flex items-baseline gap-1.5">
+          <p className="text-3xl font-semibold tracking-[-0.04em]">{totals.calories.toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#173d32]/55">of {calorieGoal.toLocaleString()}</p>
+        </div>
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/55">
+          <div className="h-full rounded-full bg-[#173d32] transition-all duration-700" style={{ width: `${progress}%` }} />
+        </div>
+      </button>
+    );
+  }
 
   // SVG ring params
   const size = 140;

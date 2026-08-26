@@ -38,12 +38,11 @@ import {
 } from '@/components/ui/sheet';
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Home' },
-  { to: '/inventory', label: 'Inventory' },
-  { to: '/meals', label: 'Recipes' },
+  { to: '/', label: 'Today' },
+  { to: '/inventory', label: 'Pantry' },
+  { to: '/meals', label: 'Library' },
   { to: '/meal-planner', label: 'Plan' },
   { to: '/shopping-list', label: 'Shop' },
-  { to: '/settings', label: 'Settings' },
 ];
 
 const KITCHEN_LOOP = [
@@ -93,12 +92,12 @@ export default function TopNav() {
   };
 
   return (
-    <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-[hsl(160_12%_20%)] text-white">
+    <header className="fixed left-0 right-0 top-0 z-50 hidden border-b border-border/60 bg-[#fffdf9]/92 text-[#173d32] backdrop-blur-xl md:block">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <button aria-label="Open kitchen menu" className="p-1.5 rounded hover:bg-white/10 transition-colors">
+              <button aria-label="Open kitchen menu" className="rounded p-1.5 transition-colors hover:bg-[#173d32]/5">
                 <Menu className="w-5 h-5" />
               </button>
             </SheetTrigger>
@@ -147,8 +146,8 @@ export default function TopNav() {
               className={({ isActive }) =>
                 `px-4 py-1.5 text-[10px] font-bold tracking-[0.14em] uppercase rounded-md transition-all ${
                   isActive
-                    ? 'border border-white/30 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/8'
+                    ? 'bg-[#173d32] text-white'
+                    : 'text-[#173d32]/55 hover:bg-[#173d32]/5 hover:text-[#173d32]'
                 }`
               }
             >
@@ -161,7 +160,7 @@ export default function TopNav() {
           <button
             aria-label="Search Kitchen Companion"
             onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[#173d32]/55 transition-colors hover:bg-[#173d32]/5 hover:text-[#173d32]"
           >
             <Search className="w-4 h-4" />
             <span className="hidden xl:inline text-[9px] font-bold tracking-wider">⌘K</span>
@@ -169,9 +168,9 @@ export default function TopNav() {
           <NavLink
             to="/settings"
             aria-label="Open account settings"
-            className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center overflow-hidden hover:bg-white/25 transition-colors"
+            className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-[#d7c3aa] transition-colors hover:bg-[#cdb494]"
           >
-            <User className="w-4 h-4 text-white/70" />
+            <User className="h-4 w-4 text-[#173d32]/70" />
           </NavLink>
         </div>
       </div>

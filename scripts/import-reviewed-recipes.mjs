@@ -179,7 +179,9 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
     source_label: recipe.source_label ?? (recipe.source_type === 'creator' ? creator.display_name : 'Kitchen Companion'),
     media_attribution: recipe.media_attribution ?? {},
     nutrition_provenance: recipe.nutrition_provenance ?? (Object.keys(recipe.nutrition ?? {}).length > 0 ? 'estimated' : 'unavailable'),
-    verification_tier: 'editorial_reviewed',
+    // A draft is not verified. The guarded review RPC assigns a tier only
+    // after the human checklist succeeds and the recipe is published.
+    verification_tier: null,
     dedupe_hash: dedupeHash,
     content_version: Number(recipe.content_version ?? 1),
     review_status: 'draft',

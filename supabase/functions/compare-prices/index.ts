@@ -1,9 +1,18 @@
 import { z } from "npm:zod@3.25.76";
 import { authenticate, errorResponse, guardRequest, HttpError, json } from "../_shared/kitchen-ai.ts";
 
-const requestSchema = z.object({
-  ingredients: z.array(z.string().trim().min(1).max(120)).min(1).max(40),
-});
+const requestSchema = z.union([
+  z.object({
+    ingredients: z.array(z.string().trim().min(1).max(120)).min(1).max(40),
+  }).strict(),
+  z.object({
+    items: z.array(z.object({
+      name: z.string().trim().min(1).max(120),
+      quantity: z.number().finite().positive(),
+      unit: z.enum(['g', 'kg', 'ml', 'cl', 'l', 'each']),
+    }).strict()).min(1).max(40),
+  }).strict(),
+]);
 
 const basketItemSchema = z.object({
   ingredient: z.string().min(1).max(120),
@@ -79,14 +88,19 @@ Deno.serve(async (req) => {
 
   try {
     await authenticate(req);
-    const { ingredients } = requestSchema.parse(await req.json());
+    const requestBody = requestSchema.parse(await req.json());
     const seenIngredients = new Set<string>();
-    const uniqueIngredients = ingredients.filter(value => {
-      const key = value.toLocaleLowerCase();
-      if (seenIngredients.has(key)) return false;
-      seenIngredients.add(key);
-      return true;
-    });
+    const providerBody = 'ingredients' in requestBody
+      ? {
+          ingredients: requestBody.ingredients.filter(value => {
+            const key = value.toLocaleLowerCase();
+            if (seenIngredients.has(key)) return false;
+            seenIngredients.add(key);
+            return true;
+          }),
+        }
+      : { items: requestBody.items };
+    const requestedCount = 'ingredients' in providerBody ? providerBody.ingredients.length : providerBody.items.length;
     const pricingApiUrl = Deno.env.get("PRICING_API_URL") ?? Deno.env.get("VITE_PRICING_API_URL");
     if (!pricingApiUrl) throw new HttpError(503, "Live supermarket prices are temporarily unavailable");
 
@@ -99,7 +113,7 @@ Deno.serve(async (req) => {
         method: "POST",
         signal: controller.signal,
         headers: providerHeaders(),
-        body: JSON.stringify({ ingredients: uniqueIngredients }),
+        body: JSON.stringify(providerBody),
       });
     } finally {
       clearTimeout(timeout);
@@ -128,7 +142,7 @@ Deno.serve(async (req) => {
         })),
         not_found: basket.not_found,
         matched_count: basket.matched_count ?? basket.items.length,
-        requested_count: basket.requested_count ?? uniqueIngredients.length,
+        requested_count: basket.requested_count ?? requestedCount,
         is_complete: basket.is_complete,
         availability: basket.availability,
         total_is_comparable: basket.total_is_comparable,

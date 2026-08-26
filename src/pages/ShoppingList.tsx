@@ -297,7 +297,7 @@ export default function ShoppingList() {
           {/* Retailer price comparison */}
           {baskets.length === 0 && !comparingPrices && (
             <button
-              onClick={() => compare(unchecked.map(i => i.name))}
+              onClick={() => compare(unchecked.map(i => ({ name: i.name, quantity: i.quantity })))}
               className="w-full glass-card p-4 flex items-center gap-3 hover:bg-surface-low/60 transition-colors text-left"
             >
               <div className="icon-container bg-muted shrink-0">
@@ -325,7 +325,7 @@ export default function ShoppingList() {
           {compareError && !comparingPrices && (
             <div className="glass-card p-4 text-xs text-muted-foreground">
               {compareError} —{' '}
-              <button className="underline" onClick={() => compare(unchecked.map(i => i.name))}>
+              <button className="underline" onClick={() => compare(unchecked.map(i => ({ name: i.name, quantity: i.quantity })))}>
                 retry
               </button>
             </div>

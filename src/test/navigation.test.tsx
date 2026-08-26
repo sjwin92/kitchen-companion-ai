@@ -9,10 +9,10 @@ function LocationProbe() {
 }
 
 describe('app navigation', () => {
-  it('opens recipe discovery from the primary Recipes destination', () => {
+  it('opens recipe discovery from the primary Library destination', () => {
     render(<MemoryRouter><TopNav /></MemoryRouter>);
 
-    expect(screen.getByRole('link', { name: 'Recipes' })).toHaveAttribute('href', '/meals');
+    expect(screen.getByRole('link', { name: 'Library' })).toHaveAttribute('href', '/meals');
     expect(screen.getByRole('link', { name: 'Open account settings' })).toHaveAttribute('href', '/settings');
   });
 

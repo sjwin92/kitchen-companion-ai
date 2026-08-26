@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Loader2, ChefHat } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { appUrl } from '@/lib/appUrls';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -43,7 +45,7 @@ export default function Auth() {
       return;
     }
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: appUrl('reset-password'),
     });
     if (error) toast.error(error.message);
     else toast.success('Password reset email sent');
@@ -124,6 +126,11 @@ export default function Auth() {
             {isLogin ? 'Sign Up' : 'Sign In'}
           </button>
         </p>
+        <nav aria-label="Legal and support" className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+          <Link to="/privacy" className="hover:text-primary">Privacy</Link>
+          <Link to="/terms" className="hover:text-primary">Terms</Link>
+          <Link to="/support" className="hover:text-primary">Support</Link>
+        </nav>
       </div>
     </div>
   );

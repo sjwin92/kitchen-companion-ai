@@ -32,6 +32,26 @@ export interface RetailerBasket {
   }>;
 }
 
+export interface BasketCompareInput {
+  name: string;
+  quantity: string;
+}
+
+const SUPPORTED_UNITS = new Set(['g', 'kg', 'ml', 'cl', 'l', 'each']);
+
+function comparisonBody(inputs: Array<string | BasketCompareInput>) {
+  if (inputs.every(input => typeof input !== 'string')) {
+    const structured = inputs.map(input => {
+      const match = input.quantity.trim().toLowerCase().match(/^(\d+(?:\.\d+)?)\s*(g|kg|ml|cl|l|each)$/);
+      return match ? { name: input.name, quantity: Number(match[1]), unit: match[2] } : null;
+    });
+    if (structured.every((item): item is { name: string; quantity: number; unit: string } =>
+      item !== null && item.quantity > 0 && SUPPORTED_UNITS.has(item.unit)
+    )) return { items: structured };
+  }
+  return { ingredients: inputs.map(input => typeof input === 'string' ? input : input.name) };
+}
+
 function isBasketItem(value: unknown): value is BasketItem {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
@@ -110,14 +130,14 @@ export function useBasketCompare() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const compare = useCallback(async (ingredients: string[]) => {
+  const compare = useCallback(async (ingredients: Array<string | BasketCompareInput>) => {
     if (ingredients.length === 0) return;
 
     setLoading(true);
     setError(null);
     try {
       const { data, error: invokeError } = await supabase.functions.invoke('compare-prices', {
-        body: { ingredients },
+        body: comparisonBody(ingredients),
       });
       if (invokeError) {
         setError(await functionErrorMessage(invokeError));

@@ -61,11 +61,12 @@ test('connects the dashboard loop, menu and search to real destinations', async 
   });
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'One connected routine' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Add food/ })).toHaveAttribute('href', '/add-food');
-  await expect(page.getByRole('link', { name: /Buy missing/ })).toHaveAttribute('href', '/shopping-list');
-  await expect(page.getByRole('link', { name: /Record/ })).toHaveAttribute('href', '/record');
-  await page.getByRole('link', { name: /Record/ }).click();
+  await expect(page.getByRole('heading', { name: 'What’s happening in your kitchen today?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Open kitchen menu' }).click();
+  await expect(page.getByRole('button', { name: /Add food/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Buy missing items/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Record the outcome/ })).toBeVisible();
+  await page.getByRole('button', { name: /Record the outcome/ }).click();
   await expect(page.getByRole('heading', { name: 'What happened to the food?' })).toBeVisible();
   await expect(page.getByRole('link', { name: /We ate it/ })).toHaveAttribute('href', '/meal-log');
   await expect(page.getByRole('link', { name: /It was wasted/ })).toHaveAttribute('href', '/waste');
@@ -87,4 +88,13 @@ test('connects the dashboard loop, menu and search to real destinations', async 
   await expect(page.getByRole('heading', { name: 'Cook from what you have' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'The first recipe packs are in review' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Recipe lab' })).toBeVisible();
+});
+
+test('makes beta privacy, terms and support information public before sign-in', async ({ page }) => {
+  await page.goto('/privacy');
+  await expect(page.getByRole('heading', { name: 'Privacy notice' })).toBeVisible();
+  await page.goto('/terms');
+  await expect(page.getByRole('heading', { name: 'Terms of use' })).toBeVisible();
+  await page.goto('/support');
+  await expect(page.getByRole('heading', { name: 'Support' })).toBeVisible();
 });

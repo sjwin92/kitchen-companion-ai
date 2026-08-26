@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Leaf } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RecipeArtworkProps {
@@ -8,31 +9,12 @@ interface RecipeArtworkProps {
   imageClassName?: string;
 }
 
-const FALLBACKS = [
-  'from-[#e7d9c8] to-[#c9d6c0]',
-  'from-[#d9dfce] to-[#b9cbbd]',
-  'from-[#ead8c8] to-[#d7c2a7]',
-  'from-[#d9d5c9] to-[#c5d2c0]',
-];
-
-function recipeEmoji(title: string) {
-  const value = title.toLowerCase();
-  if (/(oat|breakfast|porridge)/.test(value)) return '🥣';
-  if (/(pasta|orzo|noodle)/.test(value)) return '🍝';
-  if (/(soup|dal|stew|curry)/.test(value)) return '🍲';
-  if (/(taco|wrap)/.test(value)) return '🌮';
-  if (/(rice|risotto)/.test(value)) return '🍚';
-  if (/(salad|bowl|greens)/.test(value)) return '🥗';
-  return '🍽️';
-}
-
 export default function RecipeArtwork({ title, image, className, imageClassName }: RecipeArtworkProps) {
   const [failed, setFailed] = useState(false);
-  const palette = FALLBACKS[title.length % FALLBACKS.length];
 
   if (image && !failed) {
     return (
-      <div className={cn('overflow-hidden bg-muted', className)}>
+      <div className={cn('overflow-hidden bg-[#e9e4da]', className)}>
         <img
           src={image}
           alt={title}
@@ -47,13 +29,18 @@ export default function RecipeArtwork({ title, image, className, imageClassName 
 
   return (
     <div
-      className={cn('relative overflow-hidden bg-gradient-to-br', palette, className)}
+      className={cn('relative flex overflow-hidden bg-[#173d32] text-white', className)}
       role="img"
-      aria-label={`${title} illustration`}
+      aria-label={`${title}; photography not yet available`}
     >
-      <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full border border-white/40 bg-white/20" />
-      <div className="absolute -bottom-10 -left-8 h-32 w-32 rounded-full border border-white/30 bg-white/10" />
-      <span className="relative text-4xl drop-shadow-sm" aria-hidden="true">{recipeEmoji(title)}</span>
+      <div className="absolute left-[12%] top-[15%] h-[70%] w-[70%] rounded-full border border-white/15 bg-[#f3eee4]/95 shadow-[0_22px_50px_rgba(5,25,20,0.25)]" />
+      <div className="absolute left-[28%] top-[31%] flex h-[38%] w-[38%] items-center justify-center rounded-full border border-[#173d32]/10 bg-[#d9c8a8] text-[#173d32] shadow-inner">
+        <Leaf className="h-7 w-7 opacity-70" strokeWidth={1.5} />
+      </div>
+      <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3">
+        <p className="max-w-[75%] text-xs font-semibold leading-tight text-white/90">{title}</p>
+        <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-white/50">Image pending</span>
+      </div>
     </div>
   );
 }

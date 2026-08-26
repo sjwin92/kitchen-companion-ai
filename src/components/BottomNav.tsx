@@ -1,55 +1,42 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Package, Plus, ShoppingCart, CalendarDays, BookOpen } from 'lucide-react';
+import { BookOpen, CalendarDays, Home, Package, Plus } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/', icon: Home, label: 'Home' },
-  { to: '/inventory', icon: Package, label: 'Inventory' },
-  { to: '/meals', icon: BookOpen, label: 'Recipes' },
+  { to: '/', icon: Home, label: 'Today' },
+  { to: '/inventory', icon: Package, label: 'Pantry' },
+  { to: '/add-food', icon: Plus, label: 'Capture', primary: true },
+  { to: '/meals', icon: BookOpen, label: 'Library' },
   { to: '/meal-planner', icon: CalendarDays, label: 'Plan' },
-  { to: '/shopping-list', icon: ShoppingCart, label: 'Shop' },
 ];
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="max-w-lg mx-auto px-3 pb-1">
-        <div
-          className="flex items-end rounded-t-xl border border-b-0 border-border/40"
-          style={{
-            background: 'hsl(var(--card))',
-            backdropFilter: 'blur(20px) saturate(1.6)',
-            boxShadow: '0 -2px 16px -4px hsl(var(--foreground) / 0.06)',
-          }}
-        >
-          {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex-1 flex flex-col items-center gap-0.5 py-3 transition-all duration-200 ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <div className="relative">
-                    <Icon className={`w-[18px] h-[18px] transition-all duration-200 ${isActive ? 'scale-110' : ''}`} />
-                    {isActive && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />}
-                  </div>
-                  <span className="text-[9px] font-bold tracking-wide uppercase">{label}</span>
-                </>
-              )}
-            </NavLink>
-          ))}
-        </div>
+    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.55rem,env(safe-area-inset-bottom))] md:hidden" aria-label="Primary navigation">
+      <div className="mx-auto flex max-w-md items-end rounded-[1.55rem] border border-white/70 bg-[#fffdf9]/95 px-1.5 py-1.5 shadow-[0_18px_55px_rgba(24,53,44,0.2)] backdrop-blur-xl">
+        {NAV_ITEMS.map(({ to, icon: Icon, label, primary }) => (
+          <NavLink
+            key={to}
+            to={to}
+            aria-label={primary ? 'Capture food' : label}
+            className={({ isActive }) =>
+              `flex min-w-0 flex-1 flex-col items-center justify-end gap-1 rounded-[1.15rem] py-2 text-[9px] font-bold tracking-[0.05em] transition-colors ${
+                primary
+                  ? 'mx-0.5 bg-[#173d32] text-white shadow-[0_8px_22px_rgba(23,61,50,0.24)]'
+                  : isActive
+                    ? 'text-[#173d32]'
+                    : 'text-[#7f8883] hover:text-[#173d32]'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon className={`${primary ? 'h-5 w-5' : 'h-[18px] w-[18px]'} ${isActive && !primary ? 'stroke-[2.4]' : ''}`} />
+                <span className="truncate">{label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
       </div>
-      <NavLink
-        to="/add-food"
-        aria-label="Add or scan food"
-        className="fixed right-4 bottom-20 w-12 h-12 rounded-2xl text-primary-foreground flex items-center justify-center active:scale-90 transition-transform"
-        style={{ background: 'var(--gradient-primary)', boxShadow: 'var(--shadow-glow-primary)' }}
-      >
-        <Plus className="w-5 h-5" />
-      </NavLink>
     </nav>
   );
 }

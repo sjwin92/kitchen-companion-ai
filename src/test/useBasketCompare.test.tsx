@@ -70,4 +70,30 @@ describe('useBasketCompare', () => {
     await waitFor(() => expect(result.current.error).toBe('Live supermarket prices are temporarily unavailable'));
     expect(result.current.baskets).toEqual([]);
   });
+
+  it('uses quantity-aware pricing only when every shopping quantity has a supported unit', async () => {
+    invoke.mockResolvedValue({ data: response, error: null });
+    const { result } = renderHook(() => useBasketCompare());
+
+    await act(() => result.current.compare([
+      { name: 'oats', quantity: '500 g' },
+      { name: 'milk', quantity: '1 l' },
+    ]));
+
+    expect(invoke).toHaveBeenCalledWith('compare-prices', {
+      body: { items: [
+        { name: 'oats', quantity: 500, unit: 'g' },
+        { name: 'milk', quantity: 1, unit: 'l' },
+      ] },
+    });
+  });
+
+  it('falls back to name comparison when a quantity cannot be proved', async () => {
+    invoke.mockResolvedValue({ data: response, error: null });
+    const { result } = renderHook(() => useBasketCompare());
+
+    await act(() => result.current.compare([{ name: 'oats', quantity: 'a handful' }]));
+
+    expect(invoke).toHaveBeenCalledWith('compare-prices', { body: { ingredients: ['oats'] } });
+  });
 });

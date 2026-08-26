@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
 import { z } from "npm:zod@3.25.76";
 import { findDietaryConflicts, foodTextMatchesTerm } from "../_shared/dietary-rules.ts";
-import { structuredResponse } from "../_shared/kitchen-ai.ts";
+import { HttpError, structuredResponse } from "../_shared/kitchen-ai.ts";
 
 const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
 
@@ -216,6 +216,6 @@ Deno.serve(async (req) => {
       ? error.message
       : "Recipe drafting failed";
     console.error("Recipe drafting error", { message });
-    return json(req, { error: message }, 500);
+    return json(req, { error: message }, error instanceof HttpError ? error.status : 500);
   }
 });

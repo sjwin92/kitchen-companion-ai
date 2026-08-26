@@ -5,6 +5,7 @@
  * - Surfaces friendly toasts for 429 (rate limit) and 402 (credits)
  */
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -42,13 +43,15 @@ export async function callEdge<T = any>(
     let lastErr: unknown;
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session?.access_token) throw new Error('authentication_required');
         const res = await fetch(
           `https://${PROJECT_ID}.supabase.co/functions/v1/${fnName}`,
           {
             method: 'POST',
             headers: {
               apikey: ANON_KEY,
-              Authorization: `Bearer ${ANON_KEY}`,
+              Authorization: `Bearer ${session.access_token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),

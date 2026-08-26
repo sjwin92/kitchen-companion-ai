@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --background: 100 6% 97%;
-    --foreground: 160 12% 20%;
+    --background: 42 29% 96%;
+    --foreground: 157 36% 16%;
 
     --card: 0 0% 100%;
     --card-foreground: 160 12% 20%;
@@ -15,26 +15,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 160 12% 20%;
 
-    --primary: 138 10% 33%;
+    --primary: 158 49% 16%;
     --primary-foreground: 120 40% 96%;
 
     --secondary: 100 3% 37%;
     --secondary-foreground: 80 10% 96%;
 
-    --muted: 100 6% 93%;
-    --muted-foreground: 160 5% 45%;
+    --muted: 40 20% 91%;
+    --muted-foreground: 157 8% 43%;
 
-    --accent: 138 10% 33%;
+    --accent: 158 49% 16%;
     --accent-foreground: 120 40% 96%;
 
     --destructive: 14 57% 40%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 100 6% 88%;
-    --input: 100 6% 84%;
-    --ring: 138 10% 33%;
+    --border: 40 16% 86%;
+    --input: 40 16% 81%;
+    --ring: 158 49% 16%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     --warning: 38 80% 50%;
     --warning-foreground: 0 0% 100%;
@@ -52,8 +52,8 @@
     --outline-variant: 160 4% 69%;
 
     /* Gradient tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(138 10% 33% / 0.04) 0%, hsl(100 6% 97%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(138 10% 33%), hsl(138 14% 40%));
+    --gradient-hero: linear-gradient(145deg, hsl(42 29% 97%) 0%, hsl(38 24% 94%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(158 49% 16%), hsl(157 37% 24%));
     --gradient-warm: linear-gradient(135deg, hsl(35 40% 52% / 0.08), hsl(100 6% 97%));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(100 6% 98%));
 
@@ -136,6 +136,7 @@
     background-image: var(--gradient-hero);
     background-attachment: fixed;
     min-height: 100vh;
+    letter-spacing: -0.005em;
   }
 
   html {

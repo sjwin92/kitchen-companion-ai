@@ -36,6 +36,7 @@ const RecipeBookDetail = lazy(() => import("@/pages/RecipeBookDetail"));
 const CatalogueReview = lazy(() => import("@/pages/CatalogueReview"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const PublicInformation = lazy(() => import("@/pages/PublicInformation"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +73,16 @@ function AppContent() {
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <ResetPassword />
+        </Suspense>
+      </ErrorBoundary>
+    );
+  }
+
+  if (["/privacy", "/terms", "/support"].some(path => window.location.pathname.endsWith(path))) {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<RouteFallback />}>
+          <PublicInformation />
         </Suspense>
       </ErrorBoundary>
     );

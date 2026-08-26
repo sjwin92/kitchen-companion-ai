@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { getCatalogForSlot } from '@/data/mealCatalog';
 import { searchRecipes } from '@/services/recipes/recipeProvider';
+import { listRecommendedCatalogRecipes } from '@/services/betaCatalog';
+import type { CatalogRecipe } from '@/types';
 
 interface AddMealDialogProps {
   addDialog: { date: Date; slot: MealSlot } | null;
@@ -56,6 +57,8 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
   const [searching, setSearching] = useState(false);
   const [customName, setCustomName] = useState('');
   const [catalogFilter, setCatalogFilter] = useState('');
+  const [catalogRecipes, setCatalogRecipes] = useState<CatalogRecipe[]>([]);
+  const [loadingCatalog, setLoadingCatalog] = useState(false);
 
   const slot = addDialog?.slot ?? 'dinner';
 
@@ -78,16 +81,41 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     return inventoryItems.filter(i => i.name.toLowerCase().includes(q));
   }, [inventoryItems, customName]);
 
-  // Catalog items filtered by slot + search + dietary preferences
-  const catalogGroups = useMemo(() => {
-    const groups = getCatalogForSlot(slot, catalogFilter);
-    return groups.map(group => ({
-      ...group,
-      items: group.items.filter(item =>
-        passesUserDietaryFilters(item.name, [], preferences)
-      ),
-    })).filter(group => group.items.length > 0);
-  }, [slot, catalogFilter, preferences]);
+  const filteredCatalogRecipes = useMemo(() => {
+    const query = catalogFilter.trim().toLowerCase();
+    return catalogRecipes.filter(recipe => {
+      const mealTypes = recipe.mealTypes.map(type => type.toLowerCase());
+      const matchesMealSlot = mealTypes.length === 0
+        || mealTypes.includes(slot)
+        || (slot === 'lunchbox' && (mealTypes.includes('lunch') || mealTypes.includes('snack')));
+      const matchesQuery = !query
+        || recipe.title.toLowerCase().includes(query)
+        || recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(query));
+      return matchesMealSlot
+        && matchesQuery
+        && passesUserDietaryFilters(recipe.title, recipe.ingredients.map(ingredient => ingredient.name), preferences);
+    });
+  }, [catalogRecipes, catalogFilter, preferences, slot]);
+
+  useEffect(() => {
+    if (!addDialog) return;
+    let active = true;
+    setLoadingCatalog(true);
+    listRecommendedCatalogRecipes({ limit: 100 })
+      .then(recommendations => {
+        if (active) setCatalogRecipes(recommendations.map(item => item.recipe));
+      })
+      .catch(() => {
+        if (active) {
+          setCatalogRecipes([]);
+          toast.error('Reviewed catalogue recommendations are unavailable');
+        }
+      })
+      .finally(() => {
+        if (active) setLoadingCatalog(false);
+      });
+    return () => { active = false; };
+  }, [addDialog]);
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -133,8 +161,8 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
     setCustomName('');
   };
 
-  const handlePickCatalogItem = async (name: string) => {
-    await onAdd(`custom-${Date.now()}`, name, undefined);
+  const handlePickCatalogItem = async (recipe: CatalogRecipe) => {
+    await onAdd(recipe.id, recipe.title, recipe.imagePath ?? undefined);
   };
 
   const handlePickInventoryItem = async (item: { id: string; name: string; quantity: string }) => {
@@ -203,39 +231,46 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
               </div>
             )}
 
-            {/* Catalog groups */}
-            <div className="space-y-3 max-h-52 overflow-y-auto">
-              {catalogGroups.map(group => (
-                <div key={group.label} className="space-y-1.5">
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider flex items-center gap-1">
-                    <span>{group.emoji}</span> {group.label}
-                  </p>
-                  <div className="space-y-1">
-                    {group.items.map(item => (
-                      <button
-                        key={item.name}
-                        onClick={() => handlePickCatalogItem(item.name)}
-                        className="w-full flex items-center gap-2.5 rounded-lg border border-border/50 px-2.5 py-1.5 hover:bg-accent/50 transition-colors text-left"
-                      >
-                        <span className="text-base shrink-0">{item.emoji}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium truncate">{item.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{item.serving}</p>
-                        </div>
-                        <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground shrink-0">
-                          <Flame className="w-3 h-3" />
-                          {item.calories}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+            {/* Reviewed database catalogue */}
+            <div className="space-y-2 max-h-52 overflow-y-auto">
+              {loadingCatalog && (
+                <div className="flex items-center justify-center gap-2 py-5 text-xs text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading reviewed recipes…
                 </div>
+              )}
+              {!loadingCatalog && filteredCatalogRecipes.map(recipe => (
+                <button
+                  key={recipe.id}
+                  onClick={() => handlePickCatalogItem(recipe)}
+                  className="w-full flex items-center gap-2.5 rounded-lg border border-border/50 px-2.5 py-2 hover:bg-accent/50 transition-colors text-left"
+                >
+                  {recipe.imagePath ? (
+                    <img src={recipe.imagePath} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+                  ) : (
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-base">🍽️</span>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{recipe.title}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {recipe.prepMinutes + recipe.cookMinutes} min · serves {recipe.servings}
+                    </p>
+                  </div>
+                  {typeof recipe.nutrition.calories === 'number' && (
+                    <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground shrink-0">
+                      <Flame className="w-3 h-3" />
+                      {Math.round(recipe.nutrition.calories)}
+                    </span>
+                  )}
+                </button>
               ))}
 
-              {catalogGroups.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">
-                  No matches — try the Custom tab for anything
-                </p>
+              {!loadingCatalog && filteredCatalogRecipes.length === 0 && (
+                <div className="rounded-xl border border-dashed border-border px-4 py-5 text-center">
+                  <p className="text-xs font-medium">No reviewed {slot} recipes match yet</p>
+                  <p className="mt-1 text-[10px] text-muted-foreground">
+                    Try Search or Custom. Draft recipes stay private until their safety and rights review is complete.
+                  </p>
+                </div>
               )}
             </div>
           </TabsContent>
