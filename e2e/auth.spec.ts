@@ -80,4 +80,11 @@ test('connects the dashboard loop, menu and search to real destinations', async 
   await page.getByPlaceholder('Where do you want to go?').fill('recipe shelf');
   await page.getByText('Recipe books').click();
   await expect(page).toHaveURL(/\/recipe-books$/);
+  await expect(page.getByRole('heading', { name: 'A shelf that cooks with you' })).toBeVisible();
+  await expect(page.getByText('Three starter packs are in review')).toBeVisible();
+
+  await page.goto('/meals');
+  await expect(page.getByRole('heading', { name: 'Cook from what you have' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The first recipe packs are in review' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Recipe lab' })).toBeVisible();
 });
