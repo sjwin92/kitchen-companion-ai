@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 
 const validateOnly = process.argv.includes('--validate-only');
@@ -49,6 +50,12 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
   if (!['original', 'creator', 'user_submission', 'ai_assisted'].includes(recipe.source_type)) {
     throw new Error(`${label}.source_type is invalid`);
   }
+  if (typeof recipe.source_url === 'string' && /(^|\.)myplate\.gov\//i.test(new URL(recipe.source_url).hostname + '/')) {
+    throw new Error(`${label}.source_url cannot import MyPlate content; MyPlate is research-only`);
+  }
+  if (recipe.rights_basis === 'creator_permission' && !requiredText(recipe.rights_notes, `${label}.rights_notes`)) {
+    throw new Error(`${label}.rights_notes must reference the creator's permission evidence`);
+  }
 }
 
 if (validateOnly) {
@@ -91,6 +98,12 @@ if (creatorId) {
   creatorId = data.id;
 }
 
+const { error: partnershipError } = await supabase.from('creator_partnerships').upsert(
+  { creator_id: creatorId, status: 'prospect' },
+  { onConflict: 'creator_id', ignoreDuplicates: true },
+);
+if (partnershipError) fail('Could not prepare creator partnership controls', partnershipError);
+
 const { data: existingBook, error: existingBookError } = await supabase
   .from('recipe_books')
   .select('id,review_status')
@@ -124,6 +137,10 @@ if (bookId) {
 
 const importedRecipeIds = [];
 for (const [recipeIndex, recipe] of recipes.entries()) {
+  const dedupeHash = createHash('sha256').update(JSON.stringify({
+    title: recipe.title.trim().toLowerCase(),
+    ingredients: recipe.ingredients.map(ingredient => ingredient.normalized_name.trim().toLowerCase()).sort(),
+  })).digest('hex');
   const { data: existingRecipe, error: inspectError } = await supabase
     .from('recipes')
     .select('id,review_status')
@@ -159,6 +176,11 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
     source_url: recipe.source_url ?? null,
     rights_basis: recipe.rights_basis,
     rights_notes: recipe.rights_notes ?? null,
+    source_label: recipe.source_label ?? (recipe.source_type === 'creator' ? creator.display_name : 'Kitchen Companion'),
+    media_attribution: recipe.media_attribution ?? {},
+    nutrition_provenance: recipe.nutrition_provenance ?? (Object.keys(recipe.nutrition ?? {}).length > 0 ? 'estimated' : 'unavailable'),
+    verification_tier: 'editorial_reviewed',
+    dedupe_hash: dedupeHash,
     content_version: Number(recipe.content_version ?? 1),
     review_status: 'draft',
     published_at: null,
@@ -176,6 +198,29 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
 
   const { error: deleteIngredientsError } = await supabase.from('recipe_ingredients').delete().eq('recipe_id', recipeId);
   if (deleteIngredientsError) fail(`Could not replace ingredients for ${recipe.slug}`, deleteIngredientsError);
+
+  const canonicalRows = [...new Map(recipe.ingredients.map(ingredient => [
+    ingredient.normalized_name.trim().toLowerCase(),
+    {
+      canonical_name: ingredient.normalized_name.trim().toLowerCase(),
+      display_name: ingredient.name.trim(),
+      default_aisle: ingredient.aisle ?? null,
+    },
+  ])).values()];
+  const { error: canonicalError } = await supabase.from('ingredients').upsert(canonicalRows, { onConflict: 'canonical_name' });
+  if (canonicalError) fail(`Could not normalize ingredients for ${recipe.slug}`, canonicalError);
+  const { data: canonicalData, error: canonicalReadError } = await supabase
+    .from('ingredients')
+    .select('id,canonical_name')
+    .in('canonical_name', canonicalRows.map(row => row.canonical_name));
+  if (canonicalReadError) fail(`Could not read normalized ingredients for ${recipe.slug}`, canonicalReadError);
+  const ingredientIds = new Map((canonicalData ?? []).map(row => [row.canonical_name, row.id]));
+  const aliases = recipe.ingredients.map(ingredient => ({
+    alias: ingredient.name.trim().toLowerCase(),
+    ingredient_id: ingredientIds.get(ingredient.normalized_name.trim().toLowerCase()),
+  })).filter(alias => alias.ingredient_id);
+  const { error: aliasError } = await supabase.from('ingredient_aliases').upsert(aliases, { onConflict: 'alias', ignoreDuplicates: true });
+  if (aliasError) fail(`Could not save ingredient aliases for ${recipe.slug}`, aliasError);
   const { error: ingredientError } = await supabase.from('recipe_ingredients').insert(
     recipe.ingredients.map((ingredient, position) => ({
       recipe_id: recipeId,
@@ -187,6 +232,7 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
       preparation: ingredient.preparation ?? null,
       optional: Boolean(ingredient.optional),
       aisle: ingredient.aisle ?? null,
+      ingredient_id: ingredientIds.get(ingredient.normalized_name.trim().toLowerCase()),
     }))
   );
   if (ingredientError) fail(`Could not import ingredients for ${recipe.slug}`, ingredientError);

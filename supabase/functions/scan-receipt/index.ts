@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
   const guarded = guardRequest(req);
   if (guarded) return guarded;
   try {
-    const { user, userClient } = await authenticateAndQuota(req, "vision");
+    const { user, userClient, serviceClient } = await authenticateAndQuota(req, "vision");
     const body = await req.json() as Record<string, unknown>;
     const imageDataUrl = validateImageDataUrl(body.imageBase64);
     const mode = body.mode === "fridge" ? "fridge" : "receipt";
@@ -58,16 +58,18 @@ Deno.serve(async (req) => {
         "Return a confidence from 0 to 1 for each identification.",
       ],
     });
-    const parsed = resultSchema.parse(await structuredResponse({
+    const aiResult = await structuredResponse({
       userId: user.id,
-      model: "gpt-5.6-terra",
+      serviceClient,
+      capability: mode === "fridge" ? "inventory_vision" : "receipt_extraction",
       instructions: "You are Kitchen Companion's conservative inventory scanner. Accuracy is more important than item count.",
       prompt,
       imageDataUrl,
       schemaName: "inventory_scan",
       schema: jsonSchema,
       maxOutputTokens: 2200,
-    }));
+    });
+    const parsed = resultSchema.parse(aiResult.data);
     const dateAdded = new Date().toISOString().slice(0, 10);
     return json(req, {
       items: parsed.items.map((item) => ({
@@ -77,6 +79,11 @@ Deno.serve(async (req) => {
         status: item.daysUntilExpiry <= 2 ? "use-today" : item.daysUntilExpiry <= 5 ? "use-soon" : "okay",
         provenance: mode === "receipt" ? "receipt_estimate" : "vision_estimate",
       })),
+      provider: aiResult.provider,
+      model: aiResult.model,
+      confidence: parsed.items.length === 0 ? 0 : parsed.items.reduce((sum, item) => sum + item.confidence, 0) / parsed.items.length,
+      provenance: aiResult.provenance,
+      usage: aiResult.usage,
     });
   } catch (error) {
     return errorResponse(req, error, "Inventory scan failed");

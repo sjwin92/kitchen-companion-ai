@@ -3,8 +3,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useApp } from '@/context/AppContext';
 import type { MealPlan, MealSlot } from './useMealPlans';
-import { listCatalogRecipes } from '@/services/betaCatalog';
-import { recommendRecipes } from '@/lib/recommendationEngine';
+import { listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { RecipeRecommendation } from '@/types';
 
 const DRAFT_KEY = 'mealplan-draft';
@@ -27,12 +26,6 @@ function loadDraftFromStorage(): PlannedCatalogMeal[] {
   }
 }
 
-function weekKey() {
-  const monday = new Date();
-  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-  return monday.toISOString().slice(0, 10);
-}
-
 function slotMatches(recommendation: RecipeRecommendation, slot: string) {
   const target = slot === 'lunchbox' ? 'lunch' : slot;
   return recommendation.recipe.mealTypes.includes(slot)
@@ -40,7 +33,7 @@ function slotMatches(recommendation: RecipeRecommendation, slot: string) {
 }
 
 export function useAutoPlan() {
-  const { session, preferences, inventory } = useApp();
+  const { session, preferences } = useApp();
   const [generating, setGenerating] = useState(false);
   const [generatingSlot, setGeneratingSlot] = useState<string | null>(null);
   const [draft, setDraftState] = useState<PlannedCatalogMeal[]>(loadDraftFromStorage);
@@ -58,16 +51,8 @@ export function useAutoPlan() {
 
   const rankCatalogue = useCallback(async () => {
     if (!session?.user) return [];
-    const recipes = await listCatalogRecipes();
-    return recommendRecipes({
-      recipes,
-      inventory,
-      preferences,
-      userSeed: session.user.id,
-      weekKey: weekKey(),
-      limit: recipes.length,
-    });
-  }, [inventory, preferences, session?.user]);
+    return listRecommendedCatalogRecipes({ limit: 100 });
+  }, [session?.user]);
 
   const generatePlan = useCallback(async (days: Date[], existingPlans: MealPlan[]) => {
     if (!session?.user) {

@@ -5,7 +5,7 @@ This runbook is the release gate for a bootstrap beta. Start with five testers, 
 ## 1. Accounts and spend
 
 - Use the Supabase free plan while the beta remains within its limits; do not add paid infrastructure to the critical path.
-- Add OpenAI API credit and set a conservative project budget/alert. ChatGPT billing does not fund API usage.
+- Enable Gemini API billing and set a conservative provider alert below the app's £10 hard cap. Add DeepSeek credit only for non-personal catalogue work. OpenAI is an optional disabled fallback.
 - Create a Sentry project and keep its data collection minimal; no meal photos, prompts, food details or account exports belong in error events.
 - Confirm a privacy/contact mailbox to use as the VAPID subject and public support address.
 
@@ -13,7 +13,7 @@ This runbook is the release gate for a bootstrap beta. Start with five testers, 
 
 1. Create `kitchen-companion-staging` and link the CLI to its project ref.
 2. Run `npx supabase db push` and confirm the Before User Created hook is `pg-functions://postgres/private/hook_require_beta_invite`.
-3. Generate VAPID keys and set server secrets: `OPENAI_API_KEY`, `ALLOWED_ORIGINS`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
+3. Generate VAPID keys and set server secrets: `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `AI_OPENAI_FALLBACK_ENABLED=false`, `ALLOWED_ORIGINS`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
 4. Deploy `scan-receipt`, `scan-expiry`, `product-info`, `reconcile-receipt`, `generate-recipe`, `log-meal`, `send-expiry-reminders` and `delete-account`.
 5. Deploy the web app to its staging Vercel URL with `VITE_SUPABASE_PROJECT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_VAPID_PUBLIC_KEY` and `VITE_SENTRY_DSN`.
 6. Set `ALLOWED_ORIGINS` to the exact staging origin. Do not use `*`.

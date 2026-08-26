@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
-import { catalogRecipeToMealSuggestion, listCatalogRecipes } from '@/services/betaCatalog';
-import { recommendRecipes } from '@/lib/recommendationEngine';
+import { catalogRecipeToMealSuggestion, listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +12,7 @@ import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import RecipeCard from '@/components/RecipeCard';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const MAX_VISIBLE_MEALS = 30;
 type RankedMeal = MealWithStatus & { reasons: string[] };
@@ -29,6 +29,8 @@ export default function MealSuggestions() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
+  const [submissionRightsConfirmed, setSubmissionRightsConfirmed] = useState(false);
+  const [isSubmittingRecipe, setIsSubmittingRecipe] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,16 +38,10 @@ export default function MealSuggestions() {
       setIsLoading(true);
       setLoadError(null);
       try {
-        const recipes = await listCatalogRecipes();
-        const monday = new Date();
-        monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-        const ranked = recommendRecipes({
-          recipes,
-          inventory,
-          preferences,
-          userSeed: session?.user.id ?? 'anonymous',
-          weekKey: monday.toISOString().slice(0, 10),
+        const ranked = await listRecommendedCatalogRecipes({
           limit: MAX_VISIBLE_MEALS,
+          search: searchTerm,
+          minMatch: minMatchPercent,
         });
         const meals: RankedMeal[] = ranked.map(({ recipe, reasons, missingIngredients }) => {
           const meal = catalogRecipeToMealSuggestion(recipe);
@@ -72,9 +68,9 @@ export default function MealSuggestions() {
         if (!cancelled) setIsLoading(false);
       }
     }
-    void loadMeals();
-    return () => { cancelled = true; };
-  }, [inventory, preferences, session?.user.id]);
+    const timer = window.setTimeout(() => { void loadMeals(); }, 250);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [inventory, preferences, session?.user.id, searchTerm, minMatchPercent]);
 
   const filteredMeals = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -228,6 +224,9 @@ export default function MealSuggestions() {
                   ingredientCount={meal.ingredients.length}
                   reason={meal.reasons[0]}
                   expiringLabel={expiringOwned[0]}
+                  verificationTier={meal.verificationTier}
+                  sourceLabel={meal.sourceLabel}
+                  creatorName={meal.creatorName}
                   saved={isFavorite(meal.id)}
                   onOpen={() => navigate(`/recipe/${meal.id}`)}
                   onSave={() => toggleFavorite(meal.id, meal.title, meal.image, meal.category)}
@@ -266,7 +265,7 @@ export default function MealSuggestions() {
 
       {/* Generated Recipe Dialog */}
       {generatedRecipe && (
-        <Dialog open={!!generatedRecipe} onOpenChange={open => { if (!open) setGeneratedRecipe(null); }}>
+        <Dialog open={!!generatedRecipe} onOpenChange={open => { if (!open) { setGeneratedRecipe(null); setSubmissionRightsConfirmed(false); } }}>
           <DialogContent className="max-w-sm max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-base flex items-center gap-2">
@@ -432,6 +431,35 @@ export default function MealSuggestions() {
               <p className="text-[11px] text-muted-foreground">
                 This private AI draft is saved once to your recipes. It cannot become public without editorial review.
               </p>
+              <div className="rounded-xl border border-border/70 bg-muted/30 p-3 space-y-3">
+                <label className="flex items-start gap-2.5 text-xs leading-5">
+                  <Checkbox checked={submissionRightsConfirmed} onCheckedChange={value => setSubmissionRightsConfirmed(value === true)} aria-label="Confirm recipe submission permission" />
+                  <span>I have reviewed this draft and grant Kitchen Companion non-exclusive permission to edit and publish an approved version with attribution.</span>
+                </label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-xl text-xs"
+                  disabled={!submissionRightsConfirmed || isSubmittingRecipe}
+                  onClick={async () => {
+                    if (!session?.user || !generatedRecipe.user_recipe_id) return;
+                    setIsSubmittingRecipe(true);
+                    const { error } = await supabase.from('recipe_submissions').insert({
+                      user_id: session.user.id,
+                      user_recipe_id: generatedRecipe.user_recipe_id,
+                      rights_confirmed: true,
+                      licence_grant: 'nonexclusive_publish_with_attribution_v1',
+                    });
+                    if (error?.code === '23505') toast.info('This recipe is already in the review queue');
+                    else if (error) toast.error('Could not submit this recipe');
+                    else toast.success('Submitted for editorial review');
+                    setIsSubmittingRecipe(false);
+                  }}
+                >
+                  {isSubmittingRecipe && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+                  Submit for review
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

@@ -15,6 +15,9 @@ interface RecipeCardProps {
   onOpen: () => void;
   onSave: () => void;
   className?: string;
+  verificationTier?: 'editorial_reviewed' | 'creator_verified' | 'test_kitchen_verified';
+  sourceLabel?: string | null;
+  creatorName?: string | null;
 }
 
 export default function RecipeCard({
@@ -30,7 +33,17 @@ export default function RecipeCard({
   onOpen,
   onSave,
   className,
+  verificationTier,
+  sourceLabel,
+  creatorName,
 }: RecipeCardProps) {
+  const trustLabel = verificationTier === 'test_kitchen_verified'
+    ? 'Test-kitchen verified'
+    : verificationTier === 'creator_verified'
+    ? 'Creator verified'
+    : verificationTier
+    ? 'Editorially reviewed'
+    : null;
   return (
     <article className={cn('recipe-card group animate-fade-in', className)}>
       <div className="relative">
@@ -58,6 +71,11 @@ export default function RecipeCard({
       </div>
 
       <button type="button" onClick={onOpen} className="block w-full p-4 text-left">
+        {(trustLabel || creatorName || sourceLabel) && (
+          <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {[trustLabel, creatorName ?? sourceLabel].filter(Boolean).join(' · ')}
+          </p>
+        )}
         <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold text-muted-foreground">
           {prepTime && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{prepTime}</span>}
           {prepTime && <span aria-hidden="true">·</span>}

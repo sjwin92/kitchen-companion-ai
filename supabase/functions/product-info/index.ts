@@ -89,9 +89,10 @@ Deno.serve(async (req) => {
     }
 
     await consumeQuota(serviceClient, user.id, "text");
-    const info = infoSchema.parse(await structuredResponse({
+    const aiResult = await structuredResponse({
       userId: user.id,
-      model: "gpt-5.6-luna",
+      serviceClient,
+      capability: "nutrition_estimate",
       instructions: "You provide concise, conservative general nutrition estimates. Do not make medical claims.",
       prompt: JSON.stringify({
         product_name: productName,
@@ -101,8 +102,17 @@ Deno.serve(async (req) => {
       schemaName: "product_nutrition",
       schema: jsonSchema,
       maxOutputTokens: 1000,
-    }));
-    return json(req, { ...info, provenance: "ai_estimate", disclaimer: "General estimate only; packaging and preparation can differ." });
+    });
+    const info = infoSchema.parse(aiResult.data);
+    return json(req, {
+      ...info,
+      provider: aiResult.provider,
+      model: aiResult.model,
+      confidence: aiResult.confidence,
+      provenance: "ai_estimate",
+      usage: aiResult.usage,
+      disclaimer: "General estimate only; packaging and preparation can differ.",
+    });
   } catch (error) {
     return errorResponse(req, error, "Product information failed");
   }

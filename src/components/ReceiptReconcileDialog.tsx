@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { useApp } from '@/context/AppContext';
+import { compressImage } from '@/lib/imageCompression';
 
 interface Props {
   open: boolean;
@@ -37,12 +38,7 @@ export default function ReceiptReconcileDialog({ open, onClose, shoppingItems, o
     if (!session?.user) return;
     setBusy(true);
     try {
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const { dataUrl: base64 } = await compressImage(file, { maxDimension: 1280, quality: 0.75 });
 
       const { data, error } = await supabase.functions.invoke('reconcile-receipt', {
         body: { imageBase64: base64 },

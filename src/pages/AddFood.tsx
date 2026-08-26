@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 
 import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/imageCompression';
 import { toast } from 'sonner';
 import LiveScanner from '@/components/LiveScanner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -97,33 +98,6 @@ export default function AddFood() {
     }
   };
 
-  const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new window.Image();
-      const reader = new FileReader();
-      reader.onload = () => {
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let { width, height } = img;
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) return reject(new Error('Canvas not supported'));
-          ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.onerror = reject;
-        img.src = reader.result as string;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -131,7 +105,7 @@ export default function AddFood() {
     e.target.value = '';
 
     try {
-      const base64 = await compressImage(file);
+      const { dataUrl: base64 } = await compressImage(file, { maxDimension: 1200, quality: 0.7 });
       setReceiptPreview(base64);
       setMode('scanning');
 

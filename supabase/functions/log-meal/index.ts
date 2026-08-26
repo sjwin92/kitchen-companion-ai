@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
 import { z } from "npm:zod@3.25.76";
+import { HttpError, structuredResponse } from "../_shared/kitchen-ai.ts";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
@@ -59,23 +60,6 @@ function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders(req), "Content-Type": "application/json", "Cache-Control": "no-store" } });
 }
 
-function getOutputText(payload: Record<string, unknown>): string | null {
-  if (typeof payload.output_text === "string") return payload.output_text;
-  for (const item of Array.isArray(payload.output) ? payload.output : []) {
-    if (!item || typeof item !== "object") continue;
-    const content = Array.isArray((item as { content?: unknown[] }).content) ? (item as { content: unknown[] }).content : [];
-    for (const part of content) {
-      if (part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string") return (part as { text: string }).text;
-    }
-  }
-  return null;
-}
-
-async function safetyIdentifier(userId: string) {
-  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(userId));
-  return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
@@ -86,8 +70,7 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const openAiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!supabaseUrl || !anonKey || !serviceRoleKey || !openAiKey) throw new Error("Server configuration is incomplete");
+    if (!supabaseUrl || !anonKey || !serviceRoleKey) throw new Error("Server configuration is incomplete");
 
     const authorization = req.headers.get("authorization");
     if (!authorization) return json(req, { error: "Authentication required" }, 401);
@@ -120,37 +103,18 @@ Deno.serve(async (req) => {
     const recipeContext = body.recipeContext && typeof body.recipeContext === "object" ? JSON.stringify(body.recipeContext).slice(0, 6000) : "none";
     const prompt = `Estimate nutrition for the single serving shown. Treat every number as an estimate, not medical advice. Return a point estimate and an honest low/high range for calories and each macro. Use the visible portion as primary evidence and recipe context only as supporting evidence. Match inventory IDs only when clear. Ensure low <= point <= high.\n\nMeal title: ${mealTitle || "not provided"}\nRecipe context: ${recipeContext}\nInventory:\n${inventoryText || "none"}`;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30_000);
-    let response: Response;
-    try {
-      response = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST", signal: controller.signal,
-        headers: { Authorization: `Bearer ${openAiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "gpt-5.6-terra", store: false, safety_identifier: await safetyIdentifier(user.id),
-          instructions: "You are Kitchen Companion's nutrition estimation assistant. Be conservative, uncertainty-aware, and concise. Never claim medical or laboratory accuracy.",
-          input: [{ role: "user", content: [{ type: "input_text", text: prompt }, { type: "input_image", image_url: imageDataUrl, detail: "high" }] }],
-          text: { format: { type: "json_schema", name: "nutrition_estimate", strict: true, schema: jsonSchema } },
-          max_output_tokens: 1800,
-        }),
-      });
-    } finally { clearTimeout(timeout); }
-
-    if (!response.ok) {
-      const providerError = await response.json().catch(() => ({})) as { error?: { code?: string; type?: string } };
-      const errorCode = providerError.error?.code ?? providerError.error?.type ?? "unknown";
-      console.error("OpenAI Nutrition Scan failed", { status: response.status, errorCode, requestId: response.headers.get("x-request-id") });
-      if (errorCode === "credit_balance_exhausted" || errorCode === "insufficient_quota") {
-        return json(req, { error: "Nutrition Scan is temporarily unavailable" }, 503);
-      }
-      if (response.status === 429) return json(req, { error: "Nutrition Scan is busy. Try again shortly." }, 429);
-      throw new Error("Nutrition Scan could not analyze this image");
-    }
-    const payload = await response.json() as Record<string, unknown>;
-    const outputText = getOutputText(payload);
-    if (!outputText) throw new Error("Nutrition Scan returned no estimate");
-    const parsed = nutritionSchema.parse(JSON.parse(outputText));
+    const aiResult = await structuredResponse({
+      userId: user.id,
+      serviceClient,
+      capability: "nutrition_estimate",
+      instructions: "You are Kitchen Companion's nutrition estimation assistant. Be conservative, uncertainty-aware, and concise. Never claim medical or laboratory accuracy.",
+      prompt,
+      imageDataUrl,
+      schemaName: "nutrition_estimate",
+      schema: jsonSchema,
+      maxOutputTokens: 1800,
+    });
+    const parsed = nutritionSchema.parse(aiResult.data);
     const rangesValid = Object.entries(parsed.ranges).every(([key, range]) => {
       const point = parsed[key as "calories" | "protein_g" | "carbs_g" | "fat_g"];
       return range.low <= point && range.high >= point;
@@ -162,11 +126,15 @@ Deno.serve(async (req) => {
       ...parsed,
       confidence: mismatch > 0.3 ? Math.min(parsed.confidence, 0.45) : parsed.confidence,
       notes: mismatch > 0.3 ? [...parsed.notes, "Calories and macro-derived energy differ; review before confirming."] : parsed.notes,
-      model: "gpt-5.6-terra", provenance: "vision_estimate", image_path: imagePath,
+      provider: aiResult.provider,
+      model: aiResult.model,
+      usage: aiResult.usage,
+      provenance: aiResult.provenance,
+      image_path: imagePath,
     });
   } catch (error) {
     const message = error instanceof Error && error.name === "AbortError" ? "Nutrition Scan timed out. Try a clearer photo." : error instanceof z.ZodError ? "Nutrition Scan returned an invalid estimate" : error instanceof Error ? error.message : "Nutrition Scan failed";
     console.error("Nutrition Scan error", { message });
-    return json(req, { error: message }, 500);
+    return json(req, { error: message }, error instanceof HttpError ? error.status : 500);
   }
 });

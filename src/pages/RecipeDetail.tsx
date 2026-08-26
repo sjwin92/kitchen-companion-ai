@@ -167,6 +167,16 @@ export default function RecipeDetail() {
             </button>
           </div>
           <div className="absolute bottom-4 left-4 right-4">
+            {recipe.verificationTier && (
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/80">
+                {recipe.verificationTier === 'test_kitchen_verified'
+                  ? 'Test-kitchen verified'
+                  : recipe.verificationTier === 'creator_verified'
+                  ? 'Creator verified'
+                  : 'Editorially reviewed'}
+                {(recipe.creatorName || recipe.sourceLabel) ? ` · ${recipe.creatorName ?? recipe.sourceLabel}` : ''}
+              </p>
+            )}
             <h1 className="text-2xl font-extrabold text-white leading-tight tracking-tight">{recipe.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">
               <span className="text-xs text-white/80 flex items-center gap-1">

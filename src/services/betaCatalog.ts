@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import type { CatalogRecipe, MealSuggestion } from '@/types';
+import type { CatalogRecipe, MealSuggestion, RecipeRecommendation } from '@/types';
 
 const db = supabase as unknown as SupabaseClient;
 
@@ -25,6 +25,11 @@ type CatalogRecipeRow = {
   youtube_url: string | null;
   audio_url: string | null;
   source_type: CatalogRecipe['sourceType'];
+  verification_tier: CatalogRecipe['verificationTier'];
+  source_label: string | null;
+  content_version: number;
+  media_attribution: Record<string, unknown> | null;
+  contributor_user_id: string | null;
   creators: { display_name: string } | null;
   recipe_ingredients: Array<{
     id: string;
@@ -41,7 +46,8 @@ const CATALOG_RECIPE_SELECT = `
   id,slug,title,description,creator_id,servings,prep_minutes,cook_minutes,
   dietary_tags,allergen_tags,cuisine_tags,meal_types,nutrition,
   estimated_cost_low_gbp,estimated_cost_high_gbp,instructions,
-  image_path,youtube_url,audio_url,source_type,
+  image_path,youtube_url,audio_url,source_type,verification_tier,source_label,
+  content_version,media_attribution,contributor_user_id,
   creators(display_name),
   recipe_ingredients(id,name,normalized_name,quantity,unit,optional,aisle)
 `;
@@ -88,6 +94,11 @@ function mapCatalogRecipe(row: CatalogRecipeRow): CatalogRecipe {
     audioUrl: row.audio_url,
     creatorName: row.creators?.display_name ?? null,
     sourceType: row.source_type,
+    verificationTier: row.verification_tier ?? 'editorial_reviewed',
+    sourceLabel: row.source_label,
+    contentVersion: row.content_version,
+    mediaAttribution: row.media_attribution ?? {},
+    contributorUserId: row.contributor_user_id,
   };
 }
 
@@ -128,7 +139,69 @@ export function catalogRecipeToMealSuggestion(recipe: CatalogRecipe): MealSugges
     servings: recipe.servings,
     nutrition: recipe.nutrition,
     provenance: 'catalogue',
+    verificationTier: recipe.verificationTier,
+    sourceLabel: recipe.sourceLabel,
+    contentVersion: recipe.contentVersion,
+    mediaAttribution: recipe.mediaAttribution,
+    creatorName: recipe.creatorName,
   };
+}
+
+type RecommendationRow = {
+  recipe_id: string;
+  score: number;
+  components: RecipeRecommendation['components'];
+  reasons: string[];
+  matched_ingredient_ids: string[];
+  missing_ingredient_ids: string[];
+  matched_count: number;
+  missing_count: number;
+};
+
+export async function listRecommendedCatalogRecipes(options: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  minMatch?: number;
+} = {}): Promise<RecipeRecommendation[]> {
+  const { data: rankedData, error: rankedError } = await db.rpc('recommend_catalogue_recipes', {
+    p_limit: options.limit ?? 30,
+    p_offset: options.offset ?? 0,
+    p_search: options.search?.trim() || null,
+    p_min_match: options.minMatch ?? 0,
+  });
+  if (rankedError) throw rankedError;
+  const ranked = (rankedData ?? []) as unknown as RecommendationRow[];
+  if (ranked.length === 0) return [];
+
+  const { data: recipeData, error: recipeError } = await db
+    .from('recipes')
+    .select(CATALOG_RECIPE_SELECT)
+    .in('id', ranked.map(row => row.recipe_id))
+    .eq('review_status', 'approved');
+  if (recipeError) throw recipeError;
+  const recipes = new Map(
+    ((recipeData ?? []) as unknown as CatalogRecipeRow[]).map(row => {
+      const recipe = mapCatalogRecipe(row);
+      return [recipe.id, recipe] as const;
+    }),
+  );
+
+  return ranked.flatMap(row => {
+    const recipe = recipes.get(row.recipe_id);
+    if (!recipe) return [];
+    const missingIds = new Set(row.missing_ingredient_ids ?? []);
+    return [{
+      recipe,
+      score: Number(row.score),
+      components: row.components,
+      reasons: row.reasons ?? [],
+      missingIngredients: recipe.ingredients.filter(ingredient => missingIds.has(ingredient.id)),
+      matchedIngredientIds: row.matched_ingredient_ids ?? [],
+      matchedCount: row.matched_count,
+      missingCount: row.missing_count,
+    }];
+  });
 }
 
 type UserRecipeRow = {
@@ -218,6 +291,8 @@ export interface BookRecipe {
     prep_minutes: number;
     cook_minutes: number;
     dietary_tags: string[];
+    verification_tier: CatalogRecipe['verificationTier'];
+    source_label: string | null;
     instructions: Array<{ text?: string } | string>;
     recipe_ingredients: Array<{ id: string; name: string; quantity: number | null; unit: string | null; preparation: string | null }>;
   };
@@ -243,7 +318,7 @@ export async function getRecipeBook(id: string) {
 
   const { data: recipes, error: recipesError } = await db
     .from('recipe_book_recipes')
-    .select('position,section_title,recipes(id,title,description,image_path,youtube_url,audio_url,servings,prep_minutes,cook_minutes,dietary_tags,instructions,recipe_ingredients(id,name,quantity,unit,preparation))')
+    .select('position,section_title,recipes(id,title,description,image_path,youtube_url,audio_url,servings,prep_minutes,cook_minutes,dietary_tags,verification_tier,source_label,instructions,recipe_ingredients(id,name,quantity,unit,preparation))')
     .eq('recipe_book_id', id)
     .order('position');
   if (recipesError) throw recipesError;

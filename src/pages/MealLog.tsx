@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/imageCompression';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
 import { buildManualEstimate } from '@/lib/manualMealEstimate';
@@ -140,30 +141,14 @@ export default function MealLog() {
     return () => { cancelled = true; };
   }, [plannedMeal?.planId, plannedMeal?.recipeId, plannedMeal?.title, inventory]);
 
-  const processImage = useCallback((file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxSize = 800;
-        let w = img.width, h = img.height;
-        if (w > maxSize || h > maxSize) {
-          const ratio = Math.min(maxSize / w, maxSize / h);
-          w = Math.round(w * ratio);
-          h = Math.round(h * ratio);
-        }
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
-        setImagePreview(canvas.toDataURL('image/jpeg', 0.78));
-        canvas.toBlob((blob) => {
-          if (blob) setImageFile(new File([blob], 'meal.jpg', { type: 'image/jpeg' }));
-        }, 'image/jpeg', 0.78);
-      };
-      img.src = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  const processImage = useCallback(async (file: File) => {
+    try {
+      const compressed = await compressImage(file, { maxDimension: 800, quality: 0.78 });
+      setImagePreview(compressed.dataUrl);
+      setImageFile(new File([compressed.blob], 'meal.jpg', { type: 'image/jpeg' }));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not prepare this image');
+    }
   }, []);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {

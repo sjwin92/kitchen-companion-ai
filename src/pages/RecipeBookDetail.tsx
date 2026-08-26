@@ -45,6 +45,10 @@ export default function RecipeBookDetail() {
               </Link>
               <div className="min-w-0 flex-1">
                 {section && <p className="text-[10px] uppercase tracking-wider font-bold text-primary">{section}</p>}
+                <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                  {recipe.verification_tier === 'test_kitchen_verified' ? 'Test-kitchen verified' : recipe.verification_tier === 'creator_verified' ? 'Creator verified' : 'Editorially reviewed'}
+                  {recipe.source_label ? ` · ${recipe.source_label}` : ''}
+                </p>
                 <h2 className="text-lg font-extrabold leading-snug">
                   <Link to={`/recipe/${recipe.id}`} className="hover:text-primary">
                     <span className="text-muted-foreground mr-2">{String(position + 1).padStart(2, '0')}</span>{recipe.title}

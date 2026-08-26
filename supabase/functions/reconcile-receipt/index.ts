@@ -30,12 +30,13 @@ Deno.serve(async (req) => {
   const guarded = guardRequest(req);
   if (guarded) return guarded;
   try {
-    const { user } = await authenticateAndQuota(req, "vision");
+    const { user, serviceClient } = await authenticateAndQuota(req, "vision");
     const body = await req.json() as Record<string, unknown>;
     const imageDataUrl = validateImageDataUrl(body.imageBase64);
-    const parsed = resultSchema.parse(await structuredResponse({
+    const aiResult = await structuredResponse({
       userId: user.id,
-      model: "gpt-5.6-terra",
+      serviceClient,
+      capability: "receipt_extraction",
       instructions: "You are a conservative UK grocery receipt parser. Transcribe only legible purchase information.",
       prompt: JSON.stringify({
         task: "Extract grocery line items, final GBP total, retailer, and receipt date.",
@@ -50,13 +51,18 @@ Deno.serve(async (req) => {
       schemaName: "receipt_reconciliation",
       schema: jsonSchema,
       maxOutputTokens: 2600,
-    }));
+    });
+    const parsed = resultSchema.parse(aiResult.data);
     return json(req, {
       retailer: parsed.retailer || null,
       total: parsed.total,
       receipt_date: parsed.receipt_date || null,
       items: parsed.items,
-      provenance: "vision_estimate",
+      provider: aiResult.provider,
+      model: aiResult.model,
+      confidence: parsed.items.length === 0 ? 0 : parsed.items.reduce((sum, item) => sum + item.confidence, 0) / parsed.items.length,
+      provenance: aiResult.provenance,
+      usage: aiResult.usage,
     });
   } catch (error) {
     return errorResponse(req, error, "Receipt reconciliation failed");

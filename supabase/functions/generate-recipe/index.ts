@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.1";
 import { z } from "npm:zod@3.25.76";
 import { findDietaryConflicts, foodTextMatchesTerm } from "../_shared/dietary-rules.ts";
+import { structuredResponse } from "../_shared/kitchen-ai.ts";
 
 const DEFAULT_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"];
 
@@ -91,25 +92,6 @@ function json(req: Request, body: unknown, status = 200) {
   });
 }
 
-function outputText(payload: Record<string, unknown>): string | null {
-  if (typeof payload.output_text === "string") return payload.output_text;
-  for (const item of Array.isArray(payload.output) ? payload.output : []) {
-    if (!item || typeof item !== "object") continue;
-    const content = Array.isArray((item as { content?: unknown[] }).content) ? (item as { content: unknown[] }).content : [];
-    for (const part of content) {
-      if (part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string") {
-        return (part as { text: string }).text;
-      }
-    }
-  }
-  return null;
-}
-
-async function safetyIdentifier(userId: string) {
-  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(userId));
-  return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
@@ -120,8 +102,7 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const openAiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!supabaseUrl || !anonKey || !serviceRoleKey || !openAiKey) throw new Error("Server configuration is incomplete");
+    if (!supabaseUrl || !anonKey || !serviceRoleKey) throw new Error("Server configuration is incomplete");
 
     const authorization = req.headers.get("authorization");
     if (!authorization) return json(req, { error: "Authentication required" }, 401);
@@ -177,38 +158,17 @@ Deno.serve(async (req) => {
       ],
     });
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30_000);
-    let response: Response;
-    try {
-      response = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        signal: controller.signal,
-        headers: { Authorization: `Bearer ${openAiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "gpt-5.6-luna",
-          store: false,
-          safety_identifier: await safetyIdentifier(user.id),
-          instructions: "You are Kitchen Companion's recipe drafting assistant. Follow allergies and dietary restrictions strictly. Produce concise, practical recipes. This is an AI draft, not reviewed catalogue content.",
-          input: [{ role: "user", content: [{ type: "input_text", text: prompt }] }],
-          text: { format: { type: "json_schema", name: "recipe_draft", strict: true, schema: recipeJsonSchema } },
-          max_output_tokens: 2400,
-        }),
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
-
-    if (!response.ok) {
-      console.error("OpenAI recipe draft failed", { status: response.status, requestId: response.headers.get("x-request-id") });
-      if (response.status === 429) return json(req, { error: "Recipe drafting is busy. Try again shortly." }, 429);
-      throw new Error("Recipe draft could not be created");
-    }
-
-    const payload = await response.json() as Record<string, unknown>;
-    const text = outputText(payload);
-    if (!text) throw new Error("Recipe draft returned no content");
-    const recipe = recipeSchema.parse(JSON.parse(text));
+    const aiResult = await structuredResponse({
+      userId: user.id,
+      serviceClient,
+      capability: "private_recipe_draft",
+      instructions: "You are Kitchen Companion's recipe drafting assistant. Follow allergies and dietary restrictions strictly. Produce concise, practical recipes. This is an AI draft, not reviewed catalogue content.",
+      prompt,
+      schemaName: "recipe_draft",
+      schema: recipeJsonSchema,
+      maxOutputTokens: 2400,
+    });
+    const recipe = recipeSchema.parse(aiResult.data);
     const recipeFoods = [recipe.title, ...recipe.ingredients.map((ingredient) => ingredient.name)];
     const dietaryConflicts = findDietaryConflicts(recipeFoods, profile.dietary_preferences ?? []);
     const allergyConflict = recipeFoods.some((food) =>
@@ -240,7 +200,10 @@ Deno.serve(async (req) => {
     return json(req, {
       ...recipe,
       user_recipe_id: savedDraft.id,
-      model: "gpt-5.6-luna",
+      provider: aiResult.provider,
+      model: aiResult.model,
+      confidence: aiResult.confidence,
+      usage: aiResult.usage,
       provenance: "ai_assisted",
       review_status: "private_draft",
     });

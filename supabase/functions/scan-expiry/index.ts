@@ -31,15 +31,16 @@ Deno.serve(async (req) => {
   const guarded = guardRequest(req);
   if (guarded) return guarded;
   try {
-    const { user } = await authenticateAndQuota(req, "vision");
+    const { user, serviceClient } = await authenticateAndQuota(req, "vision");
     const body = await req.json() as Record<string, unknown>;
     const imageDataUrl = validateImageDataUrl(body.imageBase64);
     const itemNames = Array.isArray(body.itemNames)
       ? body.itemNames.filter((name): name is string => typeof name === "string").slice(0, 80)
       : [];
-    const parsed = resultSchema.parse(await structuredResponse({
+    const aiResult = await structuredResponse({
       userId: user.id,
-      model: "gpt-5.6-terra",
+      serviceClient,
+      capability: "expiry_extraction",
       instructions: "You extract only clearly legible food date labels. Never invent or infer an unreadable date.",
       prompt: JSON.stringify({
         task: "Extract visible use-by, best-before, or expiry dates and match them to products.",
@@ -55,9 +56,17 @@ Deno.serve(async (req) => {
       schemaName: "expiry_scan",
       schema: jsonSchema,
       maxOutputTokens: 1200,
-    }));
+    });
+    const parsed = resultSchema.parse(aiResult.data);
     const validResults = parsed.results.filter((result) => !Number.isNaN(Date.parse(`${result.expiryDate}T00:00:00Z`)));
-    return json(req, { results: validResults });
+    return json(req, {
+      results: validResults,
+      provider: aiResult.provider,
+      model: aiResult.model,
+      confidence: validResults.length === 0 ? 0 : validResults.reduce((sum, item) => sum + item.confidence, 0) / validResults.length,
+      provenance: aiResult.provenance,
+      usage: aiResult.usage,
+    });
   } catch (error) {
     return errorResponse(req, error, "Expiry scan failed");
   }

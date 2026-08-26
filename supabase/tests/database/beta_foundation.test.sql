@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local role postgres;
 select set_config('search_path', 'public,extensions', false);
-select plan(51);
+select plan(64);
 
 select ok(
   has_schema_privilege('supabase_auth_admin', 'private', 'USAGE'),
@@ -19,7 +19,14 @@ select has_table('public', 'ai_usage_daily', 'AI quota ledger exists');
 select has_table('public', 'push_subscriptions', 'web push subscriptions exist');
 select has_table('public', 'notification_preferences', 'notification preferences exist');
 select has_table('public', 'recipe_reviews', 'human recipe review audit trail exists');
+select has_table('public', 'ingredients', 'canonical ingredients exist');
+select has_table('public', 'ingredient_aliases', 'ingredient aliases exist');
+select has_table('public', 'recipe_versions', 'immutable recipe versions exist');
+select has_table('public', 'creator_partnerships', 'creator partnership approvals exist');
+select has_table('public', 'ai_usage_events', 'provider-neutral AI spend ledger exists');
 select has_column('public', 'recipes', 'rights_basis', 'recipes record their publishing rights basis');
+select has_column('public', 'recipes', 'verification_tier', 'recipes expose transparent verification');
+select has_column('public', 'recipe_ingredients', 'ingredient_id', 'recipe rows reference canonical ingredients');
 select has_index(
   'public',
   'meal_log',
@@ -38,9 +45,13 @@ select ok(
 select has_function(
   'public',
   'review_catalogue_recipe',
-  array['uuid', 'text', 'jsonb', 'text'],
+  array['uuid', 'text', 'jsonb', 'text', 'text'],
   'catalogue review uses the guarded approval function'
 );
+select has_function('public', 'recommend_catalogue_recipes', array['integer', 'integer', 'text', 'integer'], 'catalogue ranking runs in the database');
+select has_function('public', 'reserve_ai_budget', array['uuid', 'text', 'text', 'text', 'numeric'], 'AI spend is reserved atomically');
+select has_function('public', 'complete_ai_usage', array['uuid', 'text', 'integer', 'integer', 'numeric', 'text', 'text'], 'AI usage reservations are finalized');
+select has_function('public', 'promote_recipe_submission', array['uuid', 'text', 'text'], 'permissioned community submissions can enter the private editorial queue');
 select has_function(
   'public',
   'create_beta_invite',
@@ -191,7 +202,12 @@ select throws_ok(
   'approval is blocked until publishing rights are confirmed'
 );
 set local role postgres;
-update public.recipes set rights_basis = 'original_owned' where slug = 'review-target';
+update public.recipes
+set rights_basis = 'original_owned', instructions = '["Cook the test recipe safely."]'::jsonb
+where slug = 'review-target';
+insert into public.recipe_ingredients (recipe_id, name, normalized_name, quantity, unit)
+select id, 'Test ingredient', 'test ingredient', 1, 'portion'
+from public.recipes where slug = 'review-target';
 set local role authenticated;
 select lives_ok(
   $$select public.review_catalogue_recipe(
@@ -212,6 +228,20 @@ select is(
   1::bigint,
   'approval records an immutable review event'
 );
+select is(
+  (select count(*) from public.recipe_versions where recipe_id = (select id from public.recipes where slug = 'review-target')),
+  1::bigint,
+  'approval snapshots the exact published recipe version'
+);
+set local role postgres;
+select throws_ok(
+  $$update public.recipe_versions set verification_tier = 'test_kitchen_verified'
+    where recipe_id = (select id from public.recipes where slug = 'review-target')$$,
+  'P0001',
+  'Published recipe versions are immutable',
+  'published recipe snapshots cannot be changed even by a privileged database role'
+);
+set local role authenticated;
 select set_config(
   'request.jwt.claims',
   '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}',

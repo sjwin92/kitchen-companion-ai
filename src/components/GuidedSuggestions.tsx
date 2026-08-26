@@ -7,8 +7,7 @@ import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSmartRecommendations } from '@/hooks/useSmartRecommendations';
 import { explainSuggestion, reasonChipClass } from '@/lib/recommendationReason';
-import { listCatalogRecipes } from '@/services/betaCatalog';
-import { recommendRecipes } from '@/lib/recommendationEngine';
+import { listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 
 interface Suggestion {
   id: string;
@@ -24,8 +23,8 @@ interface Props {
   onSelect: (recipeId: string, title: string, image?: string) => Promise<void>;
 }
 
-export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }: Props) {
-  const { preferences, inventory, session } = useApp();
+export default function GuidedSuggestions({ slot, slotSettings, onSelect }: Props) {
+  const { preferences, inventory } = useApp();
   const { signals, loadSignals } = useSmartRecommendations();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,21 +34,13 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
   const fetchSuggestions = useCallback(async () => {
     setLoading(true);
     try {
-      const recipes = await listCatalogRecipes();
+      const ranked = await listRecommendedCatalogRecipes({ limit: 100 });
       const targetSlot = slot === 'lunchbox' ? 'lunch' : slot;
-      const slotRecipes = recipes.filter((recipe) =>
+      const slotRecipes = ranked.filter(({ recipe }) =>
         recipe.mealTypes.includes(slot) || recipe.mealTypes.includes(targetSlot),
       );
-      const candidates = slotRecipes.length > 0 ? slotRecipes : recipes;
-      const ranked = recommendRecipes({
-        recipes: candidates,
-        inventory,
-        preferences,
-        userSeed: session?.user.id ?? 'anonymous',
-        weekKey: date.toISOString().slice(0, 10),
-        limit: 3,
-      });
-      setSuggestions(ranked.map(({ recipe }) => ({
+      const candidates = slotRecipes.length > 0 ? slotRecipes : ranked;
+      setSuggestions(candidates.slice(0, 3).map(({ recipe }) => ({
         id: recipe.id,
         name: recipe.title,
         thumb: recipe.imagePath ?? '',
@@ -61,7 +52,7 @@ export default function GuidedSuggestions({ slot, date, slotSettings, onSelect }
     } finally {
       setLoading(false);
     }
-  }, [date, inventory, preferences, session?.user.id, slot]);
+  }, [slot]);
 
   useEffect(() => { fetchSuggestions(); }, [fetchSuggestions]);
 

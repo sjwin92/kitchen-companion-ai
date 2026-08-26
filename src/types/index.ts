@@ -40,6 +40,11 @@ export interface MealSuggestion {
     fat_g?: number;
   };
   provenance?: 'catalogue' | 'ai_assisted' | 'external';
+  verificationTier?: 'editorial_reviewed' | 'creator_verified' | 'test_kitchen_verified';
+  sourceLabel?: string | null;
+  contentVersion?: number;
+  mediaAttribution?: Record<string, unknown>;
+  creatorName?: string | null;
 }
 
 export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
@@ -125,6 +130,11 @@ export interface CatalogRecipe {
   audioUrl: string | null;
   creatorName: string | null;
   sourceType: 'original' | 'creator' | 'user_submission' | 'ai_assisted';
+  verificationTier: 'editorial_reviewed' | 'creator_verified' | 'test_kitchen_verified';
+  sourceLabel: string | null;
+  contentVersion: number;
+  mediaAttribution: Record<string, unknown>;
+  contributorUserId: string | null;
 }
 
 export interface RecipeBook {
@@ -152,4 +162,23 @@ export interface RecipeRecommendation {
     nutrition: number;
   };
   missingIngredients: RecipeIngredient[];
+  matchedIngredientIds?: string[];
+  matchedCount?: number;
+  missingCount?: number;
+}
+
+export interface AiUsageSummary {
+  inputTokens: number;
+  outputTokens: number;
+  estimatedCostGbp: number;
+  actualCostGbp: number;
+}
+
+export interface StructuredAiResponse<T> {
+  data: T;
+  provider: 'gemini' | 'openai' | 'deepseek';
+  model: string;
+  confidence: number | null;
+  provenance: 'vision_estimate' | 'ai_assisted' | 'catalogue_enrichment';
+  usage: AiUsageSummary;
 }
