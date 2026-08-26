@@ -16,7 +16,7 @@ The content totals are editorial and partnership milestones, not generated fixtu
 2. Set Edge Function secrets: `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`, `AI_OPENAI_FALLBACK_ENABLED=false` and `ALLOWED_ORIGINS`. Keep all provider keys out of Vite variables.
 3. Deploy the updated capture, nutrition and private recipe functions.
 4. Import candidate recipes with `npm run catalogue:import -- /absolute/path/catalogue.json`.
-5. Use `/catalogue-review` to inspect permissions, duplicates, provenance, ingredients, allergens and nutrition evidence before approval.
+5. Use `/admin/catalogue` to inspect permissions, duplicates, provenance, ingredients, allergens and nutrition evidence before approval.
 6. Test with five invited accounts, then 25. Open invitations only after 48 hours without a stop condition.
 
 OpenAI can be enabled only as a short-lived server-side emergency fallback. It must not be the default route.
