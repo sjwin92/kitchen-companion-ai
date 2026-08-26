@@ -4,7 +4,7 @@ import { Home, Package, Plus, ShoppingCart, CalendarDays, BookOpen } from 'lucid
 const NAV_ITEMS = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/inventory', icon: Package, label: 'Inventory' },
-  { to: '/recipe-books', icon: BookOpen, label: 'Recipes' },
+  { to: '/meals', icon: BookOpen, label: 'Recipes' },
   { to: '/meal-planner', icon: CalendarDays, label: 'Plan' },
   { to: '/shopping-list', icon: ShoppingCart, label: 'Shop' },
 ];

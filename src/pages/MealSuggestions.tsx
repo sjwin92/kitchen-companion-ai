@@ -7,11 +7,12 @@ import { recommendRecipes } from '@/lib/recommendationEngine';
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Check, Search, Plus, Heart, CalendarDays, Sparkles, Users, Loader2, LibraryBig } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, FlaskConical, Search, Plus, Heart, CalendarDays, Sparkles, Users, Loader2, LibraryBig } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import RecipeCard from '@/components/RecipeCard';
 
 const MAX_VISIBLE_MEALS = 30;
 type RankedMeal = MealWithStatus & { reasons: string[] };
@@ -128,178 +129,139 @@ export default function MealSuggestions() {
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
-      {/* Editorial header */}
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight font-display leading-tight">
-          Daily curation
-        </h1>
-        <p className="section-title mt-3 max-w-2xl">
-          Reviewed recipes from the Kitchen Companion catalogue, ranked for your pantry, expiring food, tastes, time and goals.
-        </p>
-        <Button variant="outline" size="sm" className="mt-4 rounded-xl gap-2" onClick={() => navigate('/recipe-books')}>
-          <LibraryBig className="w-4 h-4" /> Browse recipe books
-        </Button>
-      </div>
-
-      {/* Featured recipe card */}
-      {featured && (
-        <button
-          onClick={() => navigate(`/recipe/${featured.id}`)}
-          className="w-full max-w-xl rounded-xl overflow-hidden text-left group mb-8"
-          style={{ boxShadow: 'var(--shadow-card)' }}
-        >
-          <div className="relative">
-            <img src={featured.image} alt={featured.title} className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            {/* Badges */}
-            <div className="absolute top-3 left-3 flex gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-card/90 text-foreground">
-                Featured Selection
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary text-primary-foreground">
-                {featured.matchPercent}% Pantry Match
-              </span>
-            </div>
-            {/* Title overlay */}
-            <div className="absolute bottom-4 left-4 right-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/70 mb-1">Suggested</p>
-              <h3 className="text-xl font-bold text-white">{featured.title}</h3>
-              <p className="text-xs text-white/80 mt-1 flex items-center gap-1">
-                <Check className="w-3 h-3" /> You have {featured.owned.length}/{featured.ingredients.length} ingredients
-              </p>
-            </div>
-          </div>
-        </button>
-      )}
-
-      {/* Search & filter */}
-      <div className="max-w-xl space-y-3 mb-6">
-        <div className="glass-card p-1">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search meals or ingredients"
-              className="pl-9 border-0 bg-transparent shadow-none focus-visible:ring-0"
-            />
-          </div>
+      <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="section-title mb-2">Recipes</p>
+          <h1 className="max-w-3xl text-3xl font-extrabold tracking-[-0.035em] md:text-5xl">Cook from what you have</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
+            Trusted recipes, ordered by your pantry, food that needs using and the way your household eats.
+          </p>
         </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Pantry match — % of ingredients you already have</p>
-          <div className="flex flex-wrap gap-2">
-            {[0, 25, 50, 75].map(pct => (
-              <Button key={pct} type="button" variant={minMatchPercent === pct ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setMinMatchPercent(pct)}>
-                {pct === 0 ? 'All' : `${pct}%`}
-              </Button>
-            ))}
-          </div>
-        </div>
-        {!isLoading && (
-          <p className="text-xs text-muted-foreground">{Math.min(MAX_VISIBLE_MEALS, filteredMeals.length)} of {filteredMeals.length} recipes</p>
-        )}
-      </div>
-
-      {/* Recipe grid — large image cards */}
-      {isLoading && (
-        <div className="glass-card p-6 text-center text-sm text-muted-foreground shimmer max-w-xl">Loading meal ideas...</div>
-      )}
-
-      {!isLoading && filteredMeals.length === 0 && (
-        <div className="glass-card p-6 text-center text-sm text-muted-foreground max-w-xl">
-          {loadError ?? 'No reviewed catalogue recipes match these filters yet.'}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {visibleMeals.map((meal, i) => {
-          // Check if any owned ingredients are expiring
-          const expiringOwned = meal.owned.filter(name => {
-            const inv = inventory.find(it => it.name.toLowerCase() === name.toLowerCase());
-            return inv && (inv.status === 'use-today' || inv.status === 'use-soon');
-          });
-
-          return (
-            <div
-              key={meal.id}
-              className="glass-card overflow-hidden animate-fade-in"
-              style={{ animationDelay: `${i * 40}ms`, animationFillMode: 'backwards' }}
-            >
-              {/* Image with badges */}
-              <div className="w-full text-left group">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <button
-                    aria-label={`Open ${meal.title}`}
-                    onClick={() => navigate(`/recipe/${meal.id}`)}
-                    className="absolute inset-0 z-10"
-                  />
-                  {meal.image ? (
-                    <img src={meal.image} alt={meal.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full bg-surface-high flex items-center justify-center">
-                      <span className="text-3xl">🍽️</span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
-                  {/* Expiring badge */}
-                  {expiringOwned.length > 0 && (
-                    <span className="absolute top-2.5 left-2.5 text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-warning text-warning-foreground">
-                      Uses expiring: {expiringOwned[0]} {expiringOwned.length > 1 ? `+${expiringOwned.length - 1}` : ''}
-                    </span>
-                  )}
-
-                  {/* Match badge */}
-                  <span className="absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-card/90 text-foreground">
-                    {meal.matchPercent}% Match
-                  </span>
-
-                  {/* Add button */}
-                  <button
-                    aria-label={`Save ${meal.title}`}
-                    onClick={(e) => { e.stopPropagation(); toggleFavorite(meal.id, meal.title, meal.image, meal.category); }}
-                    className="absolute z-20 bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="p-4">
-                <h3 className="text-sm font-bold leading-tight mb-1">{meal.title}</h3>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Check className="w-3 h-3 text-primary" />
-                  You have {meal.owned.length}/{meal.ingredients.length} ingredients
-                </p>
-                {meal.reasons[0] && <p className="text-xs text-primary mt-2">{meal.reasons[0]}</p>}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Explicit fallback: catalogue is always the primary recommendation source. */}
-      <div className="glass-card p-5 mt-8 max-w-xl border-dashed">
-        <div className="flex items-center gap-3 mb-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <h3 className="text-base font-bold">Can’t find the right fit?</h3>
-        </div>
-        <p className="text-sm text-muted-foreground mb-3">
-          As an optional fallback, ask Kitchen Companion to draft one new recipe from your pantry. AI drafts are kept separate from reviewed catalogue recipes.
-        </p>
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-primary" />
-            <button aria-label="Decrease servings" onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))} className="w-7 h-7 rounded-md bg-muted font-bold">−</button>
-            <span className="text-sm font-bold w-5 text-center">{generatorServings}</span>
-            <button aria-label="Increase servings" onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))} className="w-7 h-7 rounded-md bg-muted font-bold">+</button>
-          </div>
-          <Button variant="outline" size="sm" className="ml-auto rounded-xl text-xs gap-1.5" onClick={generateRecipe} disabled={isGenerating}>
-            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-            {isGenerating ? 'Drafting…' : 'Draft one recipe with AI'}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" className="gap-2 rounded-xl" onClick={() => navigate('/favorites')}>
+            <Heart className="h-4 w-4" /> Saved
+          </Button>
+          <Button className="gap-2 rounded-xl" onClick={() => navigate('/recipe-books')}>
+            <LibraryBig className="h-4 w-4" /> Recipe books
           </Button>
         </div>
+      </header>
+
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="min-w-0">
+          {featured && (
+            <button
+              onClick={() => navigate(`/recipe/${featured.id}`)}
+              className="group relative mb-6 block aspect-[16/7] min-h-64 w-full overflow-hidden rounded-2xl text-left shadow-[var(--shadow-card)]"
+            >
+              <img src={featured.image} alt={featured.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+              <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#35463d]">Today’s best fit</span>
+              <div className="absolute bottom-0 left-0 right-0 p-5 text-white md:p-6">
+                <p className="text-xs font-semibold text-white/75">{featured.matchPercent}% pantry match</p>
+                <h2 className="mt-1 text-2xl font-extrabold tracking-tight md:text-3xl">{featured.title}</h2>
+                <p className="mt-2 text-sm text-white/80">You already have {featured.owned.length} of {featured.ingredients.length} ingredients</p>
+              </div>
+            </button>
+          )}
+
+          <div className="mb-6 rounded-2xl border border-border/70 bg-card p-3 shadow-[var(--shadow-xs)]">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="Search recipes or ingredients"
+                className="h-11 border-0 bg-surface-low pl-10 shadow-none focus-visible:ring-1"
+              />
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-xs font-semibold text-muted-foreground">Pantry match</span>
+              {[0, 25, 50, 75].map(pct => (
+                <Button key={pct} type="button" variant={minMatchPercent === pct ? 'default' : 'ghost'} size="sm" className="h-8 rounded-full px-3 text-xs" onClick={() => setMinMatchPercent(pct)}>
+                  {pct === 0 ? 'Any' : `${pct}%+`}
+                </Button>
+              ))}
+              {!isLoading && <span className="ml-auto text-xs text-muted-foreground">{filteredMeals.length} recipe{filteredMeals.length === 1 ? '' : 's'}</span>}
+            </div>
+          </div>
+
+          {isLoading && (
+            <div className="grid gap-5 sm:grid-cols-2">
+              {[0, 1, 2, 3].map(item => <div key={item} className="h-80 animate-pulse rounded-2xl border border-border/60 bg-muted/50" />)}
+            </div>
+          )}
+
+          {!isLoading && filteredMeals.length === 0 && (
+            <div className="rounded-2xl border border-border/70 bg-card p-7 md:p-9">
+              <span className="text-4xl" aria-hidden="true">🍲</span>
+              <h2 className="mt-4 text-xl font-extrabold">{loadError ? 'The recipe shelf did not load' : mealsWithStatus.length === 0 ? 'The first recipe packs are in review' : 'No recipes match those filters'}</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+                {loadError ?? (mealsWithStatus.length === 0
+                  ? 'The beta catalogue only publishes recipes after cooking, allergen and rights checks. Three Kitchen Companion starter packs are being prepared now.'
+                  : 'Try a lower pantry match or search for a different ingredient.')}
+              </p>
+              {mealsWithStatus.length === 0 && !loadError && (
+                <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-foreground/80">
+                  <span className="rounded-full bg-muted px-3 py-1.5">🌿 Plant-forward starters</span>
+                  <span className="rounded-full bg-muted px-3 py-1.5">⏱️ Five-ingredient weeknights</span>
+                  <span className="rounded-full bg-muted px-3 py-1.5">🥕 Use it up</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {visibleMeals.map(meal => {
+              const expiringOwned = meal.owned.filter(name => {
+                const inv = inventory.find(it => it.name.toLowerCase() === name.toLowerCase());
+                return inv && (inv.status === 'use-today' || inv.status === 'use-soon');
+              });
+              return (
+                <RecipeCard
+                  key={meal.id}
+                  title={meal.title}
+                  image={meal.image}
+                  prepTime={meal.prepTime}
+                  matchPercent={meal.matchPercent}
+                  ownedCount={meal.owned.length}
+                  ingredientCount={meal.ingredients.length}
+                  reason={meal.reasons[0]}
+                  expiringLabel={expiringOwned[0]}
+                  saved={isFavorite(meal.id)}
+                  onOpen={() => navigate(`/recipe/${meal.id}`)}
+                  onSave={() => toggleFavorite(meal.id, meal.title, meal.image, meal.category)}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        <aside className="space-y-4 lg:sticky lg:top-20">
+          <button onClick={() => navigate('/recipe-books')} className="w-full rounded-2xl bg-[#31433a] p-5 text-left text-white shadow-[var(--shadow-card)] transition-colors hover:bg-[#3b4d43]">
+            <BookOpen className="h-5 w-5 text-white/80" />
+            <h2 className="mt-8 text-xl font-extrabold">Your recipe shelf</h2>
+            <p className="mt-2 text-sm leading-5 text-white/70">Collect trusted creator packs and plan directly from them.</p>
+            <span className="mt-5 flex items-center gap-1 text-xs font-bold">Browse books <ArrowRight className="h-3.5 w-3.5" /></span>
+          </button>
+
+          <div className="rounded-2xl border border-dashed border-border bg-card p-5">
+            <FlaskConical className="h-5 w-5 text-muted-foreground" />
+            <h2 className="mt-4 text-base font-extrabold">Recipe lab</h2>
+            <p className="mt-1 text-sm leading-5 text-muted-foreground">If the catalogue has no fit, create one private draft from your pantry. It never enters the public shelf without review.</p>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button aria-label="Decrease servings" onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">−</button>
+                <span className="w-5 text-center text-sm font-bold">{generatorServings}</span>
+                <button aria-label="Increase servings" onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">+</button>
+              </div>
+              <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={generateRecipe} disabled={isGenerating}>
+                {isGenerating ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                {isGenerating ? 'Drafting…' : 'Create private draft'}
+              </Button>
+            </div>
+          </div>
+        </aside>
       </div>
 
       {/* Generated Recipe Dialog */}

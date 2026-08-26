@@ -156,21 +156,27 @@
 
   .glass-card {
     @apply border border-border/60 rounded-xl;
-    background: var(--gradient-card);
-    backdrop-filter: blur(12px) saturate(1.4);
+    background: hsl(var(--card));
     box-shadow: var(--shadow-card);
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
-  }
-  .glass-card:hover {
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-1px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .glass-card-elevated {
     @apply border border-border/40 rounded-xl;
-    background: var(--gradient-card);
-    backdrop-filter: blur(16px) saturate(1.6);
+    background: hsl(var(--card));
     box-shadow: var(--shadow-elevated);
+  }
+
+  .recipe-card {
+    @apply overflow-hidden rounded-2xl border border-border/70 bg-card;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .recipe-card:hover {
+    @apply border-border;
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
   }
 
   .surface-container {

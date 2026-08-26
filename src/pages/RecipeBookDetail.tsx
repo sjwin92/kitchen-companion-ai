@@ -4,6 +4,7 @@ import { ArrowLeft, BadgeCheck, Clock, ExternalLink, Loader2, Play } from 'lucid
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getRecipeBook, getRecipeMediaUrl, type BookRecipe, type RecipeBookSummary } from '@/services/betaCatalog';
+import RecipeArtwork from '@/components/RecipeArtwork';
 
 export default function RecipeBookDetail() {
   const { id } = useParams();
@@ -35,16 +36,16 @@ export default function RecipeBookDetail() {
         </div>
       </section>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {recipes.map(({ recipes: recipe, position, section_title: section }) => (
-          <Card key={recipe.id} className="p-4 md:p-5">
-            <div className="flex gap-4">
-              <Link to={`/recipe/${recipe.id}`} className="w-24 h-24 rounded-xl bg-muted overflow-hidden shrink-0">
-                {recipe.image_path && <img src={getRecipeMediaUrl(recipe.image_path) ?? ''} alt="" className="w-full h-full object-cover" />}
+          <Card key={recipe.id} className="rounded-2xl p-3 md:p-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link to={`/recipe/${recipe.id}`} className="shrink-0 overflow-hidden rounded-xl sm:h-28 sm:w-32">
+                <RecipeArtwork title={recipe.title} image={getRecipeMediaUrl(recipe.image_path)} className="flex aspect-[16/9] h-full w-full items-center justify-center sm:aspect-auto" />
               </Link>
               <div className="min-w-0 flex-1">
                 {section && <p className="text-[10px] uppercase tracking-wider font-bold text-primary">{section}</p>}
-                <h2 className="font-bold text-lg">
+                <h2 className="text-lg font-extrabold leading-snug">
                   <Link to={`/recipe/${recipe.id}`} className="hover:text-primary">
                     <span className="text-muted-foreground mr-2">{String(position + 1).padStart(2, '0')}</span>{recipe.title}
                   </Link>
@@ -57,7 +58,7 @@ export default function RecipeBookDetail() {
                 </div>
               </div>
               {recipe.youtube_url && (
-                <Button asChild variant="outline" size="sm" className="shrink-0"><a href={recipe.youtube_url} target="_blank" rel="noreferrer"><Play className="w-3.5 h-3.5 mr-1" />Watch<ExternalLink className="w-3 h-3 ml-1" /></a></Button>
+                <Button asChild variant="outline" size="sm" className="shrink-0 rounded-xl"><a href={recipe.youtube_url} target="_blank" rel="noreferrer"><Play className="w-3.5 h-3.5 mr-1" />Watch<ExternalLink className="w-3 h-3 ml-1" /></a></Button>
               )}
             </div>
           </Card>

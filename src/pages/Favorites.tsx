@@ -4,6 +4,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { useStapleMeals } from '@/hooks/useStapleMeals';
 import { Heart, ArrowRight, Pin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import RecipeArtwork from '@/components/RecipeArtwork';
 
 type Tab = 'favorites' | 'staples';
 
@@ -80,9 +81,7 @@ export default function Favorites() {
             onClick={() => navigate(`/recipe/${item.recipe_id}`)}
           >
             <div className="flex items-center gap-3">
-              {item.image && (
-                <img src={item.image} alt={item.title} className="w-20 h-20 object-cover shrink-0" loading="lazy" />
-              )}
+              <RecipeArtwork title={item.title} image={item.image} className="flex h-20 w-20 shrink-0 items-center justify-center" />
               <div className="flex-1 min-w-0 p-3">
                 <h3 className="font-semibold text-sm leading-tight truncate">{item.title}</h3>
                 <div className="flex items-center gap-2 mt-1">

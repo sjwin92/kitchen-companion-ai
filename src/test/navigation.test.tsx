@@ -9,10 +9,10 @@ function LocationProbe() {
 }
 
 describe('app navigation', () => {
-  it('keeps the desktop Recipes destination aligned with the recipe shelf', () => {
+  it('opens recipe discovery from the primary Recipes destination', () => {
     render(<MemoryRouter><TopNav /></MemoryRouter>);
 
-    expect(screen.getByRole('link', { name: 'Recipes' })).toHaveAttribute('href', '/recipe-books');
+    expect(screen.getByRole('link', { name: 'Recipes' })).toHaveAttribute('href', '/meals');
     expect(screen.getByRole('link', { name: 'Open account settings' })).toHaveAttribute('href', '/settings');
   });
 

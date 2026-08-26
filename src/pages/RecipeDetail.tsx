@@ -7,11 +7,12 @@ import type { MealSuggestion } from '@/types';
 import PairingSuggestions from '@/components/PairingSuggestions';
 import RecipeFeedbackBar from '@/components/RecipeFeedbackBar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ChefHat, ExternalLink, Heart, CalendarPlus, Minus, Users, UtensilsCrossed, X, Camera } from 'lucide-react';
+import { ArrowLeft, Clock, Check, ShoppingCart, Plus, ExternalLink, Heart, CalendarPlus, Minus, Users, UtensilsCrossed, X, Camera } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import RecipeArtwork from '@/components/RecipeArtwork';
 
 export default function RecipeDetail() {
   const { id } = useParams();
@@ -138,15 +139,14 @@ export default function RecipeDetail() {
 
   return (
     <div className="pb-28 max-w-lg mx-auto animate-fade-in">
-      {/* Hero image */}
-      {recipe.image && (
-        <div className="relative h-56 w-full overflow-hidden">
-          <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+      {/* Recipe hero — the same artwork system is used with or without a photo. */}
+        <div className="relative h-64 w-full overflow-hidden">
+          <RecipeArtwork title={recipe.title} image={recipe.image} className="flex h-full w-full items-center justify-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
           <button
             aria-label="Back to recipes"
             onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            className="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -154,20 +154,20 @@ export default function RecipeDetail() {
             <button
               aria-label={`${isFavorite(recipe.id) ? 'Remove' : 'Save'} ${recipe.title}`}
               onClick={() => toggleFavorite(recipe.id, recipe.title, recipe.image, recipe.category)}
-              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+              className="w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
             >
               <Heart className={`w-4 h-4 ${isFavorite(recipe.id) ? 'fill-red-500 text-red-500' : ''}`} />
             </button>
             <button
               aria-label={`Plan ${recipe.title}`}
               onClick={() => navigate('/meal-planner')}
-              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+              className="w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
             >
               <CalendarPlus className="w-4 h-4" />
             </button>
           </div>
           <div className="absolute bottom-4 left-4 right-4">
-            <h1 className="text-xl font-bold text-white leading-tight">{recipe.title}</h1>
+            <h1 className="text-2xl font-extrabold text-white leading-tight tracking-tight">{recipe.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">
               <span className="text-xs text-white/80 flex items-center gap-1">
                 <Clock className="w-3 h-3" /> {recipe.prepTime}
@@ -181,34 +181,8 @@ export default function RecipeDetail() {
             </div>
           </div>
         </div>
-      )}
 
       <div className="p-4 space-y-5">
-        {/* Back + header when no image */}
-        {!recipe.image && (
-          <>
-            <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Back to meals
-            </button>
-            <div className="glass-card p-5">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="icon-container bg-primary/10 shrink-0">
-                  <ChefHat className="w-5 h-5 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-xl font-bold leading-tight">{recipe.title}</h1>
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {recipe.prepTime}
-                    </span>
-                    <span className="text-xs font-semibold text-primary">{matchPercent}% match</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
         {/* Match bar */}
         <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-2">
