@@ -40,7 +40,9 @@ export default function SlotSettingsDialog({ slot, settings, onClose, onSave }: 
 
   if (!slot || !settings) return null;
 
-  const update = (key: keyof SlotSettings, value: any) => setForm(prev => ({ ...prev, [key]: value }));
+  const update = <Key extends keyof SlotSettings>(key: Key, value: SlotSettings[Key]) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+  };
 
   const handleSave = async () => {
     await onSave(slot, form);

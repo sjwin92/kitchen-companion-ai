@@ -19,14 +19,16 @@ const SLOT_LABELS: Record<string, string> = {
 export default function TasteProfileCard() {
   const { session, preferences } = useApp();
   const { loadSignals } = useSmartRecommendations();
+  const userId = session?.user?.id;
+  const preferredCuisines = preferences.preferredCuisines;
+  const avoidedPreferenceCount = preferences.dislikedIngredients.length + preferences.allergies.length;
   const [summary, setSummary] = useState<ProfileSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!userId) return;
     let cancelled = false;
     (async () => {
-      const userId = session.user.id;
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
       const [signals, logsRes, ratingsRes, libRes] = await Promise.all([
@@ -44,10 +46,10 @@ export default function TasteProfileCard() {
 
       // Top cuisines from library + preferences
       const cuisineCounts: Record<string, number> = {};
-      (libRes.data || []).forEach((r: any) => {
-        if (r.cuisine) cuisineCounts[r.cuisine] = (cuisineCounts[r.cuisine] || 0) + 1;
+      (libRes.data || []).forEach(meal => {
+        if (meal.cuisine) cuisineCounts[meal.cuisine] = (cuisineCounts[meal.cuisine] || 0) + 1;
       });
-      preferences.preferredCuisines.forEach(c => {
+      preferredCuisines.forEach(c => {
         cuisineCounts[c] = (cuisineCounts[c] || 0) + 5; // weight stated preferences
       });
       const topCuisines = Object.entries(cuisineCounts)
@@ -61,10 +63,7 @@ export default function TasteProfileCard() {
       const favouriteSlot = Object.entries(slotCounts)
         .sort((a, b) => b[1] - a[1])[0]?.[0] || null;
 
-      const avoidedCount =
-        preferences.dislikedIngredients.length +
-        preferences.allergies.length +
-        (signals?.avoidedIngredients.length || 0);
+      const avoidedCount = avoidedPreferenceCount + (signals?.avoidedIngredients.length || 0);
 
       setSummary({
         topCuisines,
@@ -76,7 +75,7 @@ export default function TasteProfileCard() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [session?.user?.id]);
+  }, [avoidedPreferenceCount, loadSignals, preferredCuisines, userId]);
 
   if (loading) {
     return (
