@@ -15,6 +15,8 @@
     "test:e2e": "playwright test",
     "catalogue:import": "node scripts/import-reviewed-recipes.mjs",
     "catalogue:validate": "node scripts/import-reviewed-recipes.mjs --validate-only",
+    "reference:import": "node scripts/import-ingredient-reference.mjs",
+    "reference:validate": "node scripts/import-ingredient-reference.mjs --validate-only",
     "beta:invite": "node scripts/create-beta-invite.mjs"
   },
   "dependencies": {

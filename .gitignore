@@ -33,3 +33,4 @@ data/external/
 *.bak
 *.bak2
 *.save
+scripts/data-import/workdir/

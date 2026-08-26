@@ -1,0 +1,1565 @@
+{
+  "creator": {
+    "slug": "usda-myplate-kitchen",
+    "display_name": "USDA MyPlate Kitchen",
+    "bio": "Recipes published by the U.S. Department of Agriculture's MyPlate Kitchen. Works of the U.S. federal government are in the public domain. Imported, converted to metric and localised for UK kitchens by the Kitchen Companion test kitchen; each recipe still requires an editorial test cook and review before publication.",
+    "website_url": "https://www.myplate.gov/myplate-kitchen",
+    "social_links": {}
+  },
+  "book": {
+    "slug": "breakfast-foundations-usda-volume-1",
+    "title": "Breakfast Foundations",
+    "subtitle": "Porridge, eggs and morning plates",
+    "description": "Breakfasts and flexible morning foundations, imported from the USDA MyPlate Kitchen public-domain collection.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "breakfast-parfait",
+      "title": "Breakfast Parfait",
+      "description": "This colorful parfait features four types of fruit: fresh, frozen, canned, and dried.",
+      "servings": 4,
+      "prep_minutes": 5,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "gluten-free",
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "In glasses or bowls, layer pineapple, berries, yogurt, banana, and raisins."
+      ],
+      "nutrition": {
+        "calories": 209.0,
+        "fat_g": 1.0,
+        "saturated_fat_g": 1.0,
+        "cholesterol_mg": 3.0,
+        "sodium_mg": 44.0,
+        "carbs_g": 49.0,
+        "fiber_g": 3.0,
+        "sugar_g": 40.0,
+        "added_sugar_g": 4.0,
+        "protein_g": 4.0,
+        "vitamin_d_mcg": 0.0,
+        "calcium_mg": 133.0,
+        "iron_mg": 1.0,
+        "potassium_mg": 502.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/breakfast-parfait",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/breakfast-parfait (archived copy: https://web.archive.org/web/20241127050344/https://www.myplate.gov/recipes/breakfast-parfait). USDA credit line: University of Illinois Extension Service. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Pineapple",
+          "normalized_name": "pineapple",
+          "quantity": 330.0,
+          "unit": "g",
+          "preparation": "canned and chopped",
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Frozen berries",
+          "normalized_name": "berry",
+          "quantity": 240.0,
+          "unit": "ml",
+          "preparation": "unsweetened and thawed",
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Yogurt, low-fat vanilla",
+          "normalized_name": "yogurt low fat vanilla",
+          "quantity": 240.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Banana",
+          "normalized_name": "banana",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": "peeled and sliced",
+          "optional": false,
+          "aisle": "Sweets and baking"
+        },
+        {
+          "name": "Raisins",
+          "normalized_name": "raisin",
+          "quantity": 48.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/4 of recipe",
+        "usda_rating": 3.99,
+        "usda_rating_count": 295,
+        "usda_notes": "Learn more about: Pineapples Blueberries Bananas",
+        "archive_url": "https://web.archive.org/web/20241127050344/https://www.myplate.gov/recipes/breakfast-parfait",
+        "ingredient_source_lines": [
+          "2 cups pineapple, canned and chopped",
+          "1 cup frozen berries, unsweetened and thawed",
+          "1 cup yogurt, low-fat vanilla",
+          "1 banana, peeled and sliced",
+          "1/3 cup raisins"
+        ],
+        "ingredient_reference_fdc_ids": [
+          169124,
+          null,
+          169608,
+          169648,
+          168166
+        ]
+      }
+    },
+    {
+      "slug": "broccoli-omelet",
+      "title": "Broccoli Omelet",
+      "description": "This omelet is lower in fat and cholesterol than a traditional omelet and stuffed with a vibrant mix of broccoli florets, red pepper, and mushrooms, and topped with melted reduced-fat cheese.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 5,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free",
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "eggs",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Cut vegetables as directed.",
+        "Whisk eggs and milk in a medium mixing bowl.",
+        "Spray 10-inch non-stick frying pan with cooking spray; heat.",
+        "Add broccoli, peppers, and mushrooms; sauté about 3-5 minutes, then remove from pan."
+      ],
+      "nutrition": {
+        "calories": 190.0,
+        "fat_g": 7.0,
+        "saturated_fat_g": 2.0,
+        "cholesterol_mg": 195.0,
+        "sodium_mg": 350.0,
+        "carbs_g": 12.0,
+        "fiber_g": 3.0,
+        "sugar_g": 6.0,
+        "added_sugar_g": 0.0,
+        "protein_g": 22.0,
+        "vitamin_d_mcg": 1.0,
+        "calcium_mg": 150.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 614.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/broccoli-omelet",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/broccoli-omelet (archived copy: https://web.archive.org/web/20241127031518/https://www.myplate.gov/recipes/broccoli-omelet). USDA credit line: Produce for Better Health Foundation. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Broccoli florets",
+          "normalized_name": "broccoli floret",
+          "quantity": 264.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Red pepper",
+          "normalized_name": "red pepper",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Button mushrooms",
+          "normalized_name": "button mushroom",
+          "quantity": 16.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Cooking spray",
+          "normalized_name": "cooking spray",
+          "quantity": null,
+          "unit": null,
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Eggs",
+          "normalized_name": "egg",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Egg whites",
+          "normalized_name": "egg white",
+          "quantity": 8.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Milk",
+          "normalized_name": "milk",
+          "quantity": 60.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Ricotta cheese",
+          "normalized_name": "ricotta cheese",
+          "quantity": 56.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Grated Parmesan cheese",
+          "normalized_name": "grated parmesan cheese",
+          "quantity": 14.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Salt",
+          "normalized_name": "salt",
+          "quantity": 1,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Pepper",
+          "normalized_name": "pepper",
+          "quantity": 0.5,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/4 of recipe",
+        "usda_rating": 3.98,
+        "usda_rating_count": 321,
+        "usda_notes": "Serving Suggestions: Serve with melon and whole wheat toast. Learn more about: Broccoli Bell Peppers Onions",
+        "archive_url": "https://web.archive.org/web/20241127031518/https://www.myplate.gov/recipes/broccoli-omelet",
+        "ingredient_source_lines": [
+          "3 cups broccoli florets",
+          "1 large red bell pepper",
+          "16 button mushrooms",
+          "cooking spray",
+          "4 eggs",
+          "8 egg whites",
+          "1/4 cup milk",
+          "1/2 cup ricotta cheese",
+          "2 tablespoons grated Parmesan cheese",
+          "1/8 teaspoon salt",
+          "1/8 teaspoon pepper"
+        ],
+        "ingredient_reference_fdc_ids": [
+          170379,
+          170108,
+          169382,
+          173576,
+          171287,
+          174542,
+          171267,
+          173414,
+          173414,
+          173468,
+          170108
+        ]
+      }
+    },
+    {
+      "slug": "avocado-breakfast-bruschetta",
+      "title": "Avocado Breakfast Bruschetta",
+      "description": "Start your day with a breakfast twist on classic bruschetta: avocados, tomato, hard-boiled egg, and ricotta with basil atop toasted rustic whole-grain bread.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "eggs",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Dice avocado, tomatoes, and spring onion.",
+        "Peel and chop hard-boiled eggs.",
+        "Reserving 2 tbsp. basil for garnish, gently toss first five ingredients in a small bowl. Add pepper to taste.",
+        "Toast baguette slices and smear with ricotta cheese.",
+        "Top with avocado mix and garnish with chopped basil."
+      ],
+      "nutrition": {
+        "calories": 340.0,
+        "fat_g": 17.0,
+        "saturated_fat_g": 4.0,
+        "cholesterol_mg": 190.0,
+        "sodium_mg": 434.0,
+        "carbs_g": 32.0,
+        "fiber_g": 9.0,
+        "sugar_g": 6.0,
+        "added_sugar_g": 1.0,
+        "protein_g": 17.0,
+        "vitamin_d_mcg": 1.0,
+        "calcium_mg": 150.0,
+        "iron_mg": 3.0,
+        "potassium_mg": 525.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/avocado-breakfast-bruschetta",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/avocado-breakfast-bruschetta (archived copy: https://web.archive.org/web/20241112211348/https://www.myplate.gov/recipes/avocado-breakfast-bruschetta). USDA credit line: Produce for Better Health Foundation. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Ripe avocado",
+          "normalized_name": "ripe avocado",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 2.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Spring onion",
+          "normalized_name": "spring onion",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped fresh basil",
+          "normalized_name": "chopped basil",
+          "quantity": 12.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Eggs",
+          "normalized_name": "egg",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Whole-wheat baguette bread",
+          "normalized_name": "whole wheat baguette bread",
+          "quantity": 12.0,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Ricotta cheese",
+          "normalized_name": "ricotta cheese",
+          "quantity": 28.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Cracked black pepper to taste",
+          "normalized_name": "cracked black pepper to taste",
+          "quantity": null,
+          "unit": null,
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": null,
+        "usda_rating": 3.82,
+        "usda_rating_count": 294,
+        "usda_notes": "Serving Suggestions: Serve with an 8 ounce glass of fat-free (skim) milk. Learn more about: Avocados Tomatoes Onions Herbs",
+        "archive_url": "https://web.archive.org/web/20241112211348/https://www.myplate.gov/recipes/avocado-breakfast-bruschetta",
+        "ingredient_source_lines": [
+          "1 ripe avocado",
+          "2 medium tomatoes",
+          "1 green onion",
+          "1/2 cup chopped fresh basil",
+          "4 eggs",
+          "12 slices whole-wheat baguette bread",
+          "1/4 cup ricotta cheese",
+          "cracked black pepper to taste"
+        ],
+        "ingredient_reference_fdc_ids": [
+          173573,
+          170456,
+          170000,
+          172232,
+          171287,
+          174924,
+          173414,
+          null
+        ]
+      }
+    },
+    {
+      "slug": "black-bean-burrito",
+      "title": "Black Bean Burrito",
+      "description": "The protein and fiber in this bean and vegetable burrito make it a great breakfast burrito, or enjoy it any time of day.",
+      "servings": 4,
+      "prep_minutes": 20,
+      "cook_minutes": 0,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mexican-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "Mash beans with rapeseed oil and mix with onion and tomatoes.",
+        "Microwave tortillas between the two sheets of slightly damp white paper towels on high for 15 seconds.",
+        "Divide bean mixture between the tortillas.",
+        "Fold each tortilla to enclose filling.",
+        "Place on microwave-safe dish and spoon salsa over each burrito.",
+        "Microwave on high for 15 seconds.",
+        "Serve topped with yogurt and coriander."
+      ],
+      "nutrition": {
+        "calories": 134.0,
+        "fat_g": 2.0,
+        "saturated_fat_g": 0.0,
+        "cholesterol_mg": 0.0,
+        "sodium_mg": 236.0,
+        "carbs_g": 24.0,
+        "fiber_g": 6.0,
+        "sugar_g": 3.0,
+        "added_sugar_g": 0.0,
+        "protein_g": 6.0,
+        "vitamin_d_mcg": 0.0,
+        "calcium_mg": 77.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 370.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/black-bean-burrito",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/black-bean-burrito (archived copy: https://web.archive.org/web/20241127021516/https://www.myplate.gov/recipes/black-bean-burrito). USDA credit line: Healthy Recipes Michigan Department of Community Health. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Cooked black beans",
+          "normalized_name": "black bean",
+          "quantity": 320.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pulses"
+        },
+        {
+          "name": "Rapeseed oil",
+          "normalized_name": "rapeseed oil",
+          "quantity": 5,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 20.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 90.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Corn tortilla",
+          "normalized_name": "corn tortilla",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Fresh tomato salsa",
+          "normalized_name": "tomato salsa",
+          "quantity": 130.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cooking ingredients"
+        },
+        {
+          "name": "Yogurt, non-fat plain",
+          "normalized_name": "yogurt non fat plain",
+          "quantity": 60.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Coriander",
+          "normalized_name": "coriander",
+          "quantity": 10.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1 burrito, 1/4 of recipe",
+        "usda_rating": 3.79,
+        "usda_rating_count": 308,
+        "usda_notes": "Learn more about: Onions Tomatoes Herbs",
+        "archive_url": "https://web.archive.org/web/20241127021516/https://www.myplate.gov/recipes/black-bean-burrito",
+        "ingredient_source_lines": [
+          "1 1/3 cups cooked black beans",
+          "1 teaspoon canola oil",
+          "2 tablespoons onion",
+          "1/2 cup tomatoes",
+          "4 corn tortillas",
+          "1/2 cup fresh tomato salsa",
+          "4 tablespoons yogurt, non-fat plain",
+          "2 tablespoons cilantro"
+        ],
+        "ingredient_reference_fdc_ids": [
+          175188,
+          173576,
+          170000,
+          170456,
+          169829,
+          174524,
+          170886,
+          170922
+        ]
+      }
+    },
+    {
+      "slug": "banana-walnut-oatmeal",
+      "title": "Banana Walnut Oatmeal",
+      "description": "If your bananas are turning ripe before you're ready to eat them or use them in a recipe that calls for very ripe or mashed bananas, pop them in the freezer and thaw before using. The peel will turn very dark but the taste and texture of the bananas will be recipe-ready when you are.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 1,
+      "difficulty": "easy",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk",
+        "tree nuts"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "In a small saucepan, combine reconstituted non-fat dry milk, salt, and additional water. Heat over medium heat until steaming hot, but not boiling.",
+        "Add oats and cook, stirring until creamy, 1 to 2 minutes.",
+        "Remove the pan from heat and stir in mashed banana and maple syrup. Divide between 4 bowls, garnish with walnuts, and serve."
+      ],
+      "nutrition": {
+        "calories": 293.0,
+        "fat_g": 5.0,
+        "saturated_fat_g": 1.0,
+        "cholesterol_mg": 2.0,
+        "sodium_mg": 78.0,
+        "carbs_g": 54.0,
+        "fiber_g": 6.0,
+        "sugar_g": 20.0,
+        "added_sugar_g": 6.0,
+        "protein_g": 10.0,
+        "vitamin_d_mcg": 1.0,
+        "calcium_mg": 182.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 587.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/banana-walnut-oatmeal",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/banana-walnut-oatmeal (archived copy: https://web.archive.org/web/20241127012614/https://www.myplate.gov/recipes/banana-walnut-oatmeal). USDA credit line: USDA’S Collection of Nonfat Dry Milk (NDM) Recipes USDA Food and Nutrition Service Food Distribution Service. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Non-fat dry milk mixed with 2 cups water",
+          "normalized_name": "non fat dry milk mixed with cups water",
+          "quantity": 160.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Salt",
+          "normalized_name": "salt",
+          "quantity": 1,
+          "unit": "g",
+          "preparation": null,
+          "optional": true,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Water",
+          "normalized_name": "water",
+          "quantity": 660.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": null
+        },
+        {
+          "name": "Quick cooking oats",
+          "normalized_name": "quick cooking oats",
+          "quantity": 467.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereals"
+        },
+        {
+          "name": "Ripe bananas",
+          "normalized_name": "ripe bananas",
+          "quantity": 2.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "100% maple syrup",
+          "normalized_name": "maple syrup",
+          "quantity": 30.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cooking ingredients"
+        },
+        {
+          "name": "Walnuts",
+          "normalized_name": "walnut",
+          "quantity": 27.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/4 of recipe",
+        "usda_rating": 3.66,
+        "usda_rating_count": 135,
+        "usda_notes": "You can substitute 2 cups water or 2 cups skim milk for the reconstituted non-fat dry milk. Learn more about: Bananas",
+        "archive_url": "https://web.archive.org/web/20241127012614/https://www.myplate.gov/recipes/banana-walnut-oatmeal",
+        "ingredient_source_lines": [
+          "2/3 cup non-fat dry milk mixed with 2 cups water",
+          "1/8 teaspoon salt",
+          "2 3/4 cups water",
+          "2 cups quick cooking oats",
+          "2 ripe bananas",
+          "2 tablespoons 100% maple syrup",
+          "2 tablespoons walnuts"
+        ],
+        "ingredient_reference_fdc_ids": [
+          174158,
+          173468,
+          174158,
+          173905,
+          173944,
+          167743,
+          171030
+        ]
+      }
+    },
+    {
+      "slug": "eggs-over-kale-and-sweet-potato-grits",
+      "title": "Eggs over Kale and Sweet Potato Grits",
+      "description": "A modern twist on a Southern classic, this baked breakfast dish features eggs and grits with sweet potatoes and kale.",
+      "servings": 4,
+      "prep_minutes": 25,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "gluten-free",
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "eggs",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Preheat oven to 175°C (350°F).",
+        "Coat 4 individual soufflé dishes with 1 tsp vegetable oil.",
+        "Make 3 to 4 slits in sweet potatoes; cook in microwave until just soft.",
+        "When sweet potatoes are cool enough to handle, peel, cut into chunks, and puree in food processor.",
+        "Heat remaining vegetable oil in sauce pan, and sauté kale about 5 minutes.",
+        "In a medium sauce pan, boil water and milk, add grits and sweet potatoes; cook for 5 minutes. Remove from heat; stir in sautéed kale.",
+        "Divide grits mixture evenly among 4 soufflé dishes (or place all in casserole dish).",
+        "Make 4 depressions in the grits mixture with the back of a large spoon. Carefully break one egg into each hollow.",
+        "Bake uncovered for 30 minutes until eggs are cooked. Let cool 10 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 280.0,
+        "fat_g": 9.0,
+        "saturated_fat_g": 2.0,
+        "cholesterol_mg": 185.0,
+        "sodium_mg": 410.0,
+        "carbs_g": 38.0,
+        "fiber_g": 4.0,
+        "sugar_g": 7.0,
+        "added_sugar_g": 0.0,
+        "protein_g": 12.0,
+        "vitamin_d_mcg": 1.0,
+        "calcium_mg": 150.0,
+        "iron_mg": 3.0,
+        "potassium_mg": 579.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/eggs-over-kale-and-sweet-potato-grits",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/eggs-over-kale-and-sweet-potato-grits (archived copy: https://web.archive.org/web/20241112211449/https://www.myplate.gov/recipes/eggs-over-kale-and-sweet-potato-grits). USDA credit line: Produce for Better Health Foundation. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Sweet potato",
+          "normalized_name": "sweet potato",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Fresh kale",
+          "normalized_name": "kale",
+          "quantity": 42.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Vegetable oil",
+          "normalized_name": "vegetable oil",
+          "quantity": 15.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Water",
+          "normalized_name": "water",
+          "quantity": 360.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": null
+        },
+        {
+          "name": "Non-fat milk",
+          "normalized_name": "non fat milk",
+          "quantity": 240.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Grits",
+          "normalized_name": "grit",
+          "quantity": 180.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": null
+        },
+        {
+          "name": "Salt",
+          "normalized_name": "salt",
+          "quantity": 2,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Eggs",
+          "normalized_name": "egg",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/4 of the recipe of Eggs over Kale and Sweet Potato Grits",
+        "usda_rating": 3.61,
+        "usda_rating_count": 345,
+        "usda_notes": "Serving Suggestions: Serve with an 8-ounce glass of 100% grapefruit juice. Learn more about: Sweet Potatoes Kale",
+        "archive_url": "https://web.archive.org/web/20241112211449/https://www.myplate.gov/recipes/eggs-over-kale-and-sweet-potato-grits",
+        "ingredient_source_lines": [
+          "1 large sweet potato",
+          "2 cups fresh kale",
+          "1 tablespoon vegetable oil",
+          "1 1/2 cups water",
+          "1 cup non-fat milk",
+          "3/4 cup grits",
+          "1/4 teaspoon salt",
+          "4 eggs"
+        ],
+        "ingredient_reference_fdc_ids": [
+          168482,
+          168421,
+          171422,
+          174158,
+          171267,
+          null,
+          173468,
+          171287
+        ]
+      }
+    },
+    {
+      "slug": "fruity-homemade-oatmeal",
+      "title": "Fruity Homemade Oatmeal",
+      "description": "Start your day off right with a warm bowl of apple cinnamon porridge oats, a dish that is perfect for a chilly morning at home.",
+      "servings": 2,
+      "prep_minutes": 20,
+      "cook_minutes": 5,
+      "difficulty": "medium",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "dairy-free",
+        "vegan",
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "Use a vegetable peeler to remove the skin from the apple.",
+        "Cut the core out of the apple. Chop the apple into small pieces.",
+        "Put the water in the saucepan.",
+        "Bring the water to a boil on medium heat.",
+        "Stir in porridge oats, raisins, chopped apple, and cinnamon.",
+        "Turn heat to low.",
+        "Cook 5 minutes, stirring often."
+      ],
+      "nutrition": {
+        "calories": 181.0,
+        "fat_g": 3.0,
+        "saturated_fat_g": 1.0,
+        "cholesterol_mg": 0.0,
+        "sodium_mg": 15.0,
+        "carbs_g": 37.0,
+        "fiber_g": 5.0,
+        "sugar_g": 13.0,
+        "added_sugar_g": 0.0,
+        "protein_g": 5.0,
+        "vitamin_d_mcg": 0.0,
+        "calcium_mg": 42.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 260.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/fruity-homemade-oatmeal",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/fruity-homemade-oatmeal (archived copy: https://web.archive.org/web/20241127020413/https://www.myplate.gov/recipes/fruity-homemade-oatmeal). USDA credit line: Pennsylvania Nutrition Education Network. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Apple",
+          "normalized_name": "apple",
+          "quantity": 1.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Cinnamon",
+          "normalized_name": "cinnamon",
+          "quantity": 3,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Raisins or currants",
+          "normalized_name": "raisins or currant",
+          "quantity": 14.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Old-fashioned rolled oats",
+          "normalized_name": "old fashioned rolled oats",
+          "quantity": 175.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Water",
+          "normalized_name": "water",
+          "quantity": 360.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": null
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/2 of recipe",
+        "usda_rating": 3.53,
+        "usda_rating_count": 98,
+        "usda_notes": "To get more fiber, leave the skin on the apple. Learn more about: Apples",
+        "archive_url": "https://web.archive.org/web/20241127020413/https://www.myplate.gov/recipes/fruity-homemade-oatmeal",
+        "ingredient_source_lines": [
+          "1 apple",
+          "1 teaspoon cinnamon",
+          "2 tablespoons raisins or currants",
+          "3/4 cup old-fashioned rolled oats",
+          "1 1/2 cups water"
+        ],
+        "ingredient_reference_fdc_ids": [
+          171688,
+          171320,
+          173964,
+          173905,
+          174158
+        ]
+      }
+    },
+    {
+      "slug": "cinnamon-raisin-breakfast-mix",
+      "title": "Cinnamon-Raisin Breakfast Mix",
+      "description": "Try this quick and easy breakfast mix, made in the microwave. Scoop portions into small bags and serve with yogurt and a banana for a nutritious, on-the-go breakfast!",
+      "servings": 10,
+      "prep_minutes": 15,
+      "cook_minutes": 2,
+      "difficulty": "medium",
+      "cuisine_tags": [],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "In small bowl, mix sugar and cinnamon; set aside.",
+        "In large microwavable bowl, microwave butter uncovered on HIGH about 40 seconds, or until melted.",
+        "Stir in cereals until evenly coated. Microwave uncovered 2 minutes, stirring after 1 minute.",
+        "Sprinkle half of the sugar mixture evenly over cereals; stir. Sprinkle with remaining sugar mixture; stir.",
+        "Microwave uncovered 1 minute.",
+        "Stir in raisins or dried cranberries. Spread on paper towels to cool."
+      ],
+      "nutrition": {
+        "calories": 165.0,
+        "fat_g": 4.0,
+        "saturated_fat_g": 1.0,
+        "cholesterol_mg": 0.0,
+        "sodium_mg": 210.0,
+        "carbs_g": 25.0,
+        "fiber_g": 2.0,
+        "sugar_g": 11.0,
+        "added_sugar_g": 6.0,
+        "protein_g": 2.0,
+        "vitamin_d_mcg": 0.0,
+        "calcium_mg": 55.0,
+        "iron_mg": 5.0,
+        "potassium_mg": 101.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/cinnamon-raisin-breakfast-mix",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/cinnamon-raisin-breakfast-mix (archived copy: https://web.archive.org/web/20241127052940/https://www.myplate.gov/recipes/cinnamon-raisin-breakfast-mix). USDA credit line: MyPlate National Strategic Partners The Grain Chain (members include American Bakers Association, Wheat Food Council, Grains Food Foundation, National Pasta Association, USA Rice Federation, General Mills, and Kellogg's). Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Sugar",
+          "normalized_name": "sugar",
+          "quantity": 50.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Sweets and baking"
+        },
+        {
+          "name": "Ground cinnamon",
+          "normalized_name": "ground cinnamon",
+          "quantity": 3,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Margarine, tub-style",
+          "normalized_name": "margarine tub style",
+          "quantity": 58.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Square, whole-grain corn cereal",
+          "normalized_name": "square whole grain corn cereal",
+          "quantity": 364.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereals"
+        },
+        {
+          "name": "Square, whole-grain rice cereal",
+          "normalized_name": "square whole grain rice cereal",
+          "quantity": 364.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereals"
+        },
+        {
+          "name": "Square, whole-grain wheat cereal",
+          "normalized_name": "square whole grain wheat cereal",
+          "quantity": 364.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereals"
+        },
+        {
+          "name": "Raisins or dried cranberries",
+          "normalized_name": "raisins or cranberry",
+          "quantity": 50.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "one serving: 1/2 cup",
+        "usda_rating": 3.51,
+        "usda_rating_count": 169,
+        "usda_notes": "Learn more about: Cranberries",
+        "archive_url": "https://web.archive.org/web/20241127052940/https://www.myplate.gov/recipes/cinnamon-raisin-breakfast-mix",
+        "ingredient_source_lines": [
+          "1/4 cup sugar",
+          "1 teaspoon ground cinnamon",
+          "1/4 cup margarine, tub-style",
+          "1 1/2 cups square, whole-grain corn cereal",
+          "1 1/2 cups square, whole-grain rice cereal",
+          "1 1/2 cups square, whole-grain wheat cereal",
+          "1/2 cup raisins or dried cranberries"
+        ],
+        "ingredient_reference_fdc_ids": [
+          169655,
+          171320,
+          171415,
+          171666,
+          171666,
+          171666,
+          171722
+        ]
+      }
+    },
+    {
+      "slug": "french-spinach-frittata",
+      "title": "French Spinach Frittata",
+      "description": "spring onion, spinach, and feta cheese are added to this classic oven-baked egg dish. Try substituting cheddar, Swiss, or ricotta cheese for variety.",
+      "servings": 6,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free",
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "eggs",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Preheat the oven to 175°C (350°F).",
+        "Put the eggs, salt, and pepper in the mixing bowl and stir with a fork until well combined.",
+        "Add spring onion, spinach, and feta cheese and mix well.",
+        "Put an 8-inch ovenproof frying pan on the stove over medium heat and when hot, add oil.",
+        "Pour the egg mixture into the frying pan and carefully transfer to the oven. Bake until the eggs are set and the top is golden, about 30 minutes.",
+        "Serve right away or cover and refrigerate overnight."
+      ],
+      "nutrition": {
+        "calories": 121.0,
+        "fat_g": 8.0,
+        "saturated_fat_g": 2.0,
+        "cholesterol_mg": 251.0,
+        "sodium_mg": 313.0,
+        "carbs_g": 3.0,
+        "fiber_g": 1.0,
+        "sugar_g": 1.0,
+        "added_sugar_g": 0.0,
+        "protein_g": 10.0,
+        "vitamin_d_mcg": 1.0,
+        "calcium_mg": 95.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 280.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/french-spinach-frittata",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/french-spinach-frittata (archived copy: https://web.archive.org/web/20241127054729/https://www.myplate.gov/recipes/french-spinach-frittata). USDA credit line: USDA Center for Nutrition Policy and Promotion. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Eggs",
+          "normalized_name": "egg",
+          "quantity": 8.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Salt",
+          "normalized_name": "salt",
+          "quantity": 3,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Black pepper",
+          "normalized_name": "black pepper",
+          "quantity": 1,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Spinach",
+          "normalized_name": "spinach",
+          "quantity": 60.0,
+          "unit": "g",
+          "preparation": "finely chopped",
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Spring onion",
+          "normalized_name": "spring onion",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Crumbled feta cheese",
+          "normalized_name": "crumbled feta cheese",
+          "quantity": 28.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Vegetable oil",
+          "normalized_name": "vegetable oil",
+          "quantity": 10.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": null,
+        "usda_rating": 3.26,
+        "usda_rating_count": 136,
+        "usda_notes": "Cheddar, Swiss, or ricotta cheese can be used instead of feta. Learn more about: Spinach Onions",
+        "archive_url": "https://web.archive.org/web/20241127054729/https://www.myplate.gov/recipes/french-spinach-frittata",
+        "ingredient_source_lines": [
+          "8 eggs",
+          "1/2 teaspoon salt",
+          "1/2 teaspoon black pepper",
+          "2 cups spinach, finely chopped",
+          "4 scallions",
+          "1/4 cup crumbled feta cheese",
+          "2 teaspoons vegetable oil"
+        ],
+        "ingredient_reference_fdc_ids": [
+          171287,
+          173468,
+          170108,
+          168462,
+          170000,
+          173414,
+          171422
+        ]
+      }
+    },
+    {
+      "slug": "corn-casserole-2",
+      "title": "Corn Casserole",
+      "description": "This simple casserole can be served for breakfast, lunch, or a side dish. For a main dish, add 1 cup of cooked chicken or beef mince.",
+      "servings": 6,
+      "prep_minutes": 20,
+      "cook_minutes": 30,
+      "difficulty": "medium",
+      "cuisine_tags": [],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "eggs",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "Preheat oven to 175°C (350°F).",
+        "Beat eggs in a bowl.",
+        "Add corn, minced onion, sugar, black pepper, and half the bread crumbs.",
+        "Stir and put into a greased 8x8 inch baking dish.",
+        "Sprinkle remaining bread crumbs on top of the casserole.",
+        "Baked at 175°C (350°F) for 30 minutes."
+      ],
+      "nutrition": {
+        "calories": 203.0,
+        "fat_g": 3.0,
+        "saturated_fat_g": 1.0,
+        "cholesterol_mg": 55.0,
+        "sodium_mg": 157.0,
+        "carbs_g": 41.0,
+        "fiber_g": 3.0,
+        "sugar_g": 8.0,
+        "added_sugar_g": 2.0,
+        "protein_g": 7.0,
+        "vitamin_d_mcg": 0.0,
+        "calcium_mg": 48.0,
+        "iron_mg": 2.0,
+        "potassium_mg": 262.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/corn-casserole",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/corn-casserole (archived copy: https://web.archive.org/web/20241127081626/https://www.myplate.gov/recipes/corn-casserole). USDA credit line: Simple Healthy Recipes Oklahoma Nutrition Information and Education ONIE Project. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Eggs",
+          "normalized_name": "egg",
+          "quantity": 2.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Cream-style corn",
+          "normalized_name": "cream style corn",
+          "quantity": 2.0,
+          "unit": "can",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Minced onion",
+          "normalized_name": "minced onion",
+          "quantity": 58.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Sugar",
+          "normalized_name": "sugar",
+          "quantity": 8,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Sweets and baking"
+        },
+        {
+          "name": "Bread crumbs",
+          "normalized_name": "bread crumb",
+          "quantity": 35.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "1/6 of recipe",
+        "usda_rating": 3.21,
+        "usda_rating_count": 24,
+        "usda_notes": "For a main dish, add 1 cup cooked chicken or ground beef. For variation, add a can of green chile peppers. Can use leftover cornbread or croutons for crumbs. Top with cheese if desired. Learn more about: Corn Onions",
+        "archive_url": "https://web.archive.org/web/20241127081626/https://www.myplate.gov/recipes/corn-casserole",
+        "ingredient_source_lines": [
+          "2 eggs",
+          "2 cans (15 ounces each) cream-style corn",
+          "1/2 cup minced onion",
+          "2 teaspoons sugar",
+          "1 cup bread crumbs"
+        ],
+        "ingredient_reference_fdc_ids": [
+          171287,
+          168538,
+          170000,
+          169655,
+          174924
+        ]
+      }
+    },
+    {
+      "slug": "english-muffin-veggie-pizza",
+      "title": "English Muffin Veggie Pizza",
+      "description": "Create your own easy-to-make personal pizza and add your favorite veggie toppings. Choose whole wheat muffins to make this recipe even better!",
+      "servings": 4,
+      "prep_minutes": 30,
+      "cook_minutes": 2,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Wash hands with soap and water.",
+        "Cut the broccoli to make 1 cup of chopped broccoli.",
+        "Put the broccoli in a saucepan with water. Cook on medium until tender.",
+        "Drain the water from the saucepan. Let the broccoli cool.",
+        "Cut 4 English muffins in half. Toast the 8 muffin halves.",
+        "Shred the mozzarella cheese to make 1/2 cup of shredded cheese.",
+        "Peel and shred the carrots to make 3 tablespoons shredded carrots.",
+        "Spoon 2 tablespoons pizza sauce over each English muffin half.",
+        "Sprinkle 1 tablespoon shredded mozzarella cheese on top of each half.",
+        "Put 2 tablespoons broccoli and 1 teaspoon shredded carrots on top of each half.",
+        "Sprinkle each half with 1 teaspoon grated parmesan cheese.",
+        "Toast in the toaster oven for 2 minutes, until the cheese melts."
+      ],
+      "nutrition": {
+        "calories": 220.0,
+        "fat_g": 5.0,
+        "saturated_fat_g": 2.0,
+        "cholesterol_mg": 8.0,
+        "sodium_mg": 576.0,
+        "carbs_g": 34.0,
+        "fiber_g": 4.0,
+        "sugar_g": 5.0,
+        "added_sugar_g": 2.0,
+        "protein_g": 11.0,
+        "calcium_mg": 249.0,
+        "iron_mg": 3.0,
+        "potassium_mg": 392.0
+      },
+      "source_type": "creator",
+      "source_url": "https://www.myplate.gov/recipes/english-muffin-veggie-pizza",
+      "rights_basis": "public_domain",
+      "rights_notes": "Imported from USDA MyPlate Kitchen, a work of the U.S. federal government and therefore in the public domain. Source page: https://www.myplate.gov/recipes/english-muffin-veggie-pizza (archived copy: https://web.archive.org/web/20241127053447/https://www.myplate.gov/recipes/english-muffin-veggie-pizza). USDA credit line: Pennsylvania Nutrition Education Network. Quantities were converted from US customary measures to metric and names localised for UK kitchens, so a reviewer must test cook the recipe and confirm quantities, timings, allergens and nutrition before publication.",
+      "content_version": 1,
+      "ingredients": [
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 88.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "English muffins",
+          "normalized_name": "english muffin",
+          "quantity": 4.0,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Pizza sauce",
+          "normalized_name": "pizza sauce",
+          "quantity": 240.0,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cooking ingredients"
+        },
+        {
+          "name": "Mozzarella cheese",
+          "normalized_name": "mozzarella cheese",
+          "quantity": 56.0,
+          "unit": "g",
+          "preparation": "shredded, part skim",
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        },
+        {
+          "name": "Carrot",
+          "normalized_name": "carrot",
+          "quantity": 28.0,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Parmesan cheese",
+          "normalized_name": "parmesan cheese",
+          "quantity": 2,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy and eggs"
+        }
+      ],
+      "import_metadata": {
+        "serving_size": "2 pizzas (each made from 1/2 English muffin), 1/4 of recipe (185g)",
+        "usda_rating": 3.2,
+        "usda_rating_count": 132,
+        "usda_notes": "Try making these pizzas with whole wheat muffins. Learn more about: Broccoli Carrots",
+        "archive_url": "https://web.archive.org/web/20241127053447/https://www.myplate.gov/recipes/english-muffin-veggie-pizza",
+        "ingredient_source_lines": [
+          "1 cup broccoli",
+          "4 English muffins",
+          "1 cup pizza sauce",
+          "1/2 cup mozzarella cheese, shredded, part skim",
+          "1/4 cup carrot",
+          "1/3 tablespoon Parmesan cheese"
+        ],
+        "ingredient_reference_fdc_ids": [
+          170379,
+          174093,
+          174523,
+          173414,
+          170393,
+          173414
+        ]
+      }
+    }
+  ]
+}
