@@ -136,7 +136,7 @@ export default function LiveScanner({ location, dietaryPreferences, onComplete, 
       } else {
         toast.info('No items detected. Try a different angle.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Scan frame error:', err);
       const now = Date.now();
       if (now - lastErrorToastAtRef.current > ERROR_TOAST_COOLDOWN_MS) {

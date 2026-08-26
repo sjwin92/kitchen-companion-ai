@@ -13,25 +13,29 @@ interface Recap {
 
 export default function MonthlyRecapCard() {
   const { session, preferences } = useApp();
+  const userId = session?.user?.id;
   const [recap, setRecap] = useState<Recap | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      if (!session?.user) return;
+      if (!userId) return;
       const lastMonth = subMonths(new Date(), 1);
       const start = startOfMonth(lastMonth).toISOString();
       const end = endOfMonth(lastMonth).toISOString();
       const [receipts, meals, waste] = await Promise.all([
         supabase.from('receipt_reconciliations').select('total_gbp')
-          .eq('user_id', session.user.id).gte('created_at', start).lte('created_at', end),
+          .eq('user_id', userId).gte('created_at', start).lte('created_at', end),
         supabase.from('meal_log').select('id', { count: 'exact', head: true })
-          .eq('user_id', session.user.id).gte('logged_at', start).lte('logged_at', end),
+          .eq('user_id', userId).gte('logged_at', start).lte('logged_at', end),
         supabase.from('waste_log').select('id', { count: 'exact', head: true })
-          .eq('user_id', session.user.id).gte('wasted_at', start).lte('wasted_at', end),
+          .eq('user_id', userId).gte('wasted_at', start).lte('wasted_at', end),
       ]);
       if (cancelled) return;
-      const spent = (receipts.data || []).reduce((s: number, r: any) => s + Number(r.total_gbp || 0), 0);
+      const spent = (receipts.data || []).reduce(
+        (total, receipt) => total + Number(receipt.total_gbp || 0),
+        0,
+      );
       setRecap({
         spent,
         budget: preferences.monthlyBudgetGbp ?? 0,
@@ -41,7 +45,7 @@ export default function MonthlyRecapCard() {
     };
     load();
     return () => { cancelled = true; };
-  }, [session?.user?.id, preferences.monthlyBudgetGbp]);
+  }, [userId, preferences.monthlyBudgetGbp]);
 
   if (!recap) return null;
   const lastMonth = subMonths(new Date(), 1);

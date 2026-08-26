@@ -15,6 +15,7 @@ import {
   Pencil,
   Check,
   UtensilsCrossed,
+  type LucideIcon,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format, startOfDay, endOfDay, parseISO } from 'date-fns';
@@ -41,6 +42,7 @@ interface PlannedMeal {
 
 export default function CalorieTracker({ prominent = false }: { prominent?: boolean }) {
   const { session, preferences, setPreferences } = useApp();
+  const userId = session?.user?.id;
   const navigate = useNavigate();
   const [meals, setMeals] = useState<MealLogEntry[]>([]);
   const [planned, setPlanned] = useState<PlannedMeal[]>([]);
@@ -56,11 +58,11 @@ export default function CalorieTracker({ prominent = false }: { prominent?: bool
     }
   }, [preferences.dailyCalorieGoal]);
 
-  const today = new Date();
-  const todayStr = format(today, 'yyyy-MM-dd');
-
   useEffect(() => {
-    if (!session?.user) return;
+    if (!userId) return;
+
+    const today = new Date();
+    const todayStr = format(today, 'yyyy-MM-dd');
 
     // Load today's logged meals
     const dayStart = startOfDay(today).toISOString();
@@ -84,7 +86,7 @@ export default function CalorieTracker({ prominent = false }: { prominent?: bool
       .then(({ data }) => {
         if (data) setPlanned(data as PlannedMeal[]);
       });
-  }, [session?.user?.id]);
+  }, [userId]);
 
   const totals = useMemo(() => {
     return meals.reduce(
@@ -114,11 +116,11 @@ export default function CalorieTracker({ prominent = false }: { prominent?: bool
     setGoalInput(String(val));
     setEditingGoal(false);
     setPreferences({ dailyCalorieGoal: val });
-    if (session?.user) {
+    if (userId) {
       await supabase
         .from('profiles')
-        .update({ daily_calorie_goal: val } as any)
-        .eq('id', session.user.id);
+        .update({ daily_calorie_goal: val })
+        .eq('id', userId);
     }
   };
 
@@ -351,7 +353,7 @@ function MacroBar({
   color,
   textColor,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value: number;
   color: string;

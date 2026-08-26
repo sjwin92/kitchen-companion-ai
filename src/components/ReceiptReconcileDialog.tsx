@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Camera, Loader2, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import { useApp } from '@/context/AppContext';
 
 interface Props {
@@ -74,8 +75,8 @@ export default function ReceiptReconcileDialog({ open, onClose, shoppingItems, o
 
       setResult({ matched, unmatched, total: r.total || 0, retailer: r.retailer });
       setTotalOverride(String(r.total || ''));
-    } catch (e: any) {
-      toast.error(e?.message || 'Failed to process receipt');
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to process receipt');
     } finally {
       setBusy(false);
     }
@@ -98,8 +99,8 @@ export default function ReceiptReconcileDialog({ open, onClose, shoppingItems, o
     await supabase.from('receipt_reconciliations').insert({
       user_id: session.user.id,
       total_gbp: finalTotal,
-      matched_items: result.matched as any,
-      unmatched_items: result.unmatched as any,
+      matched_items: result.matched as Json,
+      unmatched_items: result.unmatched as Json,
       retailer: result.retailer || null,
       receipt_date: new Date().toISOString().slice(0, 10),
     });

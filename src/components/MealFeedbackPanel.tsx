@@ -6,7 +6,7 @@ import { MessageCircle, X } from 'lucide-react';
 interface MealFeedbackPanelProps {
   mealId: string;
   existingFeedback?: FeedbackType[];
-  onSubmit: (mealId: string, feedbackType: FeedbackType, note?: string) => Promise<any>;
+  onSubmit: (mealId: string, feedbackType: FeedbackType, note?: string) => Promise<unknown>;
 }
 
 export default function MealFeedbackPanel({ mealId, existingFeedback = [], onSubmit }: MealFeedbackPanelProps) {

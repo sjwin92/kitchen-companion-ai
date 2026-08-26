@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function BudgetCard() {
   const { session, preferences } = useApp();
+  const userId = session?.user?.id;
   const navigate = useNavigate();
   const [spent, setSpent] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -14,23 +15,23 @@ export default function BudgetCard() {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      if (!session?.user) return;
+      if (!userId) return;
       const start = startOfMonth(new Date());
       const end = endOfMonth(new Date());
       const { data } = await supabase
         .from('receipt_reconciliations')
         .select('total_gbp')
-        .eq('user_id', session.user.id)
+        .eq('user_id', userId)
         .gte('created_at', start.toISOString())
         .lte('created_at', end.toISOString());
       if (cancelled) return;
-      const sum = (data || []).reduce((s: number, r: any) => s + Number(r.total_gbp || 0), 0);
+      const sum = (data || []).reduce((total, receipt) => total + Number(receipt.total_gbp || 0), 0);
       setSpent(sum);
       setLoading(false);
     };
     load();
     return () => { cancelled = true; };
-  }, [session?.user?.id]);
+  }, [userId]);
 
   const budget = preferences.monthlyBudgetGbp ?? 0;
 
