@@ -14,9 +14,11 @@ The beta promise is one complete household loop:
 - [x] A partial unique index prevents a planned meal being confirmed twice.
 - [x] Legacy meal-memory sharing is disabled; discoverability requires editorial approval.
 - [x] Three four-recipe starter packs pass offline structural validation.
-- [ ] Full unit, lint, browser and production-build suites pass on a non-synced checkout or CI.
+- [x] Full typecheck, lint, unit, production-build, dependency-audit and Chromium browser suites pass in [GitHub Actions run 32976853048](https://github.com/sjwin92/kitchen-companion-ai/actions/runs/32976853048).
 - [ ] Database pgTAP suite passes against a fresh local Supabase reset.
 - [ ] Supabase security/performance advisors have no release-blocking findings.
+
+The remaining database gates require a new Kitchen Companion staging project. The connected Supabase account currently exposes only unrelated projects, and the local Docker daemon is not running, so no legacy or unrelated database has been modified.
 
 ## Human gates
 
