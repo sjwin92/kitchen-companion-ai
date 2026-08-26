@@ -42,6 +42,12 @@ jobs:
           VITE_APP_ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
           VITE_APP_RELEASE: ${{ github.sha }}
           VITE_SUPPORT_EMAIL: ${{ vars.VITE_SUPPORT_EMAIL }}
+      - name: Save verified preview build
+        uses: actions/upload-artifact@v4
+        with:
+          name: kitchen-companion-${{ github.ref_name }}
+          path: dist
+          retention-days: 7
       - name: Cloudflare credentials required
         if: ${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' || env.CLOUDFLARE_PROJECT == '' }}
         run: echo "Build passed. Add the Cloudflare API token, account ID and project variable to enable deployment."
