@@ -1,5 +1,18 @@
 project_id = "kitchen-companion"
 
+[auth]
+site_url = "https://sjwin92.github.io/kitchen-companion-ai/"
+additional_redirect_urls = [
+  "https://sjwin92.github.io/kitchen-companion-ai/",
+  "https://sjwin92.github.io/kitchen-companion-ai/reset-password"
+]
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m"
+otp_length = 6
+otp_expiry = 3600
+
 [functions.scan-receipt]
 verify_jwt = true
 

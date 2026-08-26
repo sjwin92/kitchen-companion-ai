@@ -8,7 +8,7 @@ export async function loadLocalRecipes(): Promise<MealSuggestion[]> {
     return cachedRecipes;
   }
 
-  const response = await fetch('/local-recipes.json');
+  const response = await fetch(`${import.meta.env.BASE_URL}local-recipes.json`);
 
   if (!response.ok) {
     throw new Error(`Failed to load local recipes: ${response.status} ${response.statusText}`);

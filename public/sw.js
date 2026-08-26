@@ -1,7 +1,9 @@
-const CACHE_NAME = 'kitchen-companion-v2';
-const ASSET_CACHE = 'kitchen-companion-assets-v2';
+const CACHE_NAME = 'kitchen-companion-v3';
+const ASSET_CACHE = 'kitchen-companion-assets-v3';
+const BASE_PATH = new URL(self.registration.scope).pathname.replace(/\/$/, '');
+const appUrl = (path = '') => `${BASE_PATH}/${path.replace(/^\//, '')}`;
 
-const PRECACHE_URLS = ['/', '/index.html'];
+const PRECACHE_URLS = [appUrl(), appUrl('index.html')];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -41,7 +43,7 @@ self.addEventListener('fetch', (event) => {
 
   // For JS/CSS/image assets: cache-first (they're immutable after build)
   if (
-    url.pathname.startsWith('/assets/') ||
+    url.pathname.startsWith(appUrl('assets/')) ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.ico') ||
     url.pathname.endsWith('.svg')
@@ -67,7 +69,7 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(event.request).then((r) => r || caches.match('/')))
+      .catch(() => caches.match(event.request).then((r) => r || caches.match(appUrl())))
   );
 });
 
@@ -79,15 +81,15 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
+      icon: appUrl('icons/icon-192.png'),
+      badge: appUrl('icons/icon-192.png'),
       tag: 'expiry-reminder',
-      data: { url: data.url || '/use-soon' },
+      data: { url: data.url ? appUrl(data.url) : appUrl('use-soon') },
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data?.url || '/use-soon'));
+  event.waitUntil(clients.openWindow(event.notification.data?.url || appUrl('use-soon')));
 });

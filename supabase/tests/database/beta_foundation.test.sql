@@ -1,7 +1,9 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(47);
+set local role postgres;
+select set_config('search_path', 'public,extensions', false);
+select plan(48);
 
 select has_table('public', 'creators', 'creator catalogue exists');
 select has_table('public', 'recipe_books', 'recipe books exist');
@@ -38,6 +40,11 @@ select has_function(
   'create_beta_invite',
   array['text', 'text', 'timestamp with time zone'],
   'beta invitation issuance is a guarded function'
+);
+select ok(
+  not has_function_privilege('anon', 'public.handle_new_user()', 'EXECUTE')
+  and not has_function_privilege('authenticated', 'public.handle_new_user()', 'EXECUTE'),
+  'signup trigger function is not exposed as an RPC'
 );
 select ok(
   exists(select 1 from storage.buckets where id = 'meal-photos' and public = false),
@@ -156,7 +163,7 @@ select throws_ok(
   'Recipe rights must be confirmed before approval',
   'approval is blocked until publishing rights are confirmed'
 );
-reset role;
+set local role postgres;
 update public.recipes set rights_basis = 'original_owned' where slug = 'review-target';
 set local role authenticated;
 select lives_ok(
@@ -278,7 +285,7 @@ select ok(
   'meal photo receives a 90-day deletion deadline'
 );
 
-reset role;
+set local role postgres;
 select set_config('request.jwt.claims', '{"role":"service_role"}', true);
 set local role service_role;
 select is(
@@ -298,7 +305,7 @@ select lives_ok(
   $$select public.create_beta_invite('new-beta@example.com', 'MNOPQRSTUVWX', now() + interval '7 days')$$,
   'service role can issue an email-bound beta invitation'
 );
-reset role;
+set local role postgres;
 select is(
   (select length(code_hash) from private.beta_invites where email = 'new-beta@example.com'),
   64,

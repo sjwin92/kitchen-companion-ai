@@ -67,7 +67,7 @@ function AppContent() {
     );
   }
 
-  if (window.location.pathname === "/reset-password") {
+  if (window.location.pathname.endsWith("/reset-password")) {
     return (
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
@@ -143,7 +143,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
         <AppProvider>
           <AppContent />
         </AppProvider>

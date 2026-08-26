@@ -83,6 +83,10 @@ drop policy if exists "Users can read own library meals" on public.meal_library;
 drop policy if exists "Users can insert own library meals" on public.meal_library;
 drop policy if exists "Users can update own library meals" on public.meal_library;
 drop policy if exists "Users can delete own library meals" on public.meal_library;
+drop policy if exists meal_library_select_own on public.meal_library;
+drop policy if exists meal_library_insert_own on public.meal_library;
+drop policy if exists meal_library_update_own on public.meal_library;
+drop policy if exists meal_library_delete_own on public.meal_library;
 
 create policy meal_library_select_own on public.meal_library for select to authenticated
   using ((select auth.uid()) = user_id);
