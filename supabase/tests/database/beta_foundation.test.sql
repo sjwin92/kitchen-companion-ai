@@ -3,9 +3,15 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local role postgres;
 select set_config('search_path', 'public,extensions', false);
-select plan(48);
+select plan(51);
+
+select ok(
+  has_schema_privilege('supabase_auth_admin', 'private', 'USAGE'),
+  'Supabase Auth can resolve the private before-user-created hook'
+);
 
 select has_table('public', 'creators', 'creator catalogue exists');
+select has_column('private', 'beta_invites', 'reserved_at', 'invite reservations have a retry lease');
 select has_table('public', 'recipe_books', 'recipe books exist');
 select has_table('public', 'recipes', 'canonical recipes exist');
 select has_table('public', 'inventory_events', 'inventory event history exists');
@@ -90,6 +96,27 @@ select is(
   '11111111-1111-1111-1111-111111111111',
   'invite is reserved for the pending user'
 );
+
+update private.beta_invites
+set reserved_at = now() - interval '1 minute'
+where email = 'alpha@example.com';
+
+select is(
+  private.hook_require_beta_invite(
+    jsonb_build_object('user', jsonb_build_object(
+      'id', '33333333-3333-3333-3333-333333333333',
+      'email', 'alpha@example.com',
+      'user_metadata', jsonb_build_object('invite_code', 'ABCDEFGHIJKL')
+    ))
+  )::text,
+  '{}'::text,
+  'a stranded invite reservation can be retried after its short lease'
+);
+
+update private.beta_invites
+set reserved_user_id = '11111111-1111-1111-1111-111111111111',
+    reserved_at = now()
+where email = 'alpha@example.com';
 
 insert into auth.users (id, email, raw_user_meta_data)
 values (

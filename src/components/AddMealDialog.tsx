@@ -49,7 +49,7 @@ function matchesSlot(category: string | null, slot: MealSlot): boolean {
 
 export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: AddMealDialogProps) {
   const navigate = useNavigate();
-  const { inventory, removeItem, updateItem, preferences } = useApp();
+  const { inventory, preferences } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Array<{ id: string; name: string; thumb: string; ingredients: string[] }>>([]);
   const [searching, setSearching] = useState(false);
@@ -138,14 +138,8 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
 
   const handlePickInventoryItem = async (item: { id: string; name: string; quantity: string }) => {
     await onAdd(`custom-${Date.now()}`, item.name, undefined);
-    const currentQty = parseInt(item.quantity, 10);
-    if (!isNaN(currentQty) && currentQty > 1) {
-      await updateItem(item.id, { quantity: String(currentQty - 1) });
-    } else {
-      await removeItem(item.id);
-    }
     setCustomName('');
-    toast.success(`${item.name} deducted from stock`);
+    toast.success(`${item.name} planned from stock — confirm it after eating to update inventory`);
   };
 
   const handleClose = () => {

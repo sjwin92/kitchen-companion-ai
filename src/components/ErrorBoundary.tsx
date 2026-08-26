@@ -13,6 +13,13 @@ interface State {
   error: Error | null;
 }
 
+const CHUNK_RELOAD_KEY = 'kitchen-companion:chunk-reload';
+
+export function isStaleDeploymentError(error: Error): boolean {
+  return /Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|Loading chunk .* failed/i
+    .test(error.message);
+}
+
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
 
@@ -23,6 +30,14 @@ export default class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: { componentStack: string }) {
     console.error('ErrorBoundary caught:', error, info.componentStack);
     captureException(error);
+
+    if (isStaleDeploymentError(error)) {
+      const previous = sessionStorage.getItem(CHUNK_RELOAD_KEY);
+      if (previous !== error.message) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, error.message);
+        window.location.reload();
+      }
+    }
   }
 
   reset = () => this.setState({ hasError: false, error: null });
@@ -46,7 +61,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         </p>
         <div className="flex gap-3">
           <Button onClick={this.reset}>Try Again</Button>
-          <Button variant="outline" onClick={() => window.location.href = '/'}>
+          <Button variant="outline" onClick={() => window.location.href = import.meta.env.BASE_URL}>
             Go Home
           </Button>
         </div>

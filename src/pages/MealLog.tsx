@@ -51,6 +51,29 @@ function rangeAround(value: number, uncertainty: number) {
   };
 }
 
+export function buildManualEstimate(
+  title: string,
+  nutrition: { calories: number; protein_g: number; carbs_g: number; fat_g: number },
+): NutritionEstimate {
+  return {
+    title: title.trim(),
+    ...nutrition,
+    ranges: {
+      calories: rangeAround(nutrition.calories, 0),
+      protein_g: rangeAround(nutrition.protein_g, 0),
+      carbs_g: rangeAround(nutrition.carbs_g, 0),
+      fat_g: rangeAround(nutrition.fat_g, 0),
+    },
+    confidence: 1,
+    ingredients: [],
+    matched_inventory_ids: [],
+    notes: ['Nutrition entered manually and confirmed by the user.'],
+    model: 'manual_entry_v1',
+    provenance: 'user_estimate',
+    image_path: null,
+  };
+}
+
 export default function MealLog() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,6 +89,13 @@ export default function MealLog() {
   const [mealRating, setMealRating] = useState<number>(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<NutritionEstimate | null>(null);
+  const [manualMode, setManualMode] = useState(false);
+  const [manualNutrition, setManualNutrition] = useState({
+    calories: '',
+    protein_g: '',
+    carbs_g: '',
+    fat_g: '',
+  });
   const [saving, setSaving] = useState(false);
   const [deductItems, setDeductItems] = useState<string[]>([]);
   const [linkedPlanId, setLinkedPlanId] = useState<string | null>(plannedMeal?.planId ?? null);
@@ -242,6 +272,25 @@ export default function MealLog() {
     setDeductItems(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
+  const reviewManualEntry = () => {
+    const title = mealTitle.trim();
+    const nutrition = {
+      calories: Number(manualNutrition.calories),
+      protein_g: Number(manualNutrition.protein_g || 0),
+      carbs_g: Number(manualNutrition.carbs_g || 0),
+      fat_g: Number(manualNutrition.fat_g || 0),
+    };
+    if (!title) {
+      toast.error('Add a meal name first.');
+      return;
+    }
+    if (Object.values(nutrition).some((value) => !Number.isFinite(value) || value < 0)) {
+      toast.error('Nutrition values must be zero or higher.');
+      return;
+    }
+    setAnalysis(buildManualEstimate(title, nutrition));
+  };
+
   const saveMealLog = async () => {
     if (!analysis || !session?.user) return;
     setSaving(true);
@@ -336,7 +385,7 @@ export default function MealLog() {
         )}
 
         {/* Image capture */}
-        {!imagePreview ? (
+        {!imagePreview && !analysis && !manualMode ? (
           <Card className="p-6 flex flex-col items-center gap-4 border-dashed border-2 border-primary/30">
             <UtensilsCrossed className="w-12 h-12 text-primary/40" />
             <p className="text-sm text-muted-foreground text-center">
@@ -354,10 +403,13 @@ export default function MealLog() {
                 <Upload className="w-4 h-4" /> Upload
               </Button>
             </div>
+            <Button variant="ghost" onClick={() => setManualMode(true)}>
+              Enter nutrition manually
+            </Button>
             <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFile} />
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
           </Card>
-        ) : (
+        ) : imagePreview ? (
           <div className="space-y-3">
             <div className="relative rounded-xl overflow-hidden">
               <img src={imagePreview} alt="Meal" className="w-full max-h-64 object-cover" />
@@ -390,6 +442,45 @@ export default function MealLog() {
               </Button>
             )}
           </div>
+        ) : null}
+
+        {manualMode && !analysis && (
+          <Card className="p-4 space-y-4">
+            <div>
+              <h2 className="font-semibold text-foreground">Manual meal entry</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Use a label or package estimate. You can review it before saving.
+              </p>
+            </div>
+            <Input
+              aria-label="Meal name"
+              placeholder="Meal name"
+              value={mealTitle}
+              onChange={(event) => setMealTitle(event.target.value)}
+            />
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                ['calories', 'Calories'],
+                ['protein_g', 'Protein (g)'],
+                ['carbs_g', 'Carbs (g)'],
+                ['fat_g', 'Fat (g)'],
+              ].map(([key, label]) => (
+                <Input
+                  key={key}
+                  aria-label={label}
+                  type="number"
+                  min={0}
+                  placeholder={label}
+                  value={manualNutrition[key as keyof typeof manualNutrition]}
+                  onChange={(event) => setManualNutrition((current) => ({ ...current, [key]: event.target.value }))}
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setManualMode(false)} className="flex-1">Cancel</Button>
+              <Button onClick={reviewManualEntry} className="flex-1">Review entry</Button>
+            </div>
+          </Card>
         )}
 
         {/* Analysis results */}
@@ -400,7 +491,13 @@ export default function MealLog() {
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div>
                   <h2 className="font-semibold text-foreground">{analysis.title}</h2>
-                  <p className="text-xs text-muted-foreground mt-1">Photo estimate · {Math.round(analysis.confidence * 100)}% confidence</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {analysis.provenance === 'user_estimate'
+                      ? 'Manual entry'
+                      : analysis.provenance === 'catalog_estimate'
+                      ? 'Recipe estimate'
+                      : 'Photo estimate'} · {Math.round(analysis.confidence * 100)}% confidence
+                  </p>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Review</span>
               </div>
