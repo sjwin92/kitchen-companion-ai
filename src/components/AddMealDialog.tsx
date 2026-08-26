@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CalendarDays, Search, Loader2, Apple, Plus, Flame } from 'lucide-react';
 import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
+import { planInventoryMeal } from '@/lib/mealPlanning';
 import {
   Dialog,
   DialogContent,
@@ -137,7 +138,7 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
   };
 
   const handlePickInventoryItem = async (item: { id: string; name: string; quantity: string }) => {
-    await onAdd(`custom-${Date.now()}`, item.name, undefined);
+    await planInventoryMeal(onAdd, item);
     setCustomName('');
     toast.success(`${item.name} planned from stock — confirm it after eating to update inventory`);
   };
