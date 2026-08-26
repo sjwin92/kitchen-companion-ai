@@ -4,7 +4,11 @@ project_id = "kitchen-companion"
 site_url = "https://sjwin92.github.io/kitchen-companion-ai/"
 additional_redirect_urls = [
   "https://sjwin92.github.io/kitchen-companion-ai/",
-  "https://sjwin92.github.io/kitchen-companion-ai/reset-password"
+  "https://sjwin92.github.io/kitchen-companion-ai/reset-password",
+  "https://kitchen-companion-beta.pages.dev/",
+  "https://kitchen-companion-beta.pages.dev/reset-password",
+  "https://beta-hardening.kitchen-companion-beta.pages.dev/",
+  "https://beta-hardening.kitchen-companion-beta.pages.dev/reset-password"
 ]
 
 [auth.email]
