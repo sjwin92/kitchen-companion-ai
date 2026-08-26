@@ -1,6 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useApp } from "@/context/AppContext";
@@ -55,6 +55,14 @@ function RouteFallback() {
       <Loader2 className="w-6 h-6 text-primary animate-spin" />
     </div>
   );
+}
+
+function RouteFocusManager() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.requestAnimationFrame(() => document.getElementById('main-content')?.focus());
+  }, [pathname]);
+  return null;
 }
 
 function AppContent() {
@@ -114,8 +122,11 @@ function AppContent() {
 
   return (
     <>
+      <a href="#main-content" className="sr-only z-[100] rounded-lg bg-background px-4 py-3 font-semibold text-foreground shadow-lg focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
+        Skip to main content
+      </a>
       <TopNav />
-      <div className="md:pt-14">
+      <div id="main-content" tabIndex={-1} className="outline-none md:pt-14">
         <ErrorBoundary>
           <Suspense fallback={<RouteFallback />}>
             <Routes>
@@ -154,7 +165,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Sonner />
-      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
+      <BrowserRouter>
+        <RouteFocusManager />
         <AppProvider>
           <AppContent />
         </AppProvider>

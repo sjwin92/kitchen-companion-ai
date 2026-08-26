@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Plus, Camera, Trash2, Check, Loader2, Image, ScanEye, Refrigerator, Snowflake, Archive, CalendarDays } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { compressImage } from '@/lib/imageCompression';
+import { errorMessage } from '@/lib/appError';
 import { toast } from 'sonner';
 import LiveScanner from '@/components/LiveScanner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useCapabilities } from '@/hooks/useCapabilities';
 
 const LOCATION_BUTTONS: { value: StorageLocation; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
   { value: 'fridge', label: 'Fridge', icon: <Refrigerator className="w-3.5 h-3.5" />, color: 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400', activeColor: 'bg-emerald-500 text-white border-emerald-500 dark:bg-emerald-600 dark:border-emerald-600' },
@@ -41,6 +43,10 @@ export default function AddFood() {
   const fridgeCameraRef = useRef<HTMLInputElement>(null);
   const expiryInputRef = useRef<HTMLInputElement>(null);
   const [scanningExpiry, setScanningExpiry] = useState(false);
+  const [savingItems, setSavingItems] = useState(false);
+  const { getCapability, isLoading: capabilitiesLoading } = useCapabilities();
+  const visionAvailable = getCapability('inventory_vision')?.available ?? false;
+  const receiptAvailable = getCapability('receipt_extraction')?.available ?? false;
 
   const handleExpiryScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -141,16 +147,24 @@ export default function AddFood() {
     setScannedItems(prev => prev.map((item, i) => i === index ? { ...item, ...updates } : item));
   };
 
-  const saveScanned = () => {
+  const saveScanned = async () => {
     const items: FoodItem[] = scannedItems.map((item, i) => ({
       ...item,
       id: `new-${Date.now()}-${i}`,
     }));
-    addItems(items);
-    navigate('/inventory');
+    setSavingItems(true);
+    try {
+      await addItems(items);
+      toast.success(`Added ${items.length} item${items.length === 1 ? '' : 's'} to your kitchen`);
+      navigate('/inventory');
+    } catch (error) {
+      toast.error(errorMessage(error, 'Your items were not saved. Please try again.'));
+    } finally {
+      setSavingItems(false);
+    }
   };
 
-  const addManual = () => {
+  const addManual = async () => {
     if (!manualName.trim()) return;
     const item: FoodItem = {
       id: `manual-${Date.now()}`,
@@ -161,9 +175,17 @@ export default function AddFood() {
       daysUntilExpiry: manualLocation === 'freezer' ? 60 : manualLocation === 'cupboard' ? 90 : 7,
       status: 'okay',
     };
-    addItems([item]);
-    setManualName('');
-    setManualQty('');
+    setSavingItems(true);
+    try {
+      await addItems([item]);
+      setManualName('');
+      setManualQty('');
+      toast.success(`${item.name} added`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'This item was not saved. Please try again.'));
+    } finally {
+      setSavingItems(false);
+    }
   };
 
   const hiddenInputs = (
@@ -233,10 +255,16 @@ export default function AddFood() {
       <div className="p-4 pb-24 max-w-lg mx-auto space-y-6 animate-fade-in">
         {hiddenInputs}
         <h1 className="text-2xl font-bold">Add Food</h1>
+        {!capabilitiesLoading && (!visionAvailable || !receiptAvailable) && (
+          <div className="rounded-2xl border border-border/70 bg-[#f6f1e8] p-4 text-sm text-[#29463c]">
+            Photo capture is not configured yet. Manual entry and barcode lookup are still available.
+          </div>
+        )}
         <div className="space-y-3">
           <button
+            disabled={!visionAvailable}
             onClick={() => { setScanType('fridge'); setMode('pick-location'); }}
-            className="w-full bg-card border-2 border-primary/20 rounded-xl p-6 text-left hover:border-primary/50 transition-colors"
+            className="w-full bg-card border-2 border-primary/20 rounded-xl p-6 text-left hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:opacity-45"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
@@ -244,13 +272,14 @@ export default function AddFood() {
               </div>
               <div>
                 <div className="font-semibold">Scan My Kitchen</div>
-                <div className="text-sm text-muted-foreground">Point your camera at the fridge, freezer, or cupboard</div>
+                <div className="text-sm text-muted-foreground">{capabilitiesLoading ? 'Checking availability…' : visionAvailable ? 'Point your camera at the fridge, freezer, or cupboard' : 'Unavailable — use barcode or manual entry'}</div>
               </div>
             </div>
           </button>
           <button
+            disabled={!receiptAvailable}
             onClick={() => { setScanType('receipt'); cameraInputRef.current?.click(); }}
-            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
+            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors disabled:cursor-not-allowed disabled:opacity-45"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -258,13 +287,14 @@ export default function AddFood() {
               </div>
               <div>
                 <div className="font-semibold">Take Photo of Receipt</div>
-                <div className="text-sm text-muted-foreground">Use your camera to scan a grocery receipt</div>
+                <div className="text-sm text-muted-foreground">{receiptAvailable ? 'Use your camera to scan a grocery receipt' : 'Unavailable — add items manually'}</div>
               </div>
             </div>
           </button>
           <button
+            disabled={!receiptAvailable}
             onClick={() => { setScanType('receipt'); fileInputRef.current?.click(); }}
-            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors"
+            className="w-full bg-card border border-border rounded-xl p-6 text-left hover:border-primary/30 transition-colors disabled:cursor-not-allowed disabled:opacity-45"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -405,8 +435,9 @@ export default function AddFood() {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => setMode('choose')} className="flex-1">Cancel</Button>
-          <Button onClick={saveScanned} className="flex-1">
-            <Check className="w-4 h-4 mr-1" /> Add {scannedItems.length} Items
+          <Button onClick={saveScanned} disabled={savingItems} className="flex-1">
+            {savingItems ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
+            {savingItems ? 'Saving…' : `Add ${scannedItems.length} Items`}
           </Button>
         </div>
       </div>
@@ -444,8 +475,9 @@ export default function AddFood() {
             ))}
           </div>
         </div>
-        <Button onClick={addManual} disabled={!manualName.trim()} className="w-full">
-          <Plus className="w-4 h-4 mr-1" /> Add to Inventory
+        <Button onClick={addManual} disabled={!manualName.trim() || savingItems} className="w-full">
+          {savingItems ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
+          {savingItems ? 'Saving…' : 'Add to Inventory'}
         </Button>
       </div>
       <Button variant="ghost" onClick={() => navigate('/inventory')} className="w-full text-muted-foreground">

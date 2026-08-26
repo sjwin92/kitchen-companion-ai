@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { startOfWeek, addDays, addWeeks, format, isToday } from 'date-fns';
-import { useMealPlans, MEAL_SLOTS, type MealSlot } from '@/hooks/useMealPlans';
+import { useMealPlans, MEAL_SLOTS, type MealPlanKind, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
@@ -9,25 +9,25 @@ import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, Star, Check, UtensilsCrossed, SkipForward, Leaf } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, UtensilsCrossed, SkipForward, Leaf, MoreHorizontal } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
-import ProductInfoDialog from '@/components/ProductInfoDialog';
 import PlanningModeSelector from '@/components/PlanningModeSelector';
-import SlotSettingsDialog from '@/components/SlotSettingsDialog';
 import GuidedSuggestions from '@/components/GuidedSuggestions';
 import MealRatingDialog from '@/components/MealRatingDialog';
 import { useInteractions } from '@/hooks/useInteractions';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { errorMessage } from '@/lib/appError';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import RecipeArtwork from '@/components/RecipeArtwork';
 
 export default function MealPlanner() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { preferences, inventory } = useApp();
   const [weekOffset, setWeekOffset] = useState(0);
   const [addDialog, setAddDialog] = useState<{ date: Date; slot: MealSlot } | null>(null);
-  const [productInfoName, setProductInfoName] = useState<string | null>(null);
-  const [editingSlot, setEditingSlot] = useState<MealSlot | null>(null);
   const [guidedSlot, setGuidedSlot] = useState<{ date: Date; slot: MealSlot } | null>(null);
   const [ratingTarget, setRatingTarget] = useState<{ recipeId: string; title: string; slot: string; planId: string } | null>(null);
 
@@ -37,10 +37,11 @@ export default function MealPlanner() {
   }, [weekOffset]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
-  const { plans, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
+  const { plans, loading: plansLoading, error: plansError, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
+  const selectedPlan = plans.find(plan => plan.id === searchParams.get('plan')) ?? null;
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
-  const { getSlotSettings, updateSlotSettings } = useMealSlotSettings();
+  const { getSlotSettings } = useMealSlotSettings();
   const { fetchRatings, addRating, getRatingForRecipe } = useMealRatings();
   const { track } = useInteractions();
   const { generatePlan, generateSlot, generating: autoGenerating, generatingSlot, draft, clearDraft } = useAutoPlan();
@@ -59,7 +60,7 @@ export default function MealPlanner() {
   const expiringItems = inventory.filter(i => i.status === 'use-today' || i.status === 'use-soon');
 
   // Calculate sustainability score
-  const usesInventory = plans.length > 0 ? Math.min(100, Math.round((plans.filter(p => !p.recipe_id.startsWith('custom-')).length / plans.length) * 100)) : 0;
+  const usesInventory = plans.length > 0 ? Math.min(100, Math.round((plans.filter(p => p.planKind === 'inventory' || p.planKind === 'catalogue').length / plans.length) * 100)) : 0;
 
   const handleDrop = async (e: React.DragEvent, day: Date, slot: MealSlot) => {
     e.preventDefault(); handleDragEnd();
@@ -67,9 +68,12 @@ export default function MealPlanner() {
     const plan = plans.find(p => p.id === draggingPlanId);
     if (!plan) return;
     if (plan.planned_date === format(day, 'yyyy-MM-dd') && plan.meal_slot === slot) return;
-    const success = await movePlan(draggingPlanId, day, slot);
-    if (success) toast.success(`Moved ${plan.title} to ${slot}`);
-    else toast.error('Failed to move meal');
+    try {
+      await movePlan(draggingPlanId, day, slot);
+      toast.success(`Moved ${plan.title} to ${slot}`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to move meal'));
+    }
   };
 
   const handleTouchDrop = async (planId: string) => {
@@ -78,41 +82,53 @@ export default function MealPlanner() {
     const plan = plans.find(p => p.id === planId);
     if (!plan) return;
     if (plan.planned_date === target.dayStr && plan.meal_slot === target.slot) return;
-    const success = await movePlan(planId, target.day, target.slot);
-    if (success) toast.success(`Moved ${plan.title} to ${target.slot}`);
-    else toast.error('Failed to move meal');
+    try {
+      await movePlan(planId, target.day, target.slot);
+      toast.success(`Moved ${plan.title} to ${target.slot}`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to move meal'));
+    }
   };
 
-  const handleAddMeal = async (recipeId: string, title: string, image?: string) => {
+  const handleAddMeal = async (
+    recipeId: string,
+    title: string,
+    image?: string,
+    options?: { planKind?: MealPlanKind; inventoryItemId?: string | null },
+  ) => {
     if (!addDialog) return;
-    const success = await addPlan(recipeId, title, addDialog.date, addDialog.slot, image);
-    if (success) {
+    try {
+      await addPlan(recipeId, title, addDialog.date, addDialog.slot, image, options);
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
       toast.success(`Added ${title}`);
       setAddDialog(null);
-    } else toast.error('Failed to add meal');
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to add meal'));
+    }
   };
 
   const handleGuidedSelect = async (recipeId: string, title: string, image?: string) => {
     if (!guidedSlot) return;
-    const success = await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image);
-    if (success) {
+    try {
+      await addPlan(recipeId, title, guidedSlot.date, guidedSlot.slot, image, { planKind: 'catalogue' });
       await track('meal_added_to_plan', { recipeId, recipeTitle: title });
       toast.success(`Added ${title}`);
       setGuidedSlot(null);
-    } else toast.error('Failed to add meal');
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to add meal'));
+    }
   };
 
   const handleAutoGenerate = () => generatePlan(days, plans);
 
   const handleAutoSlot = useCallback(async (date: Date, slot: MealSlot) => {
     await generateSlot(date, slot, plans, async (meal) => {
-      const success = await addPlan(meal.recipe_id, meal.title, date, slot, meal.image);
-      if (!success) {
-        toast.error('Could not add meal');
-        return;
+      try {
+        await addPlan(meal.recipe_id, meal.title, date, slot, meal.image, { planKind: 'catalogue' });
+        toast.success(`Added ${meal.title} from your recipe catalogue`);
+      } catch (error) {
+        toast.error(errorMessage(error, 'Could not add meal'));
       }
-      toast.success(`Added ${meal.title} from your recipe catalogue`);
     });
   }, [addPlan, generateSlot, plans]);
 
@@ -127,15 +143,14 @@ export default function MealPlanner() {
     }));
 
     // Single batch insert — much faster than N sequential upserts
-    const success = await batchAddPlans(resolved);
-
-    if (success) {
+    try {
+      await batchAddPlans(resolved.map(meal => ({ ...meal, planKind: 'catalogue' as const })));
       clearDraft();
       await refetchPlans();
       toast.success(`Added ${resolved.length} catalogue meals to your plan`);
       toast.info('Use “Build shopping list” to add only the ingredients you are missing.');
-    } else {
-      toast.error('Failed to save plan — please try again');
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to save plan — please try again'));
     }
   };
 
@@ -146,11 +161,36 @@ export default function MealPlanner() {
   };
 
   const handleRemovePlan = async (planId: string, recipeId: string, title: string) => {
-    await removePlan(planId);
-    await track('meal_removed_from_plan', { recipeId, recipeTitle: title, mealPlanId: planId });
+    try {
+      await removePlan(planId);
+      await track('meal_removed_from_plan', { recipeId, recipeTitle: title, mealPlanId: planId });
+      toast.success(`${title} removed`);
+      setSearchParams(current => {
+        const next = new URLSearchParams(current);
+        next.delete('plan');
+        return next;
+      }, { replace: true });
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to remove meal'));
+    }
   };
 
-  const editingSettings = editingSlot ? getSlotSettings(editingSlot) : null;
+  const openPlanDetails = (planId: string) => {
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      next.set('plan', planId);
+      return next;
+    }, { replace: true });
+  };
+
+  const closePlanDetails = () => {
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      next.delete('plan');
+      return next;
+    }, { replace: true });
+  };
+
   const showLunchbox = (preferences.lunchboxCount ?? 0) > 0;
   const DISPLAY_SLOTS: MealSlot[] = showLunchbox
     ? ['breakfast', 'lunch', 'dinner', 'lunchbox']
@@ -202,23 +242,33 @@ export default function MealPlanner() {
       date: s.targetDate,
       slot: s.targetSlot,
       image: s.from.image || undefined,
+      planKind: s.from.planKind,
+      inventoryItemId: s.from.inventoryItemId,
     }));
-    const success = await batchAddPlans(rows);
-    if (success) {
+    try {
+      await batchAddPlans(rows);
       // Mark the original dinners as bulk-cooked
-      await Promise.all(suggestions.slice(0, 3).map(s =>
+      const updates = await Promise.all(suggestions.slice(0, 3).map(s =>
         supabase.from('meal_plans').update({ bulk_servings: 2 } as any).eq('id', s.from.id)
       ));
+      const updateError = updates.find(result => result.error)?.error;
+      if (updateError) throw updateError;
       created = rows.length;
       toast.success(`Added ${created} leftover meal${created > 1 ? 's' : ''} — cook double those dinners`);
       await refetchPlans();
-    } else {
-      toast.error('Failed to add leftover suggestions');
+    } catch (error) {
+      toast.error(errorMessage(error, 'Failed to add leftover suggestions'));
     }
   };
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      {plansError && (
+        <div role="alert" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 p-4 text-sm">
+          <span>{plansError}</span>
+          <Button variant="outline" className="min-h-11 rounded-xl" onClick={() => void refetchPlans().catch(error => toast.error(errorMessage(error, 'Could not reload meal plan.')))}>Retry</Button>
+        </div>
+      )}
       {/* Two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8">
         {/* Main content */}
@@ -246,13 +296,13 @@ export default function MealPlanner() {
           {/* Week nav + actions */}
           <div className="flex flex-wrap items-center gap-2 mb-5">
             <div className="flex items-center gap-1">
-              <Button aria-label="Previous week" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w - 1)}>
+              <Button aria-label="Previous week" variant="ghost" size="icon" className="h-11 w-11" onClick={() => setWeekOffset(w => w - 1)}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <Button variant={weekOffset === 0 ? 'default' : 'outline'} size="sm" className="rounded-xl text-xs h-8 px-3" onClick={() => setWeekOffset(0)}>
+              <Button variant={weekOffset === 0 ? 'default' : 'outline'} size="sm" className="min-h-11 rounded-xl px-3 text-xs" onClick={() => setWeekOffset(0)}>
                 This Week
               </Button>
-              <Button aria-label="Next week" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setWeekOffset(w => w + 1)}>
+              <Button aria-label="Next week" variant="ghost" size="icon" className="h-11 w-11" onClick={() => setWeekOffset(w => w + 1)}>
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
@@ -295,7 +345,7 @@ export default function MealPlanner() {
           )}
 
           {/* Day cards — horizontal grid */}
-          <div className="space-y-3">
+          <div className="space-y-3" aria-busy={plansLoading}>
             {days.map(day => {
               const dayStr = format(day, 'yyyy-MM-dd');
               const today = isToday(day);
@@ -371,11 +421,11 @@ export default function MealPlanner() {
                                   src={plan.image}
                                   alt=""
                                   className="w-full h-14 rounded-lg object-cover mb-1.5 cursor-pointer"
-                                  onClick={() => setProductInfoName(plan.title)}
+                                  onClick={() => openPlanDetails(plan.id)}
                                 />
                               )}
                               <p className="text-xs font-semibold leading-tight line-clamp-2 cursor-pointer hover:text-primary transition-colors"
-                                onClick={() => setProductInfoName(plan.title)}>
+                                onClick={() => openPlanDetails(plan.id)}>
                                 {plan.title}
                               </p>
                               {plan.status !== 'planned' && (
@@ -387,39 +437,9 @@ export default function MealPlanner() {
                                   {plan.status}
                                 </span>
                               )}
-                              <div className="flex items-center gap-1 mt-auto pt-1.5">
-                                <button
-                                  aria-label={`Rate ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
-                                  onClick={() => setRatingTarget({ recipeId: plan.recipe_id, title: plan.title, slot: plan.meal_slot, planId: plan.id })}
-                                  className="p-0.5 rounded hover:bg-foreground/10"
-                                  title="Rate"
-                                >
-                                  <Star className="w-3 h-3 text-muted-foreground" />
-                                </button>
-                                <button
-                                  aria-label={`${plan.status === 'eaten' ? 'View meal log for' : 'Confirm eaten'} ${plan.title} for ${plan.meal_slot} on ${plan.planned_date}`}
-                                  onClick={() => {
-                                    if (plan.status === 'eaten') {
-                                      navigate('/meal-history');
-                                      return;
-                                    }
-                                    navigate('/meal-log', {
-                                      state: {
-                                        plannedMeal: {
-                                          planId: plan.id,
-                                          recipeId: plan.recipe_id,
-                                          title: plan.title,
-                                        },
-                                      },
-                                    });
-                                  }}
-                                  className="p-0.5 rounded hover:bg-foreground/10"
-                                  title={plan.status === 'eaten' ? 'View meal log' : 'Confirm eaten'}
-                                >
-                                  <Check className="w-3 h-3 text-muted-foreground" />
-                                </button>
-                                <button aria-label={`Remove ${plan.title} from ${plan.meal_slot} on ${plan.planned_date}`} onClick={() => handleRemovePlan(plan.id, plan.recipe_id, plan.title)} className="p-0.5 rounded hover:bg-foreground/10 ml-auto">
-                                  <X className="w-3 h-3 text-muted-foreground" />
+                              <div className="mt-auto flex justify-end pt-1.5">
+                                <button aria-label={`Open actions for ${plan.title}`} onClick={() => openPlanDetails(plan.id)} className="flex h-11 w-11 items-center justify-center rounded-xl hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                                 </button>
                               </div>
                             </div>
@@ -486,9 +506,38 @@ export default function MealPlanner() {
       </div>
 
       <AddMealDialog addDialog={addDialog} onClose={() => setAddDialog(null)} onAdd={handleAddMeal} favorites={favorites} />
-      <ProductInfoDialog productName={productInfoName} onClose={() => setProductInfoName(null)} includeRecipe />
-      <SlotSettingsDialog slot={editingSlot} settings={editingSettings} onClose={() => setEditingSlot(null)} onSave={updateSlotSettings} />
       <MealRatingDialog open={!!ratingTarget} title={ratingTarget?.title || ''} onClose={() => setRatingTarget(null)} onSubmit={handleRatingSubmit} />
+
+      <Dialog open={!!selectedPlan} onOpenChange={open => { if (!open) closePlanDetails(); }}>
+        <DialogContent className="max-w-md overflow-hidden rounded-[1.75rem] p-0">
+          {selectedPlan && (
+            <>
+              <RecipeArtwork title={selectedPlan.title} image={selectedPlan.image ?? undefined} className="h-52 w-full" />
+              <div className="space-y-5 p-6 pt-4">
+                <DialogHeader>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">{selectedPlan.meal_slot} · {selectedPlan.planned_date}</p>
+                  <DialogTitle className="text-2xl tracking-tight">{selectedPlan.title}</DialogTitle>
+                  <DialogDescription>
+                    {selectedPlan.planKind === 'inventory'
+                      ? 'Planned directly from your kitchen inventory.'
+                      : selectedPlan.planKind === 'custom'
+                        ? 'A custom meal in your weekly plan.'
+                        : 'A recipe from your trusted catalogue.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-2">
+                  {(selectedPlan.planKind === 'catalogue' || selectedPlan.planKind === 'user_recipe') && (
+                    <Button className="min-h-11 rounded-xl" onClick={() => navigate(`/recipe/${selectedPlan.recipe_id}`)}>Open recipe</Button>
+                  )}
+                  <Button className="min-h-11 rounded-xl" variant="outline" onClick={() => navigate('/meal-log', { state: { plannedMeal: { planId: selectedPlan.id, recipeId: selectedPlan.recipe_id, title: selectedPlan.title } } })}>Record meal</Button>
+                  <Button className="min-h-11 rounded-xl" variant="outline" onClick={() => setRatingTarget({ recipeId: selectedPlan.recipe_id, title: selectedPlan.title, slot: selectedPlan.meal_slot, planId: selectedPlan.id })}>Rate meal</Button>
+                  <Button className="min-h-11 rounded-xl text-destructive" variant="outline" onClick={() => void handleRemovePlan(selectedPlan.id, selectedPlan.recipe_id, selectedPlan.title)}>Remove</Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {guidedSlot && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end justify-center p-4">

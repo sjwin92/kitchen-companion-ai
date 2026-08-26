@@ -40,6 +40,12 @@ verify_jwt = true
 [functions.compare-prices]
 verify_jwt = true
 
+[functions.capability-status]
+verify_jwt = true
+
+[functions.admin-operations]
+verify_jwt = true
+
 [auth.hook.before_user_created]
 enabled = true
 uri = "pg-functions://postgres/private/hook_require_beta_invite"

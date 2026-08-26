@@ -76,6 +76,24 @@ export interface NutritionRange {
   high: number;
 }
 
+export type AppCapability =
+  | 'inventory_vision'
+  | 'receipt_extraction'
+  | 'expiry_extraction'
+  | 'nutrition_estimate'
+  | 'private_recipe_draft'
+  | 'live_pricing'
+  | 'barcode_lookup'
+  | 'monitoring';
+
+export interface CapabilityStatus {
+  capability: AppCapability;
+  available: boolean;
+  reason: 'ready' | 'provider_not_configured' | 'budget_exhausted' | 'integration_not_configured' | 'available_without_ai' | 'monitoring_not_configured';
+  provider?: string;
+  budgetRemainingGbp?: number;
+}
+
 export interface NutritionEstimate {
   title: string;
   calories: number;

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import { catalogRecipeToMealSuggestion, listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { MealWithStatus } from '@/lib/mealMatching';
@@ -13,6 +13,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import RecipeCard from '@/components/RecipeCard';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useCapabilities } from '@/hooks/useCapabilities';
 
 const MAX_VISIBLE_MEALS = 30;
 type RankedMeal = MealWithStatus & { reasons: string[] };
@@ -20,10 +21,11 @@ type RankedMeal = MealWithStatus & { reasons: string[] };
 export default function MealSuggestions() {
   const { inventory, session, preferences } = useApp();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [mealsWithStatus, setMealsWithStatus] = useState<RankedMeal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') ?? '');
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -31,6 +33,9 @@ export default function MealSuggestions() {
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
   const [submissionRightsConfirmed, setSubmissionRightsConfirmed] = useState(false);
   const [isSubmittingRecipe, setIsSubmittingRecipe] = useState(false);
+  const { getCapability, isLoading: capabilitiesLoading } = useCapabilities();
+  const privateDraftCapability = getCapability('private_recipe_draft');
+  const privateDraftAvailable = privateDraftCapability?.available ?? false;
 
   useEffect(() => {
     let cancelled = false;
@@ -96,6 +101,10 @@ export default function MealSuggestions() {
 
   const generateRecipe = async () => {
     if (!session?.user) { toast.error('Please sign in first'); return; }
+    if (!privateDraftAvailable) {
+      toast.info('Private recipe drafting is unavailable. Browse the reviewed catalogue instead.');
+      return;
+    }
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-recipe', {
@@ -247,14 +256,20 @@ export default function MealSuggestions() {
           <div className="rounded-2xl border border-dashed border-border bg-card p-5">
             <FlaskConical className="h-5 w-5 text-muted-foreground" />
             <h2 className="mt-4 text-base font-extrabold">Recipe lab</h2>
-            <p className="mt-1 text-sm leading-5 text-muted-foreground">If the catalogue has no fit, create one private draft from your pantry. It never enters the public shelf without review.</p>
+            <p className="mt-1 text-sm leading-5 text-muted-foreground">
+              {capabilitiesLoading
+                ? 'Checking private drafting availability…'
+                : privateDraftAvailable
+                  ? 'If the catalogue has no fit, create one private draft from your pantry. It never enters the public shelf without review.'
+                  : 'Private drafting is not configured. The reviewed catalogue remains available without AI.'}
+            </p>
             <div className="mt-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <button aria-label="Decrease servings" onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">−</button>
                 <span className="w-5 text-center text-sm font-bold">{generatorServings}</span>
                 <button aria-label="Increase servings" onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">+</button>
               </div>
-              <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={generateRecipe} disabled={isGenerating}>
+              <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={generateRecipe} disabled={isGenerating || !privateDraftAvailable}>
                 {isGenerating ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
                 {isGenerating ? 'Drafting…' : 'Create private draft'}
               </Button>

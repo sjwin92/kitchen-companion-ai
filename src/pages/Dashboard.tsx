@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import RecipeArtwork from '@/components/RecipeArtwork';
+import { mealDestination } from '@/lib/mealDestination';
 
 const EDITORIAL_MEAL_IMAGE = `${import.meta.env.BASE_URL}images/editorial-cannellini-beans.jpg`;
 
@@ -42,11 +44,11 @@ export default function Dashboard() {
 
   const firstName = preferences.displayName?.trim().split(' ')[0];
   const heroTitle = tonight?.title || 'Creamy cannellini beans with spinach';
-  const heroImage = tonight?.image || EDITORIAL_MEAL_IMAGE;
+  const heroImage = tonight ? tonight.image : EDITORIAL_MEAL_IMAGE;
 
   const openTonight = () => {
-    if (tonight?.recipe_id) {
-      navigate(`/recipe/${tonight.recipe_id}`);
+    if (tonight) {
+      navigate(mealDestination(tonight));
       return;
     }
     navigate('/meals');
@@ -66,9 +68,9 @@ export default function Dashboard() {
         </div>
         <button
           type="button"
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate('/settings')}
           aria-label="Open profile"
-          className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#d7c3aa] text-sm font-bold text-[#29463c] shadow-[0_5px_20px_rgba(41,70,60,0.12)] md:hidden"
+          className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#d7c3aa] text-sm font-bold text-[#29463c] shadow-[0_5px_20px_rgba(41,70,60,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
         >
           {(firstName?.[0] || 'K').toUpperCase()}
         </button>
@@ -92,11 +94,19 @@ export default function Dashboard() {
               onClick={openTonight}
               className="group relative block h-[420px] w-full overflow-hidden rounded-[2rem] bg-[#173d32] text-left shadow-[0_24px_70px_rgba(24,53,44,0.2)] md:h-[520px]"
             >
-              <img
-                src={heroImage}
-                alt={heroTitle}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
-              />
+              {heroImage ? (
+                <img
+                  src={heroImage}
+                  alt={heroTitle}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+                />
+              ) : (
+                <RecipeArtwork
+                  title={heroTitle}
+                  className="h-full w-full"
+                  imageClassName="transition-transform duration-700 group-hover:scale-[1.025]"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#102c25]/95 via-[#102c25]/15 to-black/10" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9">
                 <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/75">
