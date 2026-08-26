@@ -52,7 +52,7 @@ export default function RecipeDetail() {
     }
     load();
     return () => { cancelled = true; };
-  }, [id, loadAttempt]);
+  }, [id, loadAttempt, track]);
 
   if (isLoading) {
     return (

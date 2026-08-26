@@ -45,6 +45,8 @@ export function useMealPlans(weekStart?: Date) {
   const userId = session?.user?.id;
   const start = weekStart ?? startOfWeek(new Date(), { weekStartsOn: 1 });
   const end = addDays(start, 6);
+  const startDate = format(start, 'yyyy-MM-dd');
+  const endDate = format(end, 'yyyy-MM-dd');
 
   const fetchPlans = useCallback(async () => {
     if (!userId) { setPlans([]); setLoading(false); return; }
@@ -54,8 +56,8 @@ export function useMealPlans(weekStart?: Date) {
       .from('meal_plans')
       .select('*')
       .eq('user_id', userId)
-      .gte('planned_date', format(start, 'yyyy-MM-dd'))
-      .lte('planned_date', format(end, 'yyyy-MM-dd'))
+      .gte('planned_date', startDate)
+      .lte('planned_date', endDate)
       .order('planned_date');
     if (error) {
       const failure = appError(error, 'We could not load your meal plan. Please try again.');
@@ -65,7 +67,7 @@ export function useMealPlans(weekStart?: Date) {
     }
     setPlans((data ?? []).map(row => mapPlan(row as unknown as Record<string, unknown>)));
     setLoading(false);
-  }, [userId, format(start, 'yyyy-MM-dd'), format(end, 'yyyy-MM-dd')]);
+  }, [userId, startDate, endDate]);
 
   useEffect(() => { void fetchPlans().catch(() => undefined); }, [fetchPlans]);
 

@@ -45,17 +45,17 @@ export default function WeeklyInsights() {
   const [stats, setStats] = useState<WeeklyStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [weekOffset, setWeekOffset] = useState(0);
+  const userId = session?.user?.id;
 
   const now = new Date();
   const weekStart = startOfWeek(subWeeks(now, weekOffset), { weekStartsOn: 1 });
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+  const startStr = format(weekStart, 'yyyy-MM-dd');
+  const endStr = format(weekEnd, 'yyyy-MM-dd');
   const weekLabel = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
 
   useEffect(() => {
-    if (!session?.user) return;
-    const userId = session.user.id;
-    const startStr = format(weekStart, 'yyyy-MM-dd');
-    const endStr = format(weekEnd, 'yyyy-MM-dd');
+    if (!userId) return;
 
     (async () => {
       setLoading(true);
@@ -121,7 +121,7 @@ export default function WeeklyInsights() {
       });
       setLoading(false);
     })();
-  }, [session, weekStart.toISOString()]);
+  }, [userId, startStr, endStr]);
 
   return (
     <div className="min-h-screen bg-background pb-24">

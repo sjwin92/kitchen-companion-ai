@@ -29,18 +29,19 @@ const REASON_LABELS: Record<string, string> = {
 
 export default function WasteTracker() {
   const { session } = useApp();
+  const userId = session?.user?.id;
   const [entries, setEntries] = useState<WasteEntry[]>([]);
   const [showCharts, setShowCharts] = useState(true);
 
   const load = useCallback(async () => {
-    if (!session?.user) return;
+    if (!userId) return;
     const { data } = await supabase
       .from('waste_log')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', userId)
       .order('wasted_at', { ascending: false });
     if (data) setEntries(data);
-  }, [session?.user?.id]);
+  }, [userId]);
 
   useEffect(() => { load(); }, [load]);
 

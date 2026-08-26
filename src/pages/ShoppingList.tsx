@@ -25,6 +25,7 @@ const AISLE_ORDER: Aisle[] = ['Produce', 'Meat & Fish', 'Dairy & Eggs', 'Bakery'
 
 export default function ShoppingList() {
   const { session, refreshInventory } = useApp();
+  const userId = session?.user?.id;
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -40,19 +41,19 @@ export default function ShoppingList() {
   const livePricingAvailable = getCapability('live_pricing')?.available ?? false;
 
   const load = useCallback(async () => {
-    if (!session?.user) return;
+    if (!userId) return;
     setLoadError(null);
     const { data, error } = await supabase
       .from('shopping_list')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: true });
     if (error) {
       setLoadError('We could not load your saved shopping list.');
       throw appError(error, 'We could not load your saved shopping list.');
     }
     setItems((data ?? []).map(d => ({ id: d.id, name: d.name, quantity: d.quantity, checked: d.checked })));
-  }, [session?.user?.id]);
+  }, [userId]);
 
   useEffect(() => { void load().catch(() => undefined); }, [load]);
 

@@ -139,7 +139,7 @@ export default function MealLog() {
     };
     void loadPlannedRecipe();
     return () => { cancelled = true; };
-  }, [plannedMeal?.planId, plannedMeal?.recipeId, plannedMeal?.title, inventory]);
+  }, [plannedMeal, inventory]);
 
   const processImage = useCallback(async (file: File) => {
     try {

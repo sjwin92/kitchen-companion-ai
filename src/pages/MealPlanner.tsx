@@ -225,14 +225,17 @@ export default function MealPlanner() {
   };
 
   const showLunchbox = (preferences.lunchboxCount ?? 0) > 0;
-  const DISPLAY_SLOTS: MealSlot[] = showLunchbox
-    ? ['breakfast', 'lunch', 'dinner', 'lunchbox']
-    : ['breakfast', 'lunch', 'dinner'];
+  const displaySlots = useMemo<MealSlot[]>(
+    () => showLunchbox
+      ? ['breakfast', 'lunch', 'dinner', 'lunchbox']
+      : ['breakfast', 'lunch', 'dinner'],
+    [showLunchbox],
+  );
   const emptySlotCount = useMemo(() => {
     let count = 0;
     days.forEach((day, idx) => {
       const dayStr = format(day, 'yyyy-MM-dd');
-      DISPLAY_SLOTS.forEach(slot => {
+      displaySlots.forEach(slot => {
         // Lunchbox only counts on first N weekdays
         if (slot === 'lunchbox') {
           const dow = day.getDay(); // 0=Sun, 6=Sat
@@ -245,7 +248,7 @@ export default function MealPlanner() {
       });
     });
     return count;
-  }, [days, plans, showLunchbox, preferences.lunchboxCount]);
+  }, [days, plans, displaySlots, preferences.lunchboxCount]);
 
   const handleSuggestBulkCook = async () => {
     // Find dinners followed by an empty lunch within 1-2 days. Create leftover plans.

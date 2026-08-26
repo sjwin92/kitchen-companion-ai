@@ -76,6 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [profileReload, setProfileReload] = useState(0);
   const [inventory, setInventory] = useState<FoodItem[]>([]);
   const [preferences, setPrefs] = useState<UserPreferences>(defaultPreferences);
+  const userId = session?.user?.id;
 
   // Auth listener. Keep the app gated until the signed-in user's profile is loaded.
   useEffect(() => {
@@ -109,7 +110,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Load profile when session changes
   useEffect(() => {
-    if (!session?.user) return;
+    if (!userId) return;
     
     let cancelled = false;
     const loadProfile = async () => {
@@ -118,7 +119,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', session.user.id)
+        .eq('id', userId)
         .maybeSingle();
 
       if (cancelled) return;
@@ -132,7 +133,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (!profile) {
         const { data: created, error: createError } = await supabase
           .from('profiles')
-          .upsert({ id: session.user.id }, { onConflict: 'id' })
+          .upsert({ id: userId }, { onConflict: 'id' })
           .select('*')
           .single();
 
@@ -170,16 +171,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     void loadProfile();
     return () => { cancelled = true; };
-  }, [session?.user?.id, profileReload]);
+  }, [userId, profileReload]);
 
   // Load inventory when session changes
   const refreshInventory = useCallback(async () => {
-    if (!session?.user) return;
+    if (!userId) return;
     setInventoryError(null);
     const { data, error } = await supabase
       .from('food_items')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -206,16 +207,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         confidence: (item as Record<string, unknown>).confidence as number | undefined,
       })));
     }
-  }, [session?.user?.id]);
+  }, [userId]);
 
   useEffect(() => {
     void refreshInventory().catch(() => undefined);
   }, [refreshInventory]);
 
   const addItems = useCallback(async (items: FoodItem[]) => {
-    if (!session?.user) return;
+    if (!userId) return;
     const rows = items.map(item => ({
-      user_id: session.user.id,
+      user_id: userId,
       name: item.name,
       quantity: item.quantity,
       location: item.location,
@@ -233,7 +234,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.from('food_items').insert(rows);
     if (error) throw appError(error, 'Your food was not saved. Please try again.');
     await refreshInventory();
-  }, [session?.user?.id, refreshInventory]);
+  }, [userId, refreshInventory]);
 
   const removeItem = useCallback(async (id: string) => {
     const { error } = await supabase.rpc('transition_inventory_item' as never, {
