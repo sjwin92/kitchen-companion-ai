@@ -569,7 +569,13 @@ export default function MealPlanner() {
                   {(selectedPlan.planKind === 'catalogue' || selectedPlan.planKind === 'user_recipe') && (
                     <Button className="min-h-11 rounded-xl" onClick={() => navigate(`/recipe/${selectedPlan.recipe_id}`)}>Open recipe</Button>
                   )}
-                  <Button className="min-h-11 rounded-xl" variant="outline" onClick={() => navigate('/meal-log', { state: { plannedMeal: { planId: selectedPlan.id, recipeId: selectedPlan.recipe_id, title: selectedPlan.title } } })}>Record meal</Button>
+                  {selectedPlan.status === 'eaten' ? (
+                    <Button className="min-h-11 rounded-xl" variant="outline" disabled>
+                      Meal recorded
+                    </Button>
+                  ) : (
+                    <Button className="min-h-11 rounded-xl" variant="outline" onClick={() => navigate('/meal-log', { state: { plannedMeal: { planId: selectedPlan.id, recipeId: selectedPlan.recipe_id, title: selectedPlan.title } } })}>Record meal</Button>
+                  )}
                   <Button className="min-h-11 rounded-xl" variant="outline" onClick={() => setRatingTarget({ recipeId: selectedPlan.recipe_id, title: selectedPlan.title, slot: selectedPlan.meal_slot, planId: selectedPlan.id })}>Rate meal</Button>
                   <Button className="min-h-11 rounded-xl text-destructive" variant="outline" onClick={() => void handleRemovePlan(selectedPlan.id, selectedPlan.recipe_id, selectedPlan.title)}>Remove</Button>
                 </div>
