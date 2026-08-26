@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isStaleDeploymentError } from '@/components/ErrorBoundary';
+import { isStaleDeploymentError } from '@/lib/errorRecovery';
 
 describe('stale deployment recovery', () => {
   it.each([

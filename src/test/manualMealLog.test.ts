@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildManualEstimate } from '@/pages/MealLog';
+import { buildManualEstimate } from '@/lib/manualMealEstimate';
 
 describe('manual meal nutrition', () => {
   it('creates a user-confirmed estimate without AI or a photo', () => {

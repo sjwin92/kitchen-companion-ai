@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getRecipeById } from '@/services/recipes/recipeProvider';
 import { ingredientMatches } from '@/lib/mealMatching';
+import { buildManualEstimate } from '@/lib/manualMealEstimate';
 import { useInteractions } from '@/hooks/useInteractions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -48,29 +49,6 @@ function rangeAround(value: number, uncertainty: number) {
   return {
     low: Math.max(0, Math.round(value * (1 - uncertainty))),
     high: Math.round(value * (1 + uncertainty)),
-  };
-}
-
-export function buildManualEstimate(
-  title: string,
-  nutrition: { calories: number; protein_g: number; carbs_g: number; fat_g: number },
-): NutritionEstimate {
-  return {
-    title: title.trim(),
-    ...nutrition,
-    ranges: {
-      calories: rangeAround(nutrition.calories, 0),
-      protein_g: rangeAround(nutrition.protein_g, 0),
-      carbs_g: rangeAround(nutrition.carbs_g, 0),
-      fat_g: rangeAround(nutrition.fat_g, 0),
-    },
-    confidence: 1,
-    ingredients: [],
-    matched_inventory_ids: [],
-    notes: ['Nutrition entered manually and confirmed by the user.'],
-    model: 'manual_entry_v1',
-    provenance: 'user_estimate',
-    image_path: null,
   };
 }
 

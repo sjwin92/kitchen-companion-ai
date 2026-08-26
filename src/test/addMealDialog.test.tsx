@@ -19,6 +19,10 @@ vi.mock('@/context/AppContext', () => ({
   }),
 }));
 
+vi.mock('@/services/recipes/recipeProvider', () => ({
+  searchRecipes: vi.fn(async () => []),
+}));
+
 describe('AddMealDialog inventory planning', () => {
   it('does not consume stock until the planned meal is confirmed', async () => {
     const onAdd = vi.fn(async () => undefined);

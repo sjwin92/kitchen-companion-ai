@@ -2,6 +2,7 @@ import { Component, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 import { captureException } from '@/lib/monitoring';
+import { isStaleDeploymentError } from '@/lib/errorRecovery';
 
 interface Props {
   children: ReactNode;
@@ -14,11 +15,6 @@ interface State {
 }
 
 const CHUNK_RELOAD_KEY = 'kitchen-companion:chunk-reload';
-
-export function isStaleDeploymentError(error: Error): boolean {
-  return /Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|Loading chunk .* failed/i
-    .test(error.message);
-}
 
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
