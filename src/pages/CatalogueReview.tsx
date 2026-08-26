@@ -61,6 +61,13 @@ const EVIDENCE_CHECKS: Record<VerificationTier, Array<{ id: ReviewCheck; label: 
 
 const db = supabase as unknown as SupabaseClient;
 
+async function runAdminAction(body: Record<string, unknown>) {
+  const { data, error } = await supabase.functions.invoke('admin-operations', { body });
+  if (error) throw error;
+  if (data?.error) throw new Error(String(data.error));
+  return data?.data;
+}
+
 export default function CatalogueReview() {
   const { session } = useApp();
   const isAdmin = session?.user.app_metadata?.role === 'admin';
@@ -136,20 +143,23 @@ export default function CatalogueReview() {
       return;
     }
     setSubmitting(decision);
-    const { error } = await db.rpc('review_catalogue_recipe', {
-      p_recipe_id: selected.id,
-      p_decision: decision,
-      p_checklist: checks,
-      p_notes: notes.trim() || null,
-      p_verification_tier: verificationTier,
-    });
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await runAdminAction({
+        action: 'review_recipe',
+        recipeId: selected.id,
+        decision,
+        checklist: checks,
+        notes: notes.trim() || null,
+        verificationTier,
+      });
       toast.success(decision === 'approved' ? 'Recipe approved and published' : 'Review decision recorded');
       resetReview();
       await loadDrafts();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'The review decision was not saved');
+    } finally {
+      setSubmitting(null);
     }
-    setSubmitting(null);
   };
 
   if (!isAdmin) {
@@ -198,14 +208,20 @@ export default function CatalogueReview() {
                 onClick={async () => {
                   const base = (submission.user_recipes?.title ?? 'community-recipe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 70);
                   setPromotingId(submission.id);
-                  const { error: promoteError } = await db.rpc('promote_recipe_submission', {
-                    p_submission_id: submission.id,
-                    p_slug: `${base}-${submission.id.slice(0, 8)}`,
-                    p_reviewer_notes: 'Promoted to the private catalogue queue; full editorial review still required.',
-                  });
-                  if (promoteError) toast.error(promoteError.message);
-                  else { toast.success('Submission processed in the editorial queue'); await loadDrafts(); }
-                  setPromotingId(null);
+                  try {
+                    await runAdminAction({
+                      action: 'promote_submission',
+                      submissionId: submission.id,
+                      slug: `${base}-${submission.id.slice(0, 8)}`,
+                      notes: 'Promoted to the private catalogue queue; full editorial review still required.',
+                    });
+                    toast.success('Submission processed in the editorial queue');
+                    await loadDrafts();
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error.message : 'The submission was not processed');
+                  } finally {
+                    setPromotingId(null);
+                  }
                 }}
               >
                 {promotingId === submission.id && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
@@ -233,13 +249,15 @@ export default function CatalogueReview() {
                   disabled={partnership.status !== 'prospect' || approvingCreatorId !== null}
                   onClick={async () => {
                     setApprovingCreatorId(partnership.id);
-                    const { error: approvalError } = await db.from('creator_partnerships').update({
-                      status: 'approved_for_outreach',
-                      founder_approved_at: new Date().toISOString(),
-                    }).eq('id', partnership.id).eq('status', 'prospect');
-                    if (approvalError) toast.error(approvalError.message);
-                    else { toast.success('Creator approved for outreach preparation'); await loadDrafts(); }
-                    setApprovingCreatorId(null);
+                    try {
+                      await runAdminAction({ action: 'approve_creator_outreach', partnershipId: partnership.id });
+                      toast.success('Creator approved for outreach preparation');
+                      await loadDrafts();
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : 'The creator approval was not saved');
+                    } finally {
+                      setApprovingCreatorId(null);
+                    }
                   }}
                 >
                   {approvingCreatorId === partnership.id && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
