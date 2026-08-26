@@ -35,6 +35,7 @@ export default function AddFood() {
   const [manualName, setManualName] = useState('');
   const [manualQty, setManualQty] = useState('');
   const [manualLocation, setManualLocation] = useState<StorageLocation>('fridge');
+  const [manualExpiry, setManualExpiry] = useState('');
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [scanType, setScanType] = useState<'receipt' | 'fridge'>('receipt');
   const [scanLocation, setScanLocation] = useState<StorageLocation>('fridge');
@@ -166,20 +167,34 @@ export default function AddFood() {
 
   const addManual = async () => {
     if (!manualName.trim()) return;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const fallbackDays = manualLocation === 'freezer' ? 60 : manualLocation === 'cupboard' ? 90 : 7;
+    const expiry = manualExpiry ? new Date(`${manualExpiry}T00:00:00`) : null;
+    const daysUntilExpiry = expiry ? Math.ceil((expiry.getTime() - today.getTime()) / 86_400_000) : fallbackDays;
+    const status: FoodItem['status'] = daysUntilExpiry < 0
+      ? 'expired'
+      : daysUntilExpiry === 0
+        ? 'use-today'
+        : daysUntilExpiry <= 3
+          ? 'use-soon'
+          : 'okay';
     const item: FoodItem = {
       id: `manual-${Date.now()}`,
       name: manualName.trim(),
       quantity: manualQty || '1',
       location: manualLocation,
       dateAdded: new Date().toISOString().split('T')[0],
-      daysUntilExpiry: manualLocation === 'freezer' ? 60 : manualLocation === 'cupboard' ? 90 : 7,
-      status: 'okay',
+      daysUntilExpiry,
+      expiryDate: manualExpiry || undefined,
+      status,
     };
     setSavingItems(true);
     try {
       await addItems([item]);
       setManualName('');
       setManualQty('');
+      setManualExpiry('');
       toast.success(`${item.name} added`);
     } catch (error) {
       toast.error(errorMessage(error, 'This item was not saved. Please try again.'));
@@ -465,7 +480,7 @@ export default function AddFood() {
                 key={loc.value}
                 type="button"
                 onClick={() => setManualLocation(loc.value)}
-                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-medium border-2 transition-all duration-150 ${
+                className={`flex min-h-11 flex-1 items-center justify-center gap-1 rounded-lg border-2 text-xs font-medium transition-all duration-150 ${
                   manualLocation === loc.value ? loc.activeColor : loc.color
                 }`}
               >
@@ -475,7 +490,12 @@ export default function AddFood() {
             ))}
           </div>
         </div>
-        <Button onClick={addManual} disabled={!manualName.trim() || savingItems} className="w-full">
+        <div>
+          <label htmlFor="manual-expiry" className="text-sm font-medium">Expiry date <span className="font-normal text-muted-foreground">(optional)</span></label>
+          <Input id="manual-expiry" type="date" value={manualExpiry} onChange={event => setManualExpiry(event.target.value)} className="mt-1 h-11" />
+          <p className="mt-1 text-xs text-muted-foreground">Leave blank and we’ll use a storage-based estimate you can edit later.</p>
+        </div>
+        <Button onClick={addManual} disabled={!manualName.trim() || savingItems} className="min-h-11 w-full">
           {savingItems ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
           {savingItems ? 'Saving…' : 'Add to Inventory'}
         </Button>

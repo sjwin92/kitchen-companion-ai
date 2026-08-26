@@ -139,6 +139,16 @@ export default function RecipeDetail() {
     navigate('/meal-log', { state: { combinedRecipes, servings } });
   };
 
+  const handlePlanRecipe = () => {
+    const params = new URLSearchParams({
+      recipe: recipe.id,
+      title: recipe.title,
+      kind: recipe.provenance === 'catalogue' ? 'catalogue' : 'user_recipe',
+    });
+    if (recipe.image) params.set('image', recipe.image);
+    navigate(`/meal-planner?${params.toString()}`);
+  };
+
   // Compute combined ingredients for the paired view
   const pairedMissing = pairedRecipe
     ? pairedRecipe.ingredients.filter(ing =>
@@ -169,7 +179,7 @@ export default function RecipeDetail() {
             </button>
             <button
               aria-label={`Plan ${recipe.title}`}
-              onClick={() => navigate('/meal-planner')}
+              onClick={handlePlanRecipe}
               className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <CalendarPlus className="w-4 h-4" />

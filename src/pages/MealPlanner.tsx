@@ -39,6 +39,14 @@ export default function MealPlanner() {
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
   const { plans, loading: plansLoading, error: plansError, addPlan, batchAddPlans, removePlan, movePlan, refetch: refetchPlans } = useMealPlans(weekStart);
   const selectedPlan = plans.find(plan => plan.id === searchParams.get('plan')) ?? null;
+  const pendingRecipe = useMemo(() => {
+    const recipeId = searchParams.get('recipe');
+    const title = searchParams.get('title');
+    if (!recipeId || !title) return null;
+    const requestedKind = searchParams.get('kind');
+    const planKind: MealPlanKind = requestedKind === 'user_recipe' ? 'user_recipe' : 'catalogue';
+    return { recipeId, title, image: searchParams.get('image') ?? undefined, planKind };
+  }, [searchParams]);
   const { favorites } = useFavorites();
   const { generate, generating } = useGroceryGenerator();
   const { getSlotSettings } = useMealSlotSettings();
@@ -55,6 +63,31 @@ export default function MealPlanner() {
 
   const isGuided = preferences.planningStyle === 'help-choose';
   const isAuto = preferences.planningStyle === 'do-it-for-me';
+
+  const clearPendingRecipe = () => {
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      ['recipe', 'title', 'image', 'kind'].forEach(key => next.delete(key));
+      return next;
+    }, { replace: true });
+  };
+
+  const handleEmptySlot = async (date: Date, slot: MealSlot) => {
+    if (pendingRecipe) {
+      try {
+        await addPlan(pendingRecipe.recipeId, pendingRecipe.title, date, slot, pendingRecipe.image, { planKind: pendingRecipe.planKind });
+        await track('meal_added_to_plan', { recipeId: pendingRecipe.recipeId, recipeTitle: pendingRecipe.title });
+        toast.success(`Added ${pendingRecipe.title} to ${format(date, 'EEEE')} ${slot}`);
+        clearPendingRecipe();
+      } catch (error) {
+        toast.error(errorMessage(error, 'Could not add this recipe to your plan.'));
+      }
+      return;
+    }
+    if (isAuto) void handleAutoSlot(date, slot);
+    else if (isGuided) setGuidedSlot({ date, slot });
+    else setAddDialog({ date, slot });
+  };
 
   // Expiring items for sidebar suggestions
   const expiringItems = inventory.filter(i => i.status === 'use-today' || i.status === 'use-soon');
@@ -281,6 +314,17 @@ export default function MealPlanner() {
             </h1>
           </div>
 
+          {pendingRecipe && (
+            <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+              <RecipeArtwork title={pendingRecipe.title} image={pendingRecipe.image} className="h-14 w-14 shrink-0 rounded-xl" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Choose an empty slot</p>
+                <p className="truncate text-sm font-semibold">Planning {pendingRecipe.title}</p>
+              </div>
+              <Button variant="ghost" className="min-h-11 rounded-xl" onClick={clearPendingRecipe}>Cancel</Button>
+            </div>
+          )}
+
           {/* Planning mode — always visible */}
           <div className="mb-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground mb-2">Planning style</p>
@@ -388,11 +432,7 @@ export default function MealPlanner() {
                       const addLabel = isAuto ? 'Auto' : 'Add';
                       const addBtn = (
                         <button
-                          onClick={() => {
-                            if (isAuto) handleAutoSlot(day, slot as MealSlot);
-                            else if (isGuided) setGuidedSlot({ date: day, slot: slot as MealSlot });
-                            else setAddDialog({ date: day, slot: slot as MealSlot });
-                          }}
+                          onClick={() => void handleEmptySlot(day, slot as MealSlot)}
                           className="flex-1 flex flex-col items-center justify-center border border-dashed border-border/60 rounded-lg hover:bg-muted/30 transition-colors"
                           disabled={generatingSlot === `${format(day, 'yyyy-MM-dd')}-${slot}`}
                         >
