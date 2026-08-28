@@ -10,9 +10,10 @@ test('shows coherent invite-only beta authentication', async ({ page }) => {
 
 test('sends password recovery back to the deployment that requested it', async ({ page }) => {
   let recoveryRedirect = '';
-  await page.route('http://127.0.0.1:54321/auth/v1/recover', async route => {
+  await page.route('http://127.0.0.1:54321/auth/v1/recover**', async route => {
+    const requestUrl = new URL(route.request().url());
     const body = route.request().postDataJSON() as { redirect_to?: string };
-    recoveryRedirect = body.redirect_to ?? '';
+    recoveryRedirect = requestUrl.searchParams.get('redirect_to') ?? body.redirect_to ?? '';
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
 
