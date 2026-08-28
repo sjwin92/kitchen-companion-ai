@@ -27,10 +27,28 @@
       "dietary_tags": ["plant-based"],
       "allergen_tags": ["gluten"],
       "meal_types": ["dinner"],
+      "equipment_tags": ["large saucepan"],
+      "season_tags": ["all-year"],
       "instructions": [
         "Replace this example with a complete, test-kitchen-verified method."
       ],
-      "nutrition": {},
+      "nutrition": {
+        "calories_low": 400,
+        "calories_high": 500,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3.5,
+      "estimated_cost_high_gbp": 5.5,
+      "price_estimate_as_of": "2026-08-28",
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "freezer_friendly": true,
+        "reheat": "Reheat until piping hot throughout; only reheat once."
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "replace-with-batch-name",
       "source_type": "original",
       "source_url": null,
       "rights_basis": "original_owned",

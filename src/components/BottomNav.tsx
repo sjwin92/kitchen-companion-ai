@@ -19,7 +19,7 @@ export default function BottomNav() {
             to={to}
             aria-label={primary ? 'Capture food' : label}
             className={({ isActive }) =>
-              `flex min-w-0 flex-1 flex-col items-center justify-end gap-1 rounded-[1.15rem] py-2 text-[9px] font-bold tracking-[0.05em] transition-colors ${
+              `flex min-h-11 min-w-0 flex-1 flex-col items-center justify-end gap-1 rounded-[1.15rem] py-2 text-[11px] font-bold tracking-[0.03em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 primary
                   ? 'mx-0.5 bg-[#173d32] text-white shadow-[0_8px_22px_rgba(23,61,50,0.24)]'
                   : isActive

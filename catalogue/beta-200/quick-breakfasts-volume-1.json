@@ -1,0 +1,1348 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "quick-breakfasts-volume-1",
+    "title": "Quick Breakfasts",
+    "subtitle": "Twelve calm starts for busy mornings",
+    "description": "Quick Breakfasts: Twelve calm starts for busy mornings. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "quick-breakfasts-berry-almond-overnight-oats",
+      "title": "Berry Almond Overnight Oats",
+      "description": "A practical breakfast designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 8,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "nuts"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Combine the oats, plant milk and cinnamon in a lidded container.",
+        "Fold through half the mixed berries and almond butter.",
+        "Cover and chill for at least 6 hours.",
+        "Stir well, then finish with the remaining mixed berries before serving."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 13,
+        "carbs_g": 67,
+        "fat_g": 12,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "45d9200d54804ea83fc332811e5e997d826c5dfde8c52482af541c22aa0e19e1",
+      "ingredients": [
+        {
+          "name": "Rolled oats",
+          "normalized_name": "oat",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereal"
+        },
+        {
+          "name": "Unsweetened plant milk",
+          "normalized_name": "plant milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy alternatives"
+        },
+        {
+          "name": "Frozen mixed berries",
+          "normalized_name": "berry",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Almond butter",
+          "normalized_name": "almond butter",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spreads"
+        },
+        {
+          "name": "Ground cinnamon",
+          "normalized_name": "cinnamon",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "quick-breakfasts-pear-and-walnut-overnight-oats",
+      "title": "Pear & Walnut Overnight Oats",
+      "description": "A practical breakfast with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 8,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "nuts"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Combine the oats, plant milk and cinnamon in a lidded container.",
+        "Fold through half the pears and walnuts.",
+        "Cover and chill for at least 6 hours.",
+        "Stir well, then finish with the remaining pears before serving."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 13,
+        "carbs_g": 67,
+        "fat_g": 12,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "951b5042a79e7b2149c8bb94ea6afb3b70146bb722f977c43fe3c6cc96b6b034",
+      "ingredients": [
+        {
+          "name": "Rolled oats",
+          "normalized_name": "oat",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereal"
+        },
+        {
+          "name": "Unsweetened plant milk",
+          "normalized_name": "plant milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy alternatives"
+        },
+        {
+          "name": "Pears",
+          "normalized_name": "pear",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Walnuts",
+          "normalized_name": "walnut",
+          "quantity": 80,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        },
+        {
+          "name": "Ground cinnamon",
+          "normalized_name": "cinnamon",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "quick-breakfasts-banana-peanut-butter-overnight-oats",
+      "title": "Banana Peanut Butter Overnight Oats",
+      "description": "A practical breakfast balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 8,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "peanuts"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Combine the oats, plant milk and cinnamon in a lidded container.",
+        "Fold through half the bananas and peanut butter.",
+        "Cover and chill for at least 6 hours.",
+        "Stir well, then finish with the remaining bananas before serving."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 13,
+        "carbs_g": 67,
+        "fat_g": 12,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "8bdf9a1ef06a5b074a85cc432c804c8a9cefb9110e1ab6ca9a6ab360effcfe02",
+      "ingredients": [
+        {
+          "name": "Rolled oats",
+          "normalized_name": "oat",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereal"
+        },
+        {
+          "name": "Unsweetened plant milk",
+          "normalized_name": "plant milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy alternatives"
+        },
+        {
+          "name": "Bananas",
+          "normalized_name": "banana",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Peanut butter",
+          "normalized_name": "peanut butter",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spreads"
+        },
+        {
+          "name": "Ground cinnamon",
+          "normalized_name": "cinnamon",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "quick-breakfasts-apple-seed-bircher-oats",
+      "title": "Apple Seed Bircher Oats",
+      "description": "A practical breakfast made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 8,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Combine the oats, plant milk and cinnamon in a lidded container.",
+        "Fold through half the apples and seeds.",
+        "Cover and chill for at least 6 hours.",
+        "Stir well, then finish with the remaining apples before serving."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 13,
+        "carbs_g": 67,
+        "fat_g": 12,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "00bf4819a2233d3e976b7a12bc7679617b8d3072cabd296d647ab3d17e1372e7",
+      "ingredients": [
+        {
+          "name": "Rolled oats",
+          "normalized_name": "oat",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereal"
+        },
+        {
+          "name": "Unsweetened plant milk",
+          "normalized_name": "plant milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy alternatives"
+        },
+        {
+          "name": "Apples",
+          "normalized_name": "apple",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed seeds",
+          "normalized_name": "seed mix",
+          "quantity": 80,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        },
+        {
+          "name": "Ground cinnamon",
+          "normalized_name": "cinnamon",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "quick-breakfasts-mushroom-spinach-breakfast-toast",
+      "title": "Mushroom Spinach Breakfast Toast",
+      "description": "A practical breakfast designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 5,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Toast the bread until crisp at the edges.",
+        "Prepare the chestnut mushrooms and baby spinach while the bread toasts.",
+        "Layer the chestnut mushrooms and baby spinach over the toast.",
+        "Finish with wholegrain mustard and a squeeze of lemon."
+      ],
+      "nutrition": {
+        "calories": 420,
+        "calories_low": 378,
+        "calories_high": 462,
+        "protein_g": 18,
+        "carbs_g": 51,
+        "fat_g": 16,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "6a2bcbe408e270d233a7adf563eddeb6faf9120b740ec2ba7346b1005ed88282",
+      "ingredients": [
+        {
+          "name": "Wholemeal bread",
+          "normalized_name": "bread",
+          "quantity": 8,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "quick-breakfasts-hummus-tomato-morning-toast",
+      "title": "Hummus Tomato Morning Toast",
+      "description": "A practical breakfast with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 5,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "sesame"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Toast the bread until crisp at the edges.",
+        "Prepare the hummus and tomatoes while the bread toasts.",
+        "Layer the hummus and tomatoes over the toast.",
+        "Finish with seeds and a squeeze of lemon."
+      ],
+      "nutrition": {
+        "calories": 420,
+        "calories_low": 378,
+        "calories_high": 462,
+        "protein_g": 18,
+        "carbs_g": 51,
+        "fat_g": 16,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "869c73d54dc1c07e091f7999d05d1af75e61ec0fb71ce5246140090fe61796d7",
+      "ingredients": [
+        {
+          "name": "Wholemeal bread",
+          "normalized_name": "bread",
+          "quantity": 8,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Hummus",
+          "normalized_name": "hummus",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed seeds",
+          "normalized_name": "seed mix",
+          "quantity": 80,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "quick-breakfasts-tomato-spinach-egg-skillet",
+      "title": "Tomato Spinach Egg Skillet",
+      "description": "A practical breakfast balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "egg",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Slice the tomatoes and baby spinach into bite-sized pieces.",
+        "Soften the vegetables in olive oil over a medium heat for 6–8 minutes.",
+        "Beat the eggs, season, and pour them evenly into the pan.",
+        "Cook gently until just set, then scatter over the feta."
+      ],
+      "nutrition": {
+        "calories": 410,
+        "calories_low": 369,
+        "calories_high": 451,
+        "protein_g": 27,
+        "carbs_g": 24,
+        "fat_g": 23,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "065958c4fedb8129ab52ce152152e50ca454b420e5e6c27530ccf9e539ca0968",
+      "ingredients": [
+        {
+          "name": "Large eggs",
+          "normalized_name": "egg",
+          "quantity": 8,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Eggs"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Feta",
+          "normalized_name": "feta",
+          "quantity": 160,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "quick-breakfasts-mushroom-pepper-egg-skillet",
+      "title": "Mushroom Pepper Egg Skillet",
+      "description": "A practical breakfast made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "egg",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Slice the chestnut mushrooms and peppers into bite-sized pieces.",
+        "Soften the vegetables in olive oil over a medium heat for 6–8 minutes.",
+        "Beat the eggs, season, and pour them evenly into the pan.",
+        "Cook gently until just set, then scatter over the mature cheddar."
+      ],
+      "nutrition": {
+        "calories": 410,
+        "calories_low": 369,
+        "calories_high": 451,
+        "protein_g": 27,
+        "carbs_g": 24,
+        "fat_g": 23,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "9f4e8f61ebd4ea7284ffa7f768f9f49c619161dce6c7eab9144bf1ce6d03921b",
+      "ingredients": [
+        {
+          "name": "Large eggs",
+          "normalized_name": "egg",
+          "quantity": 8,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Eggs"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "quick-breakfasts-sweet-potato-black-bean-breakfast-hash",
+      "title": "Sweet Potato Black Bean Breakfast Hash",
+      "description": "A practical breakfast designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mexican-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Cut the sweet potatoes into 2 cm pieces and simmer for 8 minutes; drain well.",
+        "Fry the peppers in olive oil until starting to soften.",
+        "Add the sweet potatoes, black beans and paprika; cook until crisp and piping hot.",
+        "Taste, season and divide between warm plates."
+      ],
+      "nutrition": {
+        "calories": 510,
+        "calories_low": 459,
+        "calories_high": 561,
+        "protein_g": 21,
+        "carbs_g": 71,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "326b316d4fda7972ca761981c07b5f6f944d5597c9b24beb2da56bf134a0abb1",
+      "ingredients": [
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tinned black beans",
+          "normalized_name": "black bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "quick-breakfasts-potato-chickpea-breakfast-hash",
+      "title": "Potato Chickpea Breakfast Hash",
+      "description": "A practical breakfast with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Cut the potatoes into 2 cm pieces and simmer for 8 minutes; drain well.",
+        "Fry the baby spinach in olive oil until starting to soften.",
+        "Add the potatoes, chickpeas and ground cumin; cook until crisp and piping hot.",
+        "Taste, season and divide between warm plates."
+      ],
+      "nutrition": {
+        "calories": 510,
+        "calories_low": 459,
+        "calories_high": 561,
+        "protein_g": 21,
+        "carbs_g": 71,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "66834a0951b2f89eb2b1531738725ffa2593f0827f4329034c0a51da22d2e91c",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Ground cumin",
+          "normalized_name": "cumin",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "quick-breakfasts-berry-yogurt-crunch-pots",
+      "title": "Berry Yogurt Crunch Pots",
+      "description": "A practical breakfast balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 8,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk",
+        "nuts"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Divide the greek-style yogurt between four jars or bowls.",
+        "Layer with the mixed berries and seeds.",
+        "Keep chilled until ready to eat.",
+        "Add the granola and a small drizzle of maple syrup immediately before serving."
+      ],
+      "nutrition": {
+        "calories": 390,
+        "calories_low": 351,
+        "calories_high": 429,
+        "protein_g": 22,
+        "carbs_g": 48,
+        "fat_g": 13,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "4939b3dc826edf51815fb26761972ff02874b807416f5b829a22b4c00038b110",
+      "ingredients": [
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Frozen mixed berries",
+          "normalized_name": "berry",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Low-sugar granola",
+          "normalized_name": "granola",
+          "quantity": 160,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Cereal"
+        },
+        {
+          "name": "Mixed seeds",
+          "normalized_name": "seed mix",
+          "quantity": 80,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        },
+        {
+          "name": "Maple syrup",
+          "normalized_name": "maple syrup",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        }
+      ],
+      "position": 10
+    },
+    {
+      "slug": "quick-breakfasts-lemon-blueberry-pancakes",
+      "title": "Lemon Blueberry Pancakes",
+      "description": "A practical breakfast made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 10,
+      "cook_minutes": 18,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "breakfast"
+      ],
+      "instructions": [
+        "Whisk the flour, milk and eggs into a smooth batter.",
+        "Fold half the mixed berries through the batter.",
+        "Cook small pancakes in a lightly oiled frying pan for 2 minutes on each side.",
+        "Serve with the remaining mixed berries and lemon."
+      ],
+      "nutrition": {
+        "calories": 460,
+        "calories_low": 414,
+        "calories_high": 506,
+        "protein_g": 17,
+        "carbs_g": 69,
+        "fat_g": 14,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "5a23ad1a6d620f7b1e0d0018239717f2f4ee51ae8edfe8caa69d989e1dcd8810",
+      "ingredients": [
+        {
+          "name": "Self-raising flour",
+          "normalized_name": "wheat flour",
+          "quantity": 220,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Baking"
+        },
+        {
+          "name": "Semi-skimmed milk",
+          "normalized_name": "milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Large eggs",
+          "normalized_name": "egg",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Eggs"
+        },
+        {
+          "name": "Frozen mixed berries",
+          "normalized_name": "berry",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 11
+    }
+  ]
+}

@@ -1,41 +1,41 @@
-# Kitchen Companion beta readiness
+# Kitchen Companion production-beta readiness
 
-Updated: 26 August 2026
+Updated: 28 August 2026
 
-## Automated work complete
+## Automated foundation
 
-- Premium navigation, dashboard, calorie visibility and recipe-card art direction are implemented.
-- Password-recovery redirects preserve the GitHub Pages base path.
-- Privacy, beta terms and support pages are available before sign-in and from Settings.
-- Existing profiles remain authoritative after sign-in; onboarding is only shown when `onboarding_complete` is false.
-- Dietary exclusions are applied to onboarding, settings, catalogue search and recommendations before scoring.
-- Normal discovery, search and planning use approved Supabase catalogue recipes. Legacy providers only resolve previously saved records.
-- The 12 bootstrap recipes are private drafts. Drafts cannot claim a verification tier; approval creates an immutable version snapshot.
-- Basket comparison accepts proved quantities and units, falls back safely to name-only comparison, and never writes purchases to inventory before confirmation.
-- AI capture is provider-neutral, confirmation-first and protected by daily quotas plus a £7 vision / £2 text / £1 reserve monthly allocation and £10 hard ceiling.
-- All public tables have RLS. Anonymous recommendation access is revoked and admin publication functions contain explicit administrator checks.
-- Supabase migrations and the updated `generate-recipe` and `compare-prices` Edge Functions are deployed to project `fwtbsjzgiiwgcavtohoc`.
-- The isolated release check passes 41 Vitest tests, TypeScript, the production build and three Chromium journeys. ESLint has no errors (legacy warnings remain).
+- Cloudflare Pages is the canonical host and deployment is gated by TypeScript, zero-warning lint, unit tests, the 200-recipe catalogue check, the media manifest, desktop/mobile Playwright, a fresh Supabase reset and pgTAP.
+- The complete public catalogue is 200 founder-approved `editorial_reviewed` recipes. Approval does not claim that a recipe was test-kitchen verified.
+- Public discovery and planning use Supabase catalogue recipes. Dietary and allergen conflicts are removed before ranking; AI drafting is a private, optional fallback.
+- Authentication remains invite-only. Password recovery returns to the requesting deployment and optional Turnstile support is wired into sign-in, signup and recovery.
+- Administrator catalogue operations require TOTP AAL2 and execute only through the authenticated Edge boundary.
+- Account export is a versioned Edge response and omits push endpoint/key material. Account deletion removes private meal photos, revokes the session and deletes the Auth user before reporting success.
+- Meal-photo retention runs independently of push notifications and writes a server-only cleanup audit.
+- AI spend counts `reserved`, `succeeded` and `uncertain` requests. Vision is capped at £7, text at £2, private drafting stops at £9 total and no reservation may pass £10.
+- Pricing is optional, schema-validated and timeout-bounded. Manual shopping continues when the free FASTAPI deployment is asleep or unavailable.
+- Security headers, responsive recipe WebP variants, image dimensions, lazy loading, route-focus restoration and AA contrast checks are in place.
+- A nightly encrypted logical-backup workflow, hourly route/retention health check and a local restore-verification script are committed.
+- A completely fresh local Supabase database builds all 200 recipes and passes 76 pgTAP checks.
 
-## Founder/manual release gates
+## Release-blocking work still in progress
 
-These items require a human account, legal judgement, content evidence or billing decision. They must not be marked complete by automation.
+- The media gate now verifies exactly 200 unique, visually reviewed recipe artworks with original/card/detail assets. Every commissioned image records AI-art provenance, remains `editorial_reviewed`, and is checked for title, ingredient and dietary consistency; no artwork implies test-kitchen verification.
+- The broader real-backend Playwright loop still needs authenticated test-account fixtures for shopping, consumption/waste, calorie updates, export and deletion. The current suite covers public auth/recovery, navigation, mobile overflow, keyboard access and axe checks.
 
-1. **Recover the founder account.** Use **Forgot password** on the sign-in screen, open the email, choose a new unique password, then sign in and confirm the existing profile and preferences reappear. Do not reuse any password previously pasted into a chat.
-2. **Deploy the free pricing service.** In Render, create a Blueprint from `sjwin92/FASTAPI` using its committed `render.yaml`. Keep the free plan, `DATABASE_REQUIRED=false` and restricted sources disabled. Generate a long random `BASKET_API_KEY`. Copy the resulting HTTPS base URL and key into Supabase Edge Function secrets as `PRICING_API_URL` and `PRICING_API_KEY`; leave the default Bearer header settings.
-3. **Configure AI providers only when billing is capped.** Add `GEMINI_API_KEY` for user image/text capture and `DEEPSEEK_API_KEY` for non-personal catalogue enrichment. Confirm UK billing and provider-side spending alerts. Leave `AI_OPENAI_FALLBACK_ENABLED=false` unless an emergency fallback is deliberately approved.
-4. **Configure public operations.** Set GitHub Actions variables `VITE_SUPPORT_EMAIL` and `VITE_SENTRY_DSN`. Verify Sentry receives a deliberately triggered, redacted test error. Finalise the support response process.
-5. **Harden Supabase Auth in the dashboard.** Enable leaked-password protection and at least one suitable MFA option. Confirm the production redirect allow-list contains the GitHub Pages URL and its `/reset-password` path.
-6. **Review the 12 starter recipes.** In `/admin/catalogue`, check every quantity, dietary/allergen tag, rights record, nutrition source, instruction and media right. Test-cook where the draft notes require it. Only then approve a recipe and confirm an immutable version was created. Approve the three books only after their recipes and assets are cleared.
-7. **Legal/founder review.** Replace beta placeholders with the final business identity/contact details and obtain appropriate UK privacy/terms review before open invitations.
-8. **Creator packs.** Obtain written permission before importing creator recipes or media. Record agreement, recipe-level permission, attribution and media rights. Approve every outreach message before it is sent; no outreach is automated.
-9. **Real-device acceptance.** With two separate test accounts, complete: add food → monitor expiry → choose an approved recipe → plan → derive and compare missing items → confirm purchases → record consumption or waste. Include vegan, vegetarian and allergy profiles, a blurry photo, an unreadable date and a failed provider. Confirm no scan changes inventory before confirmation and no account can see another account's data.
-10. **Progressive invitation.** Start with five testers. Expand to 25 only after the complete loop passes. Pause invites for data leakage, dietary/allergen failures, unauthorised content, false provenance or budget-cap failures.
+## Founder/dashboard gates
 
-## Phase 2 catalogue milestones
+These require an account, external credential, legal decision or real device and cannot be completed safely from repository code alone.
 
-- Phase 2.1: approve the 12 existing starter drafts and the three internal books.
-- Phase 2.2: reach 100 reviewed recipes and three permissioned creator packs.
-- Phase 2 completion: reach 1,000 reviewed recipes and ten permissioned creator packs.
+1. Set Supabase Auth Site URL to `https://kitchen-companion-beta.pages.dev` and retain the branch preview plus both `/reset-password` URLs in the redirect allow-list.
+2. Create a free Cloudflare Turnstile widget. Set `VITE_TURNSTILE_SITE_KEY` in GitHub/Cloudflare and its secret in Supabase Auth CAPTCHA settings; test accessible retry on mobile and desktop.
+3. Configure Resend SMTP and a verified sender/domain in Supabase. The built-in Supabase mailer is not suitable for public beta delivery.
+4. Set Sentry DSN/release variables and verify one deliberate redacted error in preview and production.
+5. Store `SUPABASE_DB_URL` and an age public recipient as GitHub secrets. Keep the age private recovery key outside GitHub, download one backup and run `scripts/verify-backup-restore.sh` before invitations.
+6. Enable TOTP for the founder administrator. Supabase leaked-password protection is a paid-plan feature; on the free plan retain the app's stronger password rules and Turnstile, and reconsider the dashboard feature only if the plan changes.
+7. Confirm final UK privacy/terms wording, legal identity and public support address.
+8. Run the real-device acceptance loop with two isolated accounts: add food → expiry → recipe → plan → missing shopping → purchase → consume/waste → calories. Include vegan, vegetarian, allergy, barcode and provider-failure paths.
+9. Keep creator packs private until written recipe and media permission is recorded. Payments, payouts and automated outreach remain Phase 3.
 
-The product can enter a controlled five-person beta before the 1,000-recipe operational milestone, but not before the manual release gates above are satisfied.
+## Rollout
+
+Use the founder plus two isolated test accounts, then five invited testers for 48 hours, then 25 testers for seven stable days. Pause invitations for cross-user leakage, dietary/allergen failures, unauthorized content, inventory writes without confirmation, broken recovery, false provenance, budget bypass or unrecoverable loss.

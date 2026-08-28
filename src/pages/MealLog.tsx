@@ -139,7 +139,7 @@ export default function MealLog() {
     };
     void loadPlannedRecipe();
     return () => { cancelled = true; };
-  }, [plannedMeal?.planId, plannedMeal?.recipeId, plannedMeal?.title, inventory]);
+  }, [plannedMeal, inventory]);
 
   const processImage = useCallback(async (file: File) => {
     try {
@@ -565,8 +565,10 @@ export default function MealLog() {
                   {matchedItems.map(item => (
                     <button
                       key={item.id}
+                      type="button"
+                      aria-pressed="true"
                       onClick={() => toggleDeduct(item.id)}
-                      className="flex items-center gap-2 w-full text-left text-sm px-2 py-1.5 rounded bg-primary/10 text-foreground"
+                      className="flex min-h-11 items-center gap-2 w-full text-left text-sm px-3 py-2 rounded-lg bg-primary/10 text-foreground"
                     >
                       <Check className="w-4 h-4 text-primary shrink-0" />
                       <span className="flex-1">{item.name}</span>
@@ -576,8 +578,10 @@ export default function MealLog() {
                   {unmatchedInventory.map(item => (
                     <button
                       key={item.id}
+                      type="button"
+                      aria-pressed="false"
                       onClick={() => toggleDeduct(item.id)}
-                      className="flex items-center gap-2 w-full text-left text-sm px-2 py-1.5 rounded hover:bg-muted/50 text-foreground"
+                      className="flex min-h-11 items-center gap-2 w-full text-left text-sm px-3 py-2 rounded-lg hover:bg-muted/50 text-foreground"
                     >
                       <div className="w-4 h-4 rounded border border-border shrink-0" />
                       <span className="flex-1">{item.name}</span>

@@ -21,15 +21,17 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
-      // The inherited prototype still contains broad generated/API boundary
-      // types. Keep them visible during beta hardening without blocking every
-      // security and workflow fix behind a mechanical rewrite.
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-empty-object-type": "warn",
-      "@typescript-eslint/no-require-imports": "warn",
-      "no-empty": "warn",
-      "no-useless-escape": "warn",
-      "no-control-regex": "warn",
+      // Supabase's ungenerated RPC/table surfaces are isolated behind typed
+      // application boundaries and still require `any` casts until regenerated.
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  {
+    files: ["src/components/ui/**/*.{ts,tsx}", "src/context/AppContext.tsx"],
+    rules: {
+      // shadcn modules and the application context intentionally colocate
+      // components with variants/hooks; this is safe but not Fast Refresh-only.
+      "react-refresh/only-export-components": "off",
     },
   },
 );

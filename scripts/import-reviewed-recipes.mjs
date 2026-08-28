@@ -24,6 +24,10 @@ const requireArray = (value, label) => {
   if (!Array.isArray(value) || value.length === 0) throw new Error(`${label} must be a non-empty array`);
   return value;
 };
+const requireObject = (value, label) => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object`);
+  return value;
+};
 
 const creator = payload.creator;
 const book = payload.book;
@@ -56,6 +60,17 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
   if (recipe.rights_basis === 'creator_permission' && !requiredText(recipe.rights_notes, `${label}.rights_notes`)) {
     throw new Error(`${label}.rights_notes must reference the creator's permission evidence`);
   }
+  if (recipe.equipment_tags !== undefined && !Array.isArray(recipe.equipment_tags)) {
+    throw new Error(`${label}.equipment_tags must be an array`);
+  }
+  if (recipe.season_tags !== undefined && !Array.isArray(recipe.season_tags)) {
+    throw new Error(`${label}.season_tags must be an array`);
+  }
+  if (recipe.storage_guidance !== undefined) requireObject(recipe.storage_guidance, `${label}.storage_guidance`);
+  if (recipe.swap_guidance !== undefined && !Array.isArray(recipe.swap_guidance)) {
+    throw new Error(`${label}.swap_guidance must be an array`);
+  }
+  if (recipe.catalogue_batch !== undefined) requireSlug(recipe.catalogue_batch, `${label}.catalogue_batch`);
 }
 
 if (validateOnly) {
@@ -179,6 +194,11 @@ for (const [recipeIndex, recipe] of recipes.entries()) {
     source_label: recipe.source_label ?? (recipe.source_type === 'creator' ? creator.display_name : 'Kitchen Companion'),
     media_attribution: recipe.media_attribution ?? {},
     nutrition_provenance: recipe.nutrition_provenance ?? (Object.keys(recipe.nutrition ?? {}).length > 0 ? 'estimated' : 'unavailable'),
+    equipment_tags: recipe.equipment_tags ?? [],
+    season_tags: recipe.season_tags ?? [],
+    storage_guidance: recipe.storage_guidance ?? {},
+    swap_guidance: recipe.swap_guidance ?? [],
+    catalogue_batch: recipe.catalogue_batch ?? book.slug,
     // A draft is not verified. The guarded review RPC assigns a tier only
     // after the human checklist succeeds and the recipe is published.
     verification_tier: null,

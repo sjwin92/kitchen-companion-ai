@@ -105,8 +105,9 @@ Deno.serve(async (req) => {
     if (!pricingApiUrl) throw new HttpError(503, "Live supermarket prices are temporarily unavailable");
 
     const controller = new AbortController();
-    // Free beta hosting can need extra time for its first request after sleeping.
-    const timeout = setTimeout(() => controller.abort(), 70_000);
+    const timeoutMs = Math.min(Math.max(Number(Deno.env.get("PRICING_TIMEOUT_MS") ?? 20_000), 3_000), 30_000);
+    // The comparison is optional: do not let a sleeping free provider hold the shopping UI indefinitely.
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
     let response: Response;
     try {
       response = await fetch(endpointFor(pricingApiUrl), {

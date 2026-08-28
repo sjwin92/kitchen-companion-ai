@@ -1,0 +1,29 @@
+name: production-health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 * * * *'
+
+permissions: { contents: read }
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APP_ORIGIN: https://kitchen-companion-beta.pages.dev
+      SUPABASE_FUNCTIONS_URL: ${{ vars.SUPABASE_FUNCTIONS_URL }}
+      REMINDER_CRON_SECRET: ${{ secrets.REMINDER_CRON_SECRET }}
+    steps:
+      - name: Public routes return 200
+        run: |
+          for route in / /privacy /terms /support /reset-password /meals /inventory /meal-planner; do
+            test "$(curl --retry 2 --silent --output /dev/null --write-out '%{http_code}' "${APP_ORIGIN}${route}")" = "200"
+          done
+      - name: Retention cleanup remains callable
+        if: ${{ env.SUPABASE_FUNCTIONS_URL != '' && env.REMINDER_CRON_SECRET != '' }}
+        run: |
+          curl --fail --silent --show-error --max-time 30 \
+            -H "Authorization: Bearer ${REMINDER_CRON_SECRET}" \
+            "${SUPABASE_FUNCTIONS_URL}/cleanup-expired-media" >/dev/null

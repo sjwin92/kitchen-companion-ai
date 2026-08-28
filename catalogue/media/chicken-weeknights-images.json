@@ -1,0 +1,21 @@
+{
+  "style_version": "kitchen-companion-editorial-v1",
+  "generated_at": "2026-08-28T18:43:00Z",
+  "review_status": "editorial_reviewed",
+  "provider": "OpenAI image generation",
+  "model": "Built-in image generation; model identifier not exposed",
+  "prompt_manifest": "catalogue/media/beta-200-image-queue.json",
+  "assets": [
+    { "slug": "chicken-weeknights-lemon-chicken-vegetable-traybake", "source_file": "exec-92919103-5ca6-4913-bf34-b9e574b7fe16.png", "storage_path": "catalogue/chicken-weeknights-lemon-chicken-vegetable-traybake.jpg" },
+    { "slug": "chicken-weeknights-chicken-broccoli-noodle-stir-fry", "source_file": "exec-8df6136f-a1b9-4a89-9ff5-cff0b8cbe12a.png", "storage_path": "catalogue/chicken-weeknights-chicken-broccoli-noodle-stir-fry.jpg" },
+    { "slug": "chicken-weeknights-chicken-spinach-coconut-curry", "source_file": "exec-6be8f87c-4555-4816-bc0b-7e85526ead65.png", "storage_path": "catalogue/chicken-weeknights-chicken-spinach-coconut-curry.jpg" },
+    { "slug": "chicken-weeknights-chicken-mushroom-wholewheat-pasta", "source_file": "exec-5ef8ea33-0e64-4017-9728-36d51c87d432.png", "storage_path": "catalogue/chicken-weeknights-chicken-mushroom-wholewheat-pasta.jpg" },
+    { "slug": "chicken-weeknights-paprika-chicken-rice-pot", "source_file": "exec-144a60b6-1f5e-4e01-9089-debbc291a15f.png", "storage_path": "catalogue/chicken-weeknights-paprika-chicken-rice-pot.jpg" },
+    { "slug": "chicken-weeknights-chicken-black-bean-tacos", "source_file": "exec-4bd787d2-aa10-4f98-84a7-ba65b05aee40.png", "storage_path": "catalogue/chicken-weeknights-chicken-black-bean-tacos.jpg" },
+    { "slug": "chicken-weeknights-mustard-chicken-potato-traybake", "source_file": "exec-8fc9b303-dfe5-4d52-b0dd-cd0ffcb0683b.png", "storage_path": "catalogue/chicken-weeknights-mustard-chicken-potato-traybake.jpg" },
+    { "slug": "chicken-weeknights-chicken-tahini-quinoa-bowls", "source_file": "exec-9c1754c5-ba1b-4998-abf1-78a81d63f474.png", "storage_path": "catalogue/chicken-weeknights-chicken-tahini-quinoa-bowls.jpg" },
+    { "slug": "chicken-weeknights-chicken-tomato-barley-stew", "source_file": "exec-77e0e9c2-818c-4ec8-bde9-38bbf66cee05.png", "storage_path": "catalogue/chicken-weeknights-chicken-tomato-barley-stew.jpg" },
+    { "slug": "chicken-weeknights-chicken-pesto-pea-pasta", "source_file": "exec-93b47b88-85f0-4931-b88d-e877c37c7dc0.png", "storage_path": "catalogue/chicken-weeknights-chicken-pesto-pea-pasta.jpg" },
+    { "slug": "chicken-weeknights-chicken-sweet-potato-curry", "source_file": "exec-84766134-ebe4-4ca7-96b5-6ccd4191f590.png", "storage_path": "catalogue/chicken-weeknights-chicken-sweet-potato-curry.jpg" }
+  ]
+}

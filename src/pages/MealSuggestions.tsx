@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import { catalogRecipeToMealSuggestion, listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { MealWithStatus } from '@/lib/mealMatching';
@@ -13,17 +13,20 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import RecipeCard from '@/components/RecipeCard';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useCapabilities } from '@/hooks/useCapabilities';
 
 const MAX_VISIBLE_MEALS = 30;
+const RECOMMENDATION_POOL_SIZE = 100;
 type RankedMeal = MealWithStatus & { reasons: string[] };
 
 export default function MealSuggestions() {
   const { inventory, session, preferences } = useApp();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [mealsWithStatus, setMealsWithStatus] = useState<RankedMeal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') ?? '');
   const [minMatchPercent, setMinMatchPercent] = useState(0);
   const [generatorServings, setGeneratorServings] = useState(preferences.householdSize || 4);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -31,6 +34,9 @@ export default function MealSuggestions() {
   const [generatedRecipe, setGeneratedRecipe] = useState<any>(null);
   const [submissionRightsConfirmed, setSubmissionRightsConfirmed] = useState(false);
   const [isSubmittingRecipe, setIsSubmittingRecipe] = useState(false);
+  const { getCapability, isLoading: capabilitiesLoading } = useCapabilities();
+  const privateDraftCapability = getCapability('private_recipe_draft');
+  const privateDraftAvailable = privateDraftCapability?.available ?? false;
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +45,7 @@ export default function MealSuggestions() {
       setLoadError(null);
       try {
         const ranked = await listRecommendedCatalogRecipes({
-          limit: MAX_VISIBLE_MEALS,
+          limit: RECOMMENDATION_POOL_SIZE,
           search: searchTerm,
           minMatch: minMatchPercent,
         });
@@ -77,7 +83,8 @@ export default function MealSuggestions() {
 
     return mealsWithStatus.filter(meal => {
       if (meal.matchPercent < minMatchPercent) return false;
-
+      // Defence in depth for the dietary gate enforced by the authenticated
+      // recommendation RPC. This also protects a cached/stale RPC response.
       if (!passesUserDietaryFilters(meal.title, meal.ingredients, preferences)) return false;
 
       if (!query) return true;
@@ -91,11 +98,17 @@ export default function MealSuggestions() {
 
   const visibleMeals = useMemo(() => filteredMeals.slice(0, MAX_VISIBLE_MEALS), [filteredMeals]);
 
-  // Find the top featured meal with an image and expiring ingredients
-  const featured = visibleMeals.find(m => m.image && m.matchPercent >= 50);
+  // Surface reviewed artwork even when a new or empty pantry gives every recipe
+  // a low match score. Dietary/allergen filtering has already happened in the
+  // authenticated catalogue RPC, so the hero remains safe for this user.
+  const featured = filteredMeals.find(meal => meal.image);
 
   const generateRecipe = async () => {
     if (!session?.user) { toast.error('Please sign in first'); return; }
+    if (!privateDraftAvailable) {
+      toast.info('Private recipe drafting is unavailable. Browse the reviewed catalogue instead.');
+      return;
+    }
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-recipe', {
@@ -191,13 +204,15 @@ export default function MealSuggestions() {
           {!isLoading && filteredMeals.length === 0 && (
             <div className="rounded-2xl border border-border/70 bg-card p-7 md:p-9">
               <span className="text-4xl" aria-hidden="true">🍲</span>
-              <h2 className="mt-4 text-xl font-extrabold">{loadError ? 'The recipe shelf did not load' : mealsWithStatus.length === 0 ? 'The first recipe packs are in review' : 'No recipes match those filters'}</h2>
+              <h2 className="mt-4 text-xl font-extrabold">{loadError ? 'The recipe shelf did not load' : 'No recipes match those filters'}</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                {loadError ?? (mealsWithStatus.length === 0
-                  ? 'The beta catalogue only publishes recipes after cooking, allergen and rights checks. Three Kitchen Companion starter packs are being prepared now.'
+                {loadError ?? (searchTerm.trim() || minMatchPercent > 0
+                  ? 'Try a lower pantry match or search for a different ingredient.'
+                  : mealsWithStatus.length === 0
+                  ? 'The reviewed catalogue could not find a safe match. Check your dietary preferences, try another ingredient, or lower the pantry match.'
                   : 'Try a lower pantry match or search for a different ingredient.')}
               </p>
-              {mealsWithStatus.length === 0 && !loadError && (
+              {mealsWithStatus.length === 0 && !loadError && !searchTerm.trim() && minMatchPercent === 0 && (
                 <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-foreground/80">
                   <span className="rounded-full bg-muted px-3 py-1.5">🌿 Plant-forward starters</span>
                   <span className="rounded-full bg-muted px-3 py-1.5">⏱️ Five-ingredient weeknights</span>
@@ -218,6 +233,7 @@ export default function MealSuggestions() {
                   key={meal.id}
                   title={meal.title}
                   image={meal.image}
+                  imageVariants={meal.imageVariants}
                   prepTime={meal.prepTime}
                   matchPercent={meal.matchPercent}
                   ownedCount={meal.owned.length}
@@ -247,14 +263,20 @@ export default function MealSuggestions() {
           <div className="rounded-2xl border border-dashed border-border bg-card p-5">
             <FlaskConical className="h-5 w-5 text-muted-foreground" />
             <h2 className="mt-4 text-base font-extrabold">Recipe lab</h2>
-            <p className="mt-1 text-sm leading-5 text-muted-foreground">If the catalogue has no fit, create one private draft from your pantry. It never enters the public shelf without review.</p>
+            <p className="mt-1 text-sm leading-5 text-muted-foreground">
+              {capabilitiesLoading
+                ? 'Checking private drafting availability…'
+                : privateDraftAvailable
+                  ? 'If the catalogue has no fit, create one private draft from your pantry. It never enters the public shelf without review.'
+                  : 'Private drafting is not configured. The reviewed catalogue remains available without AI.'}
+            </p>
             <div className="mt-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <button aria-label="Decrease servings" onClick={() => setGeneratorServings(Math.max(1, generatorServings - 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">−</button>
                 <span className="w-5 text-center text-sm font-bold">{generatorServings}</span>
                 <button aria-label="Increase servings" onClick={() => setGeneratorServings(Math.min(12, generatorServings + 1))} className="h-8 w-8 rounded-full bg-muted text-sm font-bold">+</button>
               </div>
-              <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={generateRecipe} disabled={isGenerating}>
+              <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={generateRecipe} disabled={isGenerating || !privateDraftAvailable}>
                 {isGenerating ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
                 {isGenerating ? 'Drafting…' : 'Create private draft'}
               </Button>

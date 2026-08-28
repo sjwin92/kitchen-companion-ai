@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { getAisle, getCheaperAlternative, fetchPricesFor, type Aisle } from '@/lib/shoppingCost';
 import { useBasketCompare } from '@/hooks/useBasketCompare';
 import ReceiptReconcileDialog from '@/components/ReceiptReconcileDialog';
+import { useCapabilities } from '@/hooks/useCapabilities';
+import { appError, errorMessage } from '@/lib/appError';
 
 interface ShoppingItem {
   id: string;
@@ -23,6 +25,7 @@ const AISLE_ORDER: Aisle[] = ['Produce', 'Meat & Fish', 'Dairy & Eggs', 'Bakery'
 
 export default function ShoppingList() {
   const { session, refreshInventory } = useApp();
+  const userId = session?.user?.id;
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -31,35 +34,55 @@ export default function ShoppingList() {
   const [quickAddText, setQuickAddText] = useState('');
   const [quickAddLoading, setQuickAddLoading] = useState(false);
   const [scanOpen, setScanOpen] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<string | null>(null);
   const { baskets, loading: comparingPrices, error: compareError, compare, clear: clearCompare } = useBasketCompare();
+  const { getCapability, isLoading: capabilitiesLoading } = useCapabilities();
+  const livePricingAvailable = getCapability('live_pricing')?.available ?? false;
 
   const load = useCallback(async () => {
-    if (!session?.user) return;
-    const { data } = await supabase
+    if (!userId) return;
+    setLoadError(null);
+    const { data, error } = await supabase
       .from('shopping_list')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: true });
-    if (data) setItems(data.map(d => ({ id: d.id, name: d.name, quantity: d.quantity, checked: d.checked })));
-  }, [session?.user?.id]);
+    if (error) {
+      setLoadError('We could not load your saved shopping list.');
+      throw appError(error, 'We could not load your saved shopping list.');
+    }
+    setItems((data ?? []).map(d => ({ id: d.id, name: d.name, quantity: d.quantity, checked: d.checked })));
+  }, [userId]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { void load().catch(() => undefined); }, [load]);
 
   const addItem = async () => {
     if (!name.trim() || !session?.user) return;
     const trimmedName = name.trim();
     const qty = quantity.trim() || '1';
     const existing = items.find(i => i.name.toLowerCase() === trimmedName.toLowerCase() && !i.checked);
-    if (existing) {
-      const newQty = mergeQuantities(existing.quantity, qty);
-      await supabase.from('shopping_list').update({ quantity: newQty }).eq('id', existing.id);
-      setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
+    setBusyAction('add');
+    try {
+      if (existing) {
+        const newQty = mergeQuantities(existing.quantity, qty);
+        const { data, error } = await supabase.from('shopping_list').update({ quantity: newQty }).eq('id', existing.id).select('id').maybeSingle();
+        if (error || !data) throw appError(error, `We could not update ${trimmedName}.`);
+        setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
+        setName(''); setQuantity('');
+        toast.success(`Updated ${trimmedName}`);
+        return;
+      }
+      const { error } = await supabase.from('shopping_list').insert({ user_id: session.user.id, name: trimmedName, quantity: qty });
+      if (error) throw appError(error, `We could not add ${trimmedName}.`);
       setName(''); setQuantity('');
-      toast.success(`Updated ${trimmedName}`);
-      return;
+      await load();
+      toast.success(`Added ${trimmedName}`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'Your shopping item was not saved.'));
+    } finally {
+      setBusyAction(null);
     }
-    const { error } = await supabase.from('shopping_list').insert({ user_id: session.user.id, name: trimmedName, quantity: qty });
-    if (!error) { setName(''); setQuantity(''); load(); }
   };
 
   const mergeQuantities = (a: string, b: string): string => {
@@ -69,29 +92,53 @@ export default function ShoppingList() {
   };
 
   const toggleCheck = async (item: ShoppingItem) => {
-    await supabase.from('shopping_list').update({ checked: !item.checked }).eq('id', item.id);
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, checked: !i.checked } : i));
+    setBusyAction(item.id);
+    try {
+      const { data, error } = await supabase.from('shopping_list').update({ checked: !item.checked }).eq('id', item.id).select('id').maybeSingle();
+      if (error || !data) throw appError(error, `We could not update ${item.name}.`);
+      setItems(prev => prev.map(i => i.id === item.id ? { ...i, checked: !i.checked } : i));
+    } catch (error) {
+      toast.error(errorMessage(error, 'Your shopping item was not updated.'));
+    } finally {
+      setBusyAction(null);
+    }
   };
 
   const remove = async (id: string) => {
-    await supabase.from('shopping_list').delete().eq('id', id);
-    setItems(prev => prev.filter(i => i.id !== id));
+    setBusyAction(id);
+    try {
+      const { data, error } = await supabase.from('shopping_list').delete().eq('id', id).select('id').maybeSingle();
+      if (error || !data) throw appError(error, 'We could not remove this item.');
+      setItems(prev => prev.filter(i => i.id !== id));
+    } catch (error) {
+      toast.error(errorMessage(error, 'This item was not removed.'));
+    } finally {
+      setBusyAction(null);
+    }
   };
 
   const clearChecked = async () => {
     const checked = items.filter(i => i.checked);
     if (checked.length === 0) return;
-    for (const item of checked) {
-      await supabase.from('shopping_list').delete().eq('id', item.id);
+    setBusyAction('clear');
+    try {
+      const { data, error } = await supabase.from('shopping_list').delete().in('id', checked.map(item => item.id)).select('id');
+      if (error || (data?.length ?? 0) !== checked.length) throw appError(error, 'We could not clear all completed items.');
+      setItems(prev => prev.filter(i => !i.checked));
+      toast.success(`Cleared ${checked.length} item${checked.length > 1 ? 's' : ''}`);
+    } catch (error) {
+      await load().catch(() => undefined);
+      toast.error(errorMessage(error, 'Completed items were not cleared.'));
+    } finally {
+      setBusyAction(null);
     }
-    setItems(prev => prev.filter(i => !i.checked));
-    toast.success(`Cleared ${checked.length} item${checked.length > 1 ? 's' : ''}`);
   };
 
   const moveCheckedToInventory = async () => {
     const checkedItems = items.filter(i => i.checked);
     if (checkedItems.length === 0) return;
 
+    setBusyAction('move');
     const payload = checkedItems.map(item => {
       const aisle = getAisle(item.name);
       const location = aisle === 'Frozen' ? 'freezer' : ['Produce', 'Meat & Fish', 'Dairy & Eggs'].includes(aisle) ? 'fridge' : 'cupboard';
@@ -101,10 +148,17 @@ export default function ShoppingList() {
     const { data: moved, error } = await supabase.rpc('move_shopping_items_to_inventory' as never, { p_items: payload } as never);
     if (error) {
       toast.error('Nothing was moved. Your shopping list is unchanged.');
+      setBusyAction(null);
       return;
     }
-    await Promise.all([load(), refreshInventory()]);
-    toast.success(`Added ${moved ?? checkedItems.length} item${checkedItems.length === 1 ? '' : 's'} to inventory`);
+    try {
+      await Promise.all([load(), refreshInventory()]);
+      toast.success(`Added ${moved ?? checkedItems.length} item${checkedItems.length === 1 ? '' : 's'} to inventory`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'Items moved, but the screen could not refresh.'));
+    } finally {
+      setBusyAction(null);
+    }
   };
 
   const unchecked = items.filter(i => !i.checked);
@@ -151,7 +205,7 @@ export default function ShoppingList() {
       .split('\n')
       .map(l => l.trim())
       .filter(Boolean);
-    let added = 0;
+    const rows: Array<{ user_id: string; name: string; quantity: string }> = [];
     for (const line of lines) {
       // Support "2x Milk" or "Milk x2" or "Milk 2" or just "Milk"
       const match = line.match(/^(\d+)\s*[xX]?\s+(.+)$/) || line.match(/^(.+?)\s+[xX]?(\d+)$/);
@@ -166,17 +220,20 @@ export default function ShoppingList() {
         qty = '1';
       }
       if (!itemName) continue;
-      const { error } = await supabase
-        .from('shopping_list')
-        .insert({ user_id: session.user.id, name: itemName, quantity: qty });
-      if (!error) added++;
+      rows.push({ user_id: session.user.id, name: itemName, quantity: qty });
     }
-    setQuickAddLoading(false);
-    setQuickAddText('');
-    setQuickAddOpen(false);
-    if (added > 0) {
-      load();
-      toast.success(`Added ${added} item${added !== 1 ? 's' : ''}`);
+    try {
+      if (rows.length === 0) return;
+      const { error } = await supabase.from('shopping_list').insert(rows);
+      if (error) throw appError(error, 'None of those items were added.');
+      await load();
+      setQuickAddText('');
+      setQuickAddOpen(false);
+      toast.success(`Added ${rows.length} item${rows.length !== 1 ? 's' : ''}`);
+    } catch (error) {
+      toast.error(errorMessage(error, 'Those items were not saved.'));
+    } finally {
+      setQuickAddLoading(false);
     }
   };
 
@@ -214,6 +271,12 @@ export default function ShoppingList() {
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      {loadError && (
+        <div role="alert" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 p-4 text-sm">
+          <span>{loadError}</span>
+          <Button variant="outline" className="min-h-11 rounded-xl" onClick={() => void load().catch(error => toast.error(errorMessage(error, 'Could not reload shopping list.')))}>Retry</Button>
+        </div>
+      )}
       {/* Header */}
       <div className="mb-8">
         <p className="section-title mb-2">Shopping</p>
@@ -243,8 +306,8 @@ export default function ShoppingList() {
             onKeyDown={e => e.key === 'Enter' && addItem()}
             className="w-16 border-0 bg-transparent shadow-none focus-visible:ring-0 text-center"
           />
-          <Button aria-label="Add shopping item" onClick={addItem} disabled={!name.trim()} size="icon" className="rounded-xl shrink-0" style={{ background: 'var(--gradient-primary)' }}>
-            <Plus className="w-4 h-4" />
+          <Button aria-label="Add shopping item" onClick={addItem} disabled={!name.trim() || busyAction === 'add'} size="icon" className="h-11 w-11 rounded-xl shrink-0" style={{ background: 'var(--gradient-primary)' }}>
+            {busyAction === 'add' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="w-4 h-4" />}
           </Button>
         </div>
       </div>
@@ -262,10 +325,10 @@ export default function ShoppingList() {
         </Button>
         {checked.length > 0 && (
           <>
-            <Button size="sm" className="rounded-xl text-xs gap-1.5 font-bold" onClick={moveCheckedToInventory}>
+            <Button size="sm" disabled={busyAction === 'move'} className="min-h-11 rounded-xl text-xs gap-1.5 font-bold" onClick={moveCheckedToInventory}>
               <PackagePlus className="w-3.5 h-3.5" /> Move to Inventory ({checked.length})
             </Button>
-            <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={clearChecked}>
+            <Button variant="outline" size="sm" disabled={busyAction === 'clear'} className="min-h-11 rounded-xl text-xs" onClick={clearChecked}>
               Clear Done
             </Button>
           </>
@@ -295,7 +358,7 @@ export default function ShoppingList() {
           )}
 
           {/* Retailer price comparison */}
-          {baskets.length === 0 && !comparingPrices && (
+          {baskets.length === 0 && !comparingPrices && livePricingAvailable && (
             <button
               onClick={() => compare(unchecked.map(i => ({ name: i.name, quantity: i.quantity })))}
               className="w-full glass-card p-4 flex items-center gap-3 hover:bg-surface-low/60 transition-colors text-left"
@@ -313,6 +376,16 @@ export default function ShoppingList() {
                 Compare →
               </span>
             </button>
+          )}
+
+          {baskets.length === 0 && !comparingPrices && !capabilitiesLoading && !livePricingAvailable && (
+            <div className="glass-card flex items-center gap-3 p-4 text-left">
+              <div className="icon-container shrink-0 bg-muted"><BarChart2 className="h-4 w-4 text-muted-foreground" /></div>
+              <div>
+                <p className="text-sm font-bold">Live price comparison is not connected</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">Your shopping list and local estimates still work normally.</p>
+              </div>
+            </div>
           )}
 
           {comparingPrices && (
@@ -468,7 +541,8 @@ export default function ShoppingList() {
                   <Checkbox
                     aria-label={`Mark ${item.name} bought`}
                     checked={item.checked}
-                    onCheckedChange={() => toggleCheck(item)}
+                    disabled={busyAction === item.id}
+                    onCheckedChange={() => void toggleCheck(item)}
                     className="rounded-lg"
                   />
                   <div className="flex-1 min-w-0">
@@ -490,7 +564,7 @@ export default function ShoppingList() {
                       £{(price * (parseFloat(item.quantity) || 1)).toFixed(2)}
                     </span>
                   )}
-                  <Button aria-label={`Remove ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl opacity-60 hover:opacity-100 hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                  <Button aria-label={`Remove ${item.name}`} disabled={busyAction === item.id} variant="ghost" size="icon" className="h-11 w-11 rounded-xl opacity-60 hover:opacity-100 hover:bg-destructive/10" onClick={() => void remove(item.id)}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
@@ -508,9 +582,9 @@ export default function ShoppingList() {
             <div className="divide-y divide-border/30">
               {checked.map(item => (
                 <div key={item.id} className="flex items-center gap-3 px-5 py-3.5">
-                  <Checkbox aria-label={`Mark ${item.name} not bought`} checked={true} onCheckedChange={() => toggleCheck(item)} className="rounded-lg" />
+                  <Checkbox aria-label={`Mark ${item.name} not bought`} checked={true} disabled={busyAction === item.id} onCheckedChange={() => void toggleCheck(item)} className="rounded-lg" />
                   <span className="text-sm line-through flex-1 text-muted-foreground">{item.name}</span>
-                  <Button aria-label={`Remove ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => remove(item.id)}>
+                  <Button aria-label={`Remove ${item.name}`} disabled={busyAction === item.id} variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-destructive/10" onClick={() => void remove(item.id)}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>

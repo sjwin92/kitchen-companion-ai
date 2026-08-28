@@ -13,6 +13,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import type { PlanningStyle, BudgetSensitivity, CookingConfidence, PrimaryGoal } from '@/types';
 import { deleteAccount, downloadAccountExport } from '@/services/accountPrivacy';
 import { DIETARY_OPTIONS, removeRedundantDislikes, toggleDietaryPreference } from '@/lib/onboardingPreferences';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const DIETARY_DESCRIPTIONS: Record<(typeof DIETARY_OPTIONS)[number], string> = {
   Vegetarian: 'Exclude meat and fish.',
@@ -66,6 +67,9 @@ export default function Settings() {
   const { enabled: notificationsEnabled, permission: notifPermission, toggle: toggleNotifications } = useNotifications();
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
   const [privacyAction, setPrivacyAction] = useState<'export' | 'delete' | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const isDirty = JSON.stringify(preferences) !== JSON.stringify(savedPreferences);
 
   useEffect(() => {
     if (darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); }
@@ -99,7 +103,7 @@ export default function Settings() {
     if (!session?.user) return;
     setPrivacyAction('export');
     try {
-      await downloadAccountExport(session.user.id, session.user.email);
+      await downloadAccountExport();
       toast.success('Your data export has downloaded');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Export failed');
@@ -109,13 +113,12 @@ export default function Settings() {
   };
 
   const handleDeleteAccount = async () => {
-    const confirmation = window.prompt('This permanently deletes your account and private meal photos. Type DELETE to continue.');
-    if (confirmation !== 'DELETE') return;
+    if (deleteConfirmation !== 'DELETE') return;
     setPrivacyAction('delete');
     try {
       await deleteAccount();
-      await signOut();
       toast.success('Account deleted');
+      setDeleteDialogOpen(false);
       navigate('/', { replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Account deletion failed');
@@ -163,6 +166,11 @@ export default function Settings() {
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      <header className="mb-8">
+        <p className="section-title mb-2">Your kitchen</p>
+        <h1 className="text-3xl font-semibold tracking-[-0.04em] md:text-4xl">Settings</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Account, food preferences, goals, appearance and privacy.</p>
+      </header>
       <div className="grid grid-cols-1 md:grid-cols-[1fr_380px] gap-8">
         {/* Main content */}
         <div className="space-y-8">
@@ -194,6 +202,8 @@ export default function Settings() {
                 return (
                   <button
                     key={option}
+                    type="button"
+                    aria-pressed={active}
                     onClick={() => toggleDietary(option)}
                     className={`glass-card p-5 text-left transition-all ${active ? 'ring-2 ring-primary' : ''}`}
                   >
@@ -337,11 +347,11 @@ export default function Settings() {
           </section>
 
           {/* Action buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button variant="outline" onClick={() => setDraftPreferences(savedPreferences)} disabled={savingProfile} className="rounded-xl text-xs font-bold uppercase tracking-wider">
+          <div className="sticky bottom-20 z-20 flex gap-3 rounded-2xl border border-border/70 bg-background/95 p-3 shadow-[var(--shadow-elevated)] backdrop-blur md:bottom-4">
+            <Button variant="outline" onClick={() => setDraftPreferences(savedPreferences)} disabled={savingProfile || !isDirty} className="min-h-11 rounded-xl text-xs font-bold uppercase tracking-wider">
               Discard Changes
             </Button>
-            <Button onClick={handleSaveProfile} disabled={savingProfile} className="rounded-xl text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--gradient-primary)' }}>
+            <Button onClick={handleSaveProfile} disabled={savingProfile || !isDirty} className="min-h-11 flex-1 rounded-xl text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--gradient-primary)' }}>
               {savingProfile && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Save Profile
             </Button>
@@ -386,11 +396,11 @@ export default function Settings() {
               <div className="flex items-center justify-between">
                 <span className="text-sm">Serving Size</span>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setPreferences({ householdSize: Math.max(1, preferences.householdSize - 1) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Decrease household size" onClick={() => setPreferences({ householdSize: Math.max(1, preferences.householdSize - 1) })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="text-lg font-bold w-6 text-center">{String(preferences.householdSize).padStart(2, '0')}</span>
-                  <button onClick={() => setPreferences({ householdSize: preferences.householdSize + 1 })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Increase household size" onClick={() => setPreferences({ householdSize: preferences.householdSize + 1 })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -398,11 +408,11 @@ export default function Settings() {
               <div className="flex items-center justify-between">
                 <span className="text-sm">Daily Calorie Target</span>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.max(1000, preferences.dailyCalorieGoal - 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Decrease daily calorie goal" onClick={() => setPreferences({ dailyCalorieGoal: Math.max(1000, preferences.dailyCalorieGoal - 100) })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="text-sm font-bold w-14 text-center">{preferences.dailyCalorieGoal.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">kcal</span></span>
-                  <button onClick={() => setPreferences({ dailyCalorieGoal: Math.min(5000, preferences.dailyCalorieGoal + 100) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Increase daily calorie goal" onClick={() => setPreferences({ dailyCalorieGoal: Math.min(5000, preferences.dailyCalorieGoal + 100) })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -434,11 +444,11 @@ export default function Settings() {
                   <span className="text-sm">Lunchboxes / Week</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setPreferences({ lunchboxCount: Math.max(0, preferences.lunchboxCount - 1) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Decrease weekly lunchboxes" onClick={() => setPreferences({ lunchboxCount: Math.max(0, preferences.lunchboxCount - 1) })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="text-lg font-bold w-6 text-center">{preferences.lunchboxCount}</span>
-                  <button onClick={() => setPreferences({ lunchboxCount: Math.min(7, preferences.lunchboxCount + 1) })} className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted">
+                  <button aria-label="Increase weekly lunchboxes" onClick={() => setPreferences({ lunchboxCount: Math.min(7, preferences.lunchboxCount + 1) })} className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -489,7 +499,7 @@ export default function Settings() {
               {privacyAction === 'export' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
               Download my data
             </Button>
-            <Button variant="outline" onClick={handleDeleteAccount} disabled={privacyAction !== null} className="w-full rounded-xl text-destructive border-destructive/20 hover:bg-destructive/5">
+            <Button variant="outline" onClick={() => { setDeleteConfirmation(''); setDeleteDialogOpen(true); }} disabled={privacyAction !== null} className="w-full min-h-11 rounded-xl text-destructive border-destructive/20 hover:bg-destructive/5">
               {privacyAction === 'delete' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
               Delete account
             </Button>
@@ -507,6 +517,27 @@ export default function Settings() {
           </Button>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="max-w-md rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete your Kitchen Companion account?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes your private inventory, meal plans and meal photos. Type DELETE to confirm.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input value={deleteConfirmation} onChange={event => setDeleteConfirmation(event.target.value)} aria-label="Type DELETE to confirm account deletion" autoComplete="off" />
+          <AlertDialogFooter>
+            <AlertDialogCancel className="min-h-11 rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button variant="destructive" className="min-h-11 rounded-xl" disabled={deleteConfirmation !== 'DELETE' || privacyAction === 'delete'} onClick={() => void handleDeleteAccount()}>
+                {privacyAction === 'delete' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Delete account
+              </Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

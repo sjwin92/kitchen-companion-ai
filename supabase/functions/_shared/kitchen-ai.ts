@@ -134,24 +134,33 @@ function geminiOutputText(payload: Record<string, unknown>): string | null {
 
 function aiRoute(capability: AiCapability): { provider: AiProvider; model: string } {
   if (capability === "catalogue_enrichment") {
-    return { provider: "deepseek", model: "deepseek-v4-flash" };
+    return { provider: "deepseek", model: Deno.env.get("DEEPSEEK_MODEL") ?? "deepseek-v4-flash" };
   }
-  return { provider: "gemini", model: "gemini-3.5-flash-lite" };
+  return { provider: "gemini", model: Deno.env.get("GEMINI_MODEL") ?? "gemini-3.5-flash-lite" };
+}
+
+function configuredNumber(name: string, fallback: number) {
+  const parsed = Number(Deno.env.get(name));
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
 }
 
 function reservationCost(capability: AiCapability) {
-  return capability === "private_recipe_draft" || capability === "catalogue_enrichment" ? 0.006 : 0.003;
+  return capability === "private_recipe_draft" || capability === "catalogue_enrichment"
+    ? configuredNumber("AI_TEXT_RESERVATION_GBP", 0.006)
+    : configuredNumber("AI_VISION_RESERVATION_GBP", 0.003);
 }
 
 function actualCostGbp(provider: AiProvider, inputTokens: number, outputTokens: number, reserved: number) {
-  const usdToGbp = 0.78;
+  const usdToGbp = configuredNumber("AI_USD_TO_GBP", 0.78);
   if (provider === "gemini") {
-    return ((inputTokens * 0.30 + outputTokens * 2.50) / 1_000_000) * usdToGbp;
+    const inputRate = configuredNumber("GEMINI_INPUT_USD_PER_MILLION", 0.30);
+    const outputRate = configuredNumber("GEMINI_OUTPUT_USD_PER_MILLION", 2.50);
+    return ((inputTokens * inputRate + outputTokens * outputRate) / 1_000_000) * usdToGbp;
   }
   if (provider === "deepseek") {
-    // DeepSeek announces peak pricing as twice the standard rate. Using that
-    // rate keeps the app-side cap conservative regardless of call time.
-    return ((inputTokens * 0.28 + outputTokens * 0.56) / 1_000_000) * usdToGbp;
+    const inputRate = configuredNumber("DEEPSEEK_INPUT_USD_PER_MILLION", 0.28);
+    const outputRate = configuredNumber("DEEPSEEK_OUTPUT_USD_PER_MILLION", 0.56);
+    return ((inputTokens * inputRate + outputTokens * outputRate) / 1_000_000) * usdToGbp;
   }
   return reserved;
 }
@@ -189,7 +198,7 @@ async function reserveUsage(
 async function completeUsage(
   serviceClient: SupabaseClient,
   eventId: string,
-  status: "succeeded" | "failed",
+  status: "succeeded" | "failed" | "uncertain",
   usage: { inputTokens?: number; outputTokens?: number; actualCostGbp?: number; requestId?: string | null; errorCode?: string | null },
 ) {
   const { error } = await serviceClient.rpc("complete_ai_usage", {
@@ -240,6 +249,7 @@ export async function structuredResponse(options: {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30_000);
   let response: Response | null = null;
+  let requestStarted = false;
   try {
     if (provider === "gemini") {
       const parts: Array<Record<string, unknown>> = [{ text: `${options.instructions}\n\n${options.prompt}` }];
@@ -248,6 +258,7 @@ export async function structuredResponse(options: {
         if (!match) throw new HttpError(415, "Unsupported image type");
         parts.push({ inlineData: { mimeType: match[1], data: match[2] } });
       }
+      requestStarted = true;
       response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: "POST",
         signal: controller.signal,
@@ -263,6 +274,7 @@ export async function structuredResponse(options: {
         }),
       });
     } else if (provider === "deepseek") {
+      requestStarted = true;
       response = await fetch("https://api.deepseek.com/chat/completions", {
         method: "POST",
         signal: controller.signal,
@@ -281,6 +293,7 @@ export async function structuredResponse(options: {
     } else {
       const content: Array<Record<string, unknown>> = [{ type: "input_text", text: options.prompt }];
       if (options.imageDataUrl) content.push({ type: "input_image", image_url: options.imageDataUrl, detail: "high" });
+      requestStarted = true;
       response = await fetch("https://api.openai.com/v1/responses", {
         method: "POST",
         signal: controller.signal,
@@ -297,7 +310,7 @@ export async function structuredResponse(options: {
       });
     }
   } catch (error) {
-    await completeUsage(options.serviceClient, eventId, "failed", {
+    await completeUsage(options.serviceClient, eventId, requestStarted ? "uncertain" : "failed", {
       errorCode: error instanceof Error ? error.name : "request_failed",
     });
     throw error;
@@ -320,7 +333,7 @@ export async function structuredResponse(options: {
   try {
     payload = await response.json() as Record<string, unknown>;
   } catch (error) {
-    await completeUsage(options.serviceClient, eventId, "failed", { errorCode: "invalid_provider_response" });
+    await completeUsage(options.serviceClient, eventId, "uncertain", { errorCode: "invalid_provider_response" });
     throw error;
   }
   const text = provider === "gemini"
@@ -329,7 +342,7 @@ export async function structuredResponse(options: {
     ? ((payload.choices as Array<{ message?: { content?: string } }> | undefined)?.[0]?.message?.content ?? null)
     : openAiOutputText(payload);
   if (!text) {
-    await completeUsage(options.serviceClient, eventId, "failed", { errorCode: "empty_structured_output" });
+    await completeUsage(options.serviceClient, eventId, "uncertain", { errorCode: "empty_structured_output" });
     throw new Error("AI returned no structured result");
   }
   const usageMetadata = (payload.usageMetadata ?? payload.usage ?? {}) as Record<string, unknown>;
@@ -340,7 +353,7 @@ export async function structuredResponse(options: {
   try {
     data = JSON.parse(text) as unknown;
   } catch (error) {
-    await completeUsage(options.serviceClient, eventId, "failed", { errorCode: "invalid_json" });
+    await completeUsage(options.serviceClient, eventId, "uncertain", { errorCode: "invalid_json" });
     throw error;
   }
   await completeUsage(options.serviceClient, eventId, "succeeded", {

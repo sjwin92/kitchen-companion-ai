@@ -1,0 +1,94 @@
+{
+  "batch": "beta-200",
+  "generated_at": "2026-08-28",
+  "candidate_count": 188,
+  "existing_approved_count": 12,
+  "database_target": 200,
+  "packs": [
+    {
+      "slug": "quick-breakfasts-volume-1",
+      "title": "Quick Breakfasts",
+      "recipe_count": 12
+    },
+    {
+      "slug": "packed-lunches-volume-1",
+      "title": "Packed Lunches",
+      "recipe_count": 11
+    },
+    {
+      "slug": "family-favourites-volume-1",
+      "title": "Family Favourites",
+      "recipe_count": 11
+    },
+    {
+      "slug": "one-pot-dinners-volume-1",
+      "title": "One-Pot Dinners",
+      "recipe_count": 11
+    },
+    {
+      "slug": "budget-batch-cooking-volume-1",
+      "title": "Budget Batch Cooking",
+      "recipe_count": 11
+    },
+    {
+      "slug": "freezer-friendly-volume-1",
+      "title": "Freezer-Friendly Favourites",
+      "recipe_count": 11
+    },
+    {
+      "slug": "twenty-minute-meals-volume-1",
+      "title": "Twenty-Minute Meals",
+      "recipe_count": 11
+    },
+    {
+      "slug": "traybakes-volume-1",
+      "title": "The Traybake Collection",
+      "recipe_count": 11
+    },
+    {
+      "slug": "soups-and-stews-volume-1",
+      "title": "Soups & Stews",
+      "recipe_count": 11
+    },
+    {
+      "slug": "pasta-and-noodles-volume-1",
+      "title": "Pasta & Noodles",
+      "recipe_count": 11
+    },
+    {
+      "slug": "rice-and-grains-volume-1",
+      "title": "Rice & Grain Bowls",
+      "recipe_count": 11
+    },
+    {
+      "slug": "plant-powered-volume-1",
+      "title": "Plant-Powered Dinners",
+      "recipe_count": 11
+    },
+    {
+      "slug": "vegetarian-comforts-volume-1",
+      "title": "Vegetarian Comforts",
+      "recipe_count": 11
+    },
+    {
+      "slug": "chicken-weeknights-volume-1",
+      "title": "Chicken Weeknights",
+      "recipe_count": 11
+    },
+    {
+      "slug": "fish-and-seafood-volume-1",
+      "title": "Fish & Seafood",
+      "recipe_count": 11
+    },
+    {
+      "slug": "flexitarian-classics-volume-1",
+      "title": "Flexitarian Classics",
+      "recipe_count": 11
+    },
+    {
+      "slug": "weekend-cooking-volume-1",
+      "title": "Weekend Cooking",
+      "recipe_count": 11
+    }
+  ]
+}

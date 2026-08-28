@@ -1,17 +1,32 @@
 project_id = "kitchen-companion"
 
 [auth]
-site_url = "https://sjwin92.github.io/kitchen-companion-ai/"
+site_url = "https://beta-hardening.kitchen-companion-beta.pages.dev/"
+minimum_password_length = 10
+password_requirements = "letters_digits"
 additional_redirect_urls = [
   "https://sjwin92.github.io/kitchen-companion-ai/",
-  "https://sjwin92.github.io/kitchen-companion-ai/reset-password"
+  "https://sjwin92.github.io/kitchen-companion-ai/reset-password",
+  "https://kitchen-companion-beta.pages.dev/",
+  "https://kitchen-companion-beta.pages.dev/reset-password",
+  "https://beta-hardening.kitchen-companion-beta.pages.dev/",
+  "https://beta-hardening.kitchen-companion-beta.pages.dev/reset-password",
+  "https://*.kitchen-companion-beta.pages.dev/reset-password"
 ]
 
 [auth.email]
 enable_confirmations = true
+secure_password_change = true
 max_frequency = "1m"
 otp_length = 6
 otp_expiry = 3600
+
+[auth.mfa]
+max_enrolled_factors = 3
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
 
 [functions.scan-receipt]
 verify_jwt = true
@@ -34,10 +49,22 @@ verify_jwt = true
 [functions.send-expiry-reminders]
 verify_jwt = false
 
+[functions.cleanup-expired-media]
+verify_jwt = false
+
 [functions.delete-account]
 verify_jwt = true
 
+[functions.account-export]
+verify_jwt = true
+
 [functions.compare-prices]
+verify_jwt = true
+
+[functions.capability-status]
+verify_jwt = true
+
+[functions.admin-operations]
 verify_jwt = true
 
 [auth.hook.before_user_created]

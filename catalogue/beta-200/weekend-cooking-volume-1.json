@@ -1,0 +1,1383 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "weekend-cooking-volume-1",
+    "title": "Weekend Cooking",
+    "subtitle": "Longer cooks that reward the extra time",
+    "description": "Weekend Cooking: Longer cooks that reward the extra time. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "weekend-cooking-slow-style-beef-mushroom-stew",
+      "title": "Slow-Style Beef Mushroom Stew",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the beef mince in olive oil, then set aside if needed.",
+        "Cook the onion, chestnut mushrooms and carrots for 8 minutes.",
+        "Return the protein, add the chicken stock and wholegrain mustard, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "d1faadce651e3ccc8fdd5d5120759a407e9e55dbbb362814ee8eeaeb11902fe1",
+      "ingredients": [
+        {
+          "name": "Lean beef mince",
+          "normalized_name": "beef mince",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt chicken stock",
+          "normalized_name": "chicken stock",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "weekend-cooking-chicken-squash-barley-casserole",
+      "title": "Chicken Squash Barley Casserole",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the chicken thighs in olive oil, then set aside if needed.",
+        "Cook the onion, butternut squash and pearl barley for 8 minutes.",
+        "Return the protein, add the chicken stock and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "0ed7b39d75b6f5623cbacb7b52c0115e8f36e403bad581aa1555a63b236eb83a",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Butternut squash",
+          "normalized_name": "butternut squash",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Pearl barley",
+          "normalized_name": "barley",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt chicken stock",
+          "normalized_name": "chicken stock",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "weekend-cooking-aubergine-lentil-pasta-bake",
+      "title": "Aubergine Lentil Pasta Bake",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the pasta, then combine with the green lentils, aubergines and passata.",
+        "Transfer to a baking dish and scatter over the breadcrumbs and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a5798c8e90b39a09760da2d51988c96bb314026e1c16114fb3a61b298592aa0d",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Aubergines",
+          "normalized_name": "aubergine",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Wholemeal breadcrumbs",
+          "normalized_name": "breadcrumb",
+          "quantity": 100,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "weekend-cooking-salmon-spinach-potato-bake",
+      "title": "Salmon Spinach Potato Bake",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the potatoes, then combine with the salmon fillets, baby spinach and milk.",
+        "Transfer to a baking dish and scatter over the breadcrumbs and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ffbe4bfcce9abd07e48eb3ca34a645d459a65c9958d6eac1c8ff637d0080969c",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Salmon fillets",
+          "normalized_name": "salmon",
+          "quantity": 520,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Semi-skimmed milk",
+          "normalized_name": "milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Wholemeal breadcrumbs",
+          "normalized_name": "breadcrumb",
+          "quantity": 100,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "weekend-cooking-mushroom-butter-bean-barley-stew",
+      "title": "Mushroom Butter Bean Barley Stew",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the butter beans in olive oil, then set aside if needed.",
+        "Cook the onion, chestnut mushrooms and pearl barley for 8 minutes.",
+        "Return the protein, add the vegetable stock and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "8c2fe4e4616323dd1dd94828314bafc7533983f7ae41bda070077fccc6afb8ca",
+      "ingredients": [
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Pearl barley",
+          "normalized_name": "barley",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "weekend-cooking-turkey-sweet-potato-chilli-bake",
+      "title": "Turkey Sweet Potato Chilli Bake",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mexican-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the sweet potatoes, then combine with the turkey mince, kidney beans and chopped tomatoes.",
+        "Transfer to a baking dish and scatter over the mature cheddar and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "740336612bacaa47b7b23bbce047fa35a7d202642d1c573ebe5e63ebafe80613",
+      "ingredients": [
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Turkey mince",
+          "normalized_name": "turkey mince",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Tinned kidney beans",
+          "normalized_name": "kidney bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "weekend-cooking-cauliflower-chickpea-rice-bake",
+      "title": "Cauliflower Chickpea Rice Bake",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the long-grain rice, then combine with the chickpeas, cauliflower and coconut milk.",
+        "Transfer to a baking dish and scatter over the breadcrumbs and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "f6708ea14d7718c2def83e8bdf236929b1d1f64e27861fe0857c4214d7f889fd",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Cauliflower",
+          "normalized_name": "cauliflower",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Wholemeal breadcrumbs",
+          "normalized_name": "breadcrumb",
+          "quantity": 100,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "weekend-cooking-pork-leek-potato-bake",
+      "title": "Pork Leek Potato Bake",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the potatoes, then combine with the pork tenderloin, leeks and milk.",
+        "Transfer to a baking dish and scatter over the mature cheddar and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "0183e1c17e2f7945be26179478d43dee78b99e28974ae6b3ceec7ddc97978bbc",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Pork tenderloin",
+          "normalized_name": "pork",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Leeks",
+          "normalized_name": "leek",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Semi-skimmed milk",
+          "normalized_name": "milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "weekend-cooking-cod-tomato-butter-bean-stew",
+      "title": "Cod Tomato Butter Bean Stew",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the cod fillets in olive oil, then set aside if needed.",
+        "Cook the onion, butter beans and tomatoes for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "0564d680a4717257d917edd9f337e7078456a69db1bfced12bfde81e0f0a6690",
+      "ingredients": [
+        {
+          "name": "Cod fillets",
+          "normalized_name": "cod",
+          "quantity": 560,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "weekend-cooking-chicken-aubergine-tomato-stew",
+      "title": "Chicken Aubergine Tomato Stew",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the chicken thighs in olive oil, then set aside if needed.",
+        "Cook the onion, aubergines and peppers for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "6646de7341a383a45582c7de529403eff739ee17a6ba17769bf7a2339cec74fd",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Aubergines",
+          "normalized_name": "aubergine",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "weekend-cooking-red-lentil-squash-coconut-stew",
+      "title": "Red Lentil Squash Coconut Stew",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the red lentils in olive oil, then set aside if needed.",
+        "Cook the onion, butternut squash and baby spinach for 8 minutes.",
+        "Return the protein, add the coconut milk and medium curry powder, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a17418c3a4dd6e72999c51de924f81c02f13254c9ce8553c4e99cea0fbb2139c",
+      "ingredients": [
+        {
+          "name": "Dried red lentils",
+          "normalized_name": "red lentil",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Butternut squash",
+          "normalized_name": "butternut squash",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

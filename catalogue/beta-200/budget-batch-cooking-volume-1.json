@@ -1,0 +1,1405 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "budget-batch-cooking-volume-1",
+    "title": "Budget Batch Cooking",
+    "subtitle": "Big pots that make tomorrow easier",
+    "description": "Budget Batch Cooking: Big pots that make tomorrow easier. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "budget-batch-cooking-smoky-three-bean-tomato-stew",
+      "title": "Smoky Three-Bean Tomato Stew",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the kidney beans in olive oil, then set aside if needed.",
+        "Cook the onion, peppers and sweetcorn for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and paprika, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "149283a88a2dc01b3df456346d26bf93ae8e2967ad5d84d248408ce733810599",
+      "ingredients": [
+        {
+          "name": "Tinned kidney beans",
+          "normalized_name": "kidney bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Sweetcorn",
+          "normalized_name": "sweetcorn",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "budget-batch-cooking-red-lentil-carrot-dal",
+      "title": "Red Lentil Carrot Dal",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the red lentils, carrots and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "45ca734625d49f87203f8d1b4afce0fa266089d048263f8d02eb2b97731ce57c",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Dried red lentils",
+          "normalized_name": "red lentil",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "budget-batch-cooking-butter-bean-and-squash-stew",
+      "title": "Butter Bean & Squash Stew",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the butter beans in olive oil, then set aside if needed.",
+        "Cook the onion, butternut squash and baby spinach for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ef9bac09ed67f678c81886cda0c9fb23d8f9cad1d49e1b3cfb4084e07a4485df",
+      "ingredients": [
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Butternut squash",
+          "normalized_name": "butternut squash",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "budget-batch-cooking-turkey-and-lentil-tomato-stew",
+      "title": "Turkey & Lentil Tomato Stew",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the turkey mince in olive oil, then set aside if needed.",
+        "Cook the onion, green lentils and carrots for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and paprika, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "832d4de5e9787fc812e70b68f0edaf9d9008882661054d654d3e97f2918c8c71",
+      "ingredients": [
+        {
+          "name": "Turkey mince",
+          "normalized_name": "turkey mince",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "budget-batch-cooking-chickpea-aubergine-curry",
+      "title": "Chickpea Aubergine Curry",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the chickpeas, aubergines and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "1a3f648cc8ba84de8d0d2bc746b74cc70abcacc1f463e9b8f0cb435bd82d7c9f",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Aubergines",
+          "normalized_name": "aubergine",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "budget-batch-cooking-kidney-bean-sweet-potato-stew",
+      "title": "Kidney Bean Sweet Potato Stew",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the kidney beans in olive oil, then set aside if needed.",
+        "Cook the onion, sweet potatoes and peppers for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and ground cumin, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "4551e882b42334b6bbe9b2faddeb9a2ae0fbaa418f79cded93ebde7a5da60164",
+      "ingredients": [
+        {
+          "name": "Tinned kidney beans",
+          "normalized_name": "kidney bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Ground cumin",
+          "normalized_name": "cumin",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "budget-batch-cooking-chicken-vegetable-barley-stew",
+      "title": "Chicken Vegetable Barley Stew",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the chicken thighs in olive oil, then set aside if needed.",
+        "Cook the onion, pearl barley and carrots for 8 minutes.",
+        "Return the protein, add the chicken stock and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "d693227f85304ead0ca80beb72fdeaa80455eae67c9d084d176d2dd855568b7a",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Pearl barley",
+          "normalized_name": "barley",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt chicken stock",
+          "normalized_name": "chicken stock",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "budget-batch-cooking-lentil-mushroom-pasta-sauce",
+      "title": "Lentil Mushroom Pasta Sauce",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and chestnut mushrooms in olive oil until softened.",
+        "Stir in the green lentils and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "8fc52eafa9ca111ec9f25c66b1ffde472aae221cf9d77350f2f574dd4a689f94",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "budget-batch-cooking-black-bean-tomato-rice-pot",
+      "title": "Black Bean Tomato Rice Pot",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the peppers and sweetcorn in even pieces.",
+        "Cook the vegetables and paprika in olive oil for 6 minutes.",
+        "Add the long-grain rice, black beans and chopped tomatoes; cover and simmer until the base is tender.",
+        "Rest for 5 minutes, fluff or stir, and check the seasoning."
+      ],
+      "nutrition": {
+        "calories": 570,
+        "calories_low": 513,
+        "calories_high": 627,
+        "protein_g": 28,
+        "carbs_g": 78,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "f40f8cfe12e69c8fbf22377d4a96a871c0437b172ea84f9bd06c481fff39fc18",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned black beans",
+          "normalized_name": "black bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Sweetcorn",
+          "normalized_name": "sweetcorn",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "budget-batch-cooking-pea-spinach-coconut-curry",
+      "title": "Pea Spinach Coconut Curry",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the chickpeas, peas and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "5cd9c4ab6034e636b2c160ea5c5dc84bd25f66262bfd5402b18028189487877c",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "budget-batch-cooking-beef-lentil-bolognese-pot",
+      "title": "Beef Lentil Bolognese Pot",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the beef mince in olive oil, then set aside if needed.",
+        "Cook the onion, green lentils and carrots for 8 minutes.",
+        "Return the protein, add the passata and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "b07b21b5d0adbce95e38bd3f16d6f85547ed011ca6b50a164faed3136f120560",
+      "ingredients": [
+        {
+          "name": "Lean beef mince",
+          "normalized_name": "beef mince",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

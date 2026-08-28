@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, BadgeCheck, Clock, ExternalLink, Loader2, Play } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getRecipeBook, getRecipeMediaUrl, type BookRecipe, type RecipeBookSummary } from '@/services/betaCatalog';
+import { getRecipeBook, getRecipeMediaUrl, getRecipeMediaVariants, type BookRecipe, type RecipeBookSummary } from '@/services/betaCatalog';
 import RecipeArtwork from '@/components/RecipeArtwork';
 
 export default function RecipeBookDetail() {
@@ -41,7 +41,7 @@ export default function RecipeBookDetail() {
           <Card key={recipe.id} className="rounded-2xl p-3 md:p-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link to={`/recipe/${recipe.id}`} className="shrink-0 overflow-hidden rounded-xl sm:h-28 sm:w-32">
-                <RecipeArtwork title={recipe.title} image={getRecipeMediaUrl(recipe.image_path)} className="flex aspect-[16/9] h-full w-full items-center justify-center sm:aspect-auto" />
+                <RecipeArtwork title={recipe.title} image={getRecipeMediaUrl(recipe.image_path)} variants={getRecipeMediaVariants(recipe.image_path)} className="flex aspect-[16/9] h-full w-full items-center justify-center sm:aspect-auto" />
               </Link>
               <div className="min-w-0 flex-1">
                 {section && <p className="text-[10px] uppercase tracking-wider font-bold text-primary">{section}</p>}

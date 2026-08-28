@@ -1,0 +1,1406 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "fish-and-seafood-volume-1",
+    "title": "Fish & Seafood",
+    "subtitle": "Straightforward fish dinners for the weekly plan",
+    "description": "Fish & Seafood: Straightforward fish dinners for the weekly plan. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "fish-and-seafood-mustard-salmon-potato-plates",
+      "title": "Mustard Salmon Potato Plates",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the potatoes until tender and keep warm.",
+        "Season the salmon fillets and cook in olive oil until opaque and flaky.",
+        "Cook the green beans and peas in the same pan until just tender.",
+        "Stir together the wholegrain mustard and lemon, then spoon over everything to serve."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 35,
+        "carbs_g": 58,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "79f7bb02e9958a3839991d653b984044e29263d72f72b03ac58d7a1f843fa083",
+      "ingredients": [
+        {
+          "name": "Salmon fillets",
+          "normalized_name": "salmon",
+          "quantity": 520,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Green beans",
+          "normalized_name": "green bean",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "fish-and-seafood-lemon-cod-couscous-plates",
+      "title": "Lemon Cod Couscous Plates",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the couscous until tender and keep warm.",
+        "Season the cod fillets and cook in olive oil until opaque and flaky.",
+        "Cook the courgettes and tomatoes in the same pan until just tender.",
+        "Stir together the wholegrain mustard and lemon, then spoon over everything to serve."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 35,
+        "carbs_g": 58,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "8b372c4f257151fbd08c6d3a1eb147323ebed42a597ff3190980199b5bfe78d4",
+      "ingredients": [
+        {
+          "name": "Cod fillets",
+          "normalized_name": "cod",
+          "quantity": 560,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Couscous",
+          "normalized_name": "couscous",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Courgettes",
+          "normalized_name": "courgette",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "fish-and-seafood-prawn-broccoli-noodle-stir-fry",
+      "title": "Prawn Broccoli Noodle Stir-Fry",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "crustaceans",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the rice noodles according to the packet and drain.",
+        "Stir-fry the king prawns in a hot wok until cooked or crisp.",
+        "Add the broccoli, peppers and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "e2467cc8b9bb1cace0cef1785a0862ce408017c5838296c61cbf3d34f29764dd",
+      "ingredients": [
+        {
+          "name": "Rice noodles",
+          "normalized_name": "rice noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Raw king prawns",
+          "normalized_name": "prawn",
+          "quantity": 450,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "fish-and-seafood-tuna-tomato-pasta",
+      "title": "Tuna Tomato Pasta",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and baby spinach in olive oil until softened.",
+        "Stir in the tuna in spring water and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "b6463acfa045bd8f79c89931dca989355f47c8b97b879f05bbd5bda33eb7b47e",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned tuna in spring water",
+          "normalized_name": "tuna",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "fish-and-seafood-mackerel-cucumber-potato-bowls",
+      "title": "Mackerel Cucumber Potato Bowls",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the potatoes until tender.",
+        "Cook or warm the mackerel fillets and prepare the cucumber and baby spinach.",
+        "Divide the grain, protein and vegetables between four bowls.",
+        "Loosen the greek-style yogurt with lemon and spoon over the bowls."
+      ],
+      "nutrition": {
+        "calories": 600,
+        "calories_low": 540,
+        "calories_high": 660,
+        "protein_g": 28,
+        "carbs_g": 82,
+        "fat_g": 19,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "e927d77888c1c571c6018ea19068e3aca2a887b660ec615f84c8a7be83e2ffd3",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Smoked mackerel fillets",
+          "normalized_name": "mackerel",
+          "quantity": 360,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "fish-and-seafood-salmon-spinach-coconut-curry",
+      "title": "Salmon Spinach Coconut Curry",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the salmon fillets, baby spinach and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a623690a4f2f5aae09e05539462e7a1d43167fcb1a5b99e71644133cb8863699",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Salmon fillets",
+          "normalized_name": "salmon",
+          "quantity": 520,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "fish-and-seafood-cod-chickpea-tomato-stew",
+      "title": "Cod Chickpea Tomato Stew",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the cod fillets in olive oil, then set aside if needed.",
+        "Cook the onion, chickpeas and tomatoes for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and paprika, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "faa59c858163800a6f0ba33bc454b95857d2316d7cd3ac03f1909d79d65b62e1",
+      "ingredients": [
+        {
+          "name": "Cod fillets",
+          "normalized_name": "cod",
+          "quantity": 560,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "fish-and-seafood-prawn-pea-couscous-bowls",
+      "title": "Prawn Pea Couscous Bowls",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "crustaceans",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the couscous until tender.",
+        "Cook or warm the king prawns and prepare the peas and cucumber.",
+        "Divide the grain, protein and vegetables between four bowls.",
+        "Loosen the greek-style yogurt with lemon and spoon over the bowls."
+      ],
+      "nutrition": {
+        "calories": 600,
+        "calories_low": 540,
+        "calories_high": 660,
+        "protein_g": 28,
+        "carbs_g": 82,
+        "fat_g": 19,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a02f321ff5ceca0da42a82ab0bc7292f4358a2d9da50d37a56d1fe3cbd7dc4b1",
+      "ingredients": [
+        {
+          "name": "Couscous",
+          "normalized_name": "couscous",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Raw king prawns",
+          "normalized_name": "prawn",
+          "quantity": 450,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "fish-and-seafood-tuna-sweetcorn-rice-pot",
+      "title": "Tuna Sweetcorn Rice Pot",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the sweetcorn and peas in even pieces.",
+        "Cook the vegetables and mixed herbs in olive oil for 6 minutes.",
+        "Add the long-grain rice, tuna in spring water and vegetable stock; cover and simmer until the base is tender.",
+        "Rest for 5 minutes, fluff or stir, and check the seasoning."
+      ],
+      "nutrition": {
+        "calories": 570,
+        "calories_low": 513,
+        "calories_high": 627,
+        "protein_g": 28,
+        "carbs_g": 78,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "111689ca1b8fdfe40ecdf859b3f1d5e59d3f158af24df36a3c0f13aaac0ddfc5",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned tuna in spring water",
+          "normalized_name": "tuna",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Sweetcorn",
+          "normalized_name": "sweetcorn",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "fish-and-seafood-salmon-broccoli-traybake",
+      "title": "Salmon Broccoli Traybake",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 35,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "fish"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 220°C/200°C fan.",
+        "Cut the sweet potatoes, broccoli and peppers into even pieces.",
+        "Toss everything except the lemon with olive oil and mixed herbs; roast until browned and cooked through.",
+        "Finish with lemon and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 590,
+        "calories_low": 531,
+        "calories_high": 649,
+        "protein_g": 32,
+        "carbs_g": 69,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "large roasting tray"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "224bbe78750807b32fd054fab126b912c65910fe7ad8c2b972d87cae46dd9259",
+      "ingredients": [
+        {
+          "name": "Salmon fillets",
+          "normalized_name": "salmon",
+          "quantity": 520,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "fish-and-seafood-mackerel-tomato-wholewheat-pasta",
+      "title": "Mackerel Tomato Wholewheat Pasta",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the wholewheat pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and tomatoes in olive oil until softened.",
+        "Stir in the mackerel fillets and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "62d5d3472cf8521729f7a29874e83cb8bec164d1887534fb5d9239297c4ec6ab",
+      "ingredients": [
+        {
+          "name": "Wholewheat pasta",
+          "normalized_name": "wholewheat pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Smoked mackerel fillets",
+          "normalized_name": "mackerel",
+          "quantity": 360,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

@@ -20,6 +20,8 @@ export default function RecipeDetail() {
   const { inventory, preferences, session } = useApp();
   const [recipe, setRecipe] = useState<MealSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites();
   const { track } = useInteractions();
   const defaultServings = preferences.householdSize || 4;
@@ -32,6 +34,7 @@ export default function RecipeDetail() {
     async function load() {
       if (!id) { setIsLoading(false); return; }
       setIsLoading(true);
+      setLoadFailed(false);
       try {
         const data = await getRecipeById(id);
         if (!cancelled) {
@@ -39,14 +42,17 @@ export default function RecipeDetail() {
           if (data) track('recipe_viewed', { recipeId: id, recipeTitle: data.title });
         }
       } catch {
-        if (!cancelled) setRecipe(null);
+        if (!cancelled) {
+          setRecipe(null);
+          setLoadFailed(true);
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     }
     load();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, loadAttempt, track]);
 
   if (isLoading) {
     return (
@@ -62,7 +68,10 @@ export default function RecipeDetail() {
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <div className="glass-card p-6 text-center text-muted-foreground">Recipe not found</div>
+        <div className="glass-card space-y-3 p-6 text-center text-muted-foreground">
+          <p>{loadFailed ? 'We could not load this recipe.' : 'Recipe not found.'}</p>
+          {loadFailed && <Button variant="outline" className="min-h-11 rounded-xl" onClick={() => setLoadAttempt(current => current + 1)}>Retry</Button>}
+        </div>
       </div>
     );
   }
@@ -130,6 +139,16 @@ export default function RecipeDetail() {
     navigate('/meal-log', { state: { combinedRecipes, servings } });
   };
 
+  const handlePlanRecipe = () => {
+    const params = new URLSearchParams({
+      recipe: recipe.id,
+      title: recipe.title,
+      kind: recipe.provenance === 'catalogue' ? 'catalogue' : 'user_recipe',
+    });
+    if (recipe.image) params.set('image', recipe.image);
+    navigate(`/meal-planner?${params.toString()}`);
+  };
+
   // Compute combined ingredients for the paired view
   const pairedMissing = pairedRecipe
     ? pairedRecipe.ingredients.filter(ing =>
@@ -141,12 +160,12 @@ export default function RecipeDetail() {
     <div className="pb-28 max-w-lg mx-auto animate-fade-in">
       {/* Recipe hero — the same artwork system is used with or without a photo. */}
         <div className="relative h-64 w-full overflow-hidden">
-          <RecipeArtwork title={recipe.title} image={recipe.image} className="flex h-full w-full items-center justify-center" />
+          <RecipeArtwork title={recipe.title} image={recipe.image} variants={recipe.imageVariants} priority className="flex h-full w-full items-center justify-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
           <button
             aria-label="Back to recipes"
             onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
+            className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -154,14 +173,14 @@ export default function RecipeDetail() {
             <button
               aria-label={`${isFavorite(recipe.id) ? 'Remove' : 'Save'} ${recipe.title}`}
               onClick={() => toggleFavorite(recipe.id, recipe.title, recipe.image, recipe.category)}
-              className="w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <Heart className={`w-4 h-4 ${isFavorite(recipe.id) ? 'fill-red-500 text-red-500' : ''}`} />
             </button>
             <button
               aria-label={`Plan ${recipe.title}`}
-              onClick={() => navigate('/meal-planner')}
-              className="w-9 h-9 rounded-full bg-black/45 flex items-center justify-center text-white"
+              onClick={handlePlanRecipe}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <CalendarPlus className="w-4 h-4" />
             </button>
@@ -175,6 +194,7 @@ export default function RecipeDetail() {
                   ? 'Creator verified'
                   : 'Editorially reviewed'}
                 {(recipe.creatorName || recipe.sourceLabel) ? ` · ${recipe.creatorName ?? recipe.sourceLabel}` : ''}
+                {recipe.mediaAttribution?.ai_generated === true ? ' · AI-generated image' : ''}
               </p>
             )}
             <h1 className="text-2xl font-extrabold text-white leading-tight tracking-tight">{recipe.title}</h1>
@@ -225,7 +245,7 @@ export default function RecipeDetail() {
                 <button
                   aria-label="Decrease servings"
                   onClick={() => setServings(Math.max(1, servings - 1))}
-                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Minus className="w-3 h-3" />
                 </button>
@@ -233,7 +253,7 @@ export default function RecipeDetail() {
                 <button
                   aria-label="Increase servings"
                   onClick={() => setServings(servings + 1)}
-                  className="w-6 h-6 rounded-md bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Plus className="w-3 h-3" />
                 </button>
