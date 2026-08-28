@@ -1,10 +1,10 @@
 # Catalogue operations
 
-The beta launches from a reviewed database catalogue, not an endless AI meal feed. The database now contains 200 recipes: 12 founder-reviewed recipes are public and 188 structured candidates are private. Candidates remain invisible to ordinary users until they pass the existing review workflow.
+The beta launches from a reviewed database catalogue, not an endless AI meal feed. The database now contains 200 founder-approved recipes, all published as `editorial_reviewed`. This tier records structural, rights, allergen and nutrition review; it does not claim that every recipe was test-cooked.
 
 ## Beta-200 catalogue
 
-The 188 candidates are split across 17 practical packs in `catalogue/beta-200`. They provide dietary and meal-type breadth while preserving provenance, deduplication hashes, structured ingredients, calorie ranges, cost ranges and storage guidance.
+The original 188-candidate production batch is split across 17 practical packs in `catalogue/beta-200`. It provides dietary and meal-type breadth while preserving provenance, deduplication hashes, structured ingredients, calorie ranges, cost ranges and storage guidance.
 
 - Run `npm run catalogue:verify` after editing generated candidates.
 - Run `npm run catalogue:build` only when intentionally regenerating the deterministic candidate set.

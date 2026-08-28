@@ -14,26 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
       VITE_SUPABASE_PROJECT_ID: ${{ vars.VITE_SUPABASE_PROJECT_ID }}
       VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
+        with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint -- --max-warnings=0
       - run: npm test
+      - run: npm run catalogue:verify
+      - run: npm run catalogue:media-verify
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run build
         env:
           VITE_BASE_PATH: /
@@ -43,15 +41,54 @@ jobs:
           VITE_APP_ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
           VITE_APP_RELEASE: ${{ github.sha }}
           VITE_SUPPORT_EMAIL: ${{ vars.VITE_SUPPORT_EMAIL }}
-      - name: Save verified preview build
-        uses: actions/upload-artifact@v4
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+      - run: npm run test:performance
+      - uses: actions/upload-artifact@v4
         with:
           name: kitchen-companion-${{ github.ref_name }}
           path: dist
           retention-days: 7
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run test:e2e
+
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: supabase start
+      - run: supabase db reset
+      - run: supabase test db
+      - if: always()
+        run: supabase stop --no-backup
+
+  deploy:
+    needs: [verify, browser, database]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: kitchen-companion-${{ github.ref_name }}
+          path: dist
       - name: Cloudflare credentials required
         if: ${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' || env.CLOUDFLARE_PROJECT == '' }}
-        run: echo "Build passed. Add the Cloudflare API token, account ID and project variable to enable deployment."
+        run: echo "Build passed. Add Cloudflare deployment credentials to enable deployment."
       - name: Deploy Cloudflare Pages
         if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' && env.CLOUDFLARE_PROJECT != '' }}
         uses: cloudflare/wrangler-action@v3

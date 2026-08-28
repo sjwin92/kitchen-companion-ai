@@ -1,0 +1,32 @@
+name: nightly-encrypted-backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions: { contents: read }
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_AGE_RECIPIENT: ${{ secrets.BACKUP_AGE_RECIPIENT }}
+    steps:
+      - name: Backup credentials required
+        run: test -n "$SUPABASE_DB_URL" && test -n "$BACKUP_AGE_RECIPIENT"
+      - run: sudo apt-get update && sudo apt-get install -y age postgresql-client
+      - name: Create encrypted logical backup
+        run: |
+          stamp=$(date -u +%Y%m%dT%H%M%SZ)
+          pg_dump "$SUPABASE_DB_URL" --format=custom --no-owner --no-acl \
+            | age --recipient "$BACKUP_AGE_RECIPIENT" \
+            > "kitchen-companion-${stamp}.dump.age"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nightly-supabase-backup
+          path: '*.dump.age'
+          retention-days: 7
+          if-no-files-found: error

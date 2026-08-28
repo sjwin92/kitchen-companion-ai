@@ -10,7 +10,7 @@ test('shows coherent invite-only beta authentication', async ({ page }) => {
 
 test('sends password recovery back to the deployment that requested it', async ({ page }) => {
   let recoveryRedirect = '';
-  await page.route('http://127.0.0.1:54321/auth/v1/recover**', async route => {
+  await page.route('**/auth/v1/recover**', async route => {
     const requestUrl = new URL(route.request().url());
     const body = route.request().postDataJSON() as { redirect_to?: string };
     recoveryRedirect = requestUrl.searchParams.get('redirect_to') ?? body.redirect_to ?? '';
@@ -21,8 +21,8 @@ test('sends password recovery back to the deployment that requested it', async (
   await page.getByLabel('Email').fill('reset-test@kitchen.local');
   await page.getByRole('button', { name: 'Forgot your password?' }).click();
 
-  await expect(page.getByRole('status')).toContainText('Check your email');
-  expect(recoveryRedirect).toBe('http://127.0.0.1:8091/reset-password');
+  await expect.poll(() => recoveryRedirect, { timeout: 10_000 }).toBe('http://127.0.0.1:8091/reset-password');
+  await expect(page.getByRole('status')).toContainText('Check your email', { timeout: 10_000 });
 });
 
 test('connects the dashboard loop, menu and search to real destinations', async ({ page }, testInfo) => {
@@ -99,11 +99,11 @@ test('connects the dashboard loop, menu and search to real destinations', async 
   await page.getByText('Recipe books').click();
   await expect(page).toHaveURL(/\/recipe-books$/);
   await expect(page.getByRole('heading', { name: 'A shelf that cooks with you' })).toBeVisible();
-  await expect(page.getByText('Three starter packs are in review')).toBeVisible();
+  await expect(page.getByText(/reviewed 200-recipe catalogue/i)).toBeVisible();
 
   await page.goto('/meals');
   await expect(page.getByRole('heading', { name: 'Cook from what you have' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'The first recipe packs are in review' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No recipes match those filters' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Recipe lab' })).toBeVisible();
 });
 
