@@ -8,6 +8,22 @@ test('shows coherent invite-only beta authentication', async ({ page }) => {
   await expect(page.getByText('Invitation codes are tied to your email and work once.')).toBeVisible();
 });
 
+test('sends password recovery back to the deployment that requested it', async ({ page }) => {
+  let recoveryRedirect = '';
+  await page.route('http://127.0.0.1:54321/auth/v1/recover', async route => {
+    const body = route.request().postDataJSON() as { redirect_to?: string };
+    recoveryRedirect = body.redirect_to ?? '';
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('/');
+  await page.getByLabel('Email').fill('reset-test@kitchen.local');
+  await page.getByRole('button', { name: 'Forgot your password?' }).click();
+
+  await expect(page.getByRole('status')).toContainText('Check your email');
+  expect(recoveryRedirect).toBe('http://127.0.0.1:8091/reset-password');
+});
+
 test('connects the dashboard loop, menu and search to real destinations', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Desktop navigation is intentionally hidden on mobile.');
 

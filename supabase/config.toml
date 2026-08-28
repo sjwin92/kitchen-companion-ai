@@ -1,7 +1,7 @@
 project_id = "kitchen-companion"
 
 [auth]
-site_url = "https://sjwin92.github.io/kitchen-companion-ai/"
+site_url = "https://beta-hardening.kitchen-companion-beta.pages.dev/"
 minimum_password_length = 10
 password_requirements = "letters_digits"
 additional_redirect_urls = [
@@ -10,7 +10,8 @@ additional_redirect_urls = [
   "https://kitchen-companion-beta.pages.dev/",
   "https://kitchen-companion-beta.pages.dev/reset-password",
   "https://beta-hardening.kitchen-companion-beta.pages.dev/",
-  "https://beta-hardening.kitchen-companion-beta.pages.dev/reset-password"
+  "https://beta-hardening.kitchen-companion-beta.pages.dev/reset-password",
+  "https://*.kitchen-companion-beta.pages.dev/reset-password"
 ]
 
 [auth.email]

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Loader2, ChefHat } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { appUrl } from '@/lib/appUrls';
+import { authRedirectUrl } from '@/lib/appUrls';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +13,8 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetSentTo, setResetSentTo] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,13 +44,24 @@ export default function Auth() {
   const handlePasswordReset = async () => {
     if (!email.trim()) {
       toast.error('Enter your email address first');
+      document.getElementById('auth-email')?.focus();
       return;
     }
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: appUrl('reset-password'),
-    });
-    if (error) toast.error(error.message);
-    else toast.success('Password reset email sent');
+    setResetting(true);
+    setResetSentTo('');
+    try {
+      const normalizedEmail = email.trim();
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: authRedirectUrl('reset-password'),
+      });
+      if (error) throw error;
+      setResetSentTo(normalizedEmail);
+      toast.success('Password reset email sent');
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'We could not send the reset email. Please try again.');
+    } finally {
+      setResetting(false);
+    }
   };
 
   return (
@@ -112,9 +125,25 @@ export default function Auth() {
         </form>
 
         {isLogin && (
-          <button type="button" onClick={handlePasswordReset} className="block mx-auto text-xs text-muted-foreground hover:text-primary">
-            Forgot your password?
-          </button>
+          <div className="space-y-3 text-center">
+            <button
+              type="button"
+              onClick={() => void handlePasswordReset()}
+              disabled={resetting}
+              className="inline-flex min-h-11 items-center justify-center px-3 text-sm text-muted-foreground hover:text-primary disabled:cursor-wait disabled:opacity-60"
+            >
+              {resetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {resetting ? 'Sending reset email…' : 'Forgot your password?'}
+            </button>
+            {resetSentTo && (
+              <div role="status" className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-sm">
+                <p className="font-medium text-foreground">Check your email</p>
+                <p className="mt-1 text-muted-foreground">
+                  We sent a one-time recovery link to {resetSentTo}. Check spam if it does not arrive.
+                </p>
+              </div>
+            )}
+          </div>
         )}
 
         <p className="text-center text-sm text-muted-foreground">
