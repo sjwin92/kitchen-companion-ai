@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import { catalogRecipeToMealSuggestion, listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useCapabilities } from '@/hooks/useCapabilities';
 
 const MAX_VISIBLE_MEALS = 30;
+const RECOMMENDATION_POOL_SIZE = 100;
 type RankedMeal = MealWithStatus & { reasons: string[] };
 
 export default function MealSuggestions() {
@@ -44,7 +44,7 @@ export default function MealSuggestions() {
       setLoadError(null);
       try {
         const ranked = await listRecommendedCatalogRecipes({
-          limit: MAX_VISIBLE_MEALS,
+          limit: RECOMMENDATION_POOL_SIZE,
           search: searchTerm,
           minMatch: minMatchPercent,
         });
@@ -83,8 +83,6 @@ export default function MealSuggestions() {
     return mealsWithStatus.filter(meal => {
       if (meal.matchPercent < minMatchPercent) return false;
 
-      if (!passesUserDietaryFilters(meal.title, meal.ingredients, preferences)) return false;
-
       if (!query) return true;
       return (
         meal.title.toLowerCase().includes(query) ||
@@ -92,12 +90,14 @@ export default function MealSuggestions() {
         meal.ingredients.some(ing => ing.toLowerCase().includes(query))
       );
     });
-  }, [mealsWithStatus, searchTerm, minMatchPercent, preferences]);
+  }, [mealsWithStatus, searchTerm, minMatchPercent]);
 
   const visibleMeals = useMemo(() => filteredMeals.slice(0, MAX_VISIBLE_MEALS), [filteredMeals]);
 
-  // Find the top featured meal with an image and expiring ingredients
-  const featured = visibleMeals.find(m => m.image && m.matchPercent >= 50);
+  // Surface reviewed artwork even when a new or empty pantry gives every recipe
+  // a low match score. Dietary/allergen filtering has already happened in the
+  // authenticated catalogue RPC, so the hero remains safe for this user.
+  const featured = filteredMeals.find(meal => meal.image);
 
   const generateRecipe = async () => {
     if (!session?.user) { toast.error('Please sign in first'); return; }

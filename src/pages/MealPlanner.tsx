@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { startOfWeek, addDays, addWeeks, format, isToday } from 'date-fns';
-import { useMealPlans, MEAL_SLOTS, type MealPlanKind, type MealSlot } from '@/hooks/useMealPlans';
+import { useMealPlans, type MealPlanKind, type MealSlot } from '@/hooks/useMealPlans';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useMealDragDrop } from '@/hooks/useMealDragDrop';
 import { useMealSlotSettings } from '@/hooks/useMealSlotSettings';
@@ -9,7 +9,7 @@ import { useMealRatings } from '@/hooks/useMealRatings';
 import { useAutoPlan } from '@/hooks/useAutoPlan';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, UtensilsCrossed, SkipForward, Leaf, MoreHorizontal } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Plus, X, Loader2, ShoppingCart, GripVertical, Sparkles, UtensilsCrossed, SkipForward, Leaf, MoreHorizontal } from 'lucide-react';
 import { useGroceryGenerator } from '@/hooks/useGroceryGenerator';
 import AddMealDialog from '@/components/AddMealDialog';
 import PlanningModeSelector from '@/components/PlanningModeSelector';
@@ -413,9 +413,9 @@ export default function MealPlanner() {
                   {/* Meal slots row */}
                   <div
                     className="grid divide-x divide-border/30"
-                    style={{ gridTemplateColumns: `repeat(${DISPLAY_SLOTS.length}, minmax(0, 1fr))` }}
+                    style={{ gridTemplateColumns: `repeat(${displaySlots.length}, minmax(0, 1fr))` }}
                   >
-                    {DISPLAY_SLOTS.map(slot => {
+                    {displaySlots.map(slot => {
                       // Hide lunchbox on weekends or past the user's weekly count
                       if (slot === 'lunchbox') {
                         const dow = day.getDay();
