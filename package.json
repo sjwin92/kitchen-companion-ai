@@ -17,6 +17,7 @@
     "catalogue:validate": "node scripts/import-reviewed-recipes.mjs --validate-only",
     "catalogue:build": "node scripts/build-beta-catalogue.mjs",
     "catalogue:verify": "node scripts/verify-beta-catalogue.mjs",
+    "catalogue:media-queue": "node scripts/build-recipe-media-queue.mjs",
     "beta:invite": "node scripts/create-beta-invite.mjs"
   },
   "dependencies": {

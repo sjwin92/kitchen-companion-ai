@@ -194,6 +194,7 @@ export default function RecipeDetail() {
                   ? 'Creator verified'
                   : 'Editorially reviewed'}
                 {(recipe.creatorName || recipe.sourceLabel) ? ` · ${recipe.creatorName ?? recipe.sourceLabel}` : ''}
+                {recipe.mediaAttribution?.ai_generated === true ? ' · AI-generated image' : ''}
               </p>
             )}
             <h1 className="text-2xl font-extrabold text-white leading-tight tracking-tight">{recipe.title}</h1>

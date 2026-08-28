@@ -51,7 +51,7 @@ export default function RecipeCard({
           <RecipeArtwork
             title={title}
             image={image}
-            className="aspect-[4/5] w-full items-center justify-center sm:aspect-[5/4]"
+            className="aspect-[4/5] w-full items-center justify-center"
             imageClassName="transition-transform duration-700 group-hover:scale-[1.025]"
           />
         </button>
