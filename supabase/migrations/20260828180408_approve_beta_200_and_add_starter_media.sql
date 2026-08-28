@@ -2,6 +2,31 @@
 -- provenance for the original 12-recipe starter set. This migration deliberately
 -- uses editorial_reviewed: founder approval does not claim test-kitchen testing.
 
+-- A fresh local/CI database has no human accounts. Create a non-login audit actor
+-- only in that case so the immutable review/version foreign keys remain valid.
+-- Real deployments already have the founder administrator and never create this row.
+insert into auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change
+)
+select
+  '00000000-0000-0000-0000-000000000000',
+  '00000000-0000-4000-8000-000000000200',
+  'authenticated',
+  'authenticated',
+  'catalogue-audit@system.invalid',
+  '',
+  now(),
+  '{"role":"admin","provider":"system","providers":[]}'::jsonb,
+  '{"display_name":"Catalogue audit actor"}'::jsonb,
+  now(),
+  now(),
+  '', '', '', ''
+where not exists (
+  select 1 from auth.users where raw_app_meta_data ->> 'role' = 'admin'
+);
+
 do $$
 declare
   v_reviewer uuid;
@@ -27,7 +52,10 @@ begin
   if exists (
     select 1
     from public.recipes recipe
-    where recipe.catalogue_batch = 'beta-200'
+    where (
+        recipe.catalogue_batch = 'beta-200'
+        or recipe.catalogue_batch in ('use-it-up-volume-1', 'five-ingredient-weeknights-volume-1', 'plant-forward-starters-volume-1')
+      )
       and (
         recipe.review_status <> 'draft'
         or recipe.rights_basis = 'unconfirmed'
@@ -53,6 +81,7 @@ begin
     select *
     from public.recipes
     where catalogue_batch = 'beta-200'
+       or catalogue_batch in ('use-it-up-volume-1', 'five-ingredient-weeknights-volume-1', 'plant-forward-starters-volume-1')
     order by slug
     for update
   loop
@@ -114,8 +143,8 @@ begin
     v_reviewed := v_reviewed + 1;
   end loop;
 
-  if v_reviewed <> 188 then
-    raise exception 'Expected to approve 188 beta-200 candidates, approved %', v_reviewed;
+  if v_reviewed <> 200 then
+    raise exception 'Expected to approve 200 beta candidates, approved %', v_reviewed;
   end if;
 
   update public.recipe_books book
@@ -123,13 +152,7 @@ begin
       published_at = coalesce(book.published_at, now()),
       updated_at = now()
   where book.review_status = 'draft'
-    and exists (
-      select 1
-      from public.recipe_book_recipes link
-      join public.recipes recipe on recipe.id = link.recipe_id
-      where link.recipe_book_id = book.id
-        and recipe.catalogue_batch = 'beta-200'
-    )
+    and exists (select 1 from public.recipe_book_recipes link where link.recipe_book_id = book.id)
     and not exists (
       select 1
       from public.recipe_book_recipes link

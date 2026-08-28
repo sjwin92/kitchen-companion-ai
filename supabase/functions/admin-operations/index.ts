@@ -37,6 +37,10 @@ Deno.serve(async (req) => {
   const { data: { user }, error: authError } = await userClient.auth.getUser();
   if (authError || !user) return respond(req, { error: "Authentication required" }, 401);
   if (user.app_metadata?.role !== "admin") return respond(req, { error: "Administrator access required" }, 403);
+  const { data: assurance, error: assuranceError } = await userClient.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assuranceError || assurance.currentLevel !== "aal2") {
+    return respond(req, { error: "Administrator MFA verification required" }, 403);
+  }
 
   const service = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
   let body: Record<string, unknown>;

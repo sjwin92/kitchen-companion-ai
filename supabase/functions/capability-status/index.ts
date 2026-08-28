@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
   const { data: usage, error: usageError } = await service
     .from("ai_usage_events")
     .select("capability,estimated_cost_gbp,actual_cost_gbp,status")
-    .in("status", ["reserved", "succeeded"])
+    .in("status", ["reserved", "succeeded", "uncertain"])
     .gte("created_at", monthStart.toISOString());
   if (usageError) return respond(req, { error: "AI budget status is unavailable" }, 503);
   const spent = (usage ?? []).reduce((total, event) => total + Number(event.actual_cost_gbp ?? event.estimated_cost_gbp ?? 0), 0);

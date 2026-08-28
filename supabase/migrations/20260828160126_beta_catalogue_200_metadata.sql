@@ -52,8 +52,8 @@ declare
   v_count integer := 0;
 begin
   if jsonb_typeof(p_payload -> 'recipes') <> 'array'
-    or jsonb_array_length(p_payload -> 'recipes') not between 8 and 15 then
-    raise exception 'Candidate packs must contain between 8 and 15 recipes';
+    or jsonb_array_length(p_payload -> 'recipes') not between 4 and 15 then
+    raise exception 'Candidate packs must contain between 4 and 15 recipes';
   end if;
 
   insert into public.creators (slug, display_name, bio, website_url, social_links, review_status)
@@ -253,7 +253,7 @@ revoke all on function private.import_catalogue_candidate_pack(jsonb) from publi
 grant execute on function private.import_catalogue_candidate_pack(jsonb) to service_role;
 
 comment on function private.import_catalogue_candidate_pack(jsonb) is
-  'Idempotently imports one 8–15 recipe candidate pack as private drafts. Approved content is never overwritten.';
+  'Idempotently imports one 4–15 recipe candidate pack as private drafts. Approved content is never overwritten.';
 
 -- The founder already reviewed the original 12-recipe starter catalogue.
 -- Publish its three shelves only when every linked recipe is approved.
