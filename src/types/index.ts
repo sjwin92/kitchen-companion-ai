@@ -28,6 +28,7 @@ export interface MealSuggestion {
   ingredients: string[];
   measures?: string[];
   image?: string;
+  imageVariants?: RecipeMediaVariants;
   instructions?: string;
   category?: string;
   area?: string;
@@ -45,6 +46,15 @@ export interface MealSuggestion {
   contentVersion?: number;
   mediaAttribution?: Record<string, unknown>;
   creatorName?: string | null;
+}
+
+export interface RecipeMediaVariants {
+  card: string;
+  detail: string;
+  original: string;
+  width: number;
+  height: number;
+  contentHash?: string;
 }
 
 export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
@@ -149,6 +159,7 @@ export interface CatalogRecipe {
   ingredients: RecipeIngredient[];
   instructions: string[];
   imagePath: string | null;
+  imageVariants: RecipeMediaVariants | null;
   youtubeUrl: string | null;
   audioUrl: string | null;
   creatorName: string | null;

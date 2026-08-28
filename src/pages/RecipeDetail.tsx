@@ -160,7 +160,7 @@ export default function RecipeDetail() {
     <div className="pb-28 max-w-lg mx-auto animate-fade-in">
       {/* Recipe hero — the same artwork system is used with or without a photo. */}
         <div className="relative h-64 w-full overflow-hidden">
-          <RecipeArtwork title={recipe.title} image={recipe.image} className="flex h-full w-full items-center justify-center" />
+          <RecipeArtwork title={recipe.title} image={recipe.image} variants={recipe.imageVariants} priority className="flex h-full w-full items-center justify-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
           <button
             aria-label="Back to recipes"

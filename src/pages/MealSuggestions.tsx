@@ -204,12 +204,12 @@ export default function MealSuggestions() {
           {!isLoading && filteredMeals.length === 0 && (
             <div className="rounded-2xl border border-border/70 bg-card p-7 md:p-9">
               <span className="text-4xl" aria-hidden="true">🍲</span>
-              <h2 className="mt-4 text-xl font-extrabold">{loadError ? 'The recipe shelf did not load' : searchTerm.trim() || minMatchPercent > 0 ? 'No recipes match those filters' : 'The first recipe packs are in review'}</h2>
+              <h2 className="mt-4 text-xl font-extrabold">{loadError ? 'The recipe shelf did not load' : 'No recipes match those filters'}</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
                 {loadError ?? (searchTerm.trim() || minMatchPercent > 0
                   ? 'Try a lower pantry match or search for a different ingredient.'
                   : mealsWithStatus.length === 0
-                  ? 'The beta catalogue only publishes recipes after cooking, allergen and rights checks. Three Kitchen Companion starter packs are being prepared now.'
+                  ? 'The reviewed catalogue could not find a safe match. Check your dietary preferences, try another ingredient, or lower the pantry match.'
                   : 'Try a lower pantry match or search for a different ingredient.')}
               </p>
               {mealsWithStatus.length === 0 && !loadError && !searchTerm.trim() && minMatchPercent === 0 && (
@@ -233,6 +233,7 @@ export default function MealSuggestions() {
                   key={meal.id}
                   title={meal.title}
                   image={meal.image}
+                  imageVariants={meal.imageVariants}
                   prepTime={meal.prepTime}
                   matchPercent={meal.matchPercent}
                   ownedCount={meal.owned.length}

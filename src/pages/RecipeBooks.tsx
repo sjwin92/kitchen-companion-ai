@@ -5,12 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { getRecipeMediaUrl, listRecipeBooks, type RecipeBookSummary } from '@/services/betaCatalog';
 
-const STARTER_COLLECTIONS = [
-  { title: 'Plant-Forward Starters', emoji: '🌿', note: 'Everyday breakfasts, lunches and dinners' },
-  { title: 'Five-Ingredient Weeknights', emoji: '⏱️', note: 'Low-fuss meals for busy evenings' },
-  { title: 'Use It Up', emoji: '🥕', note: 'Flexible recipes built around what needs eating' },
-];
-
 export default function RecipeBooks() {
   const [books, setBooks] = useState<RecipeBookSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,38 +28,14 @@ export default function RecipeBooks() {
       {loading && <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2].map(item => <div key={item} className="h-[440px] animate-pulse rounded-2xl bg-muted/60" />)}</div>}
       {error && <Card className="p-5 text-sm text-destructive">{error}</Card>}
       {!loading && !error && books.length === 0 && (
-        <section>
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <p className="section-title mb-2">Coming to the beta shelf</p>
-              <h2 className="text-xl font-extrabold">Three starter packs are in review</h2>
-            </div>
-            <span className="hidden rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-muted-foreground sm:block">12 recipes being checked</span>
+        <Card className="flex items-start gap-3 rounded-2xl p-6">
+          <BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+          <div>
+            <h2 className="text-lg font-bold">The recipe shelf is temporarily unavailable</h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">The reviewed 200-recipe catalogue is still available from Discover recipes. Refresh this page to reload its collections.</p>
+            <Button asChild className="mt-4 rounded-xl"><Link to="/meals">Browse all recipes</Link></Button>
           </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {STARTER_COLLECTIONS.map((collection, index) => (
-              <article key={collection.title} className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[var(--shadow-card)]">
-                <div className={`relative aspect-[4/3] overflow-hidden p-6 ${index === 0 ? 'bg-[#cbd8c4]' : index === 1 ? 'bg-[#ded1ba]' : 'bg-[#d7c3ad]'}`}>
-                  <div className="absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/40 bg-white/20" />
-                  <span className="relative text-5xl" aria-hidden="true">{collection.emoji}</span>
-                  <span className="absolute bottom-5 left-6 rounded-full bg-white/75 px-2.5 py-1 text-[10px] font-bold text-[#35463d]">In editorial review</span>
-                </div>
-                <div className="p-5">
-                  <p className="text-xs font-semibold text-muted-foreground">Kitchen Companion Test Kitchen</p>
-                  <h3 className="mt-2 text-xl font-extrabold leading-tight">{collection.title}</h3>
-                  <p className="mt-2 text-sm leading-5 text-muted-foreground">{collection.note}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-border/70 bg-card p-5">
-            <BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-            <div>
-              <p className="text-sm font-bold">Why the shelf is not padded with filler</p>
-              <p className="mt-1 text-sm leading-5 text-muted-foreground">Public recipes need cooking, allergen, nutrition and publishing-rights checks. Private generated drafts stay private until a human editor approves them.</p>
-            </div>
-          </div>
-        </section>
+        </Card>
       )}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {books.map(book => (

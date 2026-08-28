@@ -103,7 +103,7 @@ export default function Settings() {
     if (!session?.user) return;
     setPrivacyAction('export');
     try {
-      await downloadAccountExport(session.user.id, session.user.email);
+      await downloadAccountExport();
       toast.success('Your data export has downloaded');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Export failed');
@@ -117,7 +117,6 @@ export default function Settings() {
     setPrivacyAction('delete');
     try {
       await deleteAccount();
-      await signOut();
       toast.success('Account deleted');
       setDeleteDialogOpen(false);
       navigate('/', { replace: true });

@@ -6,6 +6,9 @@ import { toast } from 'sonner';
 import { Loader2, ChefHat } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { authRedirectUrl } from '@/lib/appUrls';
+import { Turnstile } from '@marsidev/react-turnstile';
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim();
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,21 +18,42 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [resetSentTo, setResetSentTo] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(undefined);
+    setCaptchaError(null);
+    setCaptchaKey(value => value + 1);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLogin && (password.length < 10 || !/[a-z]/i.test(password) || !/\d/.test(password))) {
+      toast.error('Use at least 10 characters, including a letter and a number');
+      return;
+    }
     setLoading(true);
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+          options: { captchaToken },
+        });
         if (error) throw error;
         toast.success('Welcome back!');
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { invite_code: inviteCode.trim() } },
+          options: {
+            data: { invite_code: inviteCode.trim() },
+            captchaToken,
+            emailRedirectTo: authRedirectUrl(''),
+          },
         });
         if (error) throw error;
         toast.success('Check your email to confirm your account!');
@@ -37,6 +61,7 @@ export default function Auth() {
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
+      if (TURNSTILE_SITE_KEY) resetCaptcha();
       setLoading(false);
     }
   };
@@ -53,6 +78,7 @@ export default function Auth() {
       const normalizedEmail = email.trim();
       const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo: authRedirectUrl('reset-password'),
+        captchaToken,
       });
       if (error) throw error;
       setResetSentTo(normalizedEmail);
@@ -60,6 +86,7 @@ export default function Auth() {
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'We could not send the reset email. Please try again.');
     } finally {
+      if (TURNSTILE_SITE_KEY) resetCaptcha();
       setResetting(false);
     }
   };
@@ -100,8 +127,9 @@ export default function Auth() {
               placeholder="••••••••"
               autoComplete={isLogin ? 'current-password' : 'new-password'}
               required
-              minLength={6}
+              minLength={isLogin ? undefined : 10}
             />
+            {!isLogin && <p className="mt-1 text-xs text-muted-foreground">At least 10 characters, including a letter and a number.</p>}
           </div>
           {!isLogin && (
             <div>
@@ -118,7 +146,25 @@ export default function Auth() {
               <p className="text-xs text-muted-foreground mt-1">Invitation codes are tied to your email and work once.</p>
             </div>
           )}
-          <Button type="submit" className="w-full" disabled={loading}>
+          {TURNSTILE_SITE_KEY && (
+            <div className="flex min-h-[70px] items-center justify-center rounded-xl border border-border/70 bg-card p-2" aria-label="Security verification">
+              <Turnstile
+                key={captchaKey}
+                siteKey={TURNSTILE_SITE_KEY}
+                onSuccess={token => { setCaptchaToken(token); setCaptchaError(null); }}
+                onExpire={() => { setCaptchaToken(undefined); setCaptchaError('Security verification expired. Please complete it again.'); }}
+                onError={() => { setCaptchaToken(undefined); setCaptchaError('Security verification did not load. Check your connection and retry.'); }}
+                options={{ theme: 'light', size: 'flexible' }}
+              />
+            </div>
+          )}
+          {captchaError && (
+            <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-destructive/25 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              <span>{captchaError}</span>
+              <Button type="button" variant="outline" size="sm" onClick={resetCaptcha}>Retry</Button>
+            </div>
+          )}
+          <Button type="submit" className="w-full" disabled={loading || Boolean(TURNSTILE_SITE_KEY && !captchaToken)}>
             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {isLogin ? 'Sign In' : 'Sign Up'}
           </Button>
@@ -129,7 +175,7 @@ export default function Auth() {
             <button
               type="button"
               onClick={() => void handlePasswordReset()}
-              disabled={resetting}
+              disabled={resetting || Boolean(TURNSTILE_SITE_KEY && !captchaToken)}
               className="inline-flex min-h-11 items-center justify-center px-3 text-sm text-muted-foreground hover:text-primary disabled:cursor-wait disabled:opacity-60"
             >
               {resetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -149,7 +195,7 @@ export default function Auth() {
         <p className="text-center text-sm text-muted-foreground">
           {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => { setIsLogin(!isLogin); if (TURNSTILE_SITE_KEY) resetCaptcha(); }}
             className="text-primary font-medium hover:underline"
           >
             {isLogin ? 'Sign Up' : 'Sign In'}

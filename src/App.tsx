@@ -34,6 +34,7 @@ const WeeklyInsights = lazy(() => import("@/pages/WeeklyInsights"));
 const RecipeBooks = lazy(() => import("@/pages/RecipeBooks"));
 const RecipeBookDetail = lazy(() => import("@/pages/RecipeBookDetail"));
 const CatalogueReview = lazy(() => import("@/pages/CatalogueReview"));
+const AdminMfaGate = lazy(() => import("@/components/AdminMfaGate"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const PublicInformation = lazy(() => import("@/pages/PublicInformation"));
@@ -138,7 +139,7 @@ function AppContent() {
               <Route path="/meals" element={<MealSuggestions />} />
               <Route path="/recipe-books" element={<RecipeBooks />} />
               <Route path="/recipe-books/:id" element={<RecipeBookDetail />} />
-              <Route path="/admin/catalogue" element={<CatalogueReview />} />
+              <Route path="/admin/catalogue" element={<AdminMfaGate><CatalogueReview /></AdminMfaGate>} />
               <Route path="/recipe/:id" element={<RecipeDetail />} />
               <Route path="/missing/:id" element={<MissingIngredients />} />
               <Route path="/saved-lists" element={<SavedLists />} />

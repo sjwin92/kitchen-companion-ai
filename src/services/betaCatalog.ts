@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import type { CatalogRecipe, MealSuggestion, RecipeRecommendation } from '@/types';
+import type { CatalogRecipe, MealSuggestion, RecipeMediaVariants, RecipeRecommendation } from '@/types';
 
 const db = supabase as unknown as SupabaseClient;
 
@@ -61,7 +61,21 @@ const CATALOG_RECIPE_SELECT = `
 export function getRecipeMediaUrl(path: string | null) {
   if (!path) return null;
   if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith('catalogue/')) return `/images/recipes/${path.slice('catalogue/'.length)}`;
   return supabase.storage.from('recipe-media').getPublicUrl(path).data.publicUrl;
+}
+
+export function getRecipeMediaVariants(path: string | null): RecipeMediaVariants | null {
+  if (!path || !path.startsWith('catalogue/')) return null;
+  const filename = path.slice('catalogue/'.length);
+  const stem = filename.replace(/\.[^.]+$/, '');
+  return {
+    card: `/images/recipes/${stem}.card.webp`,
+    detail: `/images/recipes/${stem}.detail.webp`,
+    original: `/images/recipes/${filename}`,
+    width: 1024,
+    height: 1280,
+  };
 }
 
 function instructionText(value: string | { text?: string }) {
@@ -101,6 +115,7 @@ function mapCatalogRecipe(row: CatalogRecipeRow): CatalogRecipe {
     })),
     instructions: (row.instructions ?? []).map(instructionText).filter(Boolean),
     imagePath: getRecipeMediaUrl(row.image_path),
+    imageVariants: getRecipeMediaVariants(row.image_path),
     youtubeUrl: row.youtube_url,
     audioUrl: row.audio_url,
     creatorName: row.creators?.display_name ?? null,
@@ -143,6 +158,7 @@ export function catalogRecipeToMealSuggestion(recipe: CatalogRecipe): MealSugges
     ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
     measures: recipe.ingredients.map((ingredient) => [ingredient.quantity, ingredient.unit].filter(Boolean).join(' ')),
     image: recipe.imagePath ?? undefined,
+    imageVariants: recipe.imageVariants ?? undefined,
     instructions: recipe.instructions.join('\n'),
     category: recipe.dietaryTags[0] ?? 'Recipe',
     area: recipe.cuisineTags[0],

@@ -94,19 +94,13 @@ export default function Dashboard() {
               onClick={openTonight}
               className="group relative block h-[420px] w-full overflow-hidden rounded-[2rem] bg-[#173d32] text-left shadow-[0_24px_70px_rgba(24,53,44,0.2)] md:h-[520px]"
             >
-              {heroImage ? (
-                <img
-                  src={heroImage}
-                  alt={heroTitle}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
-                />
-              ) : (
-                <RecipeArtwork
-                  title={heroTitle}
-                  className="h-full w-full"
-                  imageClassName="transition-transform duration-700 group-hover:scale-[1.025]"
-                />
-              )}
+              <RecipeArtwork
+                title={heroTitle}
+                image={heroImage}
+                priority
+                className="h-full w-full"
+                imageClassName="transition-transform duration-700 group-hover:scale-[1.025]"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[#102c25]/95 via-[#102c25]/15 to-black/10" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9">
                 <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/75">
@@ -166,7 +160,7 @@ export default function Dashboard() {
                     <p className="mt-0.5 text-xl font-semibold">{format(new Date(`${plan.planned_date}T12:00:00`), 'd')}</p>
                   </div>
                   {plan.image ? (
-                    <img src={plan.image} alt="" className="h-14 w-14 rounded-xl object-cover" />
+                    <RecipeArtwork title={plan.title} image={plan.image} className="h-14 w-14 shrink-0 rounded-xl" />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#e9e4da]"><CalendarDays className="h-4 w-4 text-primary" /></div>
                   )}
