@@ -48,6 +48,15 @@ describe('shared dietary rules', () => {
     expect(foodTextMatchesTerm('two eggs', 'egg')).toBe(true);
   });
 
+  it.each([
+    'butter beans',
+    'peanut butter',
+    'unsweetened plant milk',
+    'light coconut milk',
+  ])('recognises %s as a vegan ingredient rather than dairy', (ingredient) => {
+    expect(dietExcludesFood(ingredient, ['Vegan'])).toBe(false);
+  });
+
   it('maps legacy settings values into the canonical choices', () => {
     expect(canonicalizeDietaryPreferences(['Plant-Based', 'High Protein']))
       .toEqual(['Vegan', 'High-Protein']);

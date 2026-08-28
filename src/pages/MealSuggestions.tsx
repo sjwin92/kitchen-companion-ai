@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { passesUserDietaryFilters } from '@/lib/dietaryFilter';
 import { catalogRecipeToMealSuggestion, listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { MealWithStatus } from '@/lib/mealMatching';
 import { Button } from '@/components/ui/button';
@@ -82,6 +83,9 @@ export default function MealSuggestions() {
 
     return mealsWithStatus.filter(meal => {
       if (meal.matchPercent < minMatchPercent) return false;
+      // Defence in depth for the dietary gate enforced by the authenticated
+      // recommendation RPC. This also protects a cached/stale RPC response.
+      if (!passesUserDietaryFilters(meal.title, meal.ingredients, preferences)) return false;
 
       if (!query) return true;
       return (
@@ -90,7 +94,7 @@ export default function MealSuggestions() {
         meal.ingredients.some(ing => ing.toLowerCase().includes(query))
       );
     });
-  }, [mealsWithStatus, searchTerm, minMatchPercent]);
+  }, [mealsWithStatus, searchTerm, minMatchPercent, preferences]);
 
   const visibleMeals = useMemo(() => filteredMeals.slice(0, MAX_VISIBLE_MEALS), [filteredMeals]);
 
