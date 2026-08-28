@@ -16,8 +16,8 @@
   },
   "recipes": [
     {
-      "slug": "chicken-weeknights-lemon-chicken-couscous-traybake",
-      "title": "Lemon Chicken Couscous Traybake",
+      "slug": "chicken-weeknights-lemon-chicken-vegetable-traybake",
+      "title": "Lemon Chicken Vegetable Traybake",
       "description": "A practical dinner designed to make good use of everyday ingredients.",
       "servings": 4,
       "prep_minutes": 15,
@@ -74,7 +74,7 @@
       },
       "swap_guidance": [],
       "catalogue_batch": "beta-200",
-      "dedupe_hash": "7b9e7fe0d7e12ab31b2ac3d23396594102c2a6b4de53be54d3999474390154f1",
+      "dedupe_hash": "82938af985af3553880edc92cc60a69414595183622b2904674b1297632b2597",
       "ingredients": [
         {
           "name": "Skinless chicken thighs",

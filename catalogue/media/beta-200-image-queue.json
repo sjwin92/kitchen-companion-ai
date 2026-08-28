@@ -1,13 +1,13 @@
 {
   "style_version": "kitchen-companion-editorial-v1",
-  "generated_at": "2026-08-28T18:03:44.756Z",
+  "generated_at": "2026-08-28T19:15:17.084Z",
   "policy": "One recipe-specific asset per generation call. Human review is required before upload or publication.",
   "assets": [
     {
       "slug": "budget-batch-cooking-smoky-three-bean-tomato-stew",
       "title": "Smoky Three-Bean Tomato Stew",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-smoky-three-bean-tomato-stew.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-smoky-three-bean-tomato-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Smoky Three-Bean Tomato Stew. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Tinned kidney beans, Mixed peppers, Sweetcorn, Onion, Chopped tomatoes, Smoked paprika, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -16,7 +16,7 @@
       "slug": "budget-batch-cooking-red-lentil-carrot-dal",
       "title": "Red Lentil Carrot Dal",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-red-lentil-carrot-dal.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-red-lentil-carrot-dal.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Red Lentil Carrot Dal. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Long-grain rice, Dried red lentils, Carrots, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -25,7 +25,7 @@
       "slug": "budget-batch-cooking-butter-bean-and-squash-stew",
       "title": "Butter Bean & Squash Stew",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-butter-bean-and-squash-stew.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-butter-bean-and-squash-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Butter Bean & Squash Stew. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Tinned butter beans, Butternut squash, Baby spinach, Onion, Chopped tomatoes, Dried mixed herbs, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -34,7 +34,7 @@
       "slug": "budget-batch-cooking-turkey-and-lentil-tomato-stew",
       "title": "Turkey & Lentil Tomato Stew",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-turkey-and-lentil-tomato-stew.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-turkey-and-lentil-tomato-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Turkey & Lentil Tomato Stew. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Turkey mince, Tinned green lentils, Carrots, Onion, Chopped tomatoes, Smoked paprika, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -43,7 +43,7 @@
       "slug": "budget-batch-cooking-chickpea-aubergine-curry",
       "title": "Chickpea Aubergine Curry",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-chickpea-aubergine-curry.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-chickpea-aubergine-curry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chickpea Aubergine Curry. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Long-grain rice, Tinned chickpeas, Aubergines, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -52,7 +52,7 @@
       "slug": "budget-batch-cooking-kidney-bean-sweet-potato-stew",
       "title": "Kidney Bean Sweet Potato Stew",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-kidney-bean-sweet-potato-stew.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-kidney-bean-sweet-potato-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Kidney Bean Sweet Potato Stew. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Tinned kidney beans, Sweet potatoes, Mixed peppers, Onion, Chopped tomatoes, Ground cumin, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -61,7 +61,7 @@
       "slug": "budget-batch-cooking-chicken-vegetable-barley-stew",
       "title": "Chicken Vegetable Barley Stew",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-chicken-vegetable-barley-stew.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-chicken-vegetable-barley-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Vegetable Barley Stew. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Skinless chicken thighs, Pearl barley, Carrots, Onion, Low-salt chicken stock, Dried mixed herbs, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -70,7 +70,7 @@
       "slug": "budget-batch-cooking-lentil-mushroom-pasta-sauce",
       "title": "Lentil Mushroom Pasta Sauce",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-lentil-mushroom-pasta-sauce.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-lentil-mushroom-pasta-sauce.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lentil Mushroom Pasta Sauce. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Dried pasta, Tinned green lentils, Chestnut mushrooms, Passata, Garlic cloves, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -79,7 +79,7 @@
       "slug": "budget-batch-cooking-black-bean-tomato-rice-pot",
       "title": "Black Bean Tomato Rice Pot",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-black-bean-tomato-rice-pot.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-black-bean-tomato-rice-pot.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Black Bean Tomato Rice Pot. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Long-grain rice, Tinned black beans, Mixed peppers, Sweetcorn, Chopped tomatoes, Smoked paprika, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -88,7 +88,7 @@
       "slug": "budget-batch-cooking-pea-spinach-coconut-curry",
       "title": "Pea Spinach Coconut Curry",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-pea-spinach-coconut-curry.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-pea-spinach-coconut-curry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Pea Spinach Coconut Curry. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Long-grain rice, Tinned chickpeas, Frozen peas, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -97,25 +97,25 @@
       "slug": "budget-batch-cooking-beef-lentil-bolognese-pot",
       "title": "Beef Lentil Bolognese Pot",
       "pack": "budget-batch-cooking-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/budget-batch-cooking-beef-lentil-bolognese-pot.jpg",
       "target_storage_path": "catalogue/budget-batch-cooking-beef-lentil-bolognese-pot.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Beef Lentil Bolognese Pot. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Lean beef mince, Tinned green lentils, Carrots, Onion, Passata, Dried mixed herbs, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
     },
     {
-      "slug": "chicken-weeknights-lemon-chicken-couscous-traybake",
-      "title": "Lemon Chicken Couscous Traybake",
+      "slug": "chicken-weeknights-lemon-chicken-vegetable-traybake",
+      "title": "Lemon Chicken Vegetable Traybake",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
-      "target_file": "public/images/recipes/chicken-weeknights-lemon-chicken-couscous-traybake.jpg",
-      "target_storage_path": "catalogue/chicken-weeknights-lemon-chicken-couscous-traybake.jpg",
-      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lemon Chicken Couscous Traybake. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Skinless chicken thighs, Potatoes, Mixed peppers, Courgettes, Olive oil, Dried mixed herbs, Lemon. Setting: a refined dark timber dining table with understated modern place settings. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
+      "status": "published",
+      "target_file": "public/images/recipes/chicken-weeknights-lemon-chicken-vegetable-traybake.jpg",
+      "target_storage_path": "catalogue/chicken-weeknights-lemon-chicken-vegetable-traybake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lemon Chicken Vegetable Traybake. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Skinless chicken thighs, Potatoes, Mixed peppers, Courgettes, Olive oil, Dried mixed herbs, Lemon. Setting: a refined dark timber dining table with understated modern place settings. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
     },
     {
       "slug": "chicken-weeknights-chicken-broccoli-noodle-stir-fry",
       "title": "Chicken Broccoli Noodle Stir-Fry",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-broccoli-noodle-stir-fry.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-broccoli-noodle-stir-fry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Broccoli Noodle Stir-Fry. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Egg noodles, Chicken breast, Broccoli, Mixed peppers, Reduced-salt soy sauce, Fresh ginger, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -124,7 +124,7 @@
       "slug": "chicken-weeknights-chicken-spinach-coconut-curry",
       "title": "Chicken Spinach Coconut Curry",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-spinach-coconut-curry.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-spinach-coconut-curry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Spinach Coconut Curry. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Long-grain rice, Skinless chicken thighs, Baby spinach, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -133,7 +133,7 @@
       "slug": "chicken-weeknights-chicken-mushroom-wholewheat-pasta",
       "title": "Chicken Mushroom Wholewheat Pasta",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-mushroom-wholewheat-pasta.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-mushroom-wholewheat-pasta.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Mushroom Wholewheat Pasta. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Wholewheat pasta, Chicken breast, Chestnut mushrooms, Greek-style yogurt, Garlic cloves, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -142,7 +142,7 @@
       "slug": "chicken-weeknights-paprika-chicken-rice-pot",
       "title": "Paprika Chicken Rice Pot",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-paprika-chicken-rice-pot.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-paprika-chicken-rice-pot.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Paprika Chicken Rice Pot. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Long-grain rice, Skinless chicken thighs, Mixed peppers, Frozen peas, Low-salt chicken stock, Smoked paprika, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -151,7 +151,7 @@
       "slug": "chicken-weeknights-chicken-black-bean-tacos",
       "title": "Chicken Black Bean Tacos",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-black-bean-tacos.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-black-bean-tacos.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Black Bean Tacos. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Large tortilla wraps, Chicken breast, Tinned black beans, Romaine lettuce, Tomato salsa, Limes. Setting: a matte dark forest-green stone table with restrained negative space. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -160,7 +160,7 @@
       "slug": "chicken-weeknights-mustard-chicken-potato-traybake",
       "title": "Mustard Chicken Potato Traybake",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-mustard-chicken-potato-traybake.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-mustard-chicken-potato-traybake.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mustard Chicken Potato Traybake. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Skinless chicken thighs, Potatoes, Green beans, Carrots, Olive oil, Wholegrain mustard, Lemon. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -169,7 +169,7 @@
       "slug": "chicken-weeknights-chicken-tahini-quinoa-bowls",
       "title": "Chicken Tahini Quinoa Bowls",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-tahini-quinoa-bowls.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-tahini-quinoa-bowls.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Tahini Quinoa Bowls. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Quinoa, Chicken breast, Cucumber, Tomatoes, Tahini, Lemon. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -178,7 +178,7 @@
       "slug": "chicken-weeknights-chicken-tomato-barley-stew",
       "title": "Chicken Tomato Barley Stew",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-tomato-barley-stew.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-tomato-barley-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Tomato Barley Stew. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Skinless chicken thighs, Pearl barley, Carrots, Onion, Chopped tomatoes, Dried mixed herbs, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -187,7 +187,7 @@
       "slug": "chicken-weeknights-chicken-pesto-pea-pasta",
       "title": "Chicken Pesto Pea Pasta",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-pesto-pea-pasta.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-pesto-pea-pasta.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Pesto Pea Pasta. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Dried pasta, Chicken breast, Frozen peas, Basil pesto, Garlic cloves, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -196,7 +196,7 @@
       "slug": "chicken-weeknights-chicken-sweet-potato-curry",
       "title": "Chicken Sweet Potato Curry",
       "pack": "chicken-weeknights-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/chicken-weeknights-chicken-sweet-potato-curry.jpg",
       "target_storage_path": "catalogue/chicken-weeknights-chicken-sweet-potato-curry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Sweet Potato Curry. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Long-grain rice, Skinless chicken thighs, Sweet potatoes, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."

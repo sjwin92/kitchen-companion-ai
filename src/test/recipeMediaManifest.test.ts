@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 type MediaAsset = {
   slug: string;
+  status?: 'pending_generation' | 'published';
   file?: string;
   storage_path?: string;
   target_file?: string;
@@ -36,6 +37,13 @@ describe('recipe media manifests', () => {
       expect(asset.prompt).toContain('Dish:');
       expect(asset.prompt).toContain('Visible ingredients must agree with this recipe:');
       expect(asset.target_storage_path).toBe(`catalogue/${asset.slug}.jpg`);
+
+      if (asset.status === 'published') {
+        expect(existsSync(resolve(asset.target_file!))).toBe(true);
+      }
     }
+
+    expect(queue.assets.filter(({ status }) => status === 'published')).toHaveLength(22);
+    expect(queue.assets.filter(({ status }) => status === 'pending_generation')).toHaveLength(166);
   });
 });

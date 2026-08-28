@@ -6,6 +6,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const catalogueDir = path.join(root, 'catalogue', 'beta-200');
 const outputPath = path.join(root, 'catalogue', 'media', 'beta-200-image-queue.json');
 
+let previousAssets = new Map();
+try {
+  const previousQueue = JSON.parse(await readFile(outputPath, 'utf8'));
+  previousAssets = new Map(previousQueue.assets.map((asset) => [asset.slug, asset]));
+} catch (error) {
+  if (error?.code !== 'ENOENT') throw error;
+}
+
 const scenes = [
   'a matte dark forest-green stone table with restrained negative space',
   'a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware',
@@ -51,15 +59,19 @@ const queue = {
   style_version: 'kitchen-companion-editorial-v1',
   generated_at: new Date().toISOString(),
   policy: 'One recipe-specific asset per generation call. Human review is required before upload or publication.',
-  assets: recipes.map((recipe, index) => ({
-    slug: recipe.slug,
-    title: recipe.title,
-    pack: recipe.pack,
-    status: 'pending_generation',
-    target_file: `public/images/recipes/${recipe.slug}.jpg`,
-    target_storage_path: `catalogue/${recipe.slug}.jpg`,
-    prompt: buildPrompt(recipe, index),
-  })),
+  assets: recipes.map((recipe, index) => {
+    const previous = previousAssets.get(recipe.slug);
+
+    return {
+      slug: recipe.slug,
+      title: recipe.title,
+      pack: recipe.pack,
+      status: previous?.status ?? 'pending_generation',
+      target_file: `public/images/recipes/${recipe.slug}.jpg`,
+      target_storage_path: `catalogue/${recipe.slug}.jpg`,
+      prompt: buildPrompt(recipe, index),
+    };
+  }),
 };
 
 await mkdir(path.dirname(outputPath), { recursive: true });
