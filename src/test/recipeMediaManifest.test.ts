@@ -43,7 +43,7 @@ describe('recipe media manifests', () => {
       }
     }
 
-    expect(queue.assets.filter(({ status }) => status === 'published')).toHaveLength(22);
-    expect(queue.assets.filter(({ status }) => status === 'pending_generation')).toHaveLength(166);
+    expect(queue.assets.filter(({ status }) => status === 'published')).toHaveLength(33);
+    expect(queue.assets.filter(({ status }) => status === 'pending_generation')).toHaveLength(155);
   });
 });

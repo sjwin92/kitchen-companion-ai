@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useApp } from '@/context/AppContext';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { appError } from '@/lib/appError';
+import { getRecipeMediaUrl } from '@/services/betaCatalog';
 
 export type MealPlanKind = 'catalogue' | 'user_recipe' | 'custom' | 'inventory';
 
@@ -29,8 +30,11 @@ function inferPlanKind(recipeId: string): MealPlanKind {
 }
 
 function mapPlan(row: Record<string, unknown>): MealPlan {
+  const storedImage = row.image as string | null | undefined;
+
   return {
     ...(row as unknown as Omit<MealPlan, 'planKind' | 'inventoryItemId'>),
+    image: getRecipeMediaUrl(storedImage ?? null),
     planKind: (row.plan_kind as MealPlanKind | undefined) ?? inferPlanKind(String(row.recipe_id)),
     inventoryItemId: (row.inventory_item_id as string | null | undefined) ?? null,
   };
