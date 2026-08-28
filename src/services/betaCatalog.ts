@@ -20,6 +20,11 @@ type CatalogRecipeRow = {
   nutrition: Record<string, number> | null;
   estimated_cost_low_gbp: number | null;
   estimated_cost_high_gbp: number | null;
+  equipment_tags: string[];
+  season_tags: string[];
+  storage_guidance: Record<string, unknown> | null;
+  swap_guidance: Array<Record<string, unknown>> | null;
+  catalogue_batch: string | null;
   instructions: Array<string | { text?: string }> | null;
   image_path: string | null;
   youtube_url: string | null;
@@ -45,7 +50,8 @@ type CatalogRecipeRow = {
 const CATALOG_RECIPE_SELECT = `
   id,slug,title,description,creator_id,servings,prep_minutes,cook_minutes,
   dietary_tags,allergen_tags,cuisine_tags,meal_types,nutrition,
-  estimated_cost_low_gbp,estimated_cost_high_gbp,instructions,
+  estimated_cost_low_gbp,estimated_cost_high_gbp,equipment_tags,season_tags,
+  storage_guidance,swap_guidance,catalogue_batch,instructions,
   image_path,youtube_url,audio_url,source_type,verification_tier,source_label,
   content_version,media_attribution,contributor_user_id,
   creators(display_name),
@@ -79,6 +85,11 @@ function mapCatalogRecipe(row: CatalogRecipeRow): CatalogRecipe {
     nutrition: row.nutrition ?? {},
     estimatedCostLowGbp: row.estimated_cost_low_gbp === null ? null : Number(row.estimated_cost_low_gbp),
     estimatedCostHighGbp: row.estimated_cost_high_gbp === null ? null : Number(row.estimated_cost_high_gbp),
+    equipmentTags: row.equipment_tags ?? [],
+    seasonTags: row.season_tags ?? [],
+    storageGuidance: row.storage_guidance ?? {},
+    swapGuidance: row.swap_guidance ?? [],
+    catalogueBatch: row.catalogue_batch,
     ingredients: (row.recipe_ingredients ?? []).map((ingredient) => ({
       id: ingredient.id,
       name: ingredient.name,

@@ -1,0 +1,1369 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "packed-lunches-volume-1",
+    "title": "Packed Lunches",
+    "subtitle": "Portable lunches that hold up well",
+    "description": "Packed Lunches: Portable lunches that hold up well. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "packed-lunches-chickpea-crunch-hummus-wraps",
+      "title": "Chickpea Crunch Hummus Wraps",
+      "description": "A practical lunch designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 5,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "sesame"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the chickpeas, cucumber and peppers.",
+        "Warm the wraps briefly in a dry pan, then spread with the hummus.",
+        "Add the filling and squeeze over the lemon.",
+        "Fold in the sides, roll tightly and halve to serve."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 23,
+        "carbs_g": 67,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "77f05ee348c49bfd02a7aec971360ce344a993463463174f6b37bdb7b48cd54b",
+      "ingredients": [
+        {
+          "name": "Large tortilla wraps",
+          "normalized_name": "tortilla",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Hummus",
+          "normalized_name": "hummus",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "packed-lunches-tuna-sweetcorn-yogurt-wraps",
+      "title": "Tuna Sweetcorn Yogurt Wraps",
+      "description": "A practical lunch with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 5,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the tuna in spring water, sweetcorn and romaine lettuce.",
+        "Warm the wraps briefly in a dry pan, then spread with the greek-style yogurt.",
+        "Add the filling and squeeze over the lemon.",
+        "Fold in the sides, roll tightly and halve to serve."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 23,
+        "carbs_g": 67,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "f15f3138694e52578ee0a3a7f3ef769da825b3db12f9e2d61adf6ff6975fe4ae",
+      "ingredients": [
+        {
+          "name": "Large tortilla wraps",
+          "normalized_name": "tortilla",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Tinned tuna in spring water",
+          "normalized_name": "tuna",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Sweetcorn",
+          "normalized_name": "sweetcorn",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Romaine lettuce",
+          "normalized_name": "lettuce",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "packed-lunches-tofu-cabbage-peanut-wraps",
+      "title": "Tofu Cabbage Peanut Wraps",
+      "description": "A practical lunch balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 5,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "peanuts",
+        "soy"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the firm tofu, white cabbage and carrots.",
+        "Warm the wraps briefly in a dry pan, then spread with the peanut butter.",
+        "Add the filling and squeeze over the limes.",
+        "Fold in the sides, roll tightly and halve to serve."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 23,
+        "carbs_g": 67,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "1b0804ab265e422e4cbb939fcab694e9fbc8446e086dd025201135b1415c14de",
+      "ingredients": [
+        {
+          "name": "Large tortilla wraps",
+          "normalized_name": "tortilla",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Firm tofu",
+          "normalized_name": "tofu",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "White cabbage",
+          "normalized_name": "cabbage",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Peanut butter",
+          "normalized_name": "peanut butter",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spreads"
+        },
+        {
+          "name": "Limes",
+          "normalized_name": "lime",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "packed-lunches-lentil-cucumber-couscous-salad",
+      "title": "Lentil Cucumber Couscous Salad",
+      "description": "A practical lunch made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "sesame"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Cook the couscous until tender, then drain and cool for 10 minutes.",
+        "Prepare the green lentils, cucumber and tomatoes.",
+        "Toss everything with the baby spinach.",
+        "Loosen the tahini with lemon and fold it through just before serving."
+      ],
+      "nutrition": {
+        "calories": 500,
+        "calories_low": 450,
+        "calories_high": 550,
+        "protein_g": 22,
+        "carbs_g": 64,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan",
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "c6105f87f5b757a7b449cb9d60bd4fd93a70cccd0eb9bd90f6700273b759aeea",
+      "ingredients": [
+        {
+          "name": "Couscous",
+          "normalized_name": "couscous",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tahini",
+          "normalized_name": "tahini",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "packed-lunches-chicken-pepper-brown-rice-salad",
+      "title": "Chicken Pepper Brown Rice Salad",
+      "description": "A practical lunch designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Cook the brown rice until tender, then drain and cool for 10 minutes.",
+        "Prepare the chicken breast, peppers and sweetcorn.",
+        "Toss everything with the baby spinach.",
+        "Loosen the greek-style yogurt with limes and fold it through just before serving."
+      ],
+      "nutrition": {
+        "calories": 500,
+        "calories_low": 450,
+        "calories_high": 550,
+        "protein_g": 22,
+        "carbs_g": 64,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan",
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "45b88637592f8c0626a6eb063e88317f1fe4669528ef5db8f6c85531e328b0d0",
+      "ingredients": [
+        {
+          "name": "Brown rice",
+          "normalized_name": "brown rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Sweetcorn",
+          "normalized_name": "sweetcorn",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Limes",
+          "normalized_name": "lime",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "packed-lunches-quinoa-chickpea-lemon-salad",
+      "title": "Quinoa Chickpea Lemon Salad",
+      "description": "A practical lunch with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "sesame"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Cook the quinoa until tender, then drain and cool for 10 minutes.",
+        "Prepare the chickpeas, cucumber and tomatoes.",
+        "Toss everything with the baby spinach.",
+        "Loosen the tahini with lemon and fold it through just before serving."
+      ],
+      "nutrition": {
+        "calories": 500,
+        "calories_low": 450,
+        "calories_high": 550,
+        "protein_g": 22,
+        "carbs_g": 64,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan",
+        "mixing bowl"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "434318350b95fc007d81e67b6ad858787a0689f10365dfc3086d76f3d797b39d",
+      "ingredients": [
+        {
+          "name": "Quinoa",
+          "normalized_name": "quinoa",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tahini",
+          "normalized_name": "tahini",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "packed-lunches-cheddar-apple-mustard-sandwiches",
+      "title": "Cheddar Apple Mustard Sandwiches",
+      "description": "A practical lunch balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the mature cheddar and vegetables, keeping the pieces small enough for an even filling.",
+        "Spread the bread with the wholegrain mustard.",
+        "Layer in the mature cheddar, apples and romaine lettuce.",
+        "Close, press gently and slice just before serving."
+      ],
+      "nutrition": {
+        "calories": 470,
+        "calories_low": 423,
+        "calories_high": 517,
+        "protein_g": 24,
+        "carbs_g": 54,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "chopping board"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 1,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "d12134e98501abce929fa9ef0276e70645fe6c2c7034b2d445f2f4352c0e79b0",
+      "ingredients": [
+        {
+          "name": "Wholemeal bread",
+          "normalized_name": "bread",
+          "quantity": 8,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Apples",
+          "normalized_name": "apple",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Romaine lettuce",
+          "normalized_name": "lettuce",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "packed-lunches-mackerel-cucumber-yogurt-sandwiches",
+      "title": "Mackerel Cucumber Yogurt Sandwiches",
+      "description": "A practical lunch made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the mackerel fillets and vegetables, keeping the pieces small enough for an even filling.",
+        "Spread the bread with the greek-style yogurt.",
+        "Layer in the mackerel fillets, cucumber and romaine lettuce.",
+        "Close, press gently and slice just before serving."
+      ],
+      "nutrition": {
+        "calories": 470,
+        "calories_low": 423,
+        "calories_high": 517,
+        "protein_g": 24,
+        "carbs_g": 54,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "chopping board"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 1,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "9f1d1779b81e7fcc33f11a8a3d092d10da789731cc15316196e37c19dfb819fc",
+      "ingredients": [
+        {
+          "name": "Wholemeal bread",
+          "normalized_name": "bread",
+          "quantity": 8,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Smoked mackerel fillets",
+          "normalized_name": "mackerel",
+          "quantity": 360,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Romaine lettuce",
+          "normalized_name": "lettuce",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "packed-lunches-hummus-pepper-spinach-sandwiches",
+      "title": "Hummus Pepper Spinach Sandwiches",
+      "description": "A practical lunch designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 0,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "sesame"
+      ],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Prepare the hummus and vegetables, keeping the pieces small enough for an even filling.",
+        "Spread the bread with the wholegrain mustard.",
+        "Layer in the hummus, peppers and baby spinach.",
+        "Close, press gently and slice just before serving."
+      ],
+      "nutrition": {
+        "calories": 470,
+        "calories_low": 423,
+        "calories_high": 517,
+        "protein_g": 24,
+        "carbs_g": 54,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "chopping board"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 1,
+        "freezer_months": 0,
+        "reheat": "Serve cold or at room temperature.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "6e179fcd98dd8c28a6c7e1d0adc0d2dc3e7d8936bc22984e0f291144e10203d6",
+      "ingredients": [
+        {
+          "name": "Wholemeal bread",
+          "normalized_name": "bread",
+          "quantity": 8,
+          "unit": "slices",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Hummus",
+          "normalized_name": "hummus",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "packed-lunches-tomato-butter-bean-lunch-soup",
+      "title": "Tomato Butter Bean Lunch Soup",
+      "description": "A practical lunch with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Dice the onion, tomatoes and baby spinach evenly.",
+        "Soften the vegetables in olive oil for 8 minutes, then stir in the mixed herbs.",
+        "Add the butter beans and vegetable stock; simmer for 22 minutes.",
+        "Blend partly if desired, then check the seasoning and serve piping hot."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 22,
+        "carbs_g": 57,
+        "fat_g": 13,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "cdfdacb552736da14b68edf8acaf022ae654deceaaaf521aa34bbcf3995991cc",
+      "ingredients": [
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "packed-lunches-carrot-red-lentil-lunch-soup",
+      "title": "Carrot Red Lentil Lunch Soup",
+      "description": "A practical lunch balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "lunch",
+        "lunchbox"
+      ],
+      "instructions": [
+        "Dice the onion, carrots and celery sticks evenly.",
+        "Soften the vegetables in olive oil for 8 minutes, then stir in the ground cumin.",
+        "Add the red lentils and vegetable stock; simmer for 22 minutes.",
+        "Blend partly if desired, then check the seasoning and serve piping hot."
+      ],
+      "nutrition": {
+        "calories": 430,
+        "calories_low": 387,
+        "calories_high": 473,
+        "protein_g": 22,
+        "carbs_g": 57,
+        "fat_g": 13,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "44d9449d04ef4600260d3199ee02f18e21389c656fb9a8551976b399fa44f52d",
+      "ingredients": [
+        {
+          "name": "Dried red lentils",
+          "normalized_name": "red lentil",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Celery sticks",
+          "normalized_name": "celery",
+          "quantity": 4,
+          "unit": "sticks",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Ground cumin",
+          "normalized_name": "cumin",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

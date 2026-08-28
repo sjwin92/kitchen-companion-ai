@@ -141,6 +141,11 @@ export interface CatalogRecipe {
   nutrition: Record<string, number>;
   estimatedCostLowGbp: number | null;
   estimatedCostHighGbp: number | null;
+  equipmentTags: string[];
+  seasonTags: string[];
+  storageGuidance: Record<string, unknown>;
+  swapGuidance: Array<Record<string, unknown>>;
+  catalogueBatch: string | null;
   ingredients: RecipeIngredient[];
   instructions: string[];
   imagePath: string | null;

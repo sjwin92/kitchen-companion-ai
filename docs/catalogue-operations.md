@@ -1,6 +1,15 @@
 # Catalogue operations
 
-The beta launches from a reviewed database catalogue, not an endless AI meal feed. The bootstrap launch target is 12 strong recipes across three mini-packs. Scale the catalogue only after the loop proves useful.
+The beta launches from a reviewed database catalogue, not an endless AI meal feed. The database now contains 200 recipes: 12 founder-reviewed recipes are public and 188 structured candidates are private. Candidates remain invisible to ordinary users until they pass the existing review workflow.
+
+## Beta-200 catalogue
+
+The 188 candidates are split across 17 practical packs in `catalogue/beta-200`. They provide dietary and meal-type breadth while preserving provenance, deduplication hashes, structured ingredients, calorie ranges, cost ranges and storage guidance.
+
+- Run `npm run catalogue:verify` after editing generated candidates.
+- Run `npm run catalogue:build` only when intentionally regenerating the deterministic candidate set.
+- Validate an individual pack with `npm run catalogue:validate -- /absolute/path/to/pack.json`.
+- Treat the generated recipes as an editorial queue, not finished public content. Review wording, cooking results, quantities, allergens, nutrition and rights before approval.
 
 ## Safe import flow
 
@@ -29,7 +38,7 @@ The reviewer should also verify timings, servings, storage/reheating guidance, d
 
 ## Post-beta catalogue production board
 
-Grow toward six useful collections rather than one undifferentiated list:
+Continue growing useful collections rather than one undifferentiated list:
 
 - fast weeknights;
 - budget and batch cooking;

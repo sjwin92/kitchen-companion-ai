@@ -1,0 +1,1377 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "chicken-weeknights-volume-1",
+    "title": "Chicken Weeknights",
+    "subtitle": "Reliable chicken dinners without repetition",
+    "description": "Chicken Weeknights: Reliable chicken dinners without repetition. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "chicken-weeknights-lemon-chicken-couscous-traybake",
+      "title": "Lemon Chicken Couscous Traybake",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 35,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 220°C/200°C fan.",
+        "Cut the potatoes, peppers and courgettes into even pieces.",
+        "Toss everything except the lemon with olive oil and mixed herbs; roast until browned and cooked through.",
+        "Finish with lemon and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 590,
+        "calories_low": 531,
+        "calories_high": 649,
+        "protein_g": 32,
+        "carbs_g": 69,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "large roasting tray"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "7b9e7fe0d7e12ab31b2ac3d23396594102c2a6b4de53be54d3999474390154f1",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Courgettes",
+          "normalized_name": "courgette",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "chicken-weeknights-chicken-broccoli-noodle-stir-fry",
+      "title": "Chicken Broccoli Noodle Stir-Fry",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the egg noodles according to the packet and drain.",
+        "Stir-fry the chicken breast in a hot wok until cooked or crisp.",
+        "Add the broccoli, peppers and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "039bd03f574d9d1188cf6f0218fcf89007c3912f64cd12df71c3609f9c63f497",
+      "ingredients": [
+        {
+          "name": "Egg noodles",
+          "normalized_name": "egg noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "chicken-weeknights-chicken-spinach-coconut-curry",
+      "title": "Chicken Spinach Coconut Curry",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the chicken thighs, baby spinach and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "5264dd00fe73c7c49ea024ea7a3141497ad00099629e641a3d920ce58b8b9160",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "chicken-weeknights-chicken-mushroom-wholewheat-pasta",
+      "title": "Chicken Mushroom Wholewheat Pasta",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the wholewheat pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and chestnut mushrooms in olive oil until softened.",
+        "Stir in the chicken breast and greek-style yogurt, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ae5e9c395041ad205abdab4137e8be284659bc560700cdd12e80cf593cb19650",
+      "ingredients": [
+        {
+          "name": "Wholewheat pasta",
+          "normalized_name": "wholewheat pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "chicken-weeknights-paprika-chicken-rice-pot",
+      "title": "Paprika Chicken Rice Pot",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the peppers and peas in even pieces.",
+        "Cook the vegetables and paprika in olive oil for 6 minutes.",
+        "Add the long-grain rice, chicken thighs and chicken stock; cover and simmer until the base is tender.",
+        "Rest for 5 minutes, fluff or stir, and check the seasoning."
+      ],
+      "nutrition": {
+        "calories": 570,
+        "calories_low": 513,
+        "calories_high": 627,
+        "protein_g": 28,
+        "carbs_g": 78,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "bca0a5b32dd0b601f93c99d003aaf41374caf7eca39bae3d1246f89b0723ea7a",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Low-salt chicken stock",
+          "normalized_name": "chicken stock",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Smoked paprika",
+          "normalized_name": "paprika",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "chicken-weeknights-chicken-black-bean-tacos",
+      "title": "Chicken Black Bean Tacos",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 20,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mexican-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the chicken breast with the black beans until piping hot.",
+        "Prepare the romaine lettuce and warm the tortillas in a dry pan.",
+        "Fill each tortilla with the hot mixture and vegetables.",
+        "Top with salsa and lime just before serving."
+      ],
+      "nutrition": {
+        "calories": 550,
+        "calories_low": 495,
+        "calories_high": 605,
+        "protein_g": 27,
+        "carbs_g": 63,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a04467ce50d2ecccceead9e206bd7e0c4bfbd4ce7b6e3264150ae03b248f4915",
+      "ingredients": [
+        {
+          "name": "Large tortilla wraps",
+          "normalized_name": "tortilla",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Tinned black beans",
+          "normalized_name": "black bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Romaine lettuce",
+          "normalized_name": "lettuce",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomato salsa",
+          "normalized_name": "salsa",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Jars"
+        },
+        {
+          "name": "Limes",
+          "normalized_name": "lime",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "chicken-weeknights-mustard-chicken-potato-traybake",
+      "title": "Mustard Chicken Potato Traybake",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 35,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 220°C/200°C fan.",
+        "Cut the potatoes, green beans and carrots into even pieces.",
+        "Toss everything except the lemon with olive oil and wholegrain mustard; roast until browned and cooked through.",
+        "Finish with lemon and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 590,
+        "calories_low": 531,
+        "calories_high": 649,
+        "protein_g": 32,
+        "carbs_g": 69,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "large roasting tray"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "147f174be573f1454ab4a7881e8e17a696e980f9148621675e9b9a4566d5e3cc",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Green beans",
+          "normalized_name": "green bean",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Wholegrain mustard",
+          "normalized_name": "mustard",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Condiments"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "chicken-weeknights-chicken-tahini-quinoa-bowls",
+      "title": "Chicken Tahini Quinoa Bowls",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "sesame"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the quinoa until tender.",
+        "Cook or warm the chicken breast and prepare the cucumber and tomatoes.",
+        "Divide the grain, protein and vegetables between four bowls.",
+        "Loosen the tahini with lemon and spoon over the bowls."
+      ],
+      "nutrition": {
+        "calories": 600,
+        "calories_low": 540,
+        "calories_high": 660,
+        "protein_g": 28,
+        "carbs_g": 82,
+        "fat_g": 19,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ec8af485ec038f48ce4e1d9fb72956c0935adf306443863e86b4ef1b104da473",
+      "ingredients": [
+        {
+          "name": "Quinoa",
+          "normalized_name": "quinoa",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Cucumber",
+          "normalized_name": "cucumber",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tahini",
+          "normalized_name": "tahini",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "chicken-weeknights-chicken-tomato-barley-stew",
+      "title": "Chicken Tomato Barley Stew",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 50,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Brown or soften the chicken thighs in olive oil, then set aside if needed.",
+        "Cook the onion, pearl barley and carrots for 8 minutes.",
+        "Return the protein, add the chopped tomatoes and mixed herbs, then simmer gently until tender.",
+        "Check the seasoning and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 520,
+        "calories_low": 468,
+        "calories_high": 572,
+        "protein_g": 31,
+        "carbs_g": 55,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "08d2196f8cc128789fb2e54f417b21f8ee330aaf109b6395252e88da673b0110",
+      "ingredients": [
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Pearl barley",
+          "normalized_name": "barley",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Chopped tomatoes",
+          "normalized_name": "tinned tomato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "chicken-weeknights-chicken-pesto-pea-pasta",
+      "title": "Chicken Pesto Pea Pasta",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and peas in olive oil until softened.",
+        "Stir in the chicken breast and basil pesto, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "4e126523a466ac1dbc889717594c4431b05109419f0833049059e00ef248e808",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Basil pesto",
+          "normalized_name": "pesto",
+          "quantity": 120,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Jars"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "chicken-weeknights-chicken-sweet-potato-curry",
+      "title": "Chicken Sweet Potato Curry",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Indian-inspired"
+      ],
+      "dietary_tags": [
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the rice according to the packet instructions.",
+        "Soften the onion in olive oil, then stir in the medium curry powder.",
+        "Add the chicken thighs, sweet potatoes and coconut milk; simmer until tender and thickened.",
+        "Taste, season and serve over the rice."
+      ],
+      "nutrition": {
+        "calories": 620,
+        "calories_low": 558,
+        "calories_high": 682,
+        "protein_g": 27,
+        "carbs_g": 83,
+        "fat_g": 21,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "860d7387264325e085ee2a27ca64eb79ffb1a55cfd194021e4853915ec66a61b",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Skinless chicken thighs",
+          "normalized_name": "chicken thigh",
+          "quantity": 700,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Light coconut milk",
+          "normalized_name": "coconut milk",
+          "quantity": 400,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Onion",
+          "normalized_name": "onion",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Medium curry powder",
+          "normalized_name": "curry powder",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

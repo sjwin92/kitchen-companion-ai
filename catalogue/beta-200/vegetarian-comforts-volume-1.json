@@ -1,0 +1,1377 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "vegetarian-comforts-volume-1",
+    "title": "Vegetarian Comforts",
+    "subtitle": "Cosy meat-free meals for repeat cooking",
+    "description": "Vegetarian Comforts: Cosy meat-free meals for repeat cooking. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "vegetarian-comforts-mushroom-lentil-cottage-bake",
+      "title": "Mushroom Lentil Cottage Bake",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the potatoes, then combine with the green lentils, chestnut mushrooms and vegetable stock.",
+        "Transfer to a baking dish and scatter over the mature cheddar and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "fa2bea814189c43d9cf18254e811a21319179ec9aeac9adbb56f2d9ec30f145c",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "vegetarian-comforts-broccoli-cheddar-pasta-bake",
+      "title": "Broccoli Cheddar Pasta Bake",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the pasta, then combine with the butter beans, broccoli and milk.",
+        "Transfer to a baking dish and scatter over the mature cheddar and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "51c5ff8454b44de7f587075750c253e72e64e7ce3e24c5e1284bd80cb8e30359",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Semi-skimmed milk",
+          "normalized_name": "milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "vegetarian-comforts-spinach-feta-chickpea-rice",
+      "title": "Spinach Feta Chickpea Rice",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the baby spinach and feta in even pieces.",
+        "Cook the vegetables and mixed herbs in olive oil for 6 minutes.",
+        "Add the long-grain rice, chickpeas and vegetable stock; cover and simmer until the base is tender.",
+        "Rest for 5 minutes, fluff or stir, and check the seasoning."
+      ],
+      "nutrition": {
+        "calories": 570,
+        "calories_low": 513,
+        "calories_high": 627,
+        "protein_g": 28,
+        "carbs_g": 78,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "958d5c5fc8aa5ad166eb1062b2de6fcbfb8576897be25b7b674180adab6e2572",
+      "ingredients": [
+        {
+          "name": "Long-grain rice",
+          "normalized_name": "rice",
+          "quantity": 280,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Feta",
+          "normalized_name": "feta",
+          "quantity": 160,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "vegetarian-comforts-mushroom-pea-pesto-pasta",
+      "title": "Mushroom Pea Pesto Pasta",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and chestnut mushrooms in olive oil until softened.",
+        "Stir in the peas and basil pesto, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "9ca6c2756352457ab7f53d5defd4cc731228aaae215fa78b4c4e9884bcab3588",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Basil pesto",
+          "normalized_name": "pesto",
+          "quantity": 120,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Jars"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "vegetarian-comforts-cheddar-black-bean-tacos",
+      "title": "Cheddar Black Bean Tacos",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 20,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mexican-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the black beans with the peppers until piping hot.",
+        "Prepare the mature cheddar and warm the tortillas in a dry pan.",
+        "Fill each tortilla with the hot mixture and vegetables.",
+        "Top with salsa and lime just before serving."
+      ],
+      "nutrition": {
+        "calories": 550,
+        "calories_low": 495,
+        "calories_high": 605,
+        "protein_g": 27,
+        "carbs_g": 63,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "frying pan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "e65381eee1929ab443cbf11a13ad2f56ed6b9b8fba6ec04ef82bb3cacb7bf1ed",
+      "ingredients": [
+        {
+          "name": "Large tortilla wraps",
+          "normalized_name": "tortilla",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Bakery"
+        },
+        {
+          "name": "Tinned black beans",
+          "normalized_name": "black bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Tomato salsa",
+          "normalized_name": "salsa",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Jars"
+        },
+        {
+          "name": "Limes",
+          "normalized_name": "lime",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "vegetarian-comforts-cottage-cheese-courgette-pasta",
+      "title": "Cottage Cheese Courgette Pasta",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and courgettes in olive oil until softened.",
+        "Stir in the cottage cheese and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ebdad247db24899d2e4a806406281dda5396be5b5aee524e7d890196e394cf86",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Cottage cheese",
+          "normalized_name": "cottage cheese",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Courgettes",
+          "normalized_name": "courgette",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "vegetarian-comforts-egg-and-vegetable-noodle-stir-fry",
+      "title": "Egg & Vegetable Noodle Stir-Fry",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the egg noodles according to the packet and drain.",
+        "Stir-fry the eggs in a hot wok until cooked or crisp.",
+        "Add the broccoli, peppers and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ca1aaf623eae344858e06853f3e1c86fde09d46e74e5d3ac37f569503c98c1f7",
+      "ingredients": [
+        {
+          "name": "Egg noodles",
+          "normalized_name": "egg noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Large eggs",
+          "normalized_name": "egg",
+          "quantity": 8,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Eggs"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "vegetarian-comforts-feta-butter-bean-tomato-traybake",
+      "title": "Feta Butter Bean Tomato Traybake",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 35,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Mediterranean-inspired"
+      ],
+      "dietary_tags": [
+        "vegan",
+        "gluten-free"
+      ],
+      "allergen_tags": [],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 220°C/200°C fan.",
+        "Cut the potatoes, tomatoes and courgettes into even pieces.",
+        "Toss everything except the lemon with olive oil and mixed herbs; roast until browned and cooked through.",
+        "Finish with lemon and rest for 5 minutes before serving."
+      ],
+      "nutrition": {
+        "calories": 590,
+        "calories_low": 531,
+        "calories_high": 649,
+        "protein_g": 32,
+        "carbs_g": 69,
+        "fat_g": 20,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "large roasting tray"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "10348d13bf62070c050ff08940b68141c23de0aec925c836718ab6b61a6d4cc9",
+      "ingredients": [
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tomatoes",
+          "normalized_name": "tomato",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Courgettes",
+          "normalized_name": "courgette",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "vegetarian-comforts-mushroom-spinach-barley-pot",
+      "title": "Mushroom Spinach Barley Pot",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 30,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the chestnut mushrooms and baby spinach in even pieces.",
+        "Cook the vegetables and mixed herbs in olive oil for 6 minutes.",
+        "Add the pearl barley, green lentils and vegetable stock; cover and simmer until the base is tender.",
+        "Rest for 5 minutes, fluff or stir, and check the seasoning."
+      ],
+      "nutrition": {
+        "calories": 570,
+        "calories_low": 513,
+        "calories_high": 627,
+        "protein_g": 28,
+        "carbs_g": 78,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "e79654812cd1a4ff0f1dac0b024111da95594f4070cce9ff8b22f50cc8e43c16",
+      "ingredients": [
+        {
+          "name": "Pearl barley",
+          "normalized_name": "barley",
+          "quantity": 260,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Low-salt vegetable stock",
+          "normalized_name": "vegetable stock",
+          "quantity": 900,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Stock"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "vegetarian-comforts-cauliflower-chickpea-cheddar-bake",
+      "title": "Cauliflower Chickpea Cheddar Bake",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 18,
+      "cook_minutes": 40,
+      "difficulty": "medium",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Heat the oven to 200°C/180°C fan.",
+        "Cook or prepare the potatoes, then combine with the chickpeas, cauliflower and milk.",
+        "Transfer to a baking dish and scatter over the mature cheddar and herbs.",
+        "Bake until bubbling and deeply golden, then rest for 8 minutes."
+      ],
+      "nutrition": {
+        "calories": 630,
+        "calories_low": 567,
+        "calories_high": 693,
+        "protein_g": 31,
+        "carbs_g": 76,
+        "fat_g": 22,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "oven",
+        "baking dish"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 3,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": true
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "31bb7736d640d788ca97743f4981f567aec27f86bcf83427e6bf016daa6cc8f1",
+      "ingredients": [
+        {
+          "name": "Potatoes",
+          "normalized_name": "potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Cauliflower",
+          "normalized_name": "cauliflower",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Semi-skimmed milk",
+          "normalized_name": "milk",
+          "quantity": 600,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Mature cheddar",
+          "normalized_name": "cheddar",
+          "quantity": 140,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Dried mixed herbs",
+          "normalized_name": "mixed herbs",
+          "quantity": 2,
+          "unit": "tsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Spices"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "vegetarian-comforts-sweet-potato-feta-quinoa-bowls",
+      "title": "Sweet Potato Feta Quinoa Bowls",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 25,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "British-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "allergen_tags": [
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the quinoa until tender.",
+        "Cook or warm the feta and prepare the sweet potatoes and baby spinach.",
+        "Divide the grain, protein and vegetables between four bowls.",
+        "Loosen the greek-style yogurt with lemon and spoon over the bowls."
+      ],
+      "nutrition": {
+        "calories": 600,
+        "calories_low": 540,
+        "calories_high": 660,
+        "protein_g": 28,
+        "carbs_g": 82,
+        "fat_g": 19,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "3eb132bf88bae6ffdcab7ef919a05ebab5f0dcae0fd9b17eea92b4472dde05b5",
+      "ingredients": [
+        {
+          "name": "Quinoa",
+          "normalized_name": "quinoa",
+          "quantity": 240,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Feta",
+          "normalized_name": "feta",
+          "quantity": 160,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Sweet potatoes",
+          "normalized_name": "sweet potato",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Lemon",
+          "normalized_name": "lemon",
+          "quantity": 1,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

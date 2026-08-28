@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { CheckCircle2, Loader2, ShieldAlert } from 'lucide-react';
+import { CheckCircle2, Loader2, Search, ShieldAlert } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
 type ReviewDecision = 'approved' | 'changes_requested' | 'rejected';
@@ -25,9 +26,24 @@ type DraftRecipe = {
   prep_minutes: number;
   cook_minutes: number;
   instructions: Array<string | { text?: string }>;
+  dietary_tags: string[];
+  meal_types: string[];
   allergen_tags: string[];
   nutrition: Record<string, number>;
+  storage_guidance: Record<string, unknown>;
+  catalogue_batch: string | null;
   recipe_ingredients: Array<{ id: string; position: number; name: string; quantity: number | null; unit: string | null; preparation: string | null }>;
+};
+type CoverageRecipe = {
+  review_status: string;
+  dietary_tags: string[];
+  meal_types: string[];
+  image_path: string | null;
+  estimated_cost_low_gbp: number | null;
+  estimated_cost_high_gbp: number | null;
+  nutrition: Record<string, unknown>;
+  storage_guidance: Record<string, unknown>;
+  catalogue_batch: string | null;
 };
 type CommunitySubmission = {
   id: string;
@@ -72,6 +88,7 @@ export default function CatalogueReview() {
   const { session } = useApp();
   const isAdmin = session?.user.app_metadata?.role === 'admin';
   const [recipes, setRecipes] = useState<DraftRecipe[]>([]);
+  const [coverageRecipes, setCoverageRecipes] = useState<CoverageRecipe[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [checks, setChecks] = useState<Record<ReviewCheck, boolean>>({
     recipe_tested: false,
@@ -88,9 +105,38 @@ export default function CatalogueReview() {
   const [promotingId, setPromotingId] = useState<string | null>(null);
   const [approvingCreatorId, setApprovingCreatorId] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [batchFilter, setBatchFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<ReviewDecision | null>(null);
-  const selected = useMemo(() => recipes.find(recipe => recipe.id === selectedId) ?? recipes[0], [recipes, selectedId]);
+  const batches = useMemo(() => [...new Set(recipes.map(recipe => recipe.catalogue_batch).filter((batch): batch is string => Boolean(batch)))].sort(), [recipes]);
+  const visibleRecipes = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return recipes.filter(recipe => (
+      (batchFilter === 'all' || recipe.catalogue_batch === batchFilter)
+      && (!query || recipe.title.toLowerCase().includes(query) || recipe.meal_types.some(type => type.includes(query)) || recipe.dietary_tags.some(tag => tag.includes(query)))
+    ));
+  }, [batchFilter, recipes, searchQuery]);
+  const selected = useMemo(() => recipes.find(recipe => recipe.id === selectedId) ?? visibleRecipes[0] ?? recipes[0], [recipes, selectedId, visibleRecipes]);
+  const coverage = useMemo(() => {
+    const countTag = (field: 'dietary_tags' | 'meal_types', tag: string) => coverageRecipes.filter(recipe => recipe[field]?.includes(tag)).length;
+    return {
+      total: coverageRecipes.length,
+      approved: coverageRecipes.filter(recipe => recipe.review_status === 'approved').length,
+      awaitingReview: coverageRecipes.filter(recipe => ['draft', 'in_review'].includes(recipe.review_status)).length,
+      withImages: coverageRecipes.filter(recipe => recipe.image_path).length,
+      withCosts: coverageRecipes.filter(recipe => recipe.estimated_cost_low_gbp !== null && recipe.estimated_cost_high_gbp !== null).length,
+      withCalories: coverageRecipes.filter(recipe => Number(recipe.nutrition?.calories ?? 0) > 0).length,
+      withStorage: coverageRecipes.filter(recipe => Object.keys(recipe.storage_guidance ?? {}).length > 0).length,
+      vegan: countTag('dietary_tags', 'vegan'),
+      vegetarian: countTag('dietary_tags', 'vegetarian'),
+      pescatarian: countTag('dietary_tags', 'pescatarian'),
+      breakfast: countTag('meal_types', 'breakfast'),
+      lunch: countTag('meal_types', 'lunch'),
+      dinner: countTag('meal_types', 'dinner'),
+      lunchbox: countTag('meal_types', 'lunchbox'),
+    };
+  }, [coverageRecipes]);
 
   const loadDrafts = useCallback(async () => {
     if (!isAdmin) {
@@ -98,11 +144,13 @@ export default function CatalogueReview() {
       return;
     }
     setLoading(true);
-    const [{ data, error }, { data: budgetData }, { data: submissionData, error: submissionError }, { data: partnershipData, error: partnershipError }] = await Promise.all([
+    const [{ data, error }, { data: coverageData, error: coverageError }, { data: budgetData }, { data: submissionData, error: submissionError }, { data: partnershipData, error: partnershipError }] = await Promise.all([
       db.from('recipes')
-        .select('id,title,description,content_version,review_status,rights_basis,rights_notes,source_url,servings,prep_minutes,cook_minutes,instructions,allergen_tags,nutrition,recipe_ingredients(id,position,name,quantity,unit,preparation)')
+        .select('id,title,description,content_version,review_status,rights_basis,rights_notes,source_url,servings,prep_minutes,cook_minutes,instructions,dietary_tags,meal_types,allergen_tags,nutrition,storage_guidance,catalogue_batch,recipe_ingredients(id,position,name,quantity,unit,preparation)')
         .in('review_status', ['draft', 'in_review'])
         .order('updated_at', { ascending: true }),
+      db.from('recipes')
+        .select('review_status,dietary_tags,meal_types,image_path,estimated_cost_low_gbp,estimated_cost_high_gbp,nutrition,storage_guidance,catalogue_batch'),
       db.rpc('get_ai_budget_status'),
       db.from('recipe_submissions')
         .select('id,status,rights_confirmed,licence_grant,promoted_recipe_id,duplicate_of_recipe_id,user_recipes(title,description,provenance)')
@@ -115,6 +163,8 @@ export default function CatalogueReview() {
     ]);
     if (error) toast.error(error.message);
     else setRecipes((data ?? []) as unknown as DraftRecipe[]);
+    if (coverageError) toast.error(coverageError.message);
+    else setCoverageRecipes((coverageData ?? []) as unknown as CoverageRecipe[]);
     if (budgetData) setBudget(budgetData as unknown as typeof budget);
     if (submissionError) toast.error(submissionError.message);
     else setSubmissions((submissionData ?? []) as unknown as CommunitySubmission[]);
@@ -182,6 +232,31 @@ export default function CatalogueReview() {
         <h1 className="text-3xl font-bold">Catalogue review</h1>
         <p className="text-sm text-muted-foreground mt-2">Approve only the exact content version whose rights, ingredients, allergens and nutrition evidence you checked. Higher verification tiers require creator or test-kitchen evidence.</p>
       </header>
+
+      <section className="glass-card p-4 space-y-4" aria-label="Catalogue coverage">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Beta catalogue</p><h2 className="mt-1 text-xl font-bold">{coverage.total} / 200 recipes in the database</h2></div>
+          <Badge variant={coverage.total >= 200 ? 'default' : 'outline'}>{coverage.approved} public · {coverage.awaitingReview} awaiting review</Badge>
+        </div>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {[
+            ['Nutrition', coverage.withCalories],
+            ['Cost bands', coverage.withCosts],
+            ['Storage', coverage.withStorage],
+            ['Owned media', coverage.withImages],
+          ].map(([label, count]) => (
+            <div key={String(label)} className="rounded-xl border border-border/70 bg-background/55 p-3">
+              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="mt-1 text-lg font-bold">{Number(count)} / {coverage.total}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2 text-xs">
+          <Badge variant="secondary">Vegan {coverage.vegan}</Badge><Badge variant="secondary">Vegetarian {coverage.vegetarian}</Badge><Badge variant="secondary">Pescatarian {coverage.pescatarian}</Badge>
+          <Badge variant="outline">Breakfast {coverage.breakfast}</Badge><Badge variant="outline">Lunch {coverage.lunch}</Badge><Badge variant="outline">Dinner {coverage.dinner}</Badge><Badge variant="outline">Lunchbox {coverage.lunchbox}</Badge>
+        </div>
+        {coverage.awaitingReview > 0 && <p className="text-xs leading-5 text-muted-foreground">Candidate totals are operational capacity, not public inventory. Each recipe still needs quantities, allergens, rights and nutrition evidence checked before approval.</p>}
+      </section>
 
       {budget && (
         <section className="glass-card p-4" aria-label="Monthly AI budget">
@@ -273,17 +348,36 @@ export default function CatalogueReview() {
         <div className="glass-card p-8 text-center"><CheckCircle2 className="w-9 h-9 text-primary mx-auto mb-3" /><h2 className="font-bold">Review queue is clear</h2></div>
       ) : (
         <div className="grid md:grid-cols-[280px_1fr] gap-6">
-          <aside className="glass-card p-3 h-fit" aria-label="Recipes awaiting review">
-            {recipes.map(recipe => (
-              <button
-                key={recipe.id}
-                onClick={() => { setSelectedId(recipe.id); resetReview(); }}
-                className={`w-full text-left rounded-lg p-3 mb-1 ${selected?.id === recipe.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-              >
-                <span className="block font-semibold text-sm">{recipe.title}</span>
-                <span className="block text-xs opacity-75">Version {recipe.content_version} · {recipe.review_status}</span>
-              </button>
-            ))}
+          <aside className="glass-card h-fit overflow-hidden" aria-label="Recipes awaiting review">
+            <div className="space-y-2 border-b border-border/70 p-3">
+              <label className="relative block">
+                <span className="sr-only">Search review queue</span>
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} placeholder="Search recipes" className="pl-9" />
+              </label>
+              <label className="block">
+                <span className="sr-only">Filter by catalogue batch</span>
+                <select className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm" value={batchFilter} onChange={event => setBatchFilter(event.target.value)}>
+                  <option value="all">All batches ({recipes.length})</option>
+                  {batches.map(batch => <option key={batch} value={batch}>{batch} ({recipes.filter(recipe => recipe.catalogue_batch === batch).length})</option>)}
+                </select>
+              </label>
+              <p className="px-1 text-xs text-muted-foreground">{visibleRecipes.length} candidate{visibleRecipes.length === 1 ? '' : 's'}</p>
+            </div>
+            <div className="max-h-[65vh] overflow-y-auto p-3">
+              {visibleRecipes.map(recipe => (
+                <button
+                  key={recipe.id}
+                  onClick={() => { setSelectedId(recipe.id); resetReview(); }}
+                  aria-current={selected?.id === recipe.id ? 'true' : undefined}
+                  className={`mb-1 min-h-11 w-full rounded-lg p-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selected?.id === recipe.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                >
+                  <span className="block font-semibold text-sm">{recipe.title}</span>
+                  <span className="block text-xs opacity-75">Version {recipe.content_version} · {recipe.review_status}</span>
+                </button>
+              ))}
+              {visibleRecipes.length === 0 && <p className="p-4 text-center text-sm text-muted-foreground">No candidates match those filters.</p>}
+            </div>
           </aside>
 
           {selected && (
@@ -293,6 +387,7 @@ export default function CatalogueReview() {
                 <h2 className="text-2xl font-bold">{selected.title}</h2>
                 <p className="text-sm text-muted-foreground mt-2">{selected.description}</p>
                 <p className="text-xs mt-3">Serves {selected.servings} · prep {selected.prep_minutes} min · cook {selected.cook_minutes} min</p>
+                <p className="text-xs mt-2 text-muted-foreground">{selected.catalogue_batch ?? 'manual candidate'} · {selected.meal_types.join(', ')} · {selected.dietary_tags.join(', ') || 'no dietary label'}</p>
                 {selected.source_url && <a className="text-sm text-primary underline mt-3 inline-block" href={selected.source_url} target="_blank" rel="noreferrer">Open source evidence</a>}
                 {selected.rights_notes && <p className="text-sm mt-2"><strong>Rights:</strong> {selected.rights_notes}</p>}
               </div>
