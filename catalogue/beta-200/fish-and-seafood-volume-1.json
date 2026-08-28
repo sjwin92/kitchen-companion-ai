@@ -274,8 +274,8 @@
       "position": 1
     },
     {
-      "slug": "fish-and-seafood-prawn-broccoli-rice-stir-fry",
-      "title": "Prawn Broccoli Rice Stir-Fry",
+      "slug": "fish-and-seafood-prawn-broccoli-noodle-stir-fry",
+      "title": "Prawn Broccoli Noodle Stir-Fry",
       "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
       "servings": 4,
       "prep_minutes": 15,
@@ -335,7 +335,7 @@
       },
       "swap_guidance": [],
       "catalogue_batch": "beta-200",
-      "dedupe_hash": "9887f483cddfcadc42667aaf10e8fd450d796c795920296d718d62ebd5bf0769",
+      "dedupe_hash": "e2467cc8b9bb1cace0cef1785a0862ce408017c5838296c61cbf3d34f29764dd",
       "ingredients": [
         {
           "name": "Rice noodles",

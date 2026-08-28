@@ -1,6 +1,6 @@
 {
   "style_version": "kitchen-companion-editorial-v1",
-  "generated_at": "2026-08-28T19:15:17.084Z",
+  "generated_at": "2026-08-28T19:41:35.574Z",
   "policy": "One recipe-specific asset per generation call. Human review is required before upload or publication.",
   "assets": [
     {
@@ -304,7 +304,7 @@
       "slug": "fish-and-seafood-mustard-salmon-potato-plates",
       "title": "Mustard Salmon Potato Plates",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-mustard-salmon-potato-plates.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-mustard-salmon-potato-plates.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mustard Salmon Potato Plates. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Salmon fillets, Potatoes, Green beans, Frozen peas, Wholegrain mustard, Lemon, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -313,25 +313,25 @@
       "slug": "fish-and-seafood-lemon-cod-couscous-plates",
       "title": "Lemon Cod Couscous Plates",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-lemon-cod-couscous-plates.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-lemon-cod-couscous-plates.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lemon Cod Couscous Plates. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Cod fillets, Couscous, Courgettes, Tomatoes, Wholegrain mustard, Lemon, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
     },
     {
-      "slug": "fish-and-seafood-prawn-broccoli-rice-stir-fry",
-      "title": "Prawn Broccoli Rice Stir-Fry",
+      "slug": "fish-and-seafood-prawn-broccoli-noodle-stir-fry",
+      "title": "Prawn Broccoli Noodle Stir-Fry",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
-      "target_file": "public/images/recipes/fish-and-seafood-prawn-broccoli-rice-stir-fry.jpg",
-      "target_storage_path": "catalogue/fish-and-seafood-prawn-broccoli-rice-stir-fry.jpg",
-      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Prawn Broccoli Rice Stir-Fry. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Rice noodles, Raw king prawns, Broccoli, Mixed peppers, Reduced-salt soy sauce, Fresh ginger, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
+      "status": "published",
+      "target_file": "public/images/recipes/fish-and-seafood-prawn-broccoli-noodle-stir-fry.jpg",
+      "target_storage_path": "catalogue/fish-and-seafood-prawn-broccoli-noodle-stir-fry.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Prawn Broccoli Noodle Stir-Fry. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Rice noodles, Raw king prawns, Broccoli, Mixed peppers, Reduced-salt soy sauce, Fresh ginger, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
     },
     {
       "slug": "fish-and-seafood-tuna-tomato-pasta",
       "title": "Tuna Tomato Pasta",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-tuna-tomato-pasta.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-tuna-tomato-pasta.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Tuna Tomato Pasta. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Dried pasta, Tinned tuna in spring water, Baby spinach, Passata, Garlic cloves, Olive oil. Setting: a matte dark forest-green stone table with restrained negative space. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -340,7 +340,7 @@
       "slug": "fish-and-seafood-mackerel-cucumber-potato-bowls",
       "title": "Mackerel Cucumber Potato Bowls",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-mackerel-cucumber-potato-bowls.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-mackerel-cucumber-potato-bowls.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mackerel Cucumber Potato Bowls. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Potatoes, Smoked mackerel fillets, Cucumber, Baby spinach, Greek-style yogurt, Lemon. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -349,7 +349,7 @@
       "slug": "fish-and-seafood-salmon-spinach-coconut-curry",
       "title": "Salmon Spinach Coconut Curry",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-salmon-spinach-coconut-curry.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-salmon-spinach-coconut-curry.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Salmon Spinach Coconut Curry. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Long-grain rice, Salmon fillets, Baby spinach, Light coconut milk, Onion, Medium curry powder, Olive oil. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -358,7 +358,7 @@
       "slug": "fish-and-seafood-cod-chickpea-tomato-stew",
       "title": "Cod Chickpea Tomato Stew",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-cod-chickpea-tomato-stew.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-cod-chickpea-tomato-stew.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Cod Chickpea Tomato Stew. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Cod fillets, Tinned chickpeas, Tomatoes, Onion, Chopped tomatoes, Smoked paprika, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -367,7 +367,7 @@
       "slug": "fish-and-seafood-prawn-pea-couscous-bowls",
       "title": "Prawn Pea Couscous Bowls",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-prawn-pea-couscous-bowls.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-prawn-pea-couscous-bowls.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Prawn Pea Couscous Bowls. Dish details: A practical dinner made for practical planning without losing the pleasure of cooking.. Visible ingredients must agree with this recipe: Couscous, Raw king prawns, Frozen peas, Cucumber, Greek-style yogurt, Lemon. Setting: a matte dark forest-green stone table with restrained negative space. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -376,7 +376,7 @@
       "slug": "fish-and-seafood-tuna-sweetcorn-rice-pot",
       "title": "Tuna Sweetcorn Rice Pot",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-tuna-sweetcorn-rice-pot.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-tuna-sweetcorn-rice-pot.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Tuna Sweetcorn Rice Pot. Dish details: A practical dinner designed to make good use of everyday ingredients.. Visible ingredients must agree with this recipe: Long-grain rice, Tinned tuna in spring water, Sweetcorn, Frozen peas, Low-salt vegetable stock, Dried mixed herbs, Olive oil. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: close overhead crop with the plate slightly off-centre; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -385,7 +385,7 @@
       "slug": "fish-and-seafood-salmon-broccoli-traybake",
       "title": "Salmon Broccoli Traybake",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-salmon-broccoli-traybake.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-salmon-broccoli-traybake.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Salmon Broccoli Traybake. Dish details: A practical dinner with a straightforward method that earns a place in the weekly rotation.. Visible ingredients must agree with this recipe: Salmon fillets, Sweet potatoes, Broccoli, Mixed peppers, Olive oil, Dried mixed herbs, Lemon. Setting: a warm pale-stone table with one folded linen napkin and soft tonal shadows. Composition: editorial overhead view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
@@ -394,7 +394,7 @@
       "slug": "fish-and-seafood-mackerel-tomato-wholewheat-pasta",
       "title": "Mackerel Tomato Wholewheat Pasta",
       "pack": "fish-and-seafood-volume-1",
-      "status": "pending_generation",
+      "status": "published",
       "target_file": "public/images/recipes/fish-and-seafood-mackerel-tomato-wholewheat-pasta.jpg",
       "target_storage_path": "catalogue/fish-and-seafood-mackerel-tomato-wholewheat-pasta.jpg",
       "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mackerel Tomato Wholewheat Pasta. Dish details: A practical dinner balanced for an unfussy, satisfying home-cooked meal.. Visible ingredients must agree with this recipe: Wholewheat pasta, Smoked mackerel fillets, Tomatoes, Passata, Garlic cloves, Olive oil. Setting: a refined dark timber dining table with understated modern place settings. Composition: gentle three-quarter tabletop view; vertical 4:5 crop; dish is the clear subject; leave calm negative space where natural. Lighting: soft natural window light, gentle falloff, warm-neutral white balance and subtle photographic grain. Aesthetic: refined contemporary cookbook editorial, appetising real food texture, sophisticated, believable and quietly luxurious. Vary the ceramics, linen, surface, garnish restraint and framing while keeping the same editorial family. No text, logos, packaging, watermarks or branded tableware. No hands unless specifically requested. Avoid plastic-looking food, oversaturation, floating ingredients, excessive garnish, perfect symmetry, glossy stock-photo styling and rustic clichés."
