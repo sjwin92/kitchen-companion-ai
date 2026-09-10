@@ -30,7 +30,7 @@ Start the app with `npm run dev`. Run browser tests with `npm run test:e2e`.
 
 ## Supabase environments
 
-Use separate `kitchen-companion-staging` and `kitchen-companion-beta` projects. Do not link or modify the legacy Lovable project.
+Use separate `kitchen-companion-staging` and `kitchen-companion-beta` projects. This repo is a standalone npm/Vite + Supabase app with no Lovable dependency.
 
 Each project must:
 

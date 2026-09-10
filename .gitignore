@@ -29,7 +29,12 @@ supabase/.temp/
 *.sln
 *.sw?
 .chatgpt-backups/
+.lovable/
 data/external/
 *.bak
 *.bak2
 *.save
+
+# npm is the package manager; ignore Bun lockfiles if they reappear
+bun.lock
+bun.lockb
