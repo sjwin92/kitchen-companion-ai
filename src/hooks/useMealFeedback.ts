@@ -71,7 +71,9 @@ export function useMealFeedback() {
     }));
 
     // Trigger score recalculation
-    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {}
+    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {
+      // Best-effort legacy score refresh; the database trigger is authoritative.
+    }
 
     return entry;
   }, [userId]);
@@ -104,7 +106,9 @@ export function useMealFeedback() {
       ...prev,
       [mealId]: (prev[mealId] || []).filter(f => f.id !== feedbackId),
     }));
-    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {}
+    try { await supabase.rpc('recalculate_meal_scores', { p_meal_id: mealId } as any); } catch {
+      // Best-effort legacy score refresh; the database trigger is authoritative.
+    }
   }, []);
 
   return {

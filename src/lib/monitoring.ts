@@ -5,7 +5,8 @@ const dsn = import.meta.env.VITE_SENTRY_DSN?.trim();
 if (dsn) {
   Sentry.init({
     dsn,
-    environment: import.meta.env.MODE,
+    environment: import.meta.env.VITE_APP_ENVIRONMENT?.trim() || import.meta.env.MODE,
+    release: import.meta.env.VITE_APP_RELEASE?.trim() || undefined,
     sendDefaultPii: false,
     tracesSampleRate: 0,
     beforeSend(event) {

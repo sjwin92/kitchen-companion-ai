@@ -1,0 +1,1380 @@
+{
+  "creator": {
+    "slug": "kitchen-companion-test-kitchen",
+    "display_name": "Kitchen Companion Test Kitchen",
+    "bio": "Original and editorially developed recipes for practical home cooking.",
+    "website_url": null,
+    "social_links": {}
+  },
+  "book": {
+    "slug": "pasta-and-noodles-volume-1",
+    "title": "Pasta & Noodles",
+    "subtitle": "Comforting bowls with useful vegetables",
+    "description": "Pasta & Noodles: Comforting bowls with useful vegetables. Candidate recipes remain private until founder review.",
+    "content_version": 1,
+    "access_model": "included"
+  },
+  "recipes": [
+    {
+      "slug": "pasta-and-noodles-broccoli-butter-bean-pesto-pasta",
+      "title": "Broccoli Butter Bean Pesto Pasta",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and broccoli in olive oil until softened.",
+        "Stir in the butter beans and basil pesto, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "ca2dcc3b49c8114a53b2c4afa926241df77adcc5a083cd31688e9a6e0c4a3824",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned butter beans",
+          "normalized_name": "butter bean",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Basil pesto",
+          "normalized_name": "pesto",
+          "quantity": 120,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Jars"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 0
+    },
+    {
+      "slug": "pasta-and-noodles-chicken-courgette-tomato-pasta",
+      "title": "Chicken Courgette Tomato Pasta",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and courgettes in olive oil until softened.",
+        "Stir in the chicken breast and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "2412285e325be70777ca32466e038d2b37a8d8c670423b31b0e722b2892a497b",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Courgettes",
+          "normalized_name": "courgette",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 1
+    },
+    {
+      "slug": "pasta-and-noodles-lentil-aubergine-wholewheat-pasta",
+      "title": "Lentil Aubergine Wholewheat Pasta",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the wholewheat pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and aubergines in olive oil until softened.",
+        "Stir in the green lentils and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "3e0cdf255b8113a3ba74cf9ab6dd365fcc43779e1956a5e591c8416cfcd23159",
+      "ingredients": [
+        {
+          "name": "Wholewheat pasta",
+          "normalized_name": "wholewheat pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned green lentils",
+          "normalized_name": "lentil",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Aubergines",
+          "normalized_name": "aubergine",
+          "quantity": 2,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 2
+    },
+    {
+      "slug": "pasta-and-noodles-tuna-pea-lemon-pasta",
+      "title": "Tuna Pea Lemon Pasta",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "fish",
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and peas in olive oil until softened.",
+        "Stir in the tuna in spring water and greek-style yogurt, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "9fd547c7d075da36802c64f0327a857bd7a0a60c4bac0d781ee6597c35a65c82",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned tuna in spring water",
+          "normalized_name": "tuna",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Greek-style yogurt",
+          "normalized_name": "greek yogurt",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 3
+    },
+    {
+      "slug": "pasta-and-noodles-mushroom-spinach-cottage-cheese-pasta",
+      "title": "Mushroom Spinach Cottage Cheese Pasta",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "milk"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and chestnut mushrooms in olive oil until softened.",
+        "Stir in the cottage cheese and baby spinach, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "50584940bb6a0028a37095fac0af11d80b57ccd33182d2505a4abb0d7e6121e7",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Cottage cheese",
+          "normalized_name": "cottage cheese",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Dairy"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 4
+    },
+    {
+      "slug": "pasta-and-noodles-chickpea-pepper-tomato-pasta",
+      "title": "Chickpea Pepper Tomato Pasta",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 12,
+      "cook_minutes": 22,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "Italian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Cook the pasta in well-salted water until just tender; reserve a mug of cooking water.",
+        "Cook the garlic and peppers in olive oil until softened.",
+        "Stir in the chickpeas and passata, loosening with cooking water.",
+        "Toss with the drained pasta, season and serve immediately."
+      ],
+      "nutrition": {
+        "calories": 610,
+        "calories_low": 549,
+        "calories_high": 671,
+        "protein_g": 27,
+        "carbs_g": 88,
+        "fat_g": 18,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "large saucepan"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "7fe52d62c08d58684ff5d5d26ede04c2e7b8e46ad322900e269c7c9b5b32df35",
+      "ingredients": [
+        {
+          "name": "Dried pasta",
+          "normalized_name": "pasta",
+          "quantity": 320,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Pasta and grains"
+        },
+        {
+          "name": "Tinned chickpeas",
+          "normalized_name": "chickpea",
+          "quantity": 800,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Passata",
+          "normalized_name": "passata",
+          "quantity": 700,
+          "unit": "ml",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Tins"
+        },
+        {
+          "name": "Garlic cloves",
+          "normalized_name": "garlic",
+          "quantity": 3,
+          "unit": "cloves",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 5
+    },
+    {
+      "slug": "pasta-and-noodles-prawn-broccoli-rice-noodles",
+      "title": "Prawn Broccoli Rice Noodles",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "pescatarian"
+      ],
+      "allergen_tags": [
+        "crustaceans",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the rice noodles according to the packet and drain.",
+        "Stir-fry the king prawns in a hot wok until cooked or crisp.",
+        "Add the broccoli, peppers and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 8,
+      "estimated_cost_high_gbp": 12,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "a810b4c6c1e670748b1e9c9eaa2f21ab8340ad8d9f1c316df67e38eb97a47da8",
+      "ingredients": [
+        {
+          "name": "Rice noodles",
+          "normalized_name": "rice noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Raw king prawns",
+          "normalized_name": "prawn",
+          "quantity": 450,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Fish"
+        },
+        {
+          "name": "Broccoli",
+          "normalized_name": "broccoli",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 6
+    },
+    {
+      "slug": "pasta-and-noodles-tempeh-cabbage-egg-noodles",
+      "title": "Tempeh Cabbage Egg Noodles",
+      "description": "A practical dinner made for practical planning without losing the pleasure of cooking.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the egg noodles according to the packet and drain.",
+        "Stir-fry the tempeh in a hot wok until cooked or crisp.",
+        "Add the white cabbage, carrots and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 4,
+      "estimated_cost_high_gbp": 8,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "0ce45f024d097d5d02cef0dc4e1abcfd6c34d4f74e293930a2796f18c64eb42e",
+      "ingredients": [
+        {
+          "name": "Egg noodles",
+          "normalized_name": "egg noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Tempeh",
+          "normalized_name": "tempeh",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "White cabbage",
+          "normalized_name": "cabbage",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Carrots",
+          "normalized_name": "carrot",
+          "quantity": 4,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 7
+    },
+    {
+      "slug": "pasta-and-noodles-chicken-mushroom-egg-noodles",
+      "title": "Chicken Mushroom Egg Noodles",
+      "description": "A practical dinner designed to make good use of everyday ingredients.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the egg noodles according to the packet and drain.",
+        "Stir-fry the chicken breast in a hot wok until cooked or crisp.",
+        "Add the chestnut mushrooms, green beans and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "4bc04abfebfbfd48a6b5806b99cdc77ac8bb6b65707cef88ce73e29efeb79a21",
+      "ingredients": [
+        {
+          "name": "Egg noodles",
+          "normalized_name": "egg noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Chicken breast",
+          "normalized_name": "chicken breast",
+          "quantity": 600,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Chestnut mushrooms",
+          "normalized_name": "mushroom",
+          "quantity": 400,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Green beans",
+          "normalized_name": "green bean",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 8
+    },
+    {
+      "slug": "pasta-and-noodles-tofu-pea-rice-noodles",
+      "title": "Tofu Pea Rice Noodles",
+      "description": "A practical dinner with a straightforward method that earns a place in the weekly rotation.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergen_tags": [
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the rice noodles according to the packet and drain.",
+        "Stir-fry the firm tofu in a hot wok until cooked or crisp.",
+        "Add the peas, baby spinach and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 3,
+      "estimated_cost_high_gbp": 7,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "81be1e7f1e85708a34ccdf68c6a5291909017ac22b5adb1fdc1f290d18486efd",
+      "ingredients": [
+        {
+          "name": "Rice noodles",
+          "normalized_name": "rice noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Firm tofu",
+          "normalized_name": "tofu",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Chilled"
+        },
+        {
+          "name": "Frozen peas",
+          "normalized_name": "pea",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Frozen"
+        },
+        {
+          "name": "Baby spinach",
+          "normalized_name": "spinach",
+          "quantity": 200,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 9
+    },
+    {
+      "slug": "pasta-and-noodles-beef-pepper-egg-noodles",
+      "title": "Beef Pepper Egg Noodles",
+      "description": "A practical dinner balanced for an unfussy, satisfying home-cooked meal.",
+      "servings": 4,
+      "prep_minutes": 15,
+      "cook_minutes": 15,
+      "difficulty": "easy",
+      "cuisine_tags": [
+        "East Asian-inspired"
+      ],
+      "dietary_tags": [],
+      "allergen_tags": [
+        "egg",
+        "gluten",
+        "soy"
+      ],
+      "meal_types": [
+        "dinner"
+      ],
+      "instructions": [
+        "Prepare the egg noodles according to the packet and drain.",
+        "Stir-fry the beef mince in a hot wok until cooked or crisp.",
+        "Add the peppers, white cabbage and ginger; cook for 4–5 minutes.",
+        "Toss through the noodles and soy sauce, then serve at once."
+      ],
+      "nutrition": {
+        "calories": 560,
+        "calories_low": 504,
+        "calories_high": 616,
+        "protein_g": 30,
+        "carbs_g": 72,
+        "fat_g": 17,
+        "basis": "per serving"
+      },
+      "nutrition_provenance": "estimated",
+      "estimated_cost_low_gbp": 6,
+      "estimated_cost_high_gbp": 10,
+      "price_estimate_as_of": "2026-08-28",
+      "source_type": "ai_assisted",
+      "source_url": null,
+      "rights_basis": "original_owned",
+      "rights_notes": "Original Kitchen Companion beta candidate. Founder editorial review and recipe testing are required before publication.",
+      "source_label": "Kitchen Companion editorial candidate",
+      "media_attribution": {},
+      "content_version": 1,
+      "equipment_tags": [
+        "wok"
+      ],
+      "season_tags": [
+        "all-year"
+      ],
+      "storage_guidance": {
+        "fridge_days": 3,
+        "freezer_months": 0,
+        "reheat": "Reheat until piping hot throughout; only reheat once.",
+        "freezer_friendly": false
+      },
+      "swap_guidance": [],
+      "catalogue_batch": "beta-200",
+      "dedupe_hash": "45ea94564a1e248704a712ecb9caf0be6e52a9b01c1a17528a6a90d0b5eb7e8b",
+      "ingredients": [
+        {
+          "name": "Egg noodles",
+          "normalized_name": "egg noodle",
+          "quantity": 300,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Lean beef mince",
+          "normalized_name": "beef mince",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Meat"
+        },
+        {
+          "name": "Mixed peppers",
+          "normalized_name": "pepper",
+          "quantity": 3,
+          "unit": "each",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "White cabbage",
+          "normalized_name": "cabbage",
+          "quantity": 500,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Reduced-salt soy sauce",
+          "normalized_name": "soy sauce",
+          "quantity": 3,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "World foods"
+        },
+        {
+          "name": "Fresh ginger",
+          "normalized_name": "ginger",
+          "quantity": 20,
+          "unit": "g",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Produce"
+        },
+        {
+          "name": "Olive oil",
+          "normalized_name": "olive oil",
+          "quantity": 2,
+          "unit": "tbsp",
+          "preparation": null,
+          "optional": false,
+          "aisle": "Oils"
+        }
+      ],
+      "position": 10
+    }
+  ]
+}

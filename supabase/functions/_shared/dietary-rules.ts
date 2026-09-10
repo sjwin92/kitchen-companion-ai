@@ -138,11 +138,27 @@ export function foodTextMatchesTerm(foodText: string, term: string): boolean {
 function isExplicitSubstitute(foodText: string, rule: DietaryRuleKey): boolean {
   const normalized = normalize(foodText);
   if (rule === 'vegan' || rule === 'vegetarian' || rule === 'pescatarian') {
-    return ['vegan', 'plant based', 'meat free'].some((marker) => foodTextMatchesTerm(normalized, marker));
+    const labelledSubstitute = ['vegan', 'plant based', 'meat free']
+      .some((marker) => foodTextMatchesTerm(normalized, marker));
+    if (labelledSubstitute) return true;
+    if (rule === 'vegan') {
+      return [
+        'plant milk', 'oat milk', 'soy milk', 'soya milk', 'almond milk',
+        'coconut milk', 'rice milk', 'cashew milk', 'peanut butter',
+        'almond butter', 'cashew butter', 'sunflower butter', 'cocoa butter',
+        'butter bean',
+      ].some((marker) => foodTextMatchesTerm(normalized, marker));
+    }
+    return false;
   }
   if (rule === 'gluten-free') return foodTextMatchesTerm(normalized, 'gluten free');
   if (rule === 'dairy-free') {
-    return ['dairy free', 'vegan', 'plant based'].some((marker) => foodTextMatchesTerm(normalized, marker));
+    return [
+      'dairy free', 'vegan', 'plant based', 'plant milk', 'oat milk',
+      'soy milk', 'soya milk', 'almond milk', 'coconut milk', 'rice milk',
+      'cashew milk', 'peanut butter', 'almond butter', 'cashew butter',
+      'sunflower butter', 'cocoa butter', 'butter bean',
+    ].some((marker) => foodTextMatchesTerm(normalized, marker));
   }
   return false;
 }

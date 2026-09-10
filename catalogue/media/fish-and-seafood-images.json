@@ -1,0 +1,21 @@
+{
+  "style_version":"kitchen-companion-editorial-v1",
+  "generated_at":"2026-08-28T19:50:00Z",
+  "review_status":"editorial_reviewed",
+  "provider":"OpenAI image generation",
+  "model":"Built-in image generation; model identifier not exposed",
+  "prompt_manifest":"catalogue/media/beta-200-image-queue.json",
+  "assets":[
+    ["fish-and-seafood-mustard-salmon-potato-plates","exec-dda08bf1-6deb-4521-b1e3-325da32edda7.png"],
+    ["fish-and-seafood-lemon-cod-couscous-plates","exec-9f69bb48-d028-4018-8060-d20d064db25d.png"],
+    ["fish-and-seafood-prawn-broccoli-noodle-stir-fry","exec-502ff53c-25a8-4f51-af24-c243801bb0e8.png"],
+    ["fish-and-seafood-tuna-tomato-pasta","exec-6dcc1b60-33b2-497c-a03c-8c289c70f324.png"],
+    ["fish-and-seafood-mackerel-cucumber-potato-bowls","exec-28f52869-5b03-4d8a-916e-be544ed99268.png"],
+    ["fish-and-seafood-salmon-spinach-coconut-curry","exec-a418d97b-0bb9-4b34-9d38-8fd70d32dd8d.png"],
+    ["fish-and-seafood-cod-chickpea-tomato-stew","exec-85ca072c-9de3-4663-9ae8-da9304fc18bf.png"],
+    ["fish-and-seafood-prawn-pea-couscous-bowls","exec-fb327da5-399e-4d0d-9cb4-24c44c4f36c4.png"],
+    ["fish-and-seafood-tuna-sweetcorn-rice-pot","exec-a5f11778-aab4-4cce-a994-930b4a8f6d6d.png"],
+    ["fish-and-seafood-salmon-broccoli-traybake","exec-14da5d3b-96cd-4964-aed1-aeb140348194.png"],
+    ["fish-and-seafood-mackerel-tomato-wholewheat-pasta","exec-f41605e2-f49f-4f5b-a05d-f9ac660b88f6.png"]
+  ]
+}

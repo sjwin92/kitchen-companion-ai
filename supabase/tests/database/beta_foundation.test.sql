@@ -152,11 +152,11 @@ select ok(
   'signup creates a profile'
 );
 
-insert into public.recipes (slug, title, review_status, published_at)
+insert into public.recipes (slug, title, review_status, published_at, verification_tier)
 values
-  ('approved-recipe', 'Approved recipe', 'approved', now()),
-  ('draft-recipe', 'Draft recipe', 'draft', null),
-  ('review-target', 'Review target', 'draft', null);
+  ('approved-recipe', 'Approved recipe', 'approved', now(), 'editorial_reviewed'),
+  ('draft-recipe', 'Draft recipe', 'draft', null, null),
+  ('review-target', 'Review target', 'draft', null, null);
 
 insert into public.food_items (id, user_id, name, expiry_date)
 values
@@ -183,16 +183,17 @@ select set_config(
 );
 set local role authenticated;
 
-select is((select count(*) from public.recipes), 1::bigint, 'authenticated users see only approved recipes');
+select is((select count(*) from public.recipes where slug = 'approved-recipe'), 1::bigint, 'authenticated users can read approved recipes');
 select is((select count(*) from public.recipes where slug = 'draft-recipe'), 0::bigint, 'draft recipes remain private');
 
 select set_config(
-  'request.jwt.claims',
-  '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated","app_metadata":{"role":"admin"}}',
+  'request.jwt.claims', '{"role":"service_role"}',
   true
 );
+set local role service_role;
 select throws_ok(
-  $$select public.review_catalogue_recipe(
+  $$select public.edge_review_catalogue_recipe(
+    '00000000-0000-4000-8000-000000000200',
     (select id from public.recipes where slug = 'review-target'),
     'approved',
     '{"recipe_tested":true,"ingredient_quantities_checked":true,"allergens_checked":true,"rights_confirmed":true,"nutrition_source_checked":true}'::jsonb
@@ -208,9 +209,11 @@ where slug = 'review-target';
 insert into public.recipe_ingredients (recipe_id, name, normalized_name, quantity, unit)
 select id, 'Test ingredient', 'test ingredient', 1, 'portion'
 from public.recipes where slug = 'review-target';
-set local role authenticated;
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+set local role service_role;
 select lives_ok(
-  $$select public.review_catalogue_recipe(
+  $$select public.edge_review_catalogue_recipe(
+    '00000000-0000-4000-8000-000000000200',
     (select id from public.recipes where slug = 'review-target'),
     'approved',
     '{"recipe_tested":true,"ingredient_quantities_checked":true,"allergens_checked":true,"rights_confirmed":true,"nutrition_source_checked":true}'::jsonb,
@@ -249,9 +252,9 @@ select set_config(
 );
 select throws_ok(
   $$select public.create_beta_invite('blocked@example.com', 'ABCDEFGHIJKL', now() + interval '1 day')$$,
-  'P0001',
-  'Administrator access required',
-  'ordinary users cannot issue beta invitations'
+  '42501',
+  'permission denied for function create_beta_invite',
+  'ordinary users cannot execute the server-only invitation function'
 );
 select is((select count(*) from public.current_inventory where user_id = '11111111-1111-1111-1111-111111111111'), 2::bigint, 'user sees own active inventory');
 select is((select count(*) from public.current_inventory where user_id = '22222222-2222-2222-2222-222222222222'), 0::bigint, 'RLS hides another user inventory');

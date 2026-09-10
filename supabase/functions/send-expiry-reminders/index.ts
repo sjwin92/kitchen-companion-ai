@@ -70,19 +70,7 @@ Deno.serve(async (req) => {
     await db.from("notification_preferences").update({ last_expiry_sent_on: local.date }).eq("user_id", preference.user_id);
   }
 
-  const { data: expiredImages } = await db
-    .from("meal_log")
-    .select("id,image_path")
-    .not("image_path", "is", null)
-    .lte("image_delete_after", new Date().toISOString())
-    .limit(500);
-  const paths = (expiredImages ?? []).map((row) => row.image_path).filter((path): path is string => Boolean(path));
-  if (paths.length > 0) {
-    const { error: removeError } = await db.storage.from("meal-photos").remove(paths);
-    if (!removeError) await db.from("meal_log").update({ image_path: null, image_delete_after: null }).in("id", (expiredImages ?? []).map((row) => row.id));
-  }
-
-  return new Response(JSON.stringify({ sent, expired_images_removed: paths.length }), {
+  return new Response(JSON.stringify({ sent }), {
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 });

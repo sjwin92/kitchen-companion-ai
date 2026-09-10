@@ -1,0 +1,83 @@
+{
+  "style_version": "kitchen-companion-editorial-v1",
+  "provider": "OpenAI image generation",
+  "model": "Built-in image generation; model identifier not exposed",
+  "generated_at": "2026-08-28T17:55:00Z",
+  "review_status": "editorial_reviewed",
+  "ai_generated": true,
+  "content_version": 2,
+  "assets": [
+    {
+      "slug": "use-it-up-tomato-lentil-pasta",
+      "file": "public/images/recipes/use-it-up-tomato-lentil-pasta.jpg",
+      "storage_path": "catalogue/use-it-up-tomato-lentil-pasta.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Tomato & Lentil Pantry Pasta, glossy short pasta folded through a rich tomato and red lentil sauce with restrained herbs. Setting: a matte dark forest-green stone table with natural linen and generous negative space. Composition: editorial overhead view, vertical 4:5 crop, dish is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "use-it-up-crispy-vegetable-traybake",
+      "file": "public/images/recipes/use-it-up-crispy-vegetable-traybake.jpg",
+      "storage_path": "catalogue/use-it-up-crispy-vegetable-traybake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Crispy Vegetable Traybake with caramelised seasonal vegetables, crisp edges and restrained fresh herbs. Setting: a beautifully dressed contemporary table with natural linen, handmade ceramics and subtle glassware. Composition: gentle three-quarter tabletop view, vertical 4:5 crop, traybake is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "use-it-up-fridge-fried-rice",
+      "file": "public/images/recipes/use-it-up-fridge-fried-rice.jpg",
+      "storage_path": "catalogue/use-it-up-fridge-fried-rice.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Fridge-Clearing Fried Rice with distinct grains, colourful chopped vegetables and a light savoury glaze. Setting: refined dark timber with understated modern place settings. Composition: close overhead crop with the bowl slightly off-centre, vertical 4:5 crop, dish is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "use-it-up-herby-bean-soup",
+      "file": "public/images/recipes/use-it-up-herby-bean-soup.jpg",
+      "storage_path": "catalogue/use-it-up-herby-bean-soup.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Herby Bean & Greens Soup with creamy white beans, wilted leafy greens and a light herb-flecked broth. Setting: warm pale stone with one folded linen napkin and soft tonal shadows. Composition: gentle three-quarter tabletop view, vertical 4:5 crop, handmade bowl is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "five-lemon-chickpea-couscous",
+      "file": "public/images/recipes/five-lemon-chickpea-couscous.jpg",
+      "storage_path": "catalogue/five-lemon-chickpea-couscous.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lemon Chickpea Couscous with fluffy grains, chickpeas, lemon zest and restrained green herbs. Setting: a beautifully dressed contemporary table with natural linen and handmade ceramics. Composition: editorial overhead view, vertical 4:5 crop, dish is the clear subject with calm negative space. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "five-smoky-black-bean-tacos",
+      "file": "public/images/recipes/five-smoky-black-bean-tacos.jpg",
+      "storage_path": "catalogue/five-smoky-black-bean-tacos.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Smoky Black Bean Tacos, three soft corn tortillas with textured black beans, fresh lime and restrained colourful toppings. Setting: a matte dark forest-green stone table with one natural linen napkin. Composition: gentle three-quarter tabletop view, vertical 4:5 crop, tacos are the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "five-tomato-butter-bean-orzo",
+      "file": "public/images/recipes/five-tomato-butter-bean-orzo.jpg",
+      "storage_path": "catalogue/five-tomato-butter-bean-orzo.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Tomato Butter Bean Orzo, creamy tomato-coated orzo with plump butter beans and a restrained basil finish. Setting: refined dark timber with understated modern place settings. Composition: close overhead crop with the handmade bowl slightly off-centre, vertical 4:5 crop. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "five-coconut-red-lentil-dal",
+      "file": "public/images/recipes/five-coconut-red-lentil-dal.jpg",
+      "storage_path": "catalogue/five-coconut-red-lentil-dal.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Coconut Red Lentil Dal, velvety golden-orange lentils with a coconut sheen and restrained coriander. Setting: warm pale stone with soft tonal shadows, natural linen and a handmade ceramic bowl. Composition: gentle three-quarter tabletop view, vertical 4:5 crop, dish is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "plant-apple-cinnamon-overnight-oats",
+      "file": "public/images/recipes/plant-apple-cinnamon-overnight-oats.jpg",
+      "storage_path": "catalogue/plant-apple-cinnamon-overnight-oats.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Apple Cinnamon Overnight Oats, creamy oats topped with natural apple pieces, cinnamon and a few seeds. Setting: a beautifully dressed breakfast table with natural linen, handmade ceramics and subtle glassware. Composition: close overhead crop with the bowl slightly off-centre, vertical 4:5 crop. Soft morning window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "plant-roasted-pepper-hummus-wraps",
+      "file": "public/images/recipes/plant-roasted-pepper-hummus-wraps.jpg",
+      "storage_path": "catalogue/plant-roasted-pepper-hummus-wraps.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Roasted Pepper Hummus Wraps, neatly cut wraps showing creamy hummus, roasted red pepper and crisp leaves. Setting: refined dark timber with an understated modern place setting and folded linen. Composition: gentle three-quarter tabletop view, vertical 4:5 crop, wraps are the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "plant-sweet-potato-chickpea-bowls",
+      "file": "public/images/recipes/plant-sweet-potato-chickpea-bowls.jpg",
+      "storage_path": "catalogue/plant-sweet-potato-chickpea-bowls.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Sweet Potato Chickpea Bowls with caramelised sweet potato, crisp chickpeas, fresh greens and a restrained creamy drizzle. Setting: a matte dark forest-green stone table with calm negative space and natural linen. Composition: editorial overhead view, vertical 4:5 crop, bowl is the clear subject. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    },
+    {
+      "slug": "plant-green-pea-pesto-pasta",
+      "file": "public/images/recipes/plant-green-pea-pesto-pasta.jpg",
+      "storage_path": "catalogue/plant-green-pea-pesto-pasta.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Green Pea Pesto Pasta, glossy pasta coated in vivid but natural pea pesto with whole peas and restrained herbs. Setting: warm pale stone with one folded linen napkin and handmade ceramic plate. Composition: close overhead crop with the plate slightly off-centre, vertical 4:5 crop. Soft natural window light, warm-neutral colour, subtle photographic grain, refined contemporary cookbook styling and believable food texture. No text, logos, packaging, watermarks, hands, plastic-looking food, excessive garnish, perfect symmetry, heavy HDR or rustic clichés."
+    }
+  ]
+}

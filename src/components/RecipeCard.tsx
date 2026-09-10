@@ -1,6 +1,7 @@
 import { ArrowRight, Check, Clock, Heart } from 'lucide-react';
 import RecipeArtwork from '@/components/RecipeArtwork';
 import { cn } from '@/lib/utils';
+import type { RecipeMediaVariants } from '@/types';
 
 interface RecipeCardProps {
   title: string;
@@ -18,6 +19,8 @@ interface RecipeCardProps {
   verificationTier?: 'editorial_reviewed' | 'creator_verified' | 'test_kitchen_verified';
   sourceLabel?: string | null;
   creatorName?: string | null;
+  imageVariants?: RecipeMediaVariants;
+  priority?: boolean;
 }
 
 export default function RecipeCard({
@@ -36,6 +39,8 @@ export default function RecipeCard({
   verificationTier,
   sourceLabel,
   creatorName,
+  imageVariants,
+  priority,
 }: RecipeCardProps) {
   const trustLabel = verificationTier === 'test_kitchen_verified'
     ? 'Test-kitchen verified'
@@ -51,7 +56,9 @@ export default function RecipeCard({
           <RecipeArtwork
             title={title}
             image={image}
-            className="aspect-[4/5] w-full items-center justify-center sm:aspect-[5/4]"
+            variants={imageVariants}
+            priority={priority}
+            className="aspect-[4/5] w-full items-center justify-center"
             imageClassName="transition-transform duration-700 group-hover:scale-[1.025]"
           />
         </button>

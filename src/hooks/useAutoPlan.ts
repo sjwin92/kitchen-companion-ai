@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useApp } from '@/context/AppContext';
@@ -6,7 +6,7 @@ import type { MealPlan, MealSlot } from './useMealPlans';
 import { listRecommendedCatalogRecipes } from '@/services/betaCatalog';
 import type { RecipeRecommendation } from '@/types';
 
-const DRAFT_KEY = 'mealplan-draft';
+const DRAFT_KEY_PREFIX = 'mealplan-draft';
 
 export interface PlannedCatalogMeal {
   date: string;
@@ -17,9 +17,14 @@ export interface PlannedCatalogMeal {
   image?: string;
 }
 
-function loadDraftFromStorage(): PlannedCatalogMeal[] {
+export function mealPlanDraftKey(userId: string) {
+  return `${DRAFT_KEY_PREFIX}:${userId}`;
+}
+
+function loadDraftFromStorage(userId?: string): PlannedCatalogMeal[] {
+  if (!userId) return [];
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
+    const raw = localStorage.getItem(mealPlanDraftKey(userId));
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -34,20 +39,27 @@ function slotMatches(recommendation: RecipeRecommendation, slot: string) {
 
 export function useAutoPlan() {
   const { session, preferences } = useApp();
+  const userId = session?.user.id;
   const [generating, setGenerating] = useState(false);
   const [generatingSlot, setGeneratingSlot] = useState<string | null>(null);
-  const [draft, setDraftState] = useState<PlannedCatalogMeal[]>(loadDraftFromStorage);
+  const [draft, setDraftState] = useState<PlannedCatalogMeal[]>(() => loadDraftFromStorage(userId));
+
+  useEffect(() => {
+    localStorage.removeItem(DRAFT_KEY_PREFIX);
+    setDraftState(loadDraftFromStorage(userId));
+  }, [userId]);
 
   const setDraft = useCallback((meals: PlannedCatalogMeal[]) => {
     setDraftState(meals);
-    if (meals.length > 0) localStorage.setItem(DRAFT_KEY, JSON.stringify(meals));
-    else localStorage.removeItem(DRAFT_KEY);
-  }, []);
+    if (!userId) return;
+    if (meals.length > 0) localStorage.setItem(mealPlanDraftKey(userId), JSON.stringify(meals));
+    else localStorage.removeItem(mealPlanDraftKey(userId));
+  }, [userId]);
 
   const clearDraft = useCallback(() => {
     setDraftState([]);
-    localStorage.removeItem(DRAFT_KEY);
-  }, []);
+    if (userId) localStorage.removeItem(mealPlanDraftKey(userId));
+  }, [userId]);
 
   const rankCatalogue = useCallback(async () => {
     if (!session?.user) return [];

@@ -1,0 +1,75 @@
+{
+  "style_version": "kitchen-companion-editorial-v1",
+  "generated_at": "2026-08-28T19:28:29Z",
+  "review_status": "editorial_reviewed",
+  "provider": "OpenAI image generation",
+  "model": "Built-in image generation; model identifier not exposed",
+  "assets": [
+    {
+      "slug": "family-favourites-chicken-tomato-pasta-bake",
+      "source_file": "exec-189a7797-c317-4ef9-8011-60830e70af7c.png",
+      "storage_path": "catalogue/family-favourites-chicken-tomato-pasta-bake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Tomato Pasta Bake. Show a bubbling oven-baked pasta dish with clearly visible dried pasta, pieces of chicken breast, baby spinach, rich passata and a restrained golden mature-cheddar crust, with dried mixed herbs. Warm pale-stone table, folded natural-linen napkin, gentle three-quarter view, vertical 4:5 crop, soft natural window light, refined contemporary cookbook editorial. No text, branding, hands or ingredients not in the recipe."
+    },
+    {
+      "slug": "family-favourites-lentil-shepherd-s-potato-bake",
+      "source_file": "exec-4636d811-550b-4ca6-8ce2-5535f501a53f.png",
+      "storage_path": "catalogue/family-favourites-lentil-shepherd-s-potato-bake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lentil Shepherd's Potato Bake. Show a golden potato topping over a visible green-lentil, carrot and chopped-tomato filling, lightly finished with wholemeal breadcrumbs and mixed herbs. Refined dark timber table, close overhead vertical 4:5 crop, soft natural window light, contemporary cookbook editorial. No text, branding, hands or ingredients not in the recipe."
+    },
+    {
+      "slug": "family-favourites-tuna-sweetcorn-pasta-bake",
+      "source_file": "exec-5f23c53b-b5f1-4990-bd97-62a0f22fe99a.png",
+      "storage_path": "catalogue/family-favourites-tuna-sweetcorn-pasta-bake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Tuna Sweetcorn Pasta Bake. A ceramic baking dish and served spoonful must make both plentiful golden sweetcorn kernels and natural tuna flakes clearly identifiable among penne, tomato passata and restrained mature cheddar. Dark forest-green stone table, editorial overhead vertical 4:5 crop, soft natural window light. No text, branding, hands or ingredients not in the recipe."
+    },
+    {
+      "slug": "family-favourites-mild-chickpea-coconut-curry",
+      "source_file": "exec-00a6d335-c21e-4dfa-b270-3935877a5175.png",
+      "storage_path": "catalogue/family-favourites-mild-chickpea-coconut-curry.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mild Chickpea Coconut Curry with long-grain rice. Clearly show chickpeas, tender cauliflower and softened onion in a pale golden coconut sauce. Beautifully dressed contemporary table, natural linen, handmade ceramics, gentle three-quarter vertical 4:5 crop, soft natural light. No text, branding, hands or ingredients not in the recipe."
+    },
+    {
+      "slug": "family-favourites-mild-chicken-and-pea-curry",
+      "source_file": "exec-053adfd1-0f96-44d9-977c-ee0177391a04.png",
+      "storage_path": "catalogue/family-favourites-mild-chicken-and-pea-curry.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Mild Chicken and Pea Curry with long-grain rice. Clearly show tender chicken thigh and abundant bright green peas in a mild pale-golden coconut curry with softened onion. Warm pale-stone table, close overhead vertical 4:5 crop, soft natural light. No text, branding, hands or other dominant vegetables."
+    },
+    {
+      "slug": "family-favourites-turkey-pepper-rice-pot",
+      "source_file": "exec-8441ea42-8214-49be-9de5-10b1f253b1c8.png",
+      "storage_path": "catalogue/family-favourites-turkey-pepper-rice-pot.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Turkey Pepper Rice Pot. Clearly show fluffy long-grain rice, browned turkey mince, red and yellow pepper and green peas, lightly coloured with smoked paprika as one cohesive rice pot. Refined dark timber table, overhead vertical 4:5 crop, soft natural light. No text, branding, hands or ingredients not in the recipe."
+    },
+    {
+      "slug": "family-favourites-black-bean-sweetcorn-tacos",
+      "source_file": "exec-aa09aa64-8309-494e-b174-116cce407d75.png",
+      "storage_path": "catalogue/family-favourites-black-bean-sweetcorn-tacos.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Black Bean Sweetcorn Tacos. Three soft tortilla tacos filled only with whole black beans, visible golden sweetcorn, crisp romaine and chunky tomato salsa, with lime. Dark forest-green stone table, three-quarter vertical 4:5 crop, soft natural light. Absolutely no avocado, guacamole, green sauce, cheese, sour cream or meat."
+    },
+    {
+      "slug": "family-favourites-chicken-pepper-tacos",
+      "source_file": "exec-dc5c7e7c-0c4f-48bb-b336-39ed7234c739.png",
+      "storage_path": "catalogue/family-favourites-chicken-pepper-tacos.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Chicken Pepper Tacos. Three soft tortilla tacos with sliced chicken breast, red and yellow peppers, crisp romaine, tomato salsa and lime. Beautifully dressed contemporary table, natural linen, overhead vertical 4:5 crop, soft natural light. No beans, cheese, avocado, text, branding or hands."
+    },
+    {
+      "slug": "family-favourites-cheesy-broccoli-wholewheat-pasta",
+      "source_file": "exec-2d4a0f54-30bf-472f-b6e9-2268aeeb61d8.png",
+      "storage_path": "catalogue/family-favourites-cheesy-broccoli-wholewheat-pasta.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Cheesy Broccoli Wholewheat Pasta. Clearly show wholewheat pasta, broccoli florets and pale butter beans lightly coated with melted mature cheddar, garlic and olive oil. Warm pale-stone table, overhead vertical 4:5 crop, soft natural light. Butter beans must read as beans; no meat or tomato sauce."
+    },
+    {
+      "slug": "family-favourites-sausage-free-bean-and-potato-traybake",
+      "source_file": "exec-5670dcdf-031f-4046-8572-d7a3ed2f3af9.png",
+      "storage_path": "catalogue/family-favourites-sausage-free-bean-and-potato-traybake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Sausage-Free Bean and Potato Traybake. Show crisp-edged potatoes, abundant whole butter beans, red and yellow peppers and courgette with smoked paprika, olive oil and lemon. Refined dark timber table, three-quarter vertical 4:5 crop, soft natural light. No sausages, meat substitutes, text, branding or hands."
+    },
+    {
+      "slug": "family-favourites-lemon-chicken-and-broccoli-traybake",
+      "source_file": "exec-7f280749-98fc-4284-bff5-81b387a1ed54.png",
+      "storage_path": "catalogue/family-favourites-lemon-chicken-and-broccoli-traybake.jpg",
+      "prompt": "Premium recipe-card food photograph for Kitchen Companion. Dish: Lemon Chicken and Broccoli Traybake. Show golden skinless chicken thigh, crisp-edged potatoes, broccoli, carrots and roasted lemon with restrained mixed herbs. Dark forest-green stone table, close overhead vertical 4:5 crop, soft natural light. No other dominant vegetables, text, branding or hands."
+    }
+  ]
+}

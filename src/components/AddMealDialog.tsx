@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import type { MealSlot } from '@/hooks/useMealPlans';
+import type { MealPlanKind, MealSlot } from '@/hooks/useMealPlans';
 import type { FavoriteRecipe } from '@/hooks/useFavorites';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,12 @@ import type { CatalogRecipe } from '@/types';
 interface AddMealDialogProps {
   addDialog: { date: Date; slot: MealSlot } | null;
   onClose: () => void;
-  onAdd: (recipeId: string, title: string, image?: string) => Promise<void>;
+  onAdd: (
+    recipeId: string,
+    title: string,
+    image?: string,
+    options?: { planKind?: MealPlanKind; inventoryItemId?: string | null },
+  ) => Promise<unknown>;
   favorites: FavoriteRecipe[];
 }
 
@@ -157,12 +162,12 @@ export default function AddMealDialog({ addDialog, onClose, onAdd, favorites }: 
       toast.error('That meal conflicts with your saved food preferences. Update it or change your preferences first.');
       return;
     }
-    await onAdd(`custom-${Date.now()}`, name, undefined);
+    await onAdd(`custom-${Date.now()}`, name, undefined, { planKind: 'custom' });
     setCustomName('');
   };
 
   const handlePickCatalogItem = async (recipe: CatalogRecipe) => {
-    await onAdd(recipe.id, recipe.title, recipe.imagePath ?? undefined);
+    await onAdd(recipe.id, recipe.title, recipe.imagePath ?? undefined, { planKind: 'catalogue' });
   };
 
   const handlePickInventoryItem = async (item: { id: string; name: string; quantity: string }) => {

@@ -14,8 +14,20 @@ import {
   Camera,
   CalendarDays,
   TrendingUp,
+  Trash2,
 } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, isToday, isYesterday, parseISO } from 'date-fns';
+import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface MealLogEntry {
   id: string;
@@ -34,6 +46,8 @@ export default function MealHistory() {
   const { session } = useApp();
   const [meals, setMeals] = useState<MealLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<MealLogEntry | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -83,6 +97,21 @@ export default function MealHistory() {
     if (isToday(d)) return 'Today';
     if (isYesterday(d)) return 'Yesterday';
     return format(d, 'EEE, MMM d');
+  };
+
+  const deleteMeal = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const { error } = await supabase.from('meal_log').delete().eq('id', deleteTarget.id);
+    if (error) {
+      toast.error('Could not remove this meal. Please try again.');
+      setDeleting(false);
+      return;
+    }
+    setMeals(current => current.filter(meal => meal.id !== deleteTarget.id));
+    toast.success(`${deleteTarget.title} removed from calorie history`);
+    setDeleteTarget(null);
+    setDeleting(false);
   };
 
   return (
@@ -183,11 +212,23 @@ export default function MealHistory() {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-start justify-between gap-1">
                             <h3 className="text-sm font-semibold text-foreground truncate">{meal.title}</h3>
-                            <span className="text-[10px] text-muted-foreground shrink-0 ml-2">
-                              {format(parseISO(meal.logged_at), 'h:mm a')}
-                            </span>
+                            <div className="flex shrink-0 items-center gap-1">
+                              <span className="text-[10px] text-muted-foreground">
+                                {format(parseISO(meal.logged_at), 'h:mm a')}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-11 w-11 text-muted-foreground hover:text-destructive"
+                                aria-label={`Remove ${meal.title} from calorie history`}
+                                onClick={() => setDeleteTarget(meal)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           <div className="flex items-center gap-3 mt-1.5">
                             <MacroPill icon={Flame} value={`${meal.calories || 0}`} color="text-orange-500" />
@@ -210,6 +251,23 @@ export default function MealHistory() {
           </>
         )}
       </div>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={open => { if (!open && !deleting) setDeleteTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this calorie record?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget?.title} will be removed from your meal history and calorie totals. Any inventory already consumed stays consumed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={deleting} onClick={event => { event.preventDefault(); void deleteMeal(); }}>
+              {deleting ? 'Removing…' : 'Remove record'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

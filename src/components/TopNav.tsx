@@ -168,7 +168,7 @@ export default function TopNav() {
           <NavLink
             to="/settings"
             aria-label="Open account settings"
-            className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-[#d7c3aa] transition-colors hover:bg-[#cdb494]"
+            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#d7c3aa] transition-colors hover:bg-[#cdb494] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <User className="h-4 w-4 text-[#173d32]/70" />
           </NavLink>

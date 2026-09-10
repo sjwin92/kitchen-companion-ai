@@ -46,6 +46,14 @@ The shared prompt builder is `src/lib/recipeImageArtDirection.ts`. Generated ima
 
 Generated images are optional supporting media. Licensed creator photography and owned editorial photography remain preferable when available. Never imitate a named photographer, creator or publication.
 
+The first 12 approved starter assets and their complete prompts are recorded in
+`catalogue/media/starter-images.json`. The remaining beta catalogue has a
+recipe-specific, human-reviewable queue at
+`catalogue/media/beta-200-image-queue.json`; regenerate it with
+`npm run catalogue:media-queue`. A queued prompt does not make an image public:
+each asset must be generated separately, checked against its recipe, uploaded,
+and attached in a new immutable recipe content version.
+
 ## Recipe-card use
 
 - Primary crop: vertical 4:5.

@@ -1,28 +1,45 @@
 import { useState } from 'react';
 import { Leaf } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { RecipeMediaVariants } from '@/types';
 
 interface RecipeArtworkProps {
   title: string;
   image?: string | null;
   className?: string;
   imageClassName?: string;
+  variants?: RecipeMediaVariants | null;
+  priority?: boolean;
 }
 
-export default function RecipeArtwork({ title, image, className, imageClassName }: RecipeArtworkProps) {
+export default function RecipeArtwork({ title, image, className, imageClassName, variants, priority = false }: RecipeArtworkProps) {
   const [failed, setFailed] = useState(false);
+  const localMatch = image?.match(/\/images\/recipes\/([^?#]+)\.(?:jpe?g|png)(?:[?#].*)?$/i);
+  const resolvedVariants = variants ?? (localMatch ? {
+    card: `/images/recipes/${localMatch[1]}.card.webp`,
+    detail: `/images/recipes/${localMatch[1]}.detail.webp`,
+    original: image,
+    width: 1024,
+    height: 1280,
+  } : null);
 
   if (image && !failed) {
     return (
       <div className={cn('overflow-hidden bg-[#e9e4da]', className)}>
-        <img
-          src={image}
-          alt={title}
-          loading="lazy"
-          decoding="async"
-          onError={() => setFailed(true)}
-          className={cn('h-full w-full object-cover', imageClassName)}
-        />
+        <picture className="block h-full w-full">
+          {resolvedVariants && <source type="image/webp" srcSet={`${resolvedVariants.card} 640w, ${resolvedVariants.detail} 1280w`} sizes="(max-width: 640px) 100vw, 640px" />}
+          <img
+            src={resolvedVariants?.original ?? image}
+            alt={title}
+            width={resolvedVariants?.width}
+            height={resolvedVariants?.height}
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
+            decoding="async"
+            onError={() => setFailed(true)}
+            className={cn('h-full w-full object-cover', imageClassName)}
+          />
+        </picture>
       </div>
     );
   }

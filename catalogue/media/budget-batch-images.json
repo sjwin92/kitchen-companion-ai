@@ -1,0 +1,21 @@
+{
+  "style_version": "kitchen-companion-editorial-v1",
+  "generated_at": "2026-08-28T18:30:00Z",
+  "review_status": "editorial_reviewed",
+  "provider": "OpenAI image generation",
+  "model": "Built-in image generation; model identifier not exposed",
+  "prompt_manifest": "catalogue/media/beta-200-image-queue.json",
+  "assets": [
+    { "slug": "budget-batch-cooking-smoky-three-bean-tomato-stew", "source_file": "exec-a3210f08-7201-40d6-aecf-5784983b125a.png", "storage_path": "catalogue/budget-batch-cooking-smoky-three-bean-tomato-stew.jpg" },
+    { "slug": "budget-batch-cooking-red-lentil-carrot-dal", "source_file": "exec-6a4d45e0-b4ff-402c-a843-774673d63338.png", "storage_path": "catalogue/budget-batch-cooking-red-lentil-carrot-dal.jpg" },
+    { "slug": "budget-batch-cooking-butter-bean-and-squash-stew", "source_file": "exec-346d7bcf-7016-430e-aab9-7abd84550efa.png", "storage_path": "catalogue/budget-batch-cooking-butter-bean-and-squash-stew.jpg" },
+    { "slug": "budget-batch-cooking-turkey-and-lentil-tomato-stew", "source_file": "exec-2cec540e-3cd7-4696-9097-2b2d952f4556.png", "storage_path": "catalogue/budget-batch-cooking-turkey-and-lentil-tomato-stew.jpg" },
+    { "slug": "budget-batch-cooking-chickpea-aubergine-curry", "source_file": "exec-af9c85ab-077b-4d2f-84ca-93f39e7c3b94.png", "storage_path": "catalogue/budget-batch-cooking-chickpea-aubergine-curry.jpg" },
+    { "slug": "budget-batch-cooking-kidney-bean-sweet-potato-stew", "source_file": "exec-dd8b225b-b99c-4f7a-93a5-0ecedcaf329d.png", "storage_path": "catalogue/budget-batch-cooking-kidney-bean-sweet-potato-stew.jpg" },
+    { "slug": "budget-batch-cooking-chicken-vegetable-barley-stew", "source_file": "exec-d03c24d9-4629-4e10-8280-d22c41492246.png", "storage_path": "catalogue/budget-batch-cooking-chicken-vegetable-barley-stew.jpg" },
+    { "slug": "budget-batch-cooking-lentil-mushroom-pasta-sauce", "source_file": "exec-c643e776-0fef-4416-a012-30a7ff3803c9.png", "storage_path": "catalogue/budget-batch-cooking-lentil-mushroom-pasta-sauce.jpg" },
+    { "slug": "budget-batch-cooking-black-bean-tomato-rice-pot", "source_file": "exec-369de7a4-58fd-4503-8366-988a8837cfb7.png", "storage_path": "catalogue/budget-batch-cooking-black-bean-tomato-rice-pot.jpg" },
+    { "slug": "budget-batch-cooking-pea-spinach-coconut-curry", "source_file": "exec-4d015840-8f1e-4a0e-9774-ae3451cc98c2.png", "storage_path": "catalogue/budget-batch-cooking-pea-spinach-coconut-curry.jpg" },
+    { "slug": "budget-batch-cooking-beef-lentil-bolognese-pot", "source_file": "exec-9beaeab4-27b6-41d3-8e55-bb0ea483b079.png", "storage_path": "catalogue/budget-batch-cooking-beef-lentil-bolognese-pot.jpg" }
+  ]
+}

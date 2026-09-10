@@ -5,6 +5,7 @@ import { useApp } from '@/context/AppContext';
 import { ingredientMatches } from '@/lib/mealMatching';
 import type { MealPlan } from './useMealPlans';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 type CatalogueIngredient = {
   recipe_id: string;
@@ -89,6 +90,7 @@ function aggregateIngredients(plans: MealPlan[], ingredients: CatalogueIngredien
 
 export function useGroceryGenerator() {
   const { inventory, session } = useApp();
+  const navigate = useNavigate();
   const [generating, setGenerating] = useState(false);
 
   const generate = useCallback(async (plans: MealPlan[]) => {
@@ -103,14 +105,22 @@ export function useGroceryGenerator() {
 
     setGenerating(true);
     try {
-      const recipeIds = [...new Set(plans.map(plan => plan.recipe_id))];
+      const cataloguePlans = plans.filter(plan =>
+        plan.planKind === 'catalogue'
+        && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(plan.recipe_id)
+      );
+      if (cataloguePlans.length === 0) {
+        toast.info('Add a reviewed catalogue recipe before building the shopping list');
+        return;
+      }
+      const recipeIds = [...new Set(cataloguePlans.map(plan => plan.recipe_id))];
       const { data, error } = await db
         .from('recipe_ingredients')
         .select('recipe_id,name,normalized_name,quantity,unit,optional')
         .in('recipe_id', recipeIds);
       if (error) throw error;
 
-      const groceries = aggregateIngredients(plans, (data ?? []) as CatalogueIngredient[]);
+      const groceries = aggregateIngredients(cataloguePlans, (data ?? []) as CatalogueIngredient[]);
       if (groceries.length === 0) {
         toast.info('No reviewed catalogue ingredients were found for these meals');
         return;
@@ -119,6 +129,7 @@ export function useGroceryGenerator() {
       const missing = groceries.filter(grocery => !inventoryCoversGrocery(grocery, inventory));
       if (missing.length === 0) {
         toast.success('You already have all the ingredients');
+        navigate('/shopping-list');
         return;
       }
 
@@ -142,6 +153,7 @@ export function useGroceryGenerator() {
 
       if (toAdd.length === 0 && toIncrease.length === 0) {
         toast.info('All missing ingredients are already on your shopping list');
+        navigate('/shopping-list');
         return;
       }
 
@@ -161,13 +173,14 @@ export function useGroceryGenerator() {
 
       const changed = toAdd.length + toIncrease.length;
       toast.success(`Updated ${changed} missing ingredient${changed === 1 ? '' : 's'} on your shopping list`);
+      navigate('/shopping-list');
     } catch (error) {
       console.error(error);
       toast.error('Failed to build the shopping list');
     } finally {
       setGenerating(false);
     }
-  }, [inventory, session]);
+  }, [inventory, navigate, session]);
 
   return { generate, generating };
 }

@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { StorageLocation, FoodItem } from '@/types';
-import { Refrigerator, Snowflake, Archive, Pencil, Trash2, Check, PackageOpen, CalendarDays, Lightbulb, MoreHorizontal, Plus } from 'lucide-react';
+import { Refrigerator, Snowflake, Archive, Pencil, Trash2, Check, PackageOpen, CalendarDays, Lightbulb, MoreHorizontal, Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,9 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import WasteDialog from '@/components/WasteDialog';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { errorMessage } from '@/lib/appError';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const TABS: { key: StorageLocation; label: string; icon: React.ReactNode }[] = [
   { key: 'fridge', label: 'Fridge', icon: <Refrigerator className="w-4 h-4" /> },
@@ -39,7 +42,7 @@ function categorize(name: string): string {
 }
 
 export default function Inventory() {
-  const { inventory, removeItem, updateItem } = useApp();
+  const { inventory, inventoryError, removeItem, transitionItem, updateItem, refreshInventory } = useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState<StorageLocation>('fridge');
   const [editItem, setEditItem] = useState<FoodItem | null>(null);
@@ -48,6 +51,8 @@ export default function Inventory() {
   const [editLocation, setEditLocation] = useState<StorageLocation>('fridge');
   const [editExpiryDate, setEditExpiryDate] = useState<Date | undefined>(undefined);
   const [wasteItem, setWasteItem] = useState<FoodItem | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [busyItemId, setBusyItemId] = useState<string | null>(null);
 
   const items = inventory.filter(i => i.location === tab);
   const currentTab = TABS.find(t => t.key === tab)!;
@@ -72,7 +77,7 @@ export default function Inventory() {
     }
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (editItem) {
       const updates: Partial<FoodItem> = { name: editName, quantity: editQty, location: editLocation };
       if (editExpiryDate) {
@@ -83,8 +88,37 @@ export default function Inventory() {
         updates.expiryDate = expiry.toISOString().split('T')[0];
         updates.status = diffDays <= 1 ? 'use-today' : diffDays <= 3 ? 'use-soon' : 'okay';
       }
-      updateItem(editItem.id, updates);
-      setEditItem(null);
+      setSavingEdit(true);
+      try {
+        await updateItem(editItem.id, updates);
+        setEditItem(null);
+        toast.success(`${updates.name || editItem.name} updated`);
+      } catch (error) {
+        toast.error(errorMessage(error, 'Your changes were not saved. Please try again.'));
+      } finally {
+        setSavingEdit(false);
+      }
+    }
+  };
+
+  const markUsed = async (item: FoodItem) => {
+    setBusyItemId(item.id);
+    try {
+      await removeItem(item.id);
+      toast.success(`${item.name} marked as used`, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            void transitionItem(item.id, 'available', 'Undo consumed action')
+              .then(() => toast.success(`${item.name} restored`))
+              .catch(error => toast.error(errorMessage(error, 'Could not restore this item.')));
+          },
+        },
+      });
+    } catch (error) {
+      toast.error(errorMessage(error, 'Could not mark this item as used.'));
+    } finally {
+      setBusyItemId(null);
     }
   };
 
@@ -101,6 +135,12 @@ export default function Inventory() {
 
   return (
     <div className="p-4 md:px-8 md:py-10 pb-28 md:pb-8 max-w-7xl mx-auto animate-fade-in">
+      {inventoryError && (
+        <div role="alert" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 p-4 text-sm">
+          <span>{inventoryError}</span>
+          <Button variant="outline" className="min-h-11 rounded-xl" onClick={() => void refreshInventory().catch(error => toast.error(errorMessage(error, 'Could not refresh inventory.')))}>Retry</Button>
+        </div>
+      )}
       {/* Two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8">
         {/* Main content */}
@@ -127,7 +167,8 @@ export default function Inventory() {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px ${
+                aria-pressed={tab === t.key}
+                className={`flex min-h-11 items-center gap-2 px-3 sm:px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px ${
                   tab === t.key
                     ? 'border-primary text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
@@ -147,13 +188,16 @@ export default function Inventory() {
               </div>
               <p className="text-sm font-medium">Nothing in your {tab} yet</p>
               <p className="text-xs mt-1">Add items by scanning a receipt or manually</p>
+              <Button onClick={() => navigate('/add-food')} className="mt-5 min-h-11 rounded-xl">
+                <Plus className="mr-2 h-4 w-4" /> Add food
+              </Button>
             </div>
           ) : (
             <div className="divide-y divide-border/40">
               {items.map((item, i) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-4 py-4 animate-fade-in group"
+                  className="group flex min-w-0 items-center gap-3 py-4 animate-fade-in sm:gap-4"
                   style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'backwards' }}
                 >
                   {/* Food image placeholder */}
@@ -167,43 +211,48 @@ export default function Inventory() {
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                       {categorize(item.name)}
                     </p>
+                    <p className={`mt-1 text-[11px] font-medium sm:hidden ${statusClass(item)}`}>
+                      <span className="text-muted-foreground">{item.quantity}</span>
+                      <span aria-hidden="true"> · </span>
+                      {statusLabel(item)}
+                    </p>
                   </div>
 
                   {/* Quantity */}
-                  <span className="text-sm text-muted-foreground font-medium shrink-0 w-20 text-right">
+                  <span className="hidden text-sm text-muted-foreground font-medium shrink-0 w-20 text-right sm:block">
                     {item.quantity}
                   </span>
 
                   {/* Status */}
-                  <span className={`text-[10px] font-bold uppercase tracking-[0.12em] shrink-0 w-28 text-right ${statusClass(item)}`}>
+                  <span className={`hidden text-[10px] font-bold uppercase tracking-[0.12em] shrink-0 w-28 text-right md:block ${statusClass(item)}`}>
                     {statusLabel(item)}
                   </span>
 
                   {/* Actions */}
-                  <div className="hidden md:flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button aria-label={`Edit ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-muted" onClick={() => openEdit(item)}>
+                  <div className="hidden md:flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+                    <Button aria-label={`Edit ${item.name}`} variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-muted" onClick={() => openEdit(item)}>
                       <Pencil className="w-3.5 h-3.5" />
                     </Button>
-                    <Button aria-label={`Mark ${item.name} used`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-success/10" onClick={() => removeItem(item.id)}>
-                      <Check className="w-3.5 h-3.5 text-success" />
+                    <Button aria-label={`Mark ${item.name} used`} variant="ghost" size="icon" disabled={busyItemId === item.id} className="h-11 w-11 rounded-xl hover:bg-success/10" onClick={() => markUsed(item)}>
+                      {busyItemId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="w-3.5 h-3.5 text-success" />}
                     </Button>
-                    <Button aria-label={`Log ${item.name} as waste`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-destructive/10" onClick={() => setWasteItem(item)}>
+                    <Button aria-label={`Log ${item.name} as waste`} variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-destructive/10" onClick={() => setWasteItem(item)}>
                       <Trash2 className="w-3.5 h-3.5 text-destructive" />
                     </Button>
                   </div>
 
-                  {/* Mobile: three-dot menu */}
-                  <div className="md:hidden flex items-center">
-                    <Button aria-label={`Edit ${item.name}`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => openEdit(item)}>
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                    <Button aria-label={`Mark ${item.name} used`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => removeItem(item.id)}>
-                      <Check className="w-4 h-4 text-success" />
-                    </Button>
-                    <Button aria-label={`Log ${item.name} as waste`} variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => setWasteItem(item)}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button aria-label={`Actions for ${item.name}`} variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-xl md:hidden">
+                        {busyItemId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-48 rounded-xl p-1.5">
+                      <DropdownMenuItem className="min-h-11 gap-2 rounded-lg" onSelect={() => openEdit(item)}><Pencil className="h-4 w-4" /> Edit</DropdownMenuItem>
+                      <DropdownMenuItem className="min-h-11 gap-2 rounded-lg" disabled={busyItemId === item.id} onSelect={() => void markUsed(item)}><Check className="h-4 w-4 text-success" /> Mark used</DropdownMenuItem>
+                      <DropdownMenuItem className="min-h-11 gap-2 rounded-lg text-destructive" onSelect={() => setWasteItem(item)}><Trash2 className="h-4 w-4" /> Log as waste</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ))}
             </div>
@@ -309,8 +358,9 @@ export default function Inventory() {
                 </p>
               )}
             </div>
-            <Button onClick={saveEdit} className="w-full" style={{ background: 'var(--gradient-primary)' }}>
-              Save Changes
+            <Button onClick={saveEdit} disabled={savingEdit || !editName.trim()} className="w-full min-h-11" style={{ background: 'var(--gradient-primary)' }}>
+              {savingEdit && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {savingEdit ? 'Saving…' : 'Save Changes'}
             </Button>
           </div>
         </DialogContent>

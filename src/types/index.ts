@@ -28,6 +28,7 @@ export interface MealSuggestion {
   ingredients: string[];
   measures?: string[];
   image?: string;
+  imageVariants?: RecipeMediaVariants;
   instructions?: string;
   category?: string;
   area?: string;
@@ -45,6 +46,15 @@ export interface MealSuggestion {
   contentVersion?: number;
   mediaAttribution?: Record<string, unknown>;
   creatorName?: string | null;
+}
+
+export interface RecipeMediaVariants {
+  card: string;
+  detail: string;
+  original: string;
+  width: number;
+  height: number;
+  contentHash?: string;
 }
 
 export type PlanningStyle = 'pick-myself' | 'help-choose' | 'do-it-for-me';
@@ -74,6 +84,24 @@ export interface UserPreferences {
 export interface NutritionRange {
   low: number;
   high: number;
+}
+
+export type AppCapability =
+  | 'inventory_vision'
+  | 'receipt_extraction'
+  | 'expiry_extraction'
+  | 'nutrition_estimate'
+  | 'private_recipe_draft'
+  | 'live_pricing'
+  | 'barcode_lookup'
+  | 'monitoring';
+
+export interface CapabilityStatus {
+  capability: AppCapability;
+  available: boolean;
+  reason: 'ready' | 'provider_not_configured' | 'budget_exhausted' | 'integration_not_configured' | 'available_without_ai' | 'monitoring_not_configured';
+  provider?: string;
+  budgetRemainingGbp?: number;
 }
 
 export interface NutritionEstimate {
@@ -123,9 +151,15 @@ export interface CatalogRecipe {
   nutrition: Record<string, number>;
   estimatedCostLowGbp: number | null;
   estimatedCostHighGbp: number | null;
+  equipmentTags: string[];
+  seasonTags: string[];
+  storageGuidance: Record<string, unknown>;
+  swapGuidance: Array<Record<string, unknown>>;
+  catalogueBatch: string | null;
   ingredients: RecipeIngredient[];
   instructions: string[];
   imagePath: string | null;
+  imageVariants: RecipeMediaVariants | null;
   youtubeUrl: string | null;
   audioUrl: string | null;
   creatorName: string | null;

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'kitchen-companion-v3';
-const ASSET_CACHE = 'kitchen-companion-assets-v3';
+const CACHE_NAME = 'kitchen-companion-v4';
+const ASSET_CACHE = 'kitchen-companion-assets-v4';
 const BASE_PATH = new URL(self.registration.scope).pathname.replace(/\/$/, '');
 const appUrl = (path = '') => `${BASE_PATH}/${path.replace(/^\//, '')}`;
 
@@ -45,6 +45,10 @@ self.addEventListener('fetch', (event) => {
   if (
     url.pathname.startsWith(appUrl('assets/')) ||
     url.pathname.endsWith('.png') ||
+    url.pathname.endsWith('.jpg') ||
+    url.pathname.endsWith('.jpeg') ||
+    url.pathname.endsWith('.webp') ||
+    url.pathname.endsWith('.avif') ||
     url.pathname.endsWith('.ico') ||
     url.pathname.endsWith('.svg')
   ) {
